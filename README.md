@@ -336,3 +336,8 @@ a newer version. For example, if a new required variable is added, this should b
   * Parameters (JSON attribute names) are no longer prevised by `VITE_`, e.g.,
     `VITE_DEFAULT_COLLECTION` is now `DEFAULT_COLLECTION`
   * Parameters for which you wish to use the default no longer need to be included as null/empty.
+
+## License
+
+Copyright 2023 Element 84 <open-source@element84.com>.
+Licensed under [Apache-2.0](./LICENSE).
