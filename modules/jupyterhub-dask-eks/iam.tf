@@ -8,7 +8,10 @@ resource "aws_iam_role" "analytics_eks_codebuild_iam_role" {
     {
       "Effect": "Allow",
       "Principal": {
-        "Service": "codebuild.amazonaws.com"
+        "Service": [
+          "events.amazonaws.com",
+          "codebuild.amazonaws.com"
+        ]
       },
       "Action": "sts:AssumeRole"
     }

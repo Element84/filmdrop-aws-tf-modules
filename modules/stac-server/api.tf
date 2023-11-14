@@ -23,7 +23,11 @@ resource "aws_lambda_function" "stac_server_api" {
             : aws_opensearch_domain.stac_server_opensearch_domain.endpoint
         )
         ENABLE_TRANSACTIONS_EXTENSION     = var.enable_transactions_extension
-        STAC_API_ROOTPATH                 = "/${var.stac_api_stage}"
+        STAC_API_ROOTPATH                 = (
+          var.stac_api_rootpath != null
+            ? var.stac_api_rootpath
+            : "/${var.stac_api_stage}"
+        )
         PRE_HOOK                          = (
           var.stac_server_auth_pre_hook_enabled && var.stac_server_pre_hook_lambda_arn == "" 
             ? one(aws_lambda_function.stac_server_api_auth_pre_hook[*].arn) 

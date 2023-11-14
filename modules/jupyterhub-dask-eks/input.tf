@@ -90,6 +90,7 @@ variable "jupyterhub_image_version" {
 
 variable "jupyterhub_elb_acm_cert_arn" {
   description = "FilmDrop JupyterHub EKS ELB ACM Cert"
+  default     = ""
 }
 
 variable "eks_endpoint_private_access" {
@@ -290,10 +291,12 @@ variable "ebs_csi_driver_helm_chart_version" {
 
 variable "zone_id" {
   description = "The DNS zone id to add the record to."
+  default     = ""
 }
 
 variable "domain_alias" {
   description = "Alternate alias for Jupyter Load Balancer"
+  default     = ""
 }
 
 variable "daskhub_stage" {

@@ -86,10 +86,28 @@ variable "mosaic_titiler_release_tag" {
 
 variable "lambda_runtime" {
   description = "AWS lambda runtime version"
-  default     = "python3.9"
+  default     = "python3.10"
 }
 
 variable "titiler_s3_bucket_arns" {
   description = "List of S3 bucket ARNs to give GetObject permissions to"
   type        = list(string)
+}
+
+variable warning_titiler_invocations {
+  description = "Warning threshold for excessive TiTiler Lambda invocations (5 min)"
+  type        = string
+  default     = "1000"
+}
+
+variable warning_titiler_errors {
+  description = "Warning threshold for excessive TiTiler Lambda errors (5 min)"
+  type        = string
+  default     = "5"
+}
+
+variable critical_titiler_errors {
+  description = "Critical threshold for excessive TiTiler Lambda errors (5 min)"
+  type        = string
+  default     = "25"
 }

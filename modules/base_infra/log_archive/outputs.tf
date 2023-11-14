@@ -3,7 +3,7 @@ output "s3_access_log_bucket" {
 }
 
 output "s3_logs_archive_bucket" {
-  value = aws_s3_bucket.s3_logs_archive_bucket.id
+  value = aws_s3_bucket_versioning.s3_logs_archive_bucket_versioning.id
 }
 
 output "s3_access_log_bucket_domain_name" {

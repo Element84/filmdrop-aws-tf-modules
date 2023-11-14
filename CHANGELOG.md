@@ -5,6 +5,27 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
+## 1.3.0 2023-08-14
+
+### Changed
+
+- Add cloudwatch alarms to mosaic titiler module
+- Removes stac ingest policy assignment within the stac server ingest sqs resource
+- Utilizes the stac ingest sqs arn to build the correct access policy
+- Reverts removal of base_infra/alerts
+- Added support jupyterhub deployment as http load balancer if no acm certificates are specified
+- Add a variable for stac-server to use the correct root path when cloudfront is used
+- For stac-server, OpenSearch 2.7 will be used instead of 2.3.
+- truncate S3 cloudfront content_bucket name to 63 characters
+- add optional `stac_server_s3_bucket_arns` config input list to stac-server to grant S3 GetObject permissions
+- Fix inconsistent plan in jupyterhub trigger by triggering from S3 events
+- Try to fix yet another S3 race condition applying versioning/replication config
+- Export API gateway ID from mosaic-titiler to fix hard-coded config in top-level TF file
+
+### Fixed
+
+- Fixes jupyterhub race condition for bucket ACLs
+
 ## 1.2.1 2023-07-29
 
 ### Fixed
@@ -16,7 +37,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Changed
 
-- FilmDrop UI >= 3.0.0 is now required. The configuration file is now `./public/config/config.json` instead of `./src/assets/config.js`
+- FilmDrop UI >= 3.0.0 is now required. The configuration file is now
+  `./public/config/config.json` instead of `./src/assets/config.js`
 
 ## 1.1.4 2023-07-25
 
@@ -54,8 +76,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 - Many modules now require `project_name` to be defined, including `base_infra/log_archive`,
   `cloudfront/s3_website`, `cloudfront/lb_endpoint`, `cloudfront/apigw_endpoint`, and `stac-server`
-- Module `titler` requires `project_name`, `prefix`, and `titiler_stage` variables set (may be required from an earlier release)
-- Module `jupyterhub-dask-eks` requireds `daskhub_stage` variables set (may be required from an earlier release)
+- Module `titler` requires `project_name`, `prefix`, and `titiler_stage` variables set
+  (may be required from an earlier release)
+- Module `jupyterhub-dask-eks` requireds `daskhub_stage` variables set (may be required
+  from an earlier release)
 
 ### Fixed
 
@@ -100,7 +124,13 @@ Many changes, see commit history
 
 ### Added
 
-- Added support for deploying the stac-server auth key pre-hook lambda. This will deploy by default (tbd not having it deploy). Setting `stac_server_auth_pre_hook_enabled` or `stac_server_pre_hook_lambda_arn` will cause it not to be used. When enabled, this uses an AWS Secrets Manager secret named `stac-server-${stage}-api-auth-keys` to store a JSON value that contains a mapping of key (token) values to permission values. Currently, the only permission allowed is `write`, which allows read of everything and write if the Transaction Extension is enabled.
+- Added support for deploying the stac-server auth key pre-hook lambda. This will deploy
+  by default (tbd not having it deploy). Setting `stac_server_auth_pre_hook_enabled` or
+  `stac_server_pre_hook_lambda_arn` will cause it not to be used. When enabled, this uses
+  an AWS Secrets Manager secret named `stac-server-${stage}-api-auth-keys` to store a JSON
+  value that contains a mapping of key (token) values to permission values. Currently, the 
+  only permission allowed is `write`, which allows read of everything and write if the
+  Transaction Extension is enabled.
 
 ### Fixed
 

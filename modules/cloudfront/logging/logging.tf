@@ -24,7 +24,7 @@ resource "aws_s3_bucket_replication_configuration" "log_bucket_replication" {
   depends_on = [ aws_s3_bucket_versioning.log_bucket_versioning ]
 
   role = aws_iam_role.cloudfront_bucket_replicator_role.arn
-  bucket = aws_s3_bucket.log_bucket[0].id
+  bucket = aws_s3_bucket_versioning.log_bucket_versioning[0].id
 
   rule {
     id = "filmdrop-archive-bucket-replication"

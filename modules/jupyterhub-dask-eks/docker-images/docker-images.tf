@@ -17,7 +17,7 @@ resource "aws_s3_bucket" "docker_image_build_source" {
 resource "aws_s3_bucket_ownership_controls" "docker_image_build_source_ownership_controls" {
   bucket = aws_s3_bucket.docker_image_build_source.id
   rule {
-    object_ownership = "ObjectWriter"
+    object_ownership = "BucketOwnerPreferred"
   }
 }
 
@@ -33,6 +33,7 @@ resource "aws_s3_bucket_public_access_block" "docker_image_build_source_public_a
 resource "aws_s3_bucket_acl" "docker_image_build_source_bucket_acl" {
   bucket = aws_s3_bucket.docker_image_build_source.id
   acl    = "private"
+  depends_on = [ aws_s3_bucket_ownership_controls.docker_image_build_source_ownership_controls ]
 }
 
 resource "aws_s3_bucket_versioning" "docker_image_build_source_versioning" {

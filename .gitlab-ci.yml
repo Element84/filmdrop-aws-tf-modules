@@ -7,7 +7,7 @@ default:
 
 .common_variables:
   variables:
-    TERRAFORM_VERSION: "1.3.4"
+    TERRAFORM_VERSION: "1.5.5"
     STAC_SERVER_TAG_DEV: v2.2.3
     STAC_SERVER_TAG_RELEASE: v2.2.3
 

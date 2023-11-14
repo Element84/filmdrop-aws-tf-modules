@@ -40,7 +40,6 @@ resource "aws_sqs_queue" "stac_server_ingest_sqs_queue" {
   name_prefix                 = "stac-server-${var.stac_api_stage}-queue"
   visibility_timeout_seconds  = var.ingest_sqs_timeout
   receive_wait_time_seconds   = var.ingest_sqs_receive_wait_time_seconds
-  policy                      = data.aws_iam_policy_document.stac_server_ingest_sqs_policy.json
 
   redrive_policy= jsonencode({
     deadLetterTargetArn = aws_sqs_queue.stac_server_ingest_dead_letter_sqs_queue.arn
@@ -51,6 +50,11 @@ resource "aws_sqs_queue" "stac_server_ingest_sqs_queue" {
 resource "aws_sqs_queue" "stac_server_ingest_dead_letter_sqs_queue" {
   name_prefix                 = "stac-server-${var.stac_api_stage}-dead-letter-queue"
   visibility_timeout_seconds  = var.ingest_sqs_dlq_timeout
+}
+
+resource "aws_sqs_queue_policy" "stac_server_ingest_sqs_queue_policy" {
+  queue_url = aws_sqs_queue.stac_server_ingest_sqs_queue.id
+  policy    = data.aws_iam_policy_document.stac_server_ingest_sqs_policy.json
 }
 
 data "aws_iam_policy_document" "stac_server_ingest_sqs_policy" {
@@ -67,7 +71,7 @@ data "aws_iam_policy_document" "stac_server_ingest_sqs_policy" {
     ]
 
     resources = [
-      "arn:aws:sqs:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:stac-server-${var.stac_api_stage}-queue",
+      "${aws_sqs_queue.stac_server_ingest_sqs_queue.arn}",
     ]
 
     condition {

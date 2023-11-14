@@ -21,71 +21,63 @@ EOF
 resource "aws_iam_policy" "stac_api_lambda_policy" {
   name_prefix = "stac-server-${var.stac_api_stage}-${data.aws_region.current.name}-lambdaPolicy"
 
-  policy = <<EOF
-{
-    "Version": "2012-10-17",
-    "Statement": [
+    policy = jsonencode({
+      Version = "2012-10-17"
+      Statement = [
         {
-            "Action": [
-                "logs:CreateLogStream",
-                "logs:CreateLogGroup"
-            ],
-            "Resource": [
-                "arn:aws:logs:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:log-group:/aws/lambda/stac-server-${var.stac_api_stage}*:*"
-            ],
-            "Effect": "Allow"
+          Action = [
+            "logs:CreateLogStream",
+            "logs:CreateLogGroup",
+          ]
+          Resource = "arn:aws:logs:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:log-group:/aws/lambda/stac-server-${var.stac_api_stage}*:*"
+          Effect   = "Allow"
         },
         {
-            "Action": [
-                "logs:PutLogEvents"
-            ],
-            "Resource": [
-                "arn:aws:logs:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:log-group:/aws/lambda/stac-server-${var.stac_api_stage}*:*:*"
-            ],
-            "Effect": "Allow"
+          Action   = ["logs:PutLogEvents"]
+          Resource = "arn:aws:logs:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:log-group:/aws/lambda/stac-server-${var.stac_api_stage}*:*:*"
+          Effect   = "Allow"
         },
         {
-            "Action": [
-                "es:*"
-            ],
-            "Resource": "arn:aws:es:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:domain/*",
-            "Effect": "Allow"
+          Action   = ["es:*"]
+          Resource = "arn:aws:es:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:domain/*"
+          Effect   = "Allow"
         },
         {
-            "Action": [
-                "sqs:GetQueueUrl",
-                "sqs:SendMessage",
-                "sqs:ReceiveMessage",
-                "sqs:DeleteMessage"
-            ],
-            "Resource": "${aws_sqs_queue.stac_server_ingest_sqs_queue.arn}",
-            "Effect": "Allow"
+          Action = [
+            "sqs:GetQueueUrl",
+            "sqs:SendMessage",
+            "sqs:ReceiveMessage",
+            "sqs:DeleteMessage",
+          ],
+          Resource = aws_sqs_queue.stac_server_ingest_sqs_queue.arn
+          Effect   = "Allow"
         },
         {
-            "Action": [
-                "sqs:ReceiveMessage",
-                "sqs:DeleteMessage",
-                "sqs:GetQueueAttributes"
-            ],
-            "Resource": [
-                "${aws_sqs_queue.stac_server_ingest_sqs_queue.arn}"
-            ],
-            "Effect": "Allow"
+          Action = [
+            "sqs:ReceiveMessage",
+            "sqs:DeleteMessage",
+            "sqs:GetQueueAttributes",
+          ],
+          Resource = aws_sqs_queue.stac_server_ingest_sqs_queue.arn
+          Effect   = "Allow"
         },
         {
-            "Action": "lambda:InvokeFunction",
-            "Resource": "*",
-            "Effect": "Allow"
+          Action   = ["lambda:InvokeFunction"]
+          Resource = "*"
+          Effect   = "Allow"
         },
         {
-            "Action": "secretsmanager:*",
-            "Resource": "*",
-            "Effect": "Allow"
-        }
-    ]
-}
-EOF
-
+          Action   = ["secretsmanager:*"]
+          Resource = "*"
+          Effect   = "Allow"
+        },
+        length(var.stac_server_s3_bucket_arns) == 0 ? null : {
+          Action   = ["s3:GetObject"]
+          Effect   = "Allow"
+          Resource = var.stac_server_s3_bucket_arns
+        },
+      ]
+    })
 }
 
 resource "aws_iam_role_policy_attachment" "stac_api_lambda_vpc_policy_attachment" {

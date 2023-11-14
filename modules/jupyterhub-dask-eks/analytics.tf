@@ -86,30 +86,35 @@ resource "aws_codebuild_project" "analytics_eks_codebuild" {
   ]
 }
 
-resource "null_resource" "trigger_jupyterhub_upgrade" {
-  triggers = {
-    new_codebuild                   = aws_codebuild_project.analytics_eks_codebuild.id
-    region                          = data.aws_region.current.name
-    account                         = data.aws_caller_identity.current.account_id
-    filmdrop_analytics_cluster_name = var.kubernetes_cluster_name
-    new_eks_config                  = aws_s3_object.jupyter_dask_source_config_ekscluster.etag
-    new_spec_config                 = aws_s3_object.jupyter_dask_source_config_spec.etag
-    new_dask_config                 = aws_s3_object.jupyter_dask_source_config_daskhub.etag
-    new_storage_config              = aws_s3_object.jupyter_dask_source_config_storageclass.etag
-    new_build_spec                  = aws_s3_object.analytics_eks_build_spec.etag
+resource "aws_s3_bucket_notification" "jupyter_dask_source_config_notifications" {
+  bucket      = aws_s3_bucket.jupyter_dask_source_config.id
+  eventbridge = true
+}
 
-  }
-
-  provisioner "local-exec" {
-    command = <<EOF
-export AWS_DEFAULT_REGION=${data.aws_region.current.name}
-export AWS_REGION=${data.aws_region.current.name}
-
-echo "Triggering CodeBuild Project."
-aws codebuild start-build --project-name ${aws_codebuild_project.analytics_eks_codebuild.id}
-EOF
-
-  }
+resource "aws_cloudwatch_event_rule" "jupyter_dask_source_config_event_rule" {
+  name_prefix   = "fd-jupyter-"
+  event_pattern = jsonencode(
+    {
+      "source" : ["aws.s3"],
+      "detail-type" : ["Object Created"],
+      "account" : [data.aws_caller_identity.current.account_id],
+      "region" : [data.aws_region.current.name],
+      "detail" : {
+        "bucket" : {
+          "name" : [aws_s3_bucket.jupyter_dask_source_config.id]
+        },
+        "object" : {
+          "key" : [
+            aws_s3_object.jupyter_dask_source_config_ekscluster.id,
+            aws_s3_object.jupyter_dask_source_config_spec.id,
+            aws_s3_object.jupyter_dask_source_config_daskhub.id,
+            aws_s3_object.jupyter_dask_source_config_storageclass.id,
+            aws_s3_object.analytics_eks_build_spec.id
+          ]
+        },
+      }
+    }
+  )
 
   depends_on = [
     aws_kms_key.analytics_filmdrop_kms_key,
@@ -126,6 +131,13 @@ EOF
     aws_s3_object.analytics_eks_build_spec,
     aws_codebuild_project.analytics_eks_codebuild
   ]
+}
+
+resource "aws_cloudwatch_event_target" "trigger_jupyterhub_upgrade" {
+  rule      = aws_cloudwatch_event_rule.jupyter_dask_source_config_event_rule.name
+  arn       = aws_codebuild_project.analytics_eks_codebuild.arn
+  role_arn  = aws_iam_role.analytics_eks_codebuild_iam_role.arn
+  target_id = aws_codebuild_project.analytics_eks_codebuild.name
 }
 
 module "daskhub_docker_ecr" {
@@ -149,7 +161,7 @@ resource "aws_s3_bucket" "jupyter_dask_source_config" {
 resource "aws_s3_bucket_ownership_controls" "jupyter_dask_source_config_ownership_controls" {
   bucket = aws_s3_bucket.jupyter_dask_source_config.id
   rule {
-    object_ownership = "ObjectWriter"
+    object_ownership = "BucketOwnerPreferred"
   }
 }
 
@@ -165,6 +177,7 @@ resource "aws_s3_bucket_public_access_block" "jupyter_dask_source_config_public_
 resource "aws_s3_bucket_acl" "jupyter_dask_source_config_bucket_acl" {
   bucket = aws_s3_bucket.jupyter_dask_source_config.id
   acl    = "private"
+  depends_on = [ aws_s3_bucket_ownership_controls.jupyter_dask_source_config_ownership_controls ]
 }
 
 resource "aws_s3_bucket_versioning" "jupyter_dask_source_config_versioning" {
@@ -217,7 +230,7 @@ resource "aws_s3_object" "jupyter_dask_source_config_daskhub" {
   bucket = aws_s3_bucket.jupyter_dask_source_config.id
   key    = "daskhub.yaml"
   source = "${path.module}/daskhub.yaml"
-  etag   = md5(templatefile("${path.module}/helm_charts/daskhub/jupyterhub.yaml.tpl", {
+  etag   = md5(templatefile(var.jupyterhub_elb_acm_cert_arn == "" ? "${path.module}/helm_charts/daskhub/jupyterhub_http.yaml.tpl" : "${path.module}/helm_charts/daskhub/jupyterhub.yaml.tpl", {
     jupyterhub_image_repo           = module.daskhub_docker_ecr.daskhub_repo
     jupyterhub_image_version        = var.jupyterhub_image_version
     dask_proxy_token                = jsondecode(data.aws_secretsmanager_secret_version.filmdrop_analytics_dask_secret_tokens_version.secret_string)["PROXYTOKEN"]
@@ -245,8 +258,8 @@ resource "aws_s3_object" "jupyter_dask_source_config_storageclass" {
 resource "aws_s3_object" "analytics_eks_build_spec" {
   bucket = aws_s3_bucket.jupyter_dask_source_config.id
   key    = "buildspec.yml"
-  source = "${path.module}/buildspec.yml"
-  etag   = filemd5("${path.module}/buildspec.yml")
+  source = var.zone_id == "" && var.domain_alias == "" ? "${path.module}/buildspec_nodnsalias.yml" : "${path.module}/buildspec.yml"
+  etag   = filemd5(var.zone_id == "" && var.domain_alias == "" ? "${path.module}/buildspec_nodnsalias.yml" : "${path.module}/buildspec.yml")
 }
 
 resource "aws_kms_key" "analytics_filmdrop_kms_key" {

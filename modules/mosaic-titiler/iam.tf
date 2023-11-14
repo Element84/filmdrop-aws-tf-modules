@@ -24,7 +24,7 @@ EOF
     policy = jsonencode({
       Version = "2012-10-17"
       Statement = [
-        {
+        length(var.titiler_s3_bucket_arns) == 0 ? null : {
           Action   = ["s3:GetObject"]
           Effect   = "Allow"
           Resource = var.titiler_s3_bucket_arns

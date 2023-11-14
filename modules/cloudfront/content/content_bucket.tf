@@ -1,6 +1,6 @@
 
 resource "aws_s3_bucket" "content_bucket" {
-  bucket = lower("${local.content_pages_id}")
+  bucket = lower(substr(local.content_pages_id, 0, 63))
 }
 
 resource "aws_s3_bucket_ownership_controls" "content_bucket_ownership_controls" {

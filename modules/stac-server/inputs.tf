@@ -48,6 +48,11 @@ variable "stac_api_stage_description" {
   default     = ""
 }
 
+variable "stac_api_rootpath" {
+  description = "This should be set to an empty string when there is a cloudfront distribution in front of stac-server. This should be set to null to default to use the stac_api_stage var as the root path.  The cloudfront distros are created via the `cloudfront/apigw_endpoint` module."
+  default     = ""
+}
+
 variable "api_lambda_timeout" {
   description = "STAC API lambda timeout in seconds"
   default     = 30
@@ -83,7 +88,6 @@ variable "pre_hook_lambda_memory" {
   default     = 128
 }
 
-
 variable "api_rest_type" {
   description = "STAC API Gateway type"
   default     = "EDGE"
@@ -91,7 +95,7 @@ variable "api_rest_type" {
 
 variable "opensearch_version" {
   description = "OpenSearch version for OpenSearch Domain"
-  default     = "OpenSearch_2.3"
+  default     = "OpenSearch_2.7"
 }
 
 variable "opensearch_cluster_instance_type" {
@@ -241,4 +245,10 @@ variable "ingest_sns_topic_arns" {
 
 variable "project_name" {
   description = "Project Name"
+}
+
+variable "stac_server_s3_bucket_arns" {
+  description = "List of S3 bucket ARNs to give GetObject permissions to"
+  type        = list(string)
+  default     = []
 }
