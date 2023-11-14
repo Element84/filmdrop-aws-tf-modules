@@ -84,3 +84,9 @@ variable "default_ttl" {
 variable "max_ttl" {
   default = 0
 }
+
+variable "custom_error_response" {
+  description = "A custom aws_cloudfront_distribution.custom_error_response list to include in the distribution, e.g. for single page app error handling"
+  type        = list(map(string))
+  default     = []
+}

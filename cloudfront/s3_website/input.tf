@@ -59,3 +59,9 @@ variable "domain_name" {
   description = "Cloudfront DNS domain name of S3 bucket or custom endpoint"
   default     = ""
 }
+
+variable "custom_error_response" {
+  description = "A custom aws_cloudfront_distribution.custom_error_response list to include in the distribution, e.g. for single page app error handling"
+  type        = list(map(string))
+  default     = []
+}

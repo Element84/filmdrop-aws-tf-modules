@@ -36,6 +36,7 @@ module "cloudfront_distribution" {
   min_ttl                                   = var.min_ttl
   default_ttl                               = var.default_ttl
   max_ttl                                   = var.max_ttl
+  custom_error_response                     = var.custom_error_response
 }
 
 module "cloudfront_dns" {

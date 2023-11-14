@@ -33,6 +33,7 @@ module "cloudfront_distribution" {
   default_ttl                               = var.default_ttl
   max_ttl                                   = var.max_ttl
   domain_name                               = var.domain_name
+  custom_error_response                     = var.custom_error_response
 }
 
 module "cloudfront_dns" {
