@@ -1,5 +1,5 @@
 resource "aws_ecr_repository" "daskhub_ecr_repo" {
-  name                 = "daskhub"
+  name                 = lower("daskhub-${var.project_name}-${var.daskhub_stage}")
   image_tag_mutability = "MUTABLE"
   image_scanning_configuration {
     scan_on_push = true
@@ -57,7 +57,7 @@ resource "aws_s3_object" "docker_build_spec" {
 }
 
 resource "aws_codebuild_project" "daskhub_docker_image" {
-  name           = "daskhub-docker-image"
+  name           = "daskhub-docker-image-${var.project_name}-${var.daskhub_stage}"
   description    = "creates a daskhub docker image"
   build_timeout  = "10"
   queued_timeout = "30"

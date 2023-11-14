@@ -49,3 +49,9 @@ variable nodegroup_name {
   description = "EKS Node Group name."
   default     = "workers"
 }
+
+variable attach_accelerator_policy {
+  type        = bool
+  description = "Attach LZA policy to EKS worker nodes."
+  default     = false
+}

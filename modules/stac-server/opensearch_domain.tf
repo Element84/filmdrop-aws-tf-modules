@@ -118,6 +118,7 @@ resource "aws_security_group" "opensearch_security_group" {
 resource "aws_iam_service_linked_role" "opensearch_linked_role" {
   count             = var.create_opensearch_service_linked_role == true ? 1 : 0
   aws_service_name  = "es.amazonaws.com"
+  custom_suffix     = "${var.project_name}-${var.stac_api_stage}"
 }
 
 resource "random_password" "opensearch_master_password" {
@@ -130,7 +131,7 @@ resource "random_password" "opensearch_master_password" {
 }
  
 resource "aws_secretsmanager_secret" "opensearch_master_password_secret" {
-   name = "stac-server-${var.stac_api_stage}-master-creds"
+   name = "stac-server-${var.project_name}-${var.stac_api_stage}-master-creds"
 }
  
 resource "aws_secretsmanager_secret_version" "opensearch_master_password_secret_version" {
@@ -155,7 +156,7 @@ resource "random_password" "opensearch_stac_user_password" {
  }
 
 resource "aws_secretsmanager_secret" "opensearch_stac_user_password_secret" {
-   name = "stac-server-${var.stac_api_stage}-user-creds"
+   name = "stac-server-${var.project_name}-${var.stac_api_stage}-user-creds"
 }
 
 resource "aws_secretsmanager_secret_version" "opensearch_stac_user_password_secret_version" {
@@ -201,7 +202,8 @@ resource "aws_lambda_function" "stac_server_opensearch_user_initializer" {
     aws_secretsmanager_secret_version.opensearch_master_password_secret_version,
     random_password.opensearch_stac_user_password,
     aws_secretsmanager_secret.opensearch_stac_user_password_secret,
-    aws_secretsmanager_secret_version.opensearch_stac_user_password_secret_version
+    aws_secretsmanager_secret_version.opensearch_stac_user_password_secret_version,
+    data.archive_file.user_init_lambda_zip
   ]
 }
 

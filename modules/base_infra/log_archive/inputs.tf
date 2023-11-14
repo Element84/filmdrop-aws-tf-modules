@@ -20,3 +20,7 @@ variable "environment" {
     description = "Project environment"
     type        = string
 }
+
+variable "project_name" {
+  description = "Project Name"
+}

@@ -43,9 +43,18 @@ resource "aws_s3_bucket" "log_bucket" {
   }
 }
 
+resource "aws_s3_bucket_ownership_controls" "log_bucket_ownership_controls" {
+  count  = var.create_log_bucket ? 1 : 0
+  bucket = aws_s3_bucket.log_bucket[0].id
+  rule {
+    object_ownership = "BucketOwnerPreferred"
+  }
+}
+
 resource "aws_s3_bucket_acl" "log_bucket_acl" {
   count  = var.create_log_bucket ? 1 : 0
   bucket = aws_s3_bucket.log_bucket[0].id
+  depends_on = [aws_s3_bucket_ownership_controls.log_bucket_ownership_controls]
 
   access_control_policy {
     grant {

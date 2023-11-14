@@ -72,10 +72,6 @@ resource "aws_codebuild_project" "analytics_eks_codebuild" {
 
   depends_on = [
     aws_kms_key.analytics_filmdrop_kms_key,
-    data.template_file.eksctl_filmdrop,
-    data.template_file.kubectl_spec_filmdrop,
-    data.template_file.daskhub_helm_filmdrop,
-    data.template_file.kubectl_filmdrop_storageclass,
     local_file.rendered_eksctl_filmdrop,
     local_file.rendered_daskhub_helm_filmdrop,
     local_file.rendered_kubectl_filmdrop_storageclass,
@@ -117,10 +113,6 @@ EOF
 
   depends_on = [
     aws_kms_key.analytics_filmdrop_kms_key,
-    data.template_file.eksctl_filmdrop,
-    data.template_file.kubectl_spec_filmdrop,
-    data.template_file.daskhub_helm_filmdrop,
-    data.template_file.kubectl_filmdrop_storageclass,
     local_file.rendered_eksctl_filmdrop,
     local_file.rendered_daskhub_helm_filmdrop,
     local_file.rendered_kubectl_filmdrop_storageclass,
@@ -142,6 +134,8 @@ module "daskhub_docker_ecr" {
   vpc_id              = var.vpc_id
   private_subnet_ids  = var.vpc_private_subnet_ids
   security_group_ids  = var.vpc_security_group_ids
+  project_name        = var.project_name
+  daskhub_stage       = var.daskhub_stage
 }
 
 resource random_id suffix {
@@ -184,9 +178,24 @@ resource "aws_s3_object" "jupyter_dask_source_config_ekscluster" {
   bucket = aws_s3_bucket.jupyter_dask_source_config.id
   key    = "cluster.yaml"
   source = "${path.module}/cluster.yaml"
-  etag   = md5(data.template_file.eksctl_filmdrop.rendered)
+  etag   = md5(templatefile("${path.module}/eksctl/eksctl_filmdrop.yaml.tpl",{
+    filmdrop_analytics_cluster_name   = var.kubernetes_cluster_name
+    filmdrop_kubernetes_version       = var.kubernetes_version
+    filmdrop_region                   = data.aws_region.current.name
+    filmdrop_private_subnet_map       = jsonencode(zipmap(var.vpc_private_subnet_azs, var.vpc_private_subnet_ids))
+    filmdrop_public_subnet_map        = jsonencode(zipmap(var.vpc_public_subnet_azs, var.vpc_public_subnet_ids))
+    filmdrop_private_subnet_azs       = length(var.analytics_worker_node_azs) == 0 ? jsonencode([var.vpc_private_subnet_azs[0]]) : jsonencode(var.analytics_worker_node_azs)
+    filmdrop_public_subnet_azs        = length(var.analytics_main_node_azs) == 0 ? jsonencode([var.vpc_public_subnet_azs[0]]) : jsonencode(var.analytics_main_node_azs)
+    filmdrop_kms_key_arn              = aws_kms_key.analytics_filmdrop_kms_key.arn
+    daskhub_instance_types            = jsonencode(var.daskhub_nodegroup_instance_types)
+    jupyterhub_instance_types         = jsonencode(var.jupyterhub_nodegroup_instance_types)
+    jupyterhub_min_size               = var.jupyterhub_nodegroup_min_size
+    jupyterhub_max_size               = var.jupyterhub_nodegroup_max_size
+    daskhub_min_size                  = var.daskhub_nodegroup_min_size
+    daskhub_max_size                  = var.daskhub_nodegroup_max_size
+  }))
   depends_on = [
-    data.template_file.eksctl_filmdrop,
+    aws_kms_key.analytics_filmdrop_kms_key,
     local_file.rendered_eksctl_filmdrop
   ]
 }
@@ -195,9 +204,11 @@ resource "aws_s3_object" "jupyter_dask_source_config_spec" {
   bucket = aws_s3_bucket.jupyter_dask_source_config.id
   key    = "spec.yaml"
   source = "${path.module}/spec.yaml"
-  etag   = md5(data.template_file.kubectl_spec_filmdrop.rendered)
+  etag   = md5(templatefile("${path.module}/kubectl/kubectl_filmdrop_spec.yaml.tpl", {
+    filmdrop_analytics_cluster_name               = var.kubernetes_cluster_name
+    filmdrop_analytics_cluster_autoscaler_version = var.kubernetes_autoscaler_version
+  }))
   depends_on = [
-    data.template_file.kubectl_spec_filmdrop,
     local_file.rendered_kubectl_spec_filmdrop
   ]
 }
@@ -206,9 +217,17 @@ resource "aws_s3_object" "jupyter_dask_source_config_daskhub" {
   bucket = aws_s3_bucket.jupyter_dask_source_config.id
   key    = "daskhub.yaml"
   source = "${path.module}/daskhub.yaml"
-  etag   = md5(data.template_file.daskhub_helm_filmdrop.rendered)
+  etag   = md5(templatefile("${path.module}/helm_charts/daskhub/jupyterhub.yaml.tpl", {
+    jupyterhub_image_repo           = module.daskhub_docker_ecr.daskhub_repo
+    jupyterhub_image_version        = var.jupyterhub_image_version
+    dask_proxy_token                = jsondecode(data.aws_secretsmanager_secret_version.filmdrop_analytics_dask_secret_tokens_version.secret_string)["PROXYTOKEN"]
+    jupyterhub_elb_acm_cert_arn     = var.jupyterhub_elb_acm_cert_arn
+    jupyterhub_admin_username_list  = join(",", var.jupyterhub_admin_username_list)
+    jupyterhub_admin_password       = jsondecode(data.aws_secretsmanager_secret_version.filmdrop_analytics_credentials_version.secret_string)["PASSWORD"]
+    dask_gateway_token              = jsondecode(data.aws_secretsmanager_secret_version.filmdrop_analytics_dask_secret_tokens_version.secret_string)["APITOKEN"]
+  }))
   depends_on = [
-    data.template_file.daskhub_helm_filmdrop,
+    module.daskhub_docker_ecr,
     local_file.rendered_daskhub_helm_filmdrop
   ]
 }
@@ -217,9 +236,8 @@ resource "aws_s3_object" "jupyter_dask_source_config_storageclass" {
   bucket = aws_s3_bucket.jupyter_dask_source_config.id
   key    = "storageclass.yaml"
   source = "${path.module}/storageclass.yaml"
-  etag   = md5(data.template_file.kubectl_filmdrop_storageclass.rendered)
+  etag   = md5(templatefile("${path.module}/kubectl/kubectl_filmdrop_storageclass.yaml.tpl",{}))
   depends_on = [
-    data.template_file.kubectl_filmdrop_storageclass,
     local_file.rendered_kubectl_filmdrop_storageclass
   ]
 }
@@ -237,32 +255,52 @@ resource "aws_kms_key" "analytics_filmdrop_kms_key" {
 
 resource "local_file" "rendered_eksctl_filmdrop" {
   depends_on = [
-    data.template_file.eksctl_filmdrop
+    aws_kms_key.analytics_filmdrop_kms_key
   ]
-  content  = data.template_file.eksctl_filmdrop.rendered
+  content  = templatefile("${path.module}/eksctl/eksctl_filmdrop.yaml.tpl",{
+    filmdrop_analytics_cluster_name   = var.kubernetes_cluster_name
+    filmdrop_kubernetes_version       = var.kubernetes_version
+    filmdrop_region                   = data.aws_region.current.name
+    filmdrop_private_subnet_map       = jsonencode(zipmap(var.vpc_private_subnet_azs, var.vpc_private_subnet_ids))
+    filmdrop_public_subnet_map        = jsonencode(zipmap(var.vpc_public_subnet_azs, var.vpc_public_subnet_ids))
+    filmdrop_private_subnet_azs       = length(var.analytics_worker_node_azs) == 0 ? jsonencode([var.vpc_private_subnet_azs[0]]) : jsonencode(var.analytics_worker_node_azs)
+    filmdrop_public_subnet_azs        = length(var.analytics_main_node_azs) == 0 ? jsonencode([var.vpc_public_subnet_azs[0]]) : jsonencode(var.analytics_main_node_azs)
+    filmdrop_kms_key_arn              = aws_kms_key.analytics_filmdrop_kms_key.arn
+    daskhub_instance_types            = jsonencode(var.daskhub_nodegroup_instance_types)
+    jupyterhub_instance_types         = jsonencode(var.jupyterhub_nodegroup_instance_types)
+    jupyterhub_min_size               = var.jupyterhub_nodegroup_min_size
+    jupyterhub_max_size               = var.jupyterhub_nodegroup_max_size
+    daskhub_min_size                  = var.daskhub_nodegroup_min_size
+    daskhub_max_size                  = var.daskhub_nodegroup_max_size
+  })
   filename = "${path.module}/cluster.yaml"
 }
 
 resource "local_file" "rendered_daskhub_helm_filmdrop" {
   depends_on = [
-    data.template_file.daskhub_helm_filmdrop
+    module.daskhub_docker_ecr
   ]
-  content  = data.template_file.daskhub_helm_filmdrop.rendered
+  content  = templatefile("${path.module}/helm_charts/daskhub/jupyterhub.yaml.tpl", {
+    jupyterhub_image_repo           = module.daskhub_docker_ecr.daskhub_repo
+    jupyterhub_image_version        = var.jupyterhub_image_version
+    dask_proxy_token                = jsondecode(data.aws_secretsmanager_secret_version.filmdrop_analytics_dask_secret_tokens_version.secret_string)["PROXYTOKEN"]
+    jupyterhub_elb_acm_cert_arn     = var.jupyterhub_elb_acm_cert_arn
+    jupyterhub_admin_username_list  = join(",", var.jupyterhub_admin_username_list)
+    jupyterhub_admin_password       = jsondecode(data.aws_secretsmanager_secret_version.filmdrop_analytics_credentials_version.secret_string)["PASSWORD"]
+    dask_gateway_token              = jsondecode(data.aws_secretsmanager_secret_version.filmdrop_analytics_dask_secret_tokens_version.secret_string)["APITOKEN"]
+  })
   filename = "${path.module}/daskhub.yaml"
 }
 
 resource "local_file" "rendered_kubectl_filmdrop_storageclass" {
-  depends_on = [
-    data.template_file.kubectl_filmdrop_storageclass
-  ]
-  content  = data.template_file.kubectl_filmdrop_storageclass.rendered
+  content  = templatefile("${path.module}/kubectl/kubectl_filmdrop_storageclass.yaml.tpl",{})
   filename = "${path.module}/storageclass.yaml"
 }
 
 resource "local_file" "rendered_kubectl_spec_filmdrop" {
-  depends_on = [
-    data.template_file.kubectl_spec_filmdrop
-  ]
-  content  = data.template_file.kubectl_spec_filmdrop.rendered
+  content  = templatefile("${path.module}/kubectl/kubectl_filmdrop_spec.yaml.tpl", {
+    filmdrop_analytics_cluster_name               = var.kubernetes_cluster_name
+    filmdrop_analytics_cluster_autoscaler_version = var.kubernetes_autoscaler_version
+  })
   filename = "${path.module}/spec.yaml"
 }

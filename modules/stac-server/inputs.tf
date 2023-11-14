@@ -238,3 +238,7 @@ variable "ingest_sns_topic_arns" {
   description = "List of additional Ingest SNS topic arns to subscribe to stac server"
   default     = []
 }
+
+variable "project_name" {
+  description = "Project Name"
+}

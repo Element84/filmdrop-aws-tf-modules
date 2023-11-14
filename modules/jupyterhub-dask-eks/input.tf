@@ -295,3 +295,8 @@ variable "zone_id" {
 variable "domain_alias" {
   description = "Alternate alias for Jupyter Load Balancer"
 }
+
+variable "daskhub_stage" {
+  description = "The stage name for daskhub"
+}
+

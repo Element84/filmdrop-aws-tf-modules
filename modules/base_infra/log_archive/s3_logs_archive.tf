@@ -2,7 +2,15 @@ resource "aws_s3_bucket" "s3_logs_archive_bucket" {
   bucket_prefix = var.archive_log_bucket_prefix == "" ? "filmdrop-${var.environment}-logs-archive-" : var.archive_log_bucket_prefix
 }
 
+resource "aws_s3_bucket_ownership_controls" "s3_logs_archive_bucket_ownership_controls" {
+  bucket = aws_s3_bucket.s3_logs_archive_bucket.id
+  rule {
+    object_ownership = "BucketOwnerPreferred"
+  }
+}
+
 resource "aws_s3_bucket_acl" "s3_logs_archive_bucket_acl" {
+  depends_on = [aws_s3_bucket_ownership_controls.s3_logs_archive_bucket_ownership_controls]
   bucket = aws_s3_bucket.s3_logs_archive_bucket.id
 
   access_control_policy {
@@ -230,7 +238,7 @@ resource "aws_s3_bucket_versioning" "s3_logs_archive_bucket_versioning" {
 
 resource "aws_ssm_parameter" "s3_logs_archive_bucket_name_parameter" {
   type        = "String"
-  name        = "filmdrop_${var.environment}_logs_bucket_name"
+  name        = "filmdrop_${var.project_name}_${var.environment}_logs_bucket_name"
   description = "Name of the FilmDrop ${var.environment} Logs Bucket"
   value       = aws_s3_bucket.s3_logs_archive_bucket.id
   overwrite   = true

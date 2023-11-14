@@ -1,5 +1,5 @@
 resource "aws_ecr_repository" "titiler_ecr_repo" {
-  name                 = "${var.prefix}titiler"
+  name                 = lower("${var.prefix}titiler")
   image_tag_mutability = "MUTABLE"
   image_scanning_configuration {
     scan_on_push = true
@@ -14,9 +14,17 @@ resource "aws_s3_bucket" "docker_image_build_source" {
   bucket = "titiler-image-${random_id.suffix.hex}"
 }
 
+resource "aws_s3_bucket_ownership_controls" "docker_image_build_source_ownership_controls" {
+  bucket = aws_s3_bucket.docker_image_build_source.id
+  rule {
+    object_ownership = "BucketOwnerPreferred"
+  }
+}
+
 resource "aws_s3_bucket_acl" "docker_image_build_source_bucket_acl" {
   bucket = aws_s3_bucket.docker_image_build_source.id
   acl    = "private"
+  depends_on = [aws_s3_bucket_ownership_controls.docker_image_build_source_ownership_controls]
 }
 
 resource "aws_s3_bucket_versioning" "docker_image_build_source_versioning" {

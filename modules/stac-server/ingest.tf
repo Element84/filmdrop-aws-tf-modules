@@ -37,7 +37,7 @@ resource "aws_sns_topic_subscription" "stac_server_ingest_sqs_subscription" {
 }
 
 resource "aws_sqs_queue" "stac_server_ingest_sqs_queue" {
-  name                        = "stac-server-${var.stac_api_stage}-queue"
+  name_prefix                 = "stac-server-${var.stac_api_stage}-queue"
   visibility_timeout_seconds  = var.ingest_sqs_timeout
   receive_wait_time_seconds   = var.ingest_sqs_receive_wait_time_seconds
   policy                      = data.aws_iam_policy_document.stac_server_ingest_sqs_policy.json
@@ -49,7 +49,7 @@ resource "aws_sqs_queue" "stac_server_ingest_sqs_queue" {
 }
 
 resource "aws_sqs_queue" "stac_server_ingest_dead_letter_sqs_queue" {
-  name                        = "stac-server-${var.stac_api_stage}-dead-letter-queue"
+  name_prefix                 = "stac-server-${var.stac_api_stage}-dead-letter-queue"
   visibility_timeout_seconds  = var.ingest_sqs_dlq_timeout
 }
 

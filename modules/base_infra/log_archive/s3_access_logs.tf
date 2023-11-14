@@ -2,7 +2,15 @@ resource "aws_s3_bucket" "s3_access_logs_bucket" {
   bucket_prefix = var.access_log_bucket_prefix == "" ? "filmdrop-${var.environment}-access-logs-" : var.access_log_bucket_prefix
 }
 
+resource "aws_s3_bucket_ownership_controls" "s3_access_logs_bucket_ownership_controls" {
+  bucket = aws_s3_bucket.s3_access_logs_bucket.id
+  rule {
+    object_ownership = "BucketOwnerPreferred"
+  }
+}
+
 resource "aws_s3_bucket_acl" "s3_access_logs_bucket_acl" {
+  depends_on = [aws_s3_bucket_ownership_controls.s3_access_logs_bucket_ownership_controls]
   bucket = aws_s3_bucket.s3_access_logs_bucket.id
   acl    = var.log_bucket_acl
 }

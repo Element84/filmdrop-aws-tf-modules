@@ -25,7 +25,6 @@ variable "allowed_methods" {
 
 variable "log_prefix" {
   description = "S3 Bucket Prefix for Cloudfront Logging"
-  default     = "cloudfront"
 }
 
 variable "web_acl_id" {
@@ -210,4 +209,8 @@ variable "whitelist_ips" {
   description = "List of ips to filter access for."
   type        = set(string)
   default     = []
+}
+
+variable "project_name" {
+  description = "Project Name"
 }

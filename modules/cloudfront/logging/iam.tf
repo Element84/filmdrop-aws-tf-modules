@@ -1,5 +1,5 @@
 resource "aws_iam_role" "cloudfront_bucket_replicator_role" {
-  name = "FilmDropCloudFrontBucketReplicatorRole"
+  name_prefix = "FilmDropCloudFrontBucketReplicatorRole"
 
   assume_role_policy = <<POLICY
 {
@@ -19,7 +19,7 @@ POLICY
 }
 
 resource "aws_iam_policy" "cloudfront_bucket_replicator_policy" {
-  name = "FilmDropCloudFrontBucketReplicatorPolicy"
+  name_prefix = "FilmDropCloudFrontBucketReplicatorPolicy"
 
   policy = <<POLICY
 {
