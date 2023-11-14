@@ -14,11 +14,7 @@ resource "null_resource" "check_ssl" {
     command = <<EOF
 export AWS_DEFAULT_REGION=${data.aws_region.current.name}
 export AWS_REGION=${data.aws_region.current.name}
-export DEPLOYMENT_ROLE=$${TF_VAR_local_resources_deployer_role:="${var.filmdrop_deployment_role}"}
-export ROLE_CREDS=`aws sts assume-role --role-arn arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/$DEPLOYMENT_ROLE --role-session-name cert-check`
-export AWS_ACCESS_KEY_ID=`echo $ROLE_CREDS | jq --raw-output '.Credentials.AccessKeyId'`
-export AWS_SECRET_ACCESS_KEY=`echo $ROLE_CREDS | jq --raw-output '.Credentials.SecretAccessKey'`
-export AWS_SESSION_TOKEN=`echo $ROLE_CREDS | jq --raw-output '.Credentials.SessionToken'`
+
 COUNT=0
 STATUS=""
 if [[ "${var.ssl_certificate_arn}" == "" ]]; then

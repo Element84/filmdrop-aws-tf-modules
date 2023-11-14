@@ -31,11 +31,6 @@ resource "null_resource" "update_cloudfront_headers" {
     command = <<EOF
 export AWS_DEFAULT_REGION=${data.aws_region.current.name}
 export AWS_REGION=${data.aws_region.current.name}
-export DEPLOYMENT_ROLE=$${TF_VAR_local_resources_deployer_role:="${var.filmdrop_deployment_role}"}
-export ROLE_CREDS=`aws sts assume-role --role-arn arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/$DEPLOYMENT_ROLE --role-session-name update-cf-headers`
-export AWS_ACCESS_KEY_ID=`echo $ROLE_CREDS | jq --raw-output '.Credentials.AccessKeyId'`
-export AWS_SECRET_ACCESS_KEY=`echo $ROLE_CREDS | jq --raw-output '.Credentials.SecretAccessKey'`
-export AWS_SESSION_TOKEN=`echo $ROLE_CREDS | jq --raw-output '.Credentials.SessionToken'`
 
 echo "Update CloudFront Headers."
 aws lambda invoke --function-name ${aws_lambda_function.cloudfront_headers_lambda.function_name} --payload '{ }' output

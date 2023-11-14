@@ -14,10 +14,7 @@ resource "null_resource" "check_ssl" {
     command = <<EOF
 export AWS_DEFAULT_REGION=${data.aws_region.current.name}
 export AWS_REGION=${data.aws_region.current.name}
-export ROLE_CREDS=`aws sts assume-role --role-arn arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/${var.filmdrop_deployment_role} --role-session-name cert-check`
-export AWS_ACCESS_KEY_ID=`echo $ROLE_CREDS | jq --raw-output '.Credentials.AccessKeyId'`
-export AWS_SECRET_ACCESS_KEY=`echo $ROLE_CREDS | jq --raw-output '.Credentials.SecretAccessKey'`
-export AWS_SESSION_TOKEN=`echo $ROLE_CREDS | jq --raw-output '.Credentials.SessionToken'`
+
 COUNT=0
 STATUS=""
 if [[ "${var.ssl_certificate_arn}" == "" ]]; then
@@ -53,9 +50,13 @@ resource "aws_cloudfront_distribution" "filmdrop_managed_cloudfront_distribution
       value = "https"
     }
 
-    custom_header {
-      name  = var.auth_header_name
-      value = var.auth_header_value
+    dynamic "custom_header" {
+      for_each = { for i, j in [var.auth_header_name] : i => j if var.auth_header_name != "" }
+
+      content {
+        name = var.auth_header_name
+        value = var.auth_header_value
+      }
     }
 
     custom_origin_config {
