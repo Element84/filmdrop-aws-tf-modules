@@ -130,7 +130,7 @@ variable "opensearch_ebs_volume_size" {
 
 variable "opensearch_ebs_volume_type" {
   description = "OpenSearch EBS volume type"
-  default     = "gp2"
+  default     = "gp3"
 }
 
 variable "ingest_sqs_timeout" {

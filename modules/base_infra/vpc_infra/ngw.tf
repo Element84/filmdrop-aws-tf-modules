@@ -43,10 +43,10 @@ resource "aws_route_table" "nat_route_tables" {
 
 #Add RT association
 resource "aws_route_table_association" "nat_rt_association" {
-    for_each = var.is_prod_like ? local.prod_like_and_general_az_map : local.general_az_map
-
-    subnet_id = aws_subnet.pri_subnets[each.value].id
-    route_table_id = aws_route_table.nat_route_tables[each.key].id
+    for_each = aws_subnet.pri_subnets
+    
+    subnet_id = each.value.id
+    route_table_id = (var.is_prod_like && each.key == var.ngw_prodlike_subnet_az)? aws_route_table.nat_route_tables["prod-like"].id:aws_route_table.nat_route_tables["general"].id
 }
 
 #Add routes
