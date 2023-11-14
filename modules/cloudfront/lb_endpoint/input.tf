@@ -90,7 +90,3 @@ variable "custom_error_response" {
   type        = list(map(string))
   default     = []
 }
-
-variable "project_name" {
-  description = "Project Name"
-}

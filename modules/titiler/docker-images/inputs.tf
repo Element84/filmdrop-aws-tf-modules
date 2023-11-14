@@ -14,12 +14,10 @@ variable "security_group_ids" {
 
 variable "titiler_stage" {
   description = "Titiler stage"
+  default     = "dev"
 }
 
 variable "prefix" {
   description = "Titiler prefix"
-}
-
-variable "project_name" {
-  description = "Project Name"
+  default     = ""
 }

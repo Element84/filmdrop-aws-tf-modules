@@ -26,9 +26,7 @@ jupyterhub:
     config:
       Authenticator:
         admin_users:
-        %{ for v in split(",",jupyterhub_admin_username_list) }
-          - ${v}
-        %{ endfor }
+          - ${jupyterhub_admin_username}
       DummyAuthenticator:
         password: ${jupyterhub_admin_password}
       JupyterHub:

@@ -14,8 +14,5 @@ variable "security_group_ids" {
 
 variable "daskhub_stage" {
   description = "daskhub stage"
-}
-
-variable "project_name" {
-  description = "Project Name"
+  default     = "dev"
 }

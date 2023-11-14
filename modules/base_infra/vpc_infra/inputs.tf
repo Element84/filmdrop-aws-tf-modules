@@ -1,66 +1,52 @@
-variable "environment" {
-    description = "Project environment"
-    type        = string
-}
+variable vpc_cidr {}
+variable public_subnets_cidr_map {}
+variable private_subnets_cidr_map {}
+variable base_tags {}
+variable vpc_name { default = "filmdrop-vpc"}
 
-variable "vpc_cidr" {
-    description = "CIDR for the new VPC"
-    type        = string
-}
 
-variable "archive_log_bucket_name" {
-    description = "FilmDrop S3 Archive Log bucket name"
-    type        = string
-}
 
-variable "max_aggregation_interval" {
-    description = "The maximum interval of time in seconds during which a flow of packets is captured and aggregated into a flow log record."
-    type        = number
-    default     = 600
-}
-
-variable "log_format" {
-    description = "The fields to include in the flow log record, in the order in which they should appear."
-    type        = string
-    default     = "$${version} $${account-id} $${interface-id} $${srcaddr} $${dstaddr} $${srcport} $${dstport} $${protocol} $${packets} $${bytes} $${start} $${end} $${action} $${log-status} $${vpc-id} $${instance-id} $${pkt-srcaddr} $${pkt-dstaddr} $${az-id} $${tcp-flags} $${flow-direction} $${traffic-path}"
-}
-
-variable "traffic_type" {
-    description = "The type of traffic to capture."
-    type        = string
-    default     = "ALL"
-}
-
-variable "public_subnets_cidr_map" {
-    description = "Map with the availability zone to the cidr range for public subnets"
-    type        = map
-}
-
-variable "private_subnets_cidr_map" {
-    description = "Map with the availability zone to the cidr range for private subnets"
-    type        = map
-}
-
-variable "dhcp_options_domain_name_servers" {
-    description = "List of name servers to configure for the FilmDrop VPC."
-    type        = list(string)
-    default     = ["AmazonProvidedDNS"]
-}
-
+variable "ngw_general_subnet_az" {}
+variable "ngw_prodlike_subnet_az" {}
+variable "is_prod_like" {}
 variable "gateway_endpoints_list" {
-    description = "List of VPC Gateway Endpoints to create in the FilmDrop VPC."
-    type        = list(string)
-    default     = ["s3", "dynamodb"]
+    default = ["s3", "dynamodb"]
 }
 
-variable "interface_endpoints_list" {
-    description = "List of VPC Interface Endpoints to create in the FilmDrop VPC."
-    type        = list(string)
-    default     = ["secretsmanager", "ec2","sts"]
+variable "interface_endpoints_map" {
+    default = ["secretsmanager", "ec2","sts"]
 }
 
+variable sg_vpcendpoint_map {
+    default = {
+        "ingress" = [
+            {
+            "description" = "Allow access for vpc endpoints"
+            "from_port" = 0
+            "to_port" = 65535
+            "protocol" = "tcp"
+            }
+        ]
+        "egress" = [
+            {
+            "from_port" = 0
+            "to_port" = 65535
+            "protocol" = "tcp"
+            "cidr_blocks" = ["0.0.0.0/0"]
+            }
+        ]
+    }
+
+}
+
+variable "is_peered" {}
+variable vpc_peer_cidr {}
+variable "vpc_peering_connection_id" {}
+variable "waf_buckets_map" {}
 variable "linked_role_services_list" {
-    description = "List of Service Linked Roles to create for the FilmDrop VPC."
-    type        = list(string)
-    default     = ["es.amazonaws.com"]
+    default = ["es.amazonaws.com"]
+}
+
+locals {
+    all_cidr = "0.0.0.0/0"
 }

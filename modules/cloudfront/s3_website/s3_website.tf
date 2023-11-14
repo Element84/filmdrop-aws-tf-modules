@@ -20,7 +20,7 @@ module "cloudfront_distribution" {
   create_content_website                    = var.create_content_website
   create_waf_rule                           = true
   ssl_certificate_arn                       = module.cloudfront_certificate.certificate_arn
-  log_prefix                                = "${var.project_name}-${var.application_name}"
+  log_prefix                                = var.application_name
   domain_aliases                            = [var.domain_alias]
   cloudfront_origin_access_identity_arn     = var.cloudfront_origin_access_identity_arn
   cloudfront_access_identity_path           = var.cloudfront_access_identity_path

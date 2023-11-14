@@ -47,7 +47,7 @@ EOF
 }
 
 resource "aws_ssm_parameter" "cloudfront_x_forwarded_host" {
-  name      = "cloudfront_${var.project_name}_${var.log_prefix}_dns"
+  name      = "cloudfront_${var.log_prefix}_dns"
   type      = "String"
   value     = length(var.domain_aliases) > 0 ? element(concat(var.domain_aliases, [""]), 0) : var.domain_name
   overwrite = true

@@ -1,5 +1,5 @@
 resource "aws_ecr_repository" "daskhub_ecr_repo" {
-  name                 = lower("daskhub-${var.project_name}-${var.daskhub_stage}")
+  name                 = "daskhub"
   image_tag_mutability = "MUTABLE"
   image_scanning_configuration {
     scan_on_push = true
@@ -12,22 +12,6 @@ resource random_id suffix {
 
 resource "aws_s3_bucket" "docker_image_build_source" {
   bucket = "daskhub-image-${random_id.suffix.hex}"
-}
-
-resource "aws_s3_bucket_ownership_controls" "docker_image_build_source_ownership_controls" {
-  bucket = aws_s3_bucket.docker_image_build_source.id
-  rule {
-    object_ownership = "ObjectWriter"
-  }
-}
-
-resource "aws_s3_bucket_public_access_block" "docker_image_build_source_public_access_block" {
-  bucket = aws_s3_bucket.docker_image_build_source.id
-
-  block_public_acls       = false
-  block_public_policy     = false
-  ignore_public_acls      = false
-  restrict_public_buckets = false
 }
 
 resource "aws_s3_bucket_acl" "docker_image_build_source_bucket_acl" {
@@ -57,7 +41,7 @@ resource "aws_s3_object" "docker_build_spec" {
 }
 
 resource "aws_codebuild_project" "daskhub_docker_image" {
-  name           = "daskhub-docker-image-${var.project_name}-${var.daskhub_stage}"
+  name           = "daskhub-docker-image"
   description    = "creates a daskhub docker image"
   build_timeout  = "10"
   queued_timeout = "30"

@@ -1,5 +1,5 @@
 resource "aws_iam_role" "analytics_eks_codebuild_iam_role" {
-  name_prefix = "analytics-eks-codebuild-role"
+  name = "analytics-eks-codebuild-role"
 
   assume_role_policy = <<POLICY
 {

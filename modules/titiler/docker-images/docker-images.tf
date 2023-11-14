@@ -1,5 +1,5 @@
 resource "aws_ecr_repository" "titiler_ecr_repo" {
-  name                 = lower("${var.prefix}titiler")
+  name                 = "${var.prefix}titiler"
   image_tag_mutability = "MUTABLE"
   image_scanning_configuration {
     scan_on_push = true
@@ -14,17 +14,9 @@ resource "aws_s3_bucket" "docker_image_build_source" {
   bucket = "titiler-image-${random_id.suffix.hex}"
 }
 
-resource "aws_s3_bucket_ownership_controls" "docker_image_build_source_ownership_controls" {
-  bucket = aws_s3_bucket.docker_image_build_source.id
-  rule {
-    object_ownership = "BucketOwnerPreferred"
-  }
-}
-
 resource "aws_s3_bucket_acl" "docker_image_build_source_bucket_acl" {
   bucket = aws_s3_bucket.docker_image_build_source.id
   acl    = "private"
-  depends_on = [aws_s3_bucket_ownership_controls.docker_image_build_source_ownership_controls]
 }
 
 resource "aws_s3_bucket_versioning" "docker_image_build_source_versioning" {
@@ -133,27 +125,7 @@ export AWS_DEFAULT_REGION=${data.aws_region.current.name}
 export AWS_REGION=${data.aws_region.current.name}
 
 echo "Triggering CodeBuild Project."
-START_RESULT=$(aws codebuild start-build --project-name ${aws_codebuild_project.titiler_docker_image.id})
-BUILD_ID=$(echo $START_RESULT | jq '.build.id' -r)
-
-BUILD_STATUS="IN_PROGRESS"
-while [ "$BUILD_STATUS" == "IN_PROGRESS" ]; do
-    sleep 5
-    BUILD=$(aws codebuild batch-get-builds --ids $BUILD_ID)
-    BUILD_STATUS=$(echo $BUILD | jq '.builds[0].buildStatus' -r)
-    if [ "$BUILD_STATUS" == "IN_PROGRESS" ]; then
-        echo "CodeBuild is still in progress..."
-    fi
-done
-
-if [ "$BUILD_STATUS" != "SUCCEEDED" ]; then
-    LOG_URL=$(echo $BUILD | jq '.builds[0].logs.deepLink' -r)
-    echo "Build failed - logs are available at [$LOG_URL]"
-    exit 1
-else
-    echo "ECR CodeBuild succeeded"
-fi
-
+aws codebuild start-build --project-name ${aws_codebuild_project.titiler_docker_image.id}
 EOF
 
   }

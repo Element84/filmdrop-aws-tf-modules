@@ -9,13 +9,11 @@ metadata:
 vpc:
   subnets:
     private:
-    %{ for k, v in jsondecode(filmdrop_private_subnet_map) }
-      ${k}: { id: ${v} }
-    %{ endfor }
+      ${filmdrop_private_subnet1_az}: { id: ${filmdrop_private_subnet1_id} }
+      ${filmdrop_private_subnet2_az}: { id: ${filmdrop_private_subnet2_id} }
     public:
-    %{ for k, v in jsondecode(filmdrop_public_subnet_map) }
-      ${k}: { id: ${v} }
-    %{ endfor }
+      ${filmdrop_public_subnet1_az}: { id: ${filmdrop_public_subnet1_id} }
+      ${filmdrop_public_subnet2_az}: { id: ${filmdrop_public_subnet2_id} }
 
 iam:
   withOIDC: true
@@ -44,7 +42,7 @@ managedNodeGroups:
     minSize: ${jupyterhub_min_size}
     maxSize: ${jupyterhub_max_size}
     instanceTypes: ${jupyterhub_instance_types}
-    availabilityZones: ${filmdrop_public_subnet_azs}
+    availabilityZones: ["${filmdrop_public_subnet1_az}"]
     privateNetworking: true
     volumeEncrypted: true
     iam:
@@ -55,7 +53,7 @@ managedNodeGroups:
     minSize: ${daskhub_min_size}
     maxSize: ${daskhub_max_size}
     instanceTypes: ${daskhub_instance_types}
-    availabilityZones: ${filmdrop_private_subnet_azs}
+    availabilityZones: ["${filmdrop_private_subnet1_az}"]
     privateNetworking: true
     volumeEncrypted: true
     spot: true
