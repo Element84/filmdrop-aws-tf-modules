@@ -14,8 +14,13 @@ variable "stac_description" {
 }
 
 variable "log_level" {
-  description = "Logging level"
-  default     = "WARN"
+  description = "Logging level (error, warn, info, http, verbose, debug, silly)"
+  default     = "warn"
+}
+
+variable "request_logging_enabled" {
+  description = "Log all requests to the server"
+  default     = true
 }
 
 variable "stac_docs_url" {
