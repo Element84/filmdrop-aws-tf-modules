@@ -4,6 +4,7 @@ variable "zone_id" {
 
 variable "domain_alias" {
   description = "Alternate CNAME for Cloudfront distribution"
+  default     = ""
 }
 
 variable "application_name" {
@@ -98,4 +99,9 @@ variable "web_acl_id" {
 
 variable "project_name" {
   description = "Project Name"
+}
+
+variable "dns_validation" {
+  description = "Validate the certificate via a DNS record within the same module."
+  default     = "true"
 }

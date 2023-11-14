@@ -1,5 +1,6 @@
 variable "alias_address" {
   description = "The DNS aliases."
+  default     = ""
 }
 
 variable "zone_id" {

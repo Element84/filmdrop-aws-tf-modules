@@ -5,8 +5,9 @@ module "cloudfront_certificate" {
 
   source        = "../../cert/"
 
-  zone_id       = var.zone_id
-  alias_address = var.domain_alias
+  zone_id         = var.zone_id
+  alias_address   = var.domain_alias
+  dns_validation  = var.dns_validation
 }
 
 module "cloudfront_distribution" {
@@ -18,7 +19,7 @@ module "cloudfront_distribution" {
 
   ssl_certificate_arn                       = module.cloudfront_certificate.certificate_arn
   log_prefix                                = "${var.project_name}-${var.application_name}"
-  domain_aliases                            = [var.domain_alias]
+  domain_aliases                            = var.domain_alias == "" ? [] : [var.domain_alias]
   cloudfront_origin_access_identity_arn     = var.cloudfront_origin_access_identity_arn
   cloudfront_access_identity_path           = var.cloudfront_access_identity_path
   logging_origin_id                         = var.logging_origin_id
@@ -43,6 +44,7 @@ module "cloudfront_distribution" {
 }
 
 module "cloudfront_dns" {
+  count = var.domain_alias == "" ? 0 : 1
   providers = {
     aws = aws.east
   }
@@ -54,4 +56,9 @@ module "cloudfront_dns" {
   alias_endpoint      = module.cloudfront_distribution.cloudfront_distribution_domain_name
   alias_endpoint_zone = module.cloudfront_distribution.cloudfront_distribution_zone
   zone_id             = var.zone_id
+}
+
+moved {
+  from = module.cloudfront_dns
+  to   = module.cloudfront_dns[0]
 }
