@@ -1,0 +1,63 @@
+version: 0.2
+
+phases:
+  install:
+    runtime-versions:
+      docker: 20
+  pre_build:
+    commands:
+      - echo "Installing dependencies ..."
+      - export FILMDROP_BUILD_DIR=`pwd`
+      - cd /usr/local/bin
+      - curl -L -o eksctl.tar.gz "https://github.com/weaveworks/eksctl/releases/download/v0.123.0/eksctl_Linux_amd64.tar.gz"
+      - tar zxvf eksctl.tar.gz
+      - chmod a+x eksctl
+      - curl -L -o kubectl https://s3.us-west-2.amazonaws.com/amazon-eks/1.23.13/2022-10-31/bin/linux/amd64/kubectl
+      - chmod a+x kubectl
+      - curl -L -o /tmp/helm.tar.gz https://get.helm.sh/helm-v3.10.3-linux-amd64.tar.gz
+      - cd /tmp
+      - tar zxvf /tmp/helm.tar.gz
+      - cp /tmp/linux-amd64/helm /usr/local/bin/
+      - rm -rf linux-amd64/
+      - chmod a+x /usr/local/bin/helm
+      - cd $FILMDROP_BUILD_DIR
+  build:
+    commands:
+      - echo "Remove any previous analytics clusters ..."
+      - aws cloudformation delete-stack --stack-name eksctl-${ANALYTICS_CLUSTER_NAME}-nodegroup-dask-workers
+      - aws cloudformation wait stack-delete-complete --stack-name eksctl-${ANALYTICS_CLUSTER_NAME}-nodegroup-dask-workers
+      - aws cloudformation delete-stack --stack-name eksctl-${ANALYTICS_CLUSTER_NAME}-nodegroup-main
+      - aws cloudformation wait stack-delete-complete --stack-name eksctl-${ANALYTICS_CLUSTER_NAME}-nodegroup-main
+      - aws cloudformation delete-stack --stack-name eksctl-${ANALYTICS_CLUSTER_NAME}-addon-iamserviceaccount-kube-system-ebs-csi-controller-sa
+      - aws cloudformation wait stack-delete-complete --stack-name eksctl-${ANALYTICS_CLUSTER_NAME}-addon-iamserviceaccount-kube-system-ebs-csi-controller-sa
+      - aws cloudformation delete-stack --stack-name eksctl-${ANALYTICS_CLUSTER_NAME}-addon-iamserviceaccount-kube-system-cluster-autoscaler
+      - aws cloudformation wait stack-delete-complete --stack-name eksctl-${ANALYTICS_CLUSTER_NAME}-addon-iamserviceaccount-kube-system-cluster-autoscaler
+      - aws cloudformation delete-stack --stack-name eksctl-${ANALYTICS_CLUSTER_NAME}-addon-iamserviceaccount-kube-system-aws-node
+      - aws cloudformation wait stack-delete-complete --stack-name eksctl-${ANALYTICS_CLUSTER_NAME}-addon-iamserviceaccount-kube-system-aws-node
+      - aws cloudformation delete-stack --stack-name eksctl-${ANALYTICS_CLUSTER_NAME}-cluster
+      - aws cloudformation wait stack-delete-complete --stack-name eksctl-${ANALYTICS_CLUSTER_NAME}-cluster
+      - echo "Creating eks cluster ..."
+      - eksctl create cluster -f ./cluster.yaml
+      - kubectl apply -f https://raw.githubusercontent.com/kubernetes/autoscaler/master/cluster-autoscaler/cloudprovider/aws/examples/cluster-autoscaler-autodiscover.yaml
+      - kubectl annotate serviceaccount cluster-autoscaler -n kube-system eks.amazonaws.com/role-arn=arn:aws:iam::${AWS_ACCOUNT_ID}:role/eksctl-cluster-autoscaler-role
+      - kubectl patch deployment cluster-autoscaler -n kube-system -p '{"spec":{"template":{"metadata":{"annotations":{"cluster-autoscaler.kubernetes.io/safe-to-evict":"false"}}}}}'
+      - kubectl patch deployment cluster-autoscaler -n kube-system --patch-file ./spec.yaml
+      - kubectl set image deployment cluster-autoscaler -n kube-system cluster-autoscaler=k8s.gcr.io/autoscaling/cluster-autoscaler:${AUTOSCALER_VERSION}
+      - aws eks update-kubeconfig --name ${ANALYTICS_CLUSTER_NAME} --region ${AWS_DEFAULT_REGION}
+      - helm repo add aws-ebs-csi-driver https://kubernetes-sigs.github.io/aws-ebs-csi-driver
+      - helm upgrade --install --timeout=30m --debug aws-ebs-csi-driver aws-ebs-csi-driver/aws-ebs-csi-driver --namespace kube-system --set image.repository=602401143452.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/eks/aws-ebs-csi-driver --set controller.serviceAccount.create=true --set controller.serviceAccount.name=ebs-csi-controller-sa --set controller.serviceAccount.annotations."eks\.amazonaws\.com/role-arn"="arn:aws:iam::${AWS_ACCOUNT_ID}:role/ebs-csi-driver-role"
+      - kubectl replace -f ./storageclass.yaml --force
+      - aws ecr get-login-password --region ${AWS_DEFAULT_REGION} | docker login --username AWS --password-stdin ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com
+      - aws eks update-kubeconfig --name ${ANALYTICS_CLUSTER_NAME} --region ${AWS_DEFAULT_REGION}
+      - helm repo add dask https://helm.dask.org/
+      - helm repo update
+      - helm upgrade --install --debug daskhub dask/daskhub --values=./daskhub.yaml --timeout=30m
+  post_build:
+    commands:
+      - echo "Analytics cluster build completed, finishing configuration ..."
+      - sleep 1m
+      - aws eks update-kubeconfig --name ${ANALYTICS_CLUSTER_NAME} --region ${AWS_DEFAULT_REGION}
+      - export SUBNET_ID=`aws ec2 describe-security-groups --region ${AWS_DEFAULT_REGION} --filter "Name=tag:aws:eks:cluster-name,Values=${ANALYTICS_CLUSTER_NAME}" --query 'SecurityGroups[*].[GroupId]' --output text`
+      - aws ec2 authorize-security-group-ingress --group-id $SUBNET_ID --cidr ${VPC_CIDR_RANGE} --protocol all
+      - export JUPYTER_DNS=`kubectl get services proxy-public --output jsonpath='{.status.loadBalancer.ingress[0].hostname}'`
+      - aws route53 change-resource-record-sets --hosted-zone-id $ZONE_ID --change-batch "{\"Changes\":[{\"Action\":\"UPSERT\",\"ResourceRecordSet\":{\"Name\":\"${DOMAIN_ALIAS}\",\"Type\":\"CNAME\",\"TTL\":300,\"ResourceRecords\":[{\"Value\":\"${JUPYTER_DNS}\"}]}}]}"

@@ -73,7 +73,7 @@ variable "jupyterhub_image_repo" {
 
 variable "jupyterhub_image_version" {
   description = "FilmDrop JupyterHub Image Docker Version"
-  default     = "2022.12.20"
+  default     = "latest"
 }
 
 variable "jupyterhub_elb_acm_cert_arn" {
