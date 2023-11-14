@@ -106,3 +106,7 @@ variable "cf_function_arn" {
   type        = string
   default = ""
 }
+
+variable "project_name" {
+  description = "Project Name"
+}

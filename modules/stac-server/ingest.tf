@@ -8,6 +8,7 @@ resource "aws_lambda_function" "stac_server_ingest" {
   runtime          = "nodejs16.x"
   timeout          = var.ingest_lambda_timeout
   memory_size      = var.ingest_lambda_memory
+  reserved_concurrent_executions = var.reserved_concurrent_executions 
 
   environment {
     variables = {
@@ -36,7 +37,7 @@ resource "aws_sns_topic_subscription" "stac_server_ingest_sqs_subscription" {
 }
 
 resource "aws_sqs_queue" "stac_server_ingest_sqs_queue" {
-  name                        = "stac-server-${var.stac_api_stage}-queue"
+  name_prefix                 = "stac-server-${var.stac_api_stage}-queue"
   visibility_timeout_seconds  = var.ingest_sqs_timeout
   receive_wait_time_seconds   = var.ingest_sqs_receive_wait_time_seconds
   policy                      = data.aws_iam_policy_document.stac_server_ingest_sqs_policy.json
@@ -48,13 +49,11 @@ resource "aws_sqs_queue" "stac_server_ingest_sqs_queue" {
 }
 
 resource "aws_sqs_queue" "stac_server_ingest_dead_letter_sqs_queue" {
-  name                        = "stac-server-${var.stac_api_stage}-dead-letter-queue"
+  name_prefix                 = "stac-server-${var.stac_api_stage}-dead-letter-queue"
   visibility_timeout_seconds  = var.ingest_sqs_dlq_timeout
 }
 
 data "aws_iam_policy_document" "stac_server_ingest_sqs_policy" {
-  policy_id = "arn:aws:sqs:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:stac-server-${var.stac_api_stage}-queue/SQSDefaultPolicy"
-
   statement {
     effect = "Allow"
 

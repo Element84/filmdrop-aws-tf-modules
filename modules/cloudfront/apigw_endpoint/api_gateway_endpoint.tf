@@ -17,7 +17,7 @@ module "cloudfront_distribution" {
   source = "../custom"
 
   ssl_certificate_arn                       = module.cloudfront_certificate.certificate_arn
-  log_prefix                                = var.application_name
+  log_prefix                                = "${var.project_name}-${var.application_name}"
   domain_aliases                            = [var.domain_alias]
   cloudfront_origin_access_identity_arn     = var.cloudfront_origin_access_identity_arn
   cloudfront_access_identity_path           = var.cloudfront_access_identity_path
@@ -39,6 +39,7 @@ module "cloudfront_distribution" {
   custom_error_response                     = var.custom_error_response
   create_waf_rule                           = var.web_acl_id == "" ? true : false
   web_acl_id                                = var.web_acl_id
+  project_name                              = var.project_name
 }
 
 module "cloudfront_dns" {

@@ -24,7 +24,6 @@ variable "titiler_memory" {
 
 variable "titiler_stage" {
   description = "Titiler stage"
-  default     = "dev"
 }
 
 variable "cpl_vsil_curl_allowed_extensions" {
@@ -84,5 +83,8 @@ variable "aws_request_payer" {
 
 variable "prefix" {
   description = "Titiler prefix"
-  default     = ""
+}
+
+variable "project_name" {
+  description = "Project Name"
 }

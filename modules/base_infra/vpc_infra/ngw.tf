@@ -1,70 +1,55 @@
-
-#build a map with general and prod like subnet availability zones
-locals {
-    prod_like_and_general_az_map = {
-            "general" = var.ngw_general_subnet_az
-            "prod-like" = var.ngw_prodlike_subnet_az
-    }
-
-    general_az_map = {
-        "general" = var.ngw_general_subnet_az
-    }
-}
-
-#Add EIPS with the respective maps of prodlike or general
 resource "aws_eip" "eips" {
-    for_each = var.is_prod_like ? local.prod_like_and_general_az_map : local.general_az_map
-    vpc = true
-    depends_on = [ aws_internet_gateway.igw ]
+  for_each = var.public_subnets_cidr_map
 
+  vpc = true
+
+  tags = {
+    Name = "filmdrop-eip-${each.key}-${var.environment}"
+  }
 }
 
-#Add NAT Gateway
 resource "aws_nat_gateway" "ngws" {
-    for_each = var.is_prod_like ? local.prod_like_and_general_az_map : local.general_az_map
+  for_each = aws_subnet.public_subnets
 
-    allocation_id = aws_eip.eips[each.key].id
-    subnet_id = aws_subnet.pub_subnets[each.value].id
+  allocation_id   = element(values(aws_eip.eips).*.id, index(values(aws_subnet.public_subnets).*.id, each.value.id))
+  subnet_id       = each.value.id
+  tags = {
+    Name = "filmdrop-nat-gateway-${each.value.id}-${var.environment}"
+  }
 
-    tags = merge({ "Name" = "filmdrop-nat-gateway-${each.key}" }, var.base_tags )
-
-    depends_on = [ aws_internet_gateway.igw ]
+  depends_on = [ aws_internet_gateway.igw ]
 } 
 
-#Route table
-resource "aws_route_table" "nat_route_tables" {
-    for_each = var.is_prod_like ? local.prod_like_and_general_az_map : local.general_az_map
-    vpc_id = aws_vpc.main_vpc.id
+# We need a different route table per subnet, because each subnet
+# may point to a different NAT Gateway for high availability
+resource "aws_route_table" "private_route_tables" {
+  for_each = aws_subnet.private_subnets
 
-    tags = merge({ "Name" = "filmdrop-private-route-table" }, var.base_tags )
+  vpc_id = aws_vpc.filmdrop_vpc.id
 
-    depends_on = [aws_nat_gateway.ngws]
+  tags = {
+    Name = "filmdrop-private-route-table-${each.value.id}-${var.environment}"
+  }
+
+  depends_on = [aws_nat_gateway.ngws]
 }
 
-#Add RT association
-resource "aws_route_table_association" "nat_rt_association" {
-    for_each = aws_subnet.pri_subnets
-    
-    subnet_id = each.value.id
-    route_table_id = (var.is_prod_like && each.key == var.ngw_prodlike_subnet_az)? aws_route_table.nat_route_tables["prod-like"].id:aws_route_table.nat_route_tables["general"].id
+resource "aws_route_table_association" "private_route_table_associations" {
+  for_each = aws_subnet.private_subnets
+
+  subnet_id       = each.value.id
+  route_table_id  = element(values(aws_route_table.private_route_tables).*.id, index(values(aws_subnet.private_subnets).*.id, each.value.id))
 }
 
-#Add routes
-resource "aws_route" "nat_routes" {
-    for_each = var.is_prod_like ? local.prod_like_and_general_az_map : local.general_az_map
 
-    route_table_id = aws_route_table.nat_route_tables[each.key].id
-    nat_gateway_id = aws_nat_gateway.ngws[each.key].id
-    destination_cidr_block = local.all_cidr
+# While mapping each private subnet route table to a specific NAT Gateway
+# we need to consider NAT Gateways are dependent on the number of Public Subnets
+# and the number of Public Subnets may not be equal to the number of Private Subnets.
+# This means that the number of NAT Gateways may not be equal to the number of Private Route Tables.
+resource "aws_route" "private_subnet_default_routes" {
+  for_each = aws_subnet.private_subnets
 
-}
-
-#Add peering route
-resource "aws_route" "nat_peering_routes" {
-    for_each = var.is_peered ? local.general_az_map : {}
-
-    route_table_id = aws_route_table.nat_route_tables[each.key].id
-    destination_cidr_block = var.vpc_peer_cidr
-    vpc_peering_connection_id = var.vpc_peering_connection_id
-
+  route_table_id          = element(values(aws_route_table.private_route_tables).*.id, index(values(aws_subnet.private_subnets).*.id, each.value.id))
+  nat_gateway_id          = element(values(aws_nat_gateway.ngws).*.id, index(values(aws_subnet.private_subnets).*.id, each.value.id) % length(values(aws_subnet.public_subnets).*.id))
+  destination_cidr_block  = "0.0.0.0/0"
 }

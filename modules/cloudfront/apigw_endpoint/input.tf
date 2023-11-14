@@ -95,3 +95,7 @@ variable "web_acl_id" {
   description = "The id of the WAF resource to attach to the CloudFront endpoint."
   default     = ""
 }
+
+variable "project_name" {
+  description = "Project Name"
+}

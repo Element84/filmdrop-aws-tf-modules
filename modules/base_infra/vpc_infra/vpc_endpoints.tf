@@ -1,30 +1,21 @@
-#Add gateway endpoints
-resource "aws_vpc_endpoint" "gateway_endpoints" {
+module "gateway_endpoints" {
+  source = "../vpc_endpoint/gateway_endpoint"
+
   for_each = toset(var.gateway_endpoints_list)
 
-  vpc_id       = aws_vpc.main_vpc.id
-  service_name = "com.amazonaws.${data.aws_region.current.name}.${each.value}"
-  vpc_endpoint_type = "Gateway"
-
-  route_table_ids = concat([aws_route_table.public_route_table.id], values(aws_route_table.nat_route_tables).*.id )
-
-  tags = merge({ "Name" = "vpc-endpoint-${each.value}" }, var.base_tags )
+  vpc_id          = aws_vpc.filmdrop_vpc.id
+  service_name    = "com.amazonaws.${data.aws_region.current.name}.${each.value}"
+  route_table_ids = concat([aws_route_table.public_route_table.id], values(aws_route_table.private_route_tables).*.id )
 }
 
-#Add interface endpoints
-resource "aws_vpc_endpoint" "interface_endpoints" {
-  for_each = toset(var.interface_endpoints_map)
+module "interface_endpoints" {
+  source = "../vpc_endpoint/interface_endpoint"
 
-  vpc_id            = aws_vpc.main_vpc.id
-  service_name      = "com.amazonaws.${data.aws_region.current.name}.${each.value}"
-  vpc_endpoint_type = "Interface"
+  for_each = toset(var.interface_endpoints_list)
 
-  security_group_ids = [
-    aws_security_group.sg_vpcendpoint.id
-  ]
-
-  subnet_ids = flatten([aws_subnet.pri_subnets[var.ngw_general_subnet_az].id, var.is_prod_like ? [aws_subnet.pri_subnets[var.ngw_prodlike_subnet_az].id]:[]])
-
+  vpc_id              = aws_vpc.filmdrop_vpc.id
+  service_name        = "com.amazonaws.${data.aws_region.current.name}.${each.value}"
+  security_group_ids  = [aws_security_group.filmdrop_vpc_default_sg.id]
+  subnet_ids          = values(aws_subnet.private_subnets).*.id
   private_dns_enabled = true
-  tags = merge({ "Name" = "vpc-endpoint-${each.value}" }, var.base_tags )
 }

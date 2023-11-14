@@ -1,3 +1,7 @@
+resource random_id suffix {
+  byte_length = 8
+}
+
 resource "aws_opensearch_domain" "stac_server_opensearch_domain" {
   domain_name           = "stac-server-${var.stac_api_stage}"
   engine_version = var.opensearch_version
@@ -130,7 +134,7 @@ resource "random_password" "opensearch_master_password" {
 }
  
 resource "aws_secretsmanager_secret" "opensearch_master_password_secret" {
-   name = "stac-server-${var.stac_api_stage}-master-creds"
+   name = "stac-server-${var.project_name}-${var.stac_api_stage}-master-creds-${random_id.suffix.hex}"
 }
  
 resource "aws_secretsmanager_secret_version" "opensearch_master_password_secret_version" {
@@ -155,7 +159,7 @@ resource "random_password" "opensearch_stac_user_password" {
  }
 
 resource "aws_secretsmanager_secret" "opensearch_stac_user_password_secret" {
-   name = "stac-server-${var.stac_api_stage}-user-creds"
+   name = "stac-server-${var.project_name}-${var.stac_api_stage}-user-creds-${random_id.suffix.hex}"
 }
 
 resource "aws_secretsmanager_secret_version" "opensearch_stac_user_password_secret_version" {
@@ -201,7 +205,8 @@ resource "aws_lambda_function" "stac_server_opensearch_user_initializer" {
     aws_secretsmanager_secret_version.opensearch_master_password_secret_version,
     random_password.opensearch_stac_user_password,
     aws_secretsmanager_secret.opensearch_stac_user_password_secret,
-    aws_secretsmanager_secret_version.opensearch_stac_user_password_secret_version
+    aws_secretsmanager_secret_version.opensearch_stac_user_password_secret_version,
+    data.archive_file.user_init_lambda_zip
   ]
 }
 

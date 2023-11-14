@@ -1,6 +1,5 @@
 variable "waf_appendix" {
   description = "Unique appendix for the WAF.  Required if the account needs more than one WAF."
-  default     = ""
 }
 
 variable "logging_bucket_name" {

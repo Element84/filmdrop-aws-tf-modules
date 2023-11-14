@@ -1,7 +1,6 @@
 
 resource "aws_s3_bucket" "error_bucket" {
-  bucket = "${local.error_pages_id}"
-
+  bucket = lower("${local.error_pages_id}")
 }
 
 resource "aws_s3_object" "base_custom_error_pages_directory" {
@@ -11,7 +10,15 @@ resource "aws_s3_object" "base_custom_error_pages_directory" {
   content_type = "application/x-directory"
 }
 
+resource "aws_s3_bucket_ownership_controls" "error_bucket_ownership_controls" {
+  bucket = aws_s3_bucket.error_bucket.id
+  rule {
+    object_ownership = "BucketOwnerPreferred"
+  }
+}
+
 resource "aws_s3_bucket_acl" "error_bucket_acl" {
+  depends_on = [aws_s3_bucket_ownership_controls.error_bucket_ownership_controls]
   bucket = aws_s3_bucket.error_bucket.id
   acl    = "private"
 }

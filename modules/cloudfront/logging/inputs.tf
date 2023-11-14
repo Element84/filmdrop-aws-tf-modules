@@ -12,3 +12,8 @@ variable "log_bucket_domain_name" {
   description = "Domain Name of existing CloudFront Distribution Logging bucket"
   default     = ""
 }
+
+variable "filmdrop_archive_bucket_name" {
+  description = "Name of existing FilmDrop Archive Bucket"
+  default     = "CHANGEME"
+}

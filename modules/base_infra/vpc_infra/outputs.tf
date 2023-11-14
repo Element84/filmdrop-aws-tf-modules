@@ -1,49 +1,45 @@
-#Output nat gateway ids as a map
-output "nat_gateway" {
-  description = "Nat Gateway"
-  value       = {
-    for az, ngw in aws_nat_gateway.ngws : az => ngw.id
-  }
+output "nat_gateway_ids" {
+  description = "List of FilmDrop NAT Gateway IDs"
+  value       = values(aws_nat_gateway.ngws).*.id
+
 }
 
-#output eips as a map
-output "gateway_eips" {
-  description = "Gateway EIPs"
-  value = {
-    for k, eip in aws_eip.eips : k => eip.id
-  }
-  
+output "eip_ids" {
+  description = "List of EIP IDs"
+  value       = values(aws_eip.eips).*.id  
 }
 
-#Vpc id output
 output "vpc_id" {
-  description = "ID of the VPC"
-  value = aws_vpc.main_vpc.id
+  description = "FilmDrop VPC ID"
+  value = aws_vpc.filmdrop_vpc.id
 }
 
-#private subnets output 
-output "private_subnets" {
-  description = "ID of Private Subnets"
-  value = {
-    for az, pri_subnets in aws_subnet.pri_subnets : az => pri_subnets.id
-  }
-
+output "private_subnet_ids" {
+  description = "List of FilmDrop Private Subnet IDs"
+  value       = values(aws_subnet.private_subnets).*.id
 }
 
-#public subnets output
-output "public_subnets" {
-  description = "ID of Public Subnets"
-  value = {
-    for az, pub_subnets in aws_subnet.pub_subnets : az => pub_subnets.id
-  }
+output "public_subnet_ids" {
+  description = "List of FilmDrop Public Subnet IDs"
+  value       = values(aws_subnet.public_subnets).*.id
+}
+
+output "private_avaliability_zones" {
+  description = "List of FilmDrop Private Subnet Availability Zones"
+  value       = keys(var.private_subnets_cidr_map)
+}
+
+output "public_avaliability_zones" {
+  description = "List of FilmDrop Public Subnet Availability Zones"
+  value       = keys(var.public_subnets_cidr_map)
 }
 
 output "security_group_id" {
-  description = "ID of Security Group"
-  value = aws_security_group.sg_vpcendpoint.id
+  description = "ID of FilmDrop Default Security Group"
+  value       = aws_security_group.filmdrop_vpc_default_sg.id
 }
 
 output "vpc_cidr" {
-  description = "VPC CIDR Range"
-  value = var.vpc_cidr
+  description = "FilmDrop VPC CIDR Range"
+  value       = var.vpc_cidr
 }

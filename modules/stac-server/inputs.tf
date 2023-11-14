@@ -68,6 +68,11 @@ variable "ingest_lambda_memory" {
   default     = 512
 }
 
+variable "reserved_concurrent_executions" {
+  description = "STAC ingest lambda reserved concurrent executions (max concurrency)"
+  default     = 10
+}
+
 variable "pre_hook_lambda_timeout" {
   description = "STAC API auth pre-hook lambda timeout in seconds"
   default     = 25
@@ -232,4 +237,8 @@ variable "collection_to_index_mappings" {
 variable "ingest_sns_topic_arns" {
   description = "List of additional Ingest SNS topic arns to subscribe to stac server"
   default     = []
+}
+
+variable "project_name" {
+  description = "Project Name"
 }

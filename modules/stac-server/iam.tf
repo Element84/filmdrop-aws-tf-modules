@@ -1,5 +1,5 @@
 resource "aws_iam_role" "stac_api_lambda_role" {
-  name = "stac-server-${var.stac_api_stage}-${data.aws_region.current.name}-lambdaRole"
+  name_prefix = "stac-server-${var.stac_api_stage}-${data.aws_region.current.name}-lambdaRole"
 
   assume_role_policy = <<EOF
 {
@@ -19,7 +19,7 @@ EOF
 }
 
 resource "aws_iam_policy" "stac_api_lambda_policy" {
-  name         = "stac-server-${var.stac_api_stage}-${data.aws_region.current.name}-lambdaPolicy"
+  name_prefix = "stac-server-${var.stac_api_stage}-${data.aws_region.current.name}-lambdaPolicy"
 
   policy = <<EOF
 {
@@ -58,7 +58,7 @@ resource "aws_iam_policy" "stac_api_lambda_policy" {
                 "sqs:ReceiveMessage",
                 "sqs:DeleteMessage"
             ],
-            "Resource": "arn:aws:sqs:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:stac-server-${var.stac_api_stage}-queue",
+            "Resource": "${aws_sqs_queue.stac_server_ingest_sqs_queue.arn}",
             "Effect": "Allow"
         },
         {
@@ -68,7 +68,7 @@ resource "aws_iam_policy" "stac_api_lambda_policy" {
                 "sqs:GetQueueAttributes"
             ],
             "Resource": [
-                "arn:aws:sqs:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:stac-server-${var.stac_api_stage}-queue"
+                "${aws_sqs_queue.stac_server_ingest_sqs_queue.arn}"
             ],
             "Effect": "Allow"
         },
@@ -99,7 +99,7 @@ resource "aws_iam_role_policy_attachment" "stac_api_lambda_base_policy" {
 }
 
 resource "aws_iam_role" "stac_api_gw_role" {
-  name = "stac-server-${var.stac_api_stage}-${data.aws_region.current.name}-apigwRole"
+  name_prefix = "stac-server-${var.stac_api_stage}-${data.aws_region.current.name}-apigwRole"
 
   assume_role_policy = <<EOF
 {
@@ -118,7 +118,7 @@ EOF
 }
 
 resource "aws_iam_policy" "stac_api_gw_policy" {
-  name         = "stac-server-${var.stac_api_stage}-${data.aws_region.current.name}-apigwPolicy"
+  name_prefix = "stac-server-${var.stac_api_stage}-${data.aws_region.current.name}-apigwPolicy"
 
   policy = <<EOF
 {

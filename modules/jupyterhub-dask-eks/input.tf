@@ -26,6 +26,18 @@ variable "vpc_public_subnet_azs" {
   default     = []
 }
 
+variable "analytics_main_node_azs" {
+  description = "List of AZs for the Analytics main nodes within the Public Subnet"
+  type        = list(string)
+  default     = []
+}
+
+variable "analytics_worker_node_azs" {
+  description = "List of AZs for the Analytics worker nodes within the Private Subnet"
+  type        = list(string)
+  default     = []
+}
+
 variable "vpc_security_group_ids" {
   description = "List of security groups in the FilmDrop vpc"
   type        = list(string)
@@ -226,6 +238,11 @@ variable "daskhub_nodegroup_instance_types" {
   default     = ["m5.large", "m5.xlarge", "m5.2xlarge", "m5.4xlarge"]
 }
 
+variable "jupyterhub_admin_username_list" {
+  description = "FilmDrop Analytics Admin Users List"
+  default     = ["admin"]
+}
+
 variable "daskhub_nodegroup_capacity_type" {
   description = "Daskhub Nodegroup Capacity Type"
   default     = "SPOT"
@@ -278,3 +295,8 @@ variable "zone_id" {
 variable "domain_alias" {
   description = "Alternate alias for Jupyter Load Balancer"
 }
+
+variable "daskhub_stage" {
+  description = "The stage name for daskhub"
+}
+

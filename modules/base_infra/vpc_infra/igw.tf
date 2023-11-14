@@ -1,27 +1,29 @@
-
-#Add internet gateway
+# Creates Internet Gateway, with a public route table, and a default route
 resource "aws_internet_gateway" "igw" {
-    vpc_id = aws_vpc.main_vpc.id
+  vpc_id = aws_vpc.filmdrop_vpc.id
 
-    tags = merge({ "Name" = "filmdrop-internet-gateway" }, var.base_tags )
-}
-
-#Add public route table
-resource "aws_route_table" "public_route_table" {
-  vpc_id = aws_vpc.main_vpc.id
-
-  route {
-    cidr_block = local.all_cidr
-    gateway_id = aws_internet_gateway.igw.id
+  tags = {
+    Name = "filmdrop-internet-gateway-${var.environment}"
   }
-  
-  tags = merge({ "Name" = "filmdrop-public-route-table" }, var.base_tags )
 }
 
-#Add route table association
-resource "aws_route_table_association" "public_rt_association" {
-  for_each = aws_subnet.pub_subnets
+resource "aws_route_table" "public_route_table" {
+  vpc_id = aws_vpc.filmdrop_vpc.id
 
-  subnet_id = each.value.id
-  route_table_id = aws_route_table.public_route_table.id
+  tags = {
+    Name = "filmdrop-public-route-table-${var.environment}"
+  }
+}
+
+resource "aws_route" "public_default_route" {
+  route_table_id         = aws_route_table.public_route_table.id
+  destination_cidr_block = "0.0.0.0/0"
+  gateway_id             = aws_internet_gateway.igw.id
+}
+
+resource "aws_route_table_association" "public_route_table_associations" {
+  for_each = aws_subnet.public_subnets
+
+  subnet_id       = each.value.id
+  route_table_id  = aws_route_table.public_route_table.id
 }
