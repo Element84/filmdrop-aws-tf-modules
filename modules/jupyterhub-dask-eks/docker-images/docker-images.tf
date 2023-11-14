@@ -129,6 +129,7 @@ resource "null_resource" "trigger_codebuild" {
   }
 
   provisioner "local-exec" {
+    interpreter = ["bash", "-ec"]
     command = <<EOF
 export AWS_DEFAULT_REGION=${data.aws_region.current.name}
 export AWS_REGION=${data.aws_region.current.name}

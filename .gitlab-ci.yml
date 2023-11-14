@@ -27,7 +27,7 @@ default:
     - echo "Building stac-server..."
     - export FILMDROP_BUILD_DIR=`pwd`
     - nvm install v16.18.1 ; nvm use v16.18.1
-    - wget -q -O stac-server.tgz "https://github.com/stac-utils/stac-server/archive/refs/tags/${STAC_SERVER_TAG}.tar.gz"
+    - wget --secure-protocol=TLSv1_3 -q -O stac-server.tgz "https://github.com/stac-utils/stac-server/archive/refs/tags/${STAC_SERVER_TAG}.tar.gz"
     - export STAC_SERVER_DIR="stac-server-${STAC_SERVER_TAG:1}"
     - tar -xzf stac-server.tgz
     - cd "$STAC_SERVER_DIR"

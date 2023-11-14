@@ -10,6 +10,14 @@ Document any changes that need to be made by module instances using these module
 a newer version. For example, if a new required variable is added, this should be documented here.
 
 ### 1.next
+- The WAF rules for mosaic titiler have been defined in the mosaic-titler module.  The consumer
+  must now pass in an "aws.east" provider because cloudfront requires global resources created in
+  us-east-1.  Consumers should set the new "waf_allowed_url" variable to set the WAF rules to enable
+  blocking of requests.  Leaving the default of null will set the rules to count only and disable
+  blocking.  If the consumer has previous defined a mosaic titiler WAF rule using the "titiler_waf_rules_map"
+  variable, this should be removed as it has been replaced with the module's implementation.
+
+### 1.3.0
 
 - If your deployment does not use cloudfront in front of stac-server, the stac_api_rootpath variable
   in stac-server/inputs.tf must be set to null.  The default (empty string) is correct for when

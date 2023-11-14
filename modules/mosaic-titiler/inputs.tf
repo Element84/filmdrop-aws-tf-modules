@@ -111,3 +111,9 @@ variable critical_titiler_errors {
   type        = string
   default     = "25"
 }
+
+variable waf_allowed_url {
+  description = "The url query param in mosaic titiler GET requests, and the stac_api_root in POST requests, that should be allowed by WAF rules.  Setting to null will disable blocking behavior and set rules to count instead"
+  type = string
+  default = null
+}

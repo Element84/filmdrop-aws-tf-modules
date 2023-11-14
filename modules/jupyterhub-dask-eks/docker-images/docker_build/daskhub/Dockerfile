@@ -1,5 +1,5 @@
 FROM pangeo/pangeo-notebook:2022.12.18
-LABEL maintainer="hector@element84.com"
+LABEL maintainer="open-source@element84.com"
 
 USER root
 

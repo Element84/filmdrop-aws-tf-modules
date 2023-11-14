@@ -220,6 +220,7 @@ resource "null_resource" "invoke_stac_server_opensearch_user_initializer" {
   }
 
   provisioner "local-exec" {
+    interpreter = ["bash", "-ec"]
 command = <<EOF
 export AWS_DEFAULT_REGION=${data.aws_region.current.name}
 export AWS_REGION=${data.aws_region.current.name}

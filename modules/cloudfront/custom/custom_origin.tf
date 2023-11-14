@@ -11,6 +11,7 @@ resource "null_resource" "check_ssl" {
 
   provisioner "local-exec" {
     # check that the cert is ready
+    interpreter = ["bash", "-ec"]
     command = <<EOF
 export AWS_DEFAULT_REGION=${data.aws_region.current.name}
 export AWS_REGION=${data.aws_region.current.name}

@@ -205,7 +205,8 @@ resource "null_resource" "enable_access_logs" {
   }
 
   provisioner "local-exec" {
-command = <<EOF
+    interpreter = ["bash", "-ec"]
+    command = <<EOF
 export AWS_DEFAULT_REGION=${data.aws_region.current.name}
 export AWS_REGION=${data.aws_region.current.name}
 

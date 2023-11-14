@@ -5,6 +5,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Changed
+
+- Add WAF rules to check requests for mosaic titiler - consumer must set "waf_allowed_url" to enable (updated to allow OPTIONS)
+- Sets element 84 distribution email as maintainer for daskhub dockerfile
+- explicitly set bash interpreter for local-exec shell scripts, and don't swallow errors (-e)
+- Updated wget TLS to v1.3 (Github began denying the default)
+
+
 ## 1.3.0 2023-08-14
 
 ### Changed
