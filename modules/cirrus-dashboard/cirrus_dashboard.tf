@@ -114,7 +114,7 @@ resource "aws_s3_bucket" "cirrus_dashboard_source_config" {
 resource "aws_s3_bucket_ownership_controls" "cirrus_dashboard_source_config_ownership_controls" {
   bucket = aws_s3_bucket.cirrus_dashboard_source_config.id
   rule {
-    object_ownership = "ObjectWriter"
+    object_ownership = "BucketOwnerPreferred"
   }
 }
 
@@ -130,6 +130,8 @@ resource "aws_s3_bucket_public_access_block" "cirrus_dashboard_source_config_pub
 resource "aws_s3_bucket_acl" "cirrus_dashboard_source_config_bucket_acl" {
   bucket = aws_s3_bucket.cirrus_dashboard_source_config.id
   acl    = "private"
+
+  depends_on = [aws_s3_bucket_ownership_controls.cirrus_dashboard_source_config_ownership_controls]
 }
 
 resource "aws_s3_bucket_versioning" "cirrus_dashboard_source_config_versioning" {

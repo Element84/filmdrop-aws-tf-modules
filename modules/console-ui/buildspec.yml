@@ -15,7 +15,7 @@ phases:
       - rm -f ./src/assets/config.*
       - echo "Setting environment variables for the Console UI ..."
       - echo $FILMDROP_UI_ENV | base64 --decode >> .env
-      - echo $FILMDROP_UI_CONFIG | base64 --decode >> ./src/assets/config.js
+      - echo $FILMDROP_UI_CONFIG | base64 --decode >> ./public/config/config.json
       - echo $FILMDROP_UI_LOGO | base64 --decode >> ./public/${FILMDROP_UI_LOGO_FILE##*/}
       - echo "Building FilmDrop UI Console release ..."
       - npm install
