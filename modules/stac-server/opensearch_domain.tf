@@ -1,5 +1,5 @@
 resource "aws_opensearch_domain" "stac_server_opensearch_domain" {
-  domain_name           = "stac-server-${var.stac_api_stage}-${var.opensearch_domain_type}"
+  domain_name           = "stac-server-${var.stac_api_stage}"
   engine_version = var.opensearch_version
 
   cluster_config {

@@ -113,11 +113,6 @@ variable "opensearch_domain_min_tls" {
   default     = "Policy-Min-TLS-1-2-2019-07"
 }
 
-variable "opensearch_domain_type" {
-  description = "OpenSearch Domain type"
-  default     = "opensearch"
-}
-
 variable "opensearch_ebs_volume_size" {
   description = "OpenSearch EBS volume size"
   default     = 35
