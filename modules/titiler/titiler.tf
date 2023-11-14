@@ -4,6 +4,7 @@ module "titiler_docker_ecr" {
   vpc_id              = var.vpc_id
   private_subnet_ids  = var.private_subnet_ids
   security_group_ids  = var.security_group_ids
+  prefix              = var.prefix
 }
 
 resource "aws_lambda_function" "titiler_lambda" {

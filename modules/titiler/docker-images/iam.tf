@@ -1,5 +1,5 @@
 resource "aws_iam_role" "docker_image_codebuild_iam_role" {
-  name = "titiler-dockerimage-codebuild-role"
+  name = "${var.prefix}titiler-dockerimage-codebuild-role"
 
   assume_role_policy = <<POLICY
 {

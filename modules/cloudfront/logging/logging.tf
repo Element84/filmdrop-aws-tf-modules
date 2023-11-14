@@ -8,7 +8,7 @@ resource "aws_cloudfront_origin_access_identity" "filmdrop_origin_access_identit
 
 resource "aws_ssm_parameter" "logs_bucket_name" {
   type        = "String"
-  name        = "cloudfront_logs_bucket_name"
+  name        = "cloudfront_logs_bucket_name_${local.origin_id}"
   description = "Name of the FilmDrop Cloudfront Logs Bucket"
   value       = "cloudfront-filmdrop-logs-${local.origin_id}"
   overwrite   = true

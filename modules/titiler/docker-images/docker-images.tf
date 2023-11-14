@@ -1,5 +1,5 @@
 resource "aws_ecr_repository" "titiler_ecr_repo" {
-  name                 = "titiler"
+  name                 = "${var.prefix}titiler"
   image_tag_mutability = "MUTABLE"
   image_scanning_configuration {
     scan_on_push = true

@@ -16,3 +16,8 @@ variable "titiler_stage" {
   description = "Titiler stage"
   default     = "dev"
 }
+
+variable "prefix" {
+  description = "Titiler prefix"
+  default     = ""
+}

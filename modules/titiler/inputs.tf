@@ -81,3 +81,8 @@ variable "aws_request_payer" {
   description = "AWS_REQUEST_PAYER env var"
   default     = "requester"
 }
+
+variable "prefix" {
+  description = "Titiler prefix"
+  default     = ""
+}
