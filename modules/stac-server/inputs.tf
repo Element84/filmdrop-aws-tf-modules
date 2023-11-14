@@ -23,7 +23,7 @@ variable "log_level" {
   default     = "DEBUG"
 }
 
-variable "os_batch_size" {
+variable "opensearch_batch_size" {
   description = "ElasticSearch Batch Size"
   default     = 500
 }
@@ -33,7 +33,7 @@ variable "stac_docs_url" {
   default     = "https://stac-utils.github.io/stac-server/"
 }
 
-variable "os_host" {
+variable "opensearch_host" {
   description = "ElasticSearch Host"
   default     = ""
 }
@@ -83,52 +83,52 @@ variable "elasticsearch_version" {
   default     = "OpenSearch_2.3"
 }
 
-variable "os_cluster_instance_type" {
+variable "opensearch_cluster_instance_type" {
   description = "ES Domain instance type"
   default     = "t3.small.elasticsearch"
 }
 
-variable "os_cluster_instance_count" {
+variable "opensearch_cluster_instance_count" {
   description = "ES Domain instance count"
   default     = 2
 }
 
-variable "os_cluster_dedicated_master_enabled" {
+variable "opensearch_cluster_dedicated_master_enabled" {
   description = "ES Domain dedicated master"
   default     = false
 }
 
-variable "os_cluster_zone_awareness_enabled" {
+variable "opensearch_cluster_zone_awareness_enabled" {
   description = "ES Domain zone awareness"
   default     = true
 }
 
-variable "os_domain_enforce_https" {
+variable "opensearch_domain_enforce_https" {
   description = "ES Domain enforce https"
   default     = true
 }
 
-variable "os_domain_min_tls" {
+variable "opensearch_domain_min_tls" {
   description = "ES Domain minimum TLS"
   default     = "Policy-Min-TLS-1-2-2019-07"
 }
 
-variable "os_domain_type" {
+variable "opensearch_domain_type" {
   description = "ES Domain type"
-  default     = "os"
+  default     = "opensearch"
 }
 
-variable "os_ebs_enabled" {
+variable "opensearch_ebs_enabled" {
   description = "ES EBS enabled"
   default     = true
 }
 
-variable "os_ebs_volume_size" {
+variable "opensearch_ebs_volume_size" {
   description = "ES EBS volume size"
   default     = 35
 }
 
-variable "os_ebs_volume_type" {
+variable "opensearch_ebs_volume_type" {
   description = "ES EBS volume type"
   default     = "gp2"
 }
@@ -228,7 +228,7 @@ variable "allow_explicit_index" {
   default     = "true"
 }
 
-variable "create_os_service_linked_role" {
+variable "create_opensearch_service_linked_role" {
   description = "Enable creation of OpenSearch Service Linked Role"
   default     = true
 }

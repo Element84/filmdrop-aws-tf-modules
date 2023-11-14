@@ -17,9 +17,9 @@ resource "aws_lambda_function" "stac_server_pre_hook_lambda" {
         STAC_DESCRIPTION                = var.stac_description
         STAC_VERSION                    = var.stac_version
         LOG_LEVEL                       = var.log_level
-        INGEST_BATCH_SIZE               = var.os_batch_size
+        INGEST_BATCH_SIZE               = var.opensearch_batch_size
         STAC_DOCS_URL                   = var.stac_docs_url
-        OPENSEARCH_HOST                 = var.os_host != "" ? var.os_host : aws_elasticsearch_domain.stac_server_os_domain.endpoint
+        OPENSEARCH_HOST                 = var.opensearch_host != "" ? var.opensearch_host : aws_elasticsearch_domain.stac_server_opensearch_domain.endpoint
         ENABLE_TRANSACTIONS_EXTENSION   = var.enable_transactions_extension
         STAC_API_ROOTPATH               = "/${var.stac_api_stage}"
         PRE_HOOK                        = var.stac_pre_hook_lambda
@@ -54,9 +54,9 @@ resource "aws_lambda_function" "stac_server_post_hook_lambda" {
         STAC_DESCRIPTION                = var.stac_description
         STAC_VERSION                    = var.stac_version
         LOG_LEVEL                       = var.log_level
-        INGEST_BATCH_SIZE               = var.os_batch_size
+        INGEST_BATCH_SIZE               = var.opensearch_batch_size
         STAC_DOCS_URL                   = var.stac_docs_url
-        OPENSEARCH_HOST                 = var.os_host != "" ? var.os_host : aws_elasticsearch_domain.stac_server_os_domain.endpoint
+        OPENSEARCH_HOST                 = var.opensearch_host != "" ? var.opensearch_host : aws_elasticsearch_domain.stac_server_opensearch_domain.endpoint
         ENABLE_TRANSACTIONS_EXTENSION   = var.enable_transactions_extension
         STAC_API_ROOTPATH               = "/${var.stac_api_stage}"
         PRE_HOOK                        = var.stac_pre_hook_lambda
