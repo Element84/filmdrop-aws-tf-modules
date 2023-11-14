@@ -7,7 +7,7 @@ phases:
   build:
     commands:
       - echo "Pulling FilmDrop Cirrus Dashboard release ..."
-      - wget --secure-protocol=TLSv1_3 -q -O cirrus-dashboard.tgz "https://github.com/cirrus-geo/cirrus-dashboard/archive/refs/tags/${CIRRUS_DASHBOARD_TAG}.tar.gz"
+      - wget --secure-protocol=TLSv1_2 -q -O cirrus-dashboard.tgz "https://github.com/cirrus-geo/cirrus-dashboard/archive/refs/tags/${CIRRUS_DASHBOARD_TAG}.tar.gz"
       - export CIRRUS_DASHBOARD_DIR="cirrus-dashboard-${CIRRUS_DASHBOARD_TAG:1}"
       - tar -xzf cirrus-dashboard.tgz
       - cd "$CIRRUS_DASHBOARD_DIR"
