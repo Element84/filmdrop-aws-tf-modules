@@ -32,11 +32,6 @@ resource "aws_codebuild_project" "console_ui_codebuild" {
     }
 
     environment_variable {
-      name  = "FILMDROP_UI_ENV"
-      value = var.filmdrop_ui_env
-    }
-
-    environment_variable {
       name  = "FILMDROP_UI_CONFIG"
       value = var.filmdrop_ui_config
     }

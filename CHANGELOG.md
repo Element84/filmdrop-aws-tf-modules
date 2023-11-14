@@ -5,16 +5,23 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## 1.5.0
+
+### Changed
+
+- console-ui.filmdrop_ui_release must be gte 4.x, e.g., `v4.0.1`
+
+## 1.4.3
 
 ### Changed
 
 - Defining a non-empty `stac_server_s3_bucket_arns` and `titiler_s3_bucket_arns` parameters
   is no longer required. This can now be empty.
 - Refined public bucket access policies
-- Disabled public access to EKS endpoint (CloudFront only)
 - SSM secret creation will now fail if a secret with the same name already exists
-- add an optional env var config for mosaic lambda (request_host_header_override) that will override the host header in the event, so that responses crafted use the desired external-facing domain instead of internal API gateway
+- add an optional env var config for mosaic lambda (request_host_header_override)
+  that will overridethe host header in the event, so that responses crafted use the
+  desired external-facing domain instead of internal API gateway
 - set force_delete on daskhub and titiler ECR repos to allow automated destroy
 - set force_destroy access logs and logs archive S3 buckets to allow automated destroy
 

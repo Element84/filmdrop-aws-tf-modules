@@ -9,7 +9,13 @@ Check out the [changelog](CHANGELOG.md).
 Document any changes that need to be made by module instances using these modules to uptake
 a newer version. For example, if a new required variable is added, this should be documented here.
 
-### Unreleased
+### 1.5.0
+
+- console-ui.filmdrop_ui_release must be gte 4.x, e.g., `v4.0.1`. Along with this,
+  the `filmdrop_ui_env` variable should be removed, the .env files deleted, and the
+  `VITE_APP_NAME` variable moved to `APP_NAME` in the config json file.
+
+### 1.4.x
 
 - Please upgrade to AWS provider `~=5.13`
 - The WAF rules for mosaic titiler have been defined in the mosaic-titler module.  The consumer

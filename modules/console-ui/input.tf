@@ -18,11 +18,10 @@ variable "vpc_id" {
 variable "filmdrop_ui_release" {
   description = "FilmDrop UI Release"
   type        = string
-}
-
-variable "filmdrop_ui_env" {
-  description = "FilmDrop UI Deployment ENV file"
-  type        = string
+  validation {
+    condition     = substr(var.filmdrop_ui_release, 0, 1) == "v" && substr(var.filmdrop_ui_release, 1, 2) >= 4
+    error_message = "The filmdrop_ui_release value must be a filmdrop-ui release >= v4.0.0"
+  }
 }
 
 variable "filmdrop_ui_config" {

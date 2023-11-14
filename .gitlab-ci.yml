@@ -1,34 +1,20 @@
-stages:
-  - scan
-  - release
-
 default:
-  image: artifactory.prod.element84.com/e84-infra-docker/e84-build-base:main
+  image: quay.io/element84/e84-build-filmdrop:1.5.7-main
 
 .common_variables:
   variables:
-    TERRAFORM_VERSION: "1.5.5"
     STAC_SERVER_TAG_DEV: v2.2.3
     STAC_SERVER_TAG_RELEASE: v2.2.3
 
 .setup_and_validate:
   script:
     - export CI=true
-    - jfrog c add --url ${ARTIFACTORY_URL} --user ${ARTIFACTORY_USERNAME} --password ${ARTIFACTORY_PASSWORD} e84artifactory
-    - curl -f -o - https://raw.githubusercontent.com/creationix/nvm/v0.39.3/install.sh | bash
-    - source "$HOME/.nvm/nvm.sh"
-    - echo "Installing Terraform ..."
-    - export BUILD_DIR=`pwd`
-    - cd /usr/local/bin
-    - curl -f -L -o terraform.zip https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_linux_amd64.zip
-    - unzip terraform.zip
-    - rm terraform.zip
-    - cd $BUILD_DIR
-    - echo "Building stac-server..."
     - export FILMDROP_BUILD_DIR=`pwd`
-    - nvm install v16.18.1 ; nvm use v16.18.1
-    - wget --secure-protocol=TLSv1_3 -q -O stac-server.tgz "https://github.com/stac-utils/stac-server/archive/refs/tags/${STAC_SERVER_TAG}.tar.gz"
     - export STAC_SERVER_DIR="stac-server-${STAC_SERVER_TAG:1}"
+    - . $HOME/.nvm/nvm.sh
+    - nvm use v16
+    - echo "Building stac-server..."
+    - curl -L -f --no-progress-meter -o stac-server.tgz "https://github.com/stac-utils/stac-server/archive/refs/tags/${STAC_SERVER_TAG}.tar.gz"
     - tar -xzf stac-server.tgz
     - cd "$STAC_SERVER_DIR"
     - npm install
@@ -40,61 +26,26 @@ default:
     - mkdir -p $FILMDROP_BUILD_DIR/modules/stac-server/lambda/pre-hook
     - cp dist/pre-hook/pre-hook.zip $FILMDROP_BUILD_DIR/modules/stac-server/lambda/pre-hook/
     - cd $FILMDROP_BUILD_DIR/modules
-    - $FILMDROP_BUILD_DIR/scripts/validate.sh
+    # - pre-commit run --all-files
 
-.build_and_publish:
-  script:
-    - tar zcvf filmdrop-tf-modules-release-${RELEASE_VERSION}${SUFFIX}.tgz *
-    - jfrog rt u --build-name "filmdrop/tf-modules/${CI_COMMIT_BRANCH}" --build-number ${CI_PIPELINE_IID} filmdrop-tf-modules-release-${RELEASE_VERSION}${SUFFIX}.tgz "${ARTIFACTORY_FILMDROP_TF_MODULE_REPO}/packaged-releases/filmdrop-tf-modules-release-${RELEASE_VERSION}${SUFFIX}.tgz"
-    - jfrog rt bp --build-url "$CI_PIPELINE_URL" "filmdrop/tf-modules/${CI_COMMIT_BRANCH}" ${CI_PIPELINE_IID}
-    - jfrog rt build-scan "filmdrop/tf-modules/${CI_COMMIT_BRANCH}" ${CI_PIPELINE_IID}
-    - jfrog tfc --repo-deploy ${ARTIFACTORY_FILMDROP_TF_MODULE_REPO}
-    - jfrog tf p --namespace=aws --provider=aws --tag="${RELEASE_VERSION}${SUFFIX}" --exclusions="*test*;*ignore*"
-    - echo "Validating the artifact upload to Artifactory ..."
-    - export RELEASE_VERSION="latest"
-    - jfrog rt dl "${ARTIFACTORY_FILMDROP_TF_MODULE_REPO}/packaged-releases/filmdrop-tf-modules-release-${RELEASE_VERSION}.tgz"
-    - cd packaged-releases && pwd
-    - tar ztvf filmdrop-tf-modules-release-${RELEASE_VERSION}.tgz
-
-xray_scan:
-  stage: scan
-  extends: [.common_variables]
-  rules:
-    - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
-      when: always
-  variables:
-    STAC_SERVER_TAG: ${STAC_SERVER_TAG_DEV}
-  script:
-    - !reference [.setup_and_validate, script]
-    - echo "Xray Scan for FilmDrop Terraform Modules..."
-    - jfrog rt bce "filmdrop/tf-modules/${CI_COMMIT_BRANCH}" ${CI_PIPELINE_IID}
-    - jfrog rt bp "filmdrop/tf-modules/${CI_COMMIT_BRANCH}" ${CI_PIPELINE_IID}
-    - jfrog rt build-scan "filmdrop/tf-modules/${CI_COMMIT_BRANCH}" ${CI_PIPELINE_IID}
-
-dev_release:
-  stage: release
+dev_validate:
   extends: [.common_variables]
   rules:
     - if: $CI_COMMIT_REF_NAME == "main"
-      when: always
+      when: on_success
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+      when: on_success
   variables:
     STAC_SERVER_TAG: ${STAC_SERVER_TAG_DEV}
   script:
-    - export RELEASE_VERSION="dev"
     - !reference [.setup_and_validate, script]
-    - echo "Xray Scan and Publish dev release for FilmDrop Terraform Modules..."
-    - !reference [.build_and_publish, script]
 
-version_release:
-  stage: release
+version_validate:
   extends: [.common_variables]
   rules:
     - if: $CI_COMMIT_TAG =~ /^v(\d+.)(\d+.)(\d+)(-[.\d\w]+)?$/
-      when: always
+      when: on_success
   variables:
     STAC_SERVER_TAG: ${STAC_SERVER_TAG_RELEASE}
   script:
-    - export RELEASE_VERSION=$CI_COMMIT_TAG
     - !reference [.setup_and_validate, script]
-    - echo "Xray Scan and Publish versioned release for FilmDrop Terraform Modules..."
-    - !reference [.build_and_publish, script]

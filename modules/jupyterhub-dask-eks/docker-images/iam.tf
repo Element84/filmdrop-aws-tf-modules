@@ -1,5 +1,5 @@
 resource "aws_iam_role" "docker_image_codebuild_iam_role" {
-  name = "daskhub-dockerimage-codebuild-${var.project_name}-${var.daskhub_stage}-role"
+  name = "daskhub-dkr-cb-${var.project_name}-${var.daskhub_stage}"
 
   assume_role_policy = <<POLICY
 {
