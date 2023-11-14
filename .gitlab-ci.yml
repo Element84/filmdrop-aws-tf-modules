@@ -1,0 +1,90 @@
+stages:
+  - scan
+  - dev_release
+  - candidate_release
+  - latest_stable_release
+  - official_stable_release
+
+default: 
+  image: artifactory.prod.element84.com/e84-infra-docker/e84-build-base:main
+
+before_script:
+  - export CI=true
+  - jfrog c add --url ${ARTIFACTORY_URL} --user ${ARTIFACTORY_USERNAME} --password ${ARTIFACTORY_PASSWORD} e84artifactory
+
+xray_scan:
+  stage: scan
+  only:
+    - merge_requests
+  script:
+    - echo "Xray Scan for FilmDrop Terraform Modules..."
+    - jfrog rt bce "filmdrop/tf-modules/${CI_COMMIT_BRANCH}" ${CI_PIPELINE_IID}
+    - jfrog rt bp "filmdrop/tf-modules/${CI_COMMIT_BRANCH}" ${CI_PIPELINE_IID}
+    - jfrog rt build-scan "filmdrop/tf-modules/${CI_COMMIT_BRANCH}" ${CI_PIPELINE_IID}
+
+dev_release_to_artifactory:
+  stage: dev_release
+  only:
+    - develop
+  script:
+    - echo "Xray Scan and Publish development releases for FilmDrop Terraform Modules..."
+    - export RELEASE_VERSION="dev"
+    - tar zcvf filmdrop-tf-modules-release-${RELEASE_VERSION}.tgz *
+    - jfrog rt u --build-name "filmdrop/tf-modules/${CI_COMMIT_BRANCH}" --build-number ${CI_PIPELINE_IID} filmdrop-tf-modules-release-${RELEASE_VERSION}.tgz "${ARTIFACTORY_FILMDROP_TF_MODULE_REPO}/packaged-releases/filmdrop-tf-modules-release-${RELEASE_VERSION}.tgz"
+    - jfrog rt bp --build-url "$CI_PIPELINE_URL" "filmdrop/tf-modules/${CI_COMMIT_BRANCH}" ${CI_PIPELINE_IID}
+    - jfrog rt build-scan "filmdrop/tf-modules/${CI_COMMIT_BRANCH}" ${CI_PIPELINE_IID}
+    - jfrog tfc --repo-deploy ${ARTIFACTORY_FILMDROP_TF_MODULE_REPO}
+    - jfrog tf p --namespace=aws --provider=aws --tag="${RELEASE_VERSION}" --exclusions="*test*;*ignore*"
+
+candidate_release_to_artifactory:
+  stage: candidate_release
+  only:
+    - /^release\//
+  script:
+    - echo "Xray Scan and Publish release candidate for FilmDrop Terraform Modules..."
+    - export RELEASE_VERSION=$(echo $CI_COMMIT_REF_NAME | awk -F/ '{print $2}')
+    - tar zcvf filmdrop-tf-modules-release-${RELEASE_VERSION}-rc.tgz *
+    - jfrog rt u --build-name "filmdrop/tf-modules/${CI_COMMIT_BRANCH}" --build-number ${CI_PIPELINE_IID} filmdrop-tf-modules-release-${RELEASE_VERSION}-rc.tgz "${ARTIFACTORY_FILMDROP_TF_MODULE_REPO}/packaged-releases/filmdrop-tf-modules-release-${RELEASE_VERSION}-rc.tgz"
+    - jfrog rt bp --build-url "$CI_PIPELINE_URL" "filmdrop/tf-modules/${CI_COMMIT_BRANCH}" ${CI_PIPELINE_IID}
+    - jfrog rt build-scan "filmdrop/tf-modules/${CI_COMMIT_BRANCH}" ${CI_PIPELINE_IID}
+    - jfrog tfc --repo-deploy ${ARTIFACTORY_FILMDROP_TF_MODULE_REPO}
+    - jfrog tf p --namespace=aws --provider=aws --tag="${RELEASE_VERSION}-rc" --exclusions="*test*;*ignore*"
+
+latest_stable_release_to_artifactory:
+  stage: latest_stable_release
+  only:
+    - master
+  script:
+    - echo "Xray Scan and Publish official releases for FilmDrop Terraform Modules..."
+    - export RELEASE_VERSION="latest"
+    - tar zcvf filmdrop-tf-modules-release-${RELEASE_VERSION}.tgz *
+    - jfrog rt u --build-name "filmdrop/tf-modules/${CI_COMMIT_BRANCH}" --build-number ${CI_PIPELINE_IID} filmdrop-tf-modules-release-${RELEASE_VERSION}.tgz "${ARTIFACTORY_FILMDROP_TF_MODULE_REPO}/packaged-releases/filmdrop-tf-modules-release-${RELEASE_VERSION}.tgz"
+    - jfrog rt bp --build-url "$CI_PIPELINE_URL" "filmdrop/tf-modules/${CI_COMMIT_BRANCH}" ${CI_PIPELINE_IID}
+    - jfrog rt build-scan "filmdrop/tf-modules/${CI_COMMIT_BRANCH}" ${CI_PIPELINE_IID}
+    - jfrog tfc --repo-deploy ${ARTIFACTORY_FILMDROP_TF_MODULE_REPO}
+    - jfrog tf p --namespace=aws --provider=aws --tag="${RELEASE_VERSION}" --exclusions="*test*;*ignore*"
+
+official_stable_release_to_artifactory:
+  stage: official_stable_release
+  only:
+    - tags
+  script:
+    - echo "Xray Scan and Publish official releases for FilmDrop Terraform Modules..."
+    - export RELEASE_VERSION=$CI_COMMIT_TAG
+    - tar zcvf filmdrop-tf-modules-release-${RELEASE_VERSION}.tgz *
+    - jfrog rt u --build-name "filmdrop/tf-modules/${CI_COMMIT_BRANCH}" --build-number ${CI_PIPELINE_IID} filmdrop-tf-modules-release-${RELEASE_VERSION}.tgz "${ARTIFACTORY_FILMDROP_TF_MODULE_REPO}/packaged-releases/filmdrop-tf-modules-release-${RELEASE_VERSION}.tgz"
+    - jfrog rt bp --build-url "$CI_PIPELINE_URL" "filmdrop/tf-modules/${CI_COMMIT_BRANCH}" ${CI_PIPELINE_IID}
+    - jfrog rt build-scan "filmdrop/tf-modules/${CI_COMMIT_BRANCH}" ${CI_PIPELINE_IID}
+    - jfrog tfc --repo-deploy ${ARTIFACTORY_FILMDROP_TF_MODULE_REPO}
+    - jfrog tf p --namespace=aws --provider=aws --tag="${RELEASE_VERSION}" --exclusions="*test*;*ignore*"
+
+test_download:
+  stage: .post
+  only:
+    - master
+  script:
+    - echo "Validating the artifact upload to Artifactory ..."
+    - export RELEASE_VERSION="latest"
+    - jfrog rt dl "${ARTIFACTORY_FILMDROP_TF_MODULE_REPO}/packaged-releases/filmdrop-tf-modules-release-${RELEASE_VERSION}.tgz"
+    - cd packaged-releases && pwd
+    - tar ztvf filmdrop-tf-modules-release-${RELEASE_VERSION}.tgz
