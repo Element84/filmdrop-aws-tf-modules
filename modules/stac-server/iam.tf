@@ -76,6 +76,11 @@ resource "aws_iam_policy" "stac_api_lambda_policy" {
             "Action": "lambda:InvokeFunction",
             "Resource": "*",
             "Effect": "Allow"
+        },
+        {
+            "Action": "secretsmanager:*",
+            "Resource": "*",
+            "Effect": "Allow"
         }
     ]
 }

@@ -20,6 +20,31 @@ resource "aws_elasticsearch_domain" "stac_server_opensearch_domain" {
     volume_type = var.opensearch_ebs_volume_type
   }
 
+  encrypt_at_rest {
+    enabled = var.opensearch_encrypt_at_rest_enabled
+  }
+
+  node_to_node_encryption {
+    enabled = var.opensearch_node_to_node_encryption_enabled
+  }
+
+  dynamic advanced_security_options {
+    for_each = var.opensearch_advanced_security_options_enabled == true ? [1] : []
+    content {
+        enabled                         = var.opensearch_advanced_security_options_enabled
+        internal_user_database_enabled  = var.opensearch_internal_user_database_enabled
+
+        dynamic master_user_options {
+          for_each = var.opensearch_internal_user_database_enabled == true ? [1] : []
+
+          content {
+            master_user_name      = jsondecode(aws_secretsmanager_secret_version.opensearch_master_password_secret_version.secret_string)["USERNAME"]
+            master_user_password  = jsondecode(aws_secretsmanager_secret_version.opensearch_master_password_secret_version.secret_string)["PASSWORD"]
+          }
+        }
+    }
+  }
+
   vpc_options {
     subnet_ids          = [var.vpc_subnet_ids[0], var.vpc_subnet_ids[1]]
     security_group_ids  = [aws_security_group.opensearch_security_group.id]
@@ -34,8 +59,8 @@ resource "aws_elasticsearch_domain" "stac_server_opensearch_domain" {
     "Version": "2012-10-17",
     "Statement": [
         {
-            "Action": "es:*",
-            "Principal": "*",
+            "Action": "es:ESHttp*",
+            "Principal": { "AWS": "*" },
             "Effect": "Allow",
             "Resource": "arn:aws:es:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:domain/stac-server-${var.stac_api_stage}-${var.opensearch_domain_type}/*"
         }
@@ -48,6 +73,15 @@ CONFIG
       ignore_changes  = [access_policies]
       prevent_destroy = true
   }
+
+  depends_on = [
+    random_password.opensearch_master_password,
+    aws_secretsmanager_secret.opensearch_master_password_secret,
+    aws_secretsmanager_secret_version.opensearch_master_password_secret_version,
+    random_password.opensearch_stac_user_password,
+    aws_secretsmanager_secret.opensearch_stac_user_password_secret,
+    aws_secretsmanager_secret_version.opensearch_stac_user_password_secret_version
+  ]
 }
 
 resource "aws_security_group" "opensearch_security_group" {
@@ -79,4 +113,120 @@ resource "aws_security_group" "opensearch_security_group" {
 resource "aws_iam_service_linked_role" "os" {
   count             = var.create_opensearch_service_linked_role == true ? 1 : 0
   aws_service_name  = "es.amazonaws.com"
+}
+
+resource "random_password" "opensearch_master_password" {
+  length           = 16
+  min_lower        = 1
+  min_numeric      = 1
+  min_special      = 1
+  min_upper        = 1
+  special          = true
+  override_special = "_%@"
+}
+ 
+resource "aws_secretsmanager_secret" "opensearch_master_password_secret" {
+   name = "stac-server-${var.stac_api_stage}-${var.opensearch_domain_type}-master-creds"
+}
+ 
+resource "aws_secretsmanager_secret_version" "opensearch_master_password_secret_version" {
+  secret_id = aws_secretsmanager_secret.opensearch_master_password_secret.id
+  secret_string = <<EOF
+   {
+    "USERNAME": "${var.opensearch_admin_username}",
+    "PASSWORD": "${random_password.opensearch_master_password.result}"
+   }
+EOF
+}
+
+resource "random_password" "opensearch_stac_user_password" {
+  length           = 16
+  min_lower        = 1
+  min_numeric      = 1
+  min_special      = 1
+  min_upper        = 1
+  special          = true
+  override_special = "_%@"
+}
+
+resource "aws_secretsmanager_secret" "opensearch_stac_user_password_secret" {
+   name = "stac-server-${var.stac_api_stage}-${var.opensearch_domain_type}-user-creds"
+}
+
+resource "aws_secretsmanager_secret_version" "opensearch_stac_user_password_secret_version" {
+  secret_id = aws_secretsmanager_secret.opensearch_stac_user_password_secret.id
+  secret_string = <<EOF
+   {
+    "USERNAME": "${var.opensearch_stac_server_username}",
+    "PASSWORD": "${random_password.opensearch_stac_user_password.result}"
+   }
+EOF
+}
+
+resource "aws_lambda_function" "stac_server_opensearch_user_initializer" {
+  filename         = data.archive_file.user_init_lambda_zip.output_path
+  source_code_hash = data.archive_file.user_init_lambda_zip.output_base64sha256
+  function_name    = "stac-server-${var.stac_api_stage}-${var.opensearch_domain_type}-init"
+  role             = aws_iam_role.stac_api_lambda_role.arn
+  description      = "Lambda function to initialize OpenSearch Stac Server user and roles."
+  handler          = "main.lambda_handler"
+  runtime          = "python3.9"
+  memory_size      = "512"
+  timeout          = "900"
+
+  environment {
+    variables = {
+        OPENSEARCH_HOST                     = var.opensearch_host != "" ? var.opensearch_host : aws_elasticsearch_domain.stac_server_opensearch_domain.endpoint
+        OPENSEARCH_MASTER_CREDS_SECRET_ARN  = aws_secretsmanager_secret.opensearch_master_password_secret.arn
+        OPENSEARCH_USER_CREDS_SECRET_ARN    = aws_secretsmanager_secret.opensearch_stac_user_password_secret.arn
+        REGION                              = data.aws_region.current.name
+    }
+  }
+
+  vpc_config {
+    subnet_ids         = [var.vpc_subnet_ids[0], var.vpc_subnet_ids[1]]
+    security_group_ids = var.vpc_security_group_ids
+  }
+
+  depends_on = [
+    aws_elasticsearch_domain.stac_server_opensearch_domain,
+    random_password.opensearch_master_password,
+    aws_secretsmanager_secret.opensearch_master_password_secret,
+    aws_secretsmanager_secret_version.opensearch_master_password_secret_version,
+    random_password.opensearch_stac_user_password,
+    aws_secretsmanager_secret.opensearch_stac_user_password_secret,
+    aws_secretsmanager_secret_version.opensearch_stac_user_password_secret_version
+  ]
+}
+
+resource "null_resource" "invoke_stac_server_opensearch_user_initializer" {
+  triggers = {
+    INITIALIZER_LAMBDA                  = aws_lambda_function.stac_server_opensearch_user_initializer.function_name
+    OPENSEARCH_HOST                     = aws_elasticsearch_domain.stac_server_opensearch_domain.endpoint
+    OPENSEARCH_MASTER_CREDS_SECRET_ARN  = aws_secretsmanager_secret.opensearch_master_password_secret.arn
+    OPENSEARCH_USER_CREDS_SECRET_ARN    = aws_secretsmanager_secret.opensearch_stac_user_password_secret.arn
+    REGION                              = data.aws_region.current.name
+  }
+
+  provisioner "local-exec" {
+command = <<EOF
+export AWS_DEFAULT_REGION=${data.aws_region.current.name}
+export AWS_REGION=${data.aws_region.current.name}
+
+echo "Creating stac_server user on OpenSearch cluster."
+aws lambda invoke --function-name ${aws_lambda_function.stac_server_opensearch_user_initializer.function_name} --payload '{ }' output
+
+EOF
+  }
+
+  depends_on = [
+    aws_elasticsearch_domain.stac_server_opensearch_domain,
+    random_password.opensearch_master_password,
+    aws_secretsmanager_secret.opensearch_master_password_secret,
+    aws_secretsmanager_secret_version.opensearch_master_password_secret_version,
+    random_password.opensearch_stac_user_password,
+    aws_secretsmanager_secret.opensearch_stac_user_password_secret,
+    aws_secretsmanager_secret_version.opensearch_stac_user_password_secret_version,
+    aws_lambda_function.stac_server_opensearch_user_initializer
+  ]
 }

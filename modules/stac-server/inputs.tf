@@ -232,3 +232,33 @@ variable "create_opensearch_service_linked_role" {
   description = "Enable creation of OpenSearch Service Linked Role"
   default     = true
 }
+
+variable "opensearch_encrypt_at_rest_enabled" {
+  description = "OpenSearch encrypt at rest enabled"
+  default     = true
+}
+
+variable "opensearch_node_to_node_encryption_enabled" {
+  description = "OpenSearch node-to-node encryption enabled"
+  default     = true
+}
+
+variable "opensearch_advanced_security_options_enabled" {
+  description = "OpenSearch advanced security options enabled"
+  default     = true
+}
+
+variable "opensearch_internal_user_database_enabled" {
+  description = "OpenSearch internal user database enabled"
+  default     = true
+}
+
+variable "opensearch_stac_server_username" {
+  description = "OpenSearch stac server username"
+  default     = "stac_server"
+}
+
+variable "opensearch_admin_username" {
+  description = "OpenSearch admin username"
+  default     = "admin"
+}

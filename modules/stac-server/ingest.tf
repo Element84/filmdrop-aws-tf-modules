@@ -98,6 +98,7 @@ resource "aws_lambda_permission" "stac_server_ingest_sqs_lambda_permission" {
 resource "null_resource" "stac_server_ingest_create_indices" {
   triggers = {
     stac_server_ingest = aws_lambda_function.stac_server_ingest.function_name
+    opensearch_host    = var.opensearch_host != "" ? var.opensearch_host : aws_elasticsearch_domain.stac_server_opensearch_domain.endpoint
   }
 
   provisioner "local-exec" {
