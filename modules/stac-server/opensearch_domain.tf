@@ -38,8 +38,8 @@ resource "aws_elasticsearch_domain" "stac_server_opensearch_domain" {
           for_each = var.opensearch_internal_user_database_enabled == true ? [1] : []
 
           content {
-            master_user_name      = jsondecode(aws_secretsmanager_secret_version.opensearch_master_password_secret_version.secret_string)["USERNAME"]
-            master_user_password  = jsondecode(aws_secretsmanager_secret_version.opensearch_master_password_secret_version.secret_string)["PASSWORD"]
+            master_user_name      = jsondecode(aws_secretsmanager_secret_version.opensearch_master_password_secret_version.secret_string)["username"]
+            master_user_password  = jsondecode(aws_secretsmanager_secret_version.opensearch_master_password_secret_version.secret_string)["password"]
           }
         }
     }
@@ -133,8 +133,8 @@ resource "aws_secretsmanager_secret_version" "opensearch_master_password_secret_
   secret_id = aws_secretsmanager_secret.opensearch_master_password_secret.id
   secret_string = <<EOF
    {
-    "USERNAME": "${var.opensearch_admin_username}",
-    "PASSWORD": "${random_password.opensearch_master_password.result}"
+    "username": "${var.opensearch_admin_username}",
+    "password": "${random_password.opensearch_master_password.result}"
    }
 EOF
 }
@@ -157,8 +157,8 @@ resource "aws_secretsmanager_secret_version" "opensearch_stac_user_password_secr
   secret_id = aws_secretsmanager_secret.opensearch_stac_user_password_secret.id
   secret_string = <<EOF
    {
-    "USERNAME": "${var.opensearch_stac_server_username}",
-    "PASSWORD": "${random_password.opensearch_stac_user_password.result}"
+    "username": "${var.opensearch_stac_server_username}",
+    "password": "${random_password.opensearch_stac_user_password.result}"
    }
 EOF
 }

@@ -31,7 +31,7 @@ def create_stac_server_role():
             header = {}
             admin_secret = secretsmanager.get_secret_value(SecretId=OPENSEARCH_MASTER_CREDS_SECRET_ARN)
             credentials = json.loads(admin_secret['SecretString'])
-            auth_string = "%s:%s" % (credentials['USERNAME'], credentials['PASSWORD'])
+            auth_string = "%s:%s" % (credentials['username'], credentials['password'])
             userAndPass = base64.b64encode(auth_string.encode('utf-8')).decode("ascii")
             header['Authorization'] = 'Basic %s' %  userAndPass
             header['Content-Type'] = 'application/json; charset=utf-8'
@@ -110,14 +110,14 @@ def create_stac_server_user():
             user_secret = secretsmanager.get_secret_value(SecretId=OPENSEARCH_USER_CREDS_SECRET_ARN)
             credentials = json.loads(admin_secret['SecretString'])
             user_credentials = json.loads(user_secret['SecretString'])
-            auth_string = "%s:%s" % (credentials['USERNAME'], credentials['PASSWORD'])
+            auth_string = "%s:%s" % (credentials['username'], credentials['password'])
             userAndPass = base64.b64encode(auth_string.encode('utf-8')).decode("ascii")
             header['Authorization'] = 'Basic %s' %  userAndPass
             header['Content-Type'] = 'application/json; charset=utf-8'
-            path = "/_plugins/_security/api/internalusers/%s" % user_credentials['USERNAME']
+            path = "/_plugins/_security/api/internalusers/%s" % user_credentials['username']
             host = OPENSEARCH_HOST + ":443"
             header['Origin'] = "https://" + OPENSEARCH_HOST
-            request = { "password": "%s" % user_credentials['PASSWORD'] }
+            request = { "password": "%s" % user_credentials['password'] }
         
             connection = http.client.HTTPSConnection(
                 host,
@@ -164,7 +164,7 @@ def create_stac_server_user_role_mapping():
             user_secret = secretsmanager.get_secret_value(SecretId=OPENSEARCH_USER_CREDS_SECRET_ARN)
             credentials = json.loads(admin_secret['SecretString'])
             user_credentials = json.loads(user_secret['SecretString'])
-            auth_string = "%s:%s" % (credentials['USERNAME'], credentials['PASSWORD'])
+            auth_string = "%s:%s" % (credentials['username'], credentials['password'])
             userAndPass = base64.b64encode(auth_string.encode('utf-8')).decode("ascii")
             header['Authorization'] = 'Basic %s' %  userAndPass
             header['Content-Type'] = 'application/json; charset=utf-8'
@@ -173,7 +173,7 @@ def create_stac_server_user_role_mapping():
             header['Origin'] = "https://" + OPENSEARCH_HOST
             request = {
                         "users": [
-                            "%s" % user_credentials['USERNAME']
+                            "%s" % user_credentials['username']
                         ]
                     }
         

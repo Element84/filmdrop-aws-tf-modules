@@ -262,3 +262,23 @@ variable "opensearch_admin_username" {
   description = "OpenSearch admin username"
   default     = "admin"
 }
+
+variable "opensearch_username" {
+  description = "OpenSearch username"
+  default     = ""
+}
+
+variable "opensearch_password" {
+  description = "OpenSearch password"
+  default     = ""
+}
+
+variable "es_compat_mode" {
+  description = "Enable Elasticsearch 7.10 compatibility mode within the server"
+  default     = false
+}
+
+variable "collection_to_index_mappings" {
+  description = "A JSON object representing collection id to index name mappings if they do not have the same names"
+  default     = ""
+}
