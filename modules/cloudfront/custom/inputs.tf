@@ -1,133 +1,146 @@
 variable "enabled" {
   description = "Whether to enable/disable [true/false] the cloudfront distribution"
+  type        = bool
   default     = true
 }
 
 variable "ipv6_enabled" {
   description = "Whether to enable/disable [true/false] ipv6 in the cloudfront distribution"
+  type        = bool
   default     = false
 }
 
 variable "log_cookies" {
   description = "Whether to enable/disable [true/false] cookie logging in the cloudfront distribution"
+  type        = bool
   default     = false
 }
 
 variable "default_root" {
   description = "Default object for CloudFront to return for requests at the root URL"
+  type        = string
   default     = "index.html"
-}
-
-variable "allowed_methods" {
-  description = "Which HTTP methods CloudFront processes"
-  default     = ["HEAD", "GET", "OPTIONS"]
 }
 
 variable "log_prefix" {
   description = "S3 Bucket Prefix for Cloudfront Logging"
+  type        = string
 }
 
 variable "web_acl_id" {
   description = "The id of the WAF resource to attach to the CloudFront endpoint."
+  type        = string
   default     = ""
 }
 
 variable "domain_name" {
   description = "Cloudfront DNS domain name of S3 bucket or custom endpoint"
+  type        = string
 }
 
 variable "origin_path" {
   description = "Cloudfront origin optional path"
+  type        = string
   default     = ""
 }
 
 variable "domain_aliases" {
   description = "Alternate CNAMEs for Cloudfront distribution"
+  type        = list(string)
   default     = []
 }
 
 variable "min_ttl" {
-  default = 0
+  description = "Minimum amount of time, in seconds, that you want objects to stay in the CloudFront cache before CloudFront sends another request to the origin to determine whether the object has been updated."
+  type        = number
+  default     = 0
 }
 
 variable "default_ttl" {
-  default = 3600
+  description = "Default amount of time, in seconds, that you want objects to stay in CloudFront caches before CloudFront forwards another request to your origin to determine whether the object has been updated"
+  type        = number
+  default     = 3600
 }
 
 variable "max_ttl" {
-  default = 86400
+  description = "Maximum amount of time, in seconds, that you want objects to stay in CloudFront caches before CloudFront queries your origin to see whether the object has been updated."
+  type        = number
+  default     = 86400
 }
 
 variable "ssl_certificate_arn" {
   description = "SSL Certificate ARN from Certificate Manager for CloudFront"
+  type        = string
   default     = ""
 }
 
 variable "minimum_protocol_version" {
   description = "Minimum version of the SSL protocol"
+  type        = string
   default     = "TLSv1.2_2019"
 }
 
 variable "origin_http_port" {
   description = "Origin HTTP Port"
+  type        = number
   default     = 80
 }
 
 variable "origin_https_port" {
   description = "Origin HTTPS Port"
+  type        = number
   default     = 443
 }
 
 variable "origin_protocol_policy" {
   description = "Origin Protocol Policy"
+  type        = string
   default     = "http-only"
 }
 
 variable "origin_ssl_protocols" {
   description = "SSL/TLS protocols CloudFront will use when communicating with the origin"
+  type        = list(string)
   default     = ["SSLv3", "TLSv1", "TLSv1.1", "TLSv1.2"]
 }
 
 variable "origin_keepalive_timeout" {
   description = "Custom KeepAlive timeout in seconds"
+  type        = string
   default     = "60"
 }
 
 variable "origin_read_timeout" {
   description = "Custom Read timeout in seconds"
+  type        = string
   default     = "60"
-}
-
-variable "s3_content_bucket_name" {
-  description = "Name of S3 Bucket used to serve content to CloudFront, required if origin is S3"
-  default     = ""
 }
 
 variable "logging_origin_id" {
   description = "CloudFront Logging Origin Id."
+  type        = string
 }
 
 variable "logging_domain_name" {
   description = "CloudFront Logging S3 Bucket Domain Name."
+  type        = string
 }
 
 variable "auth_header_value" {
   description = "Custom authentication header value for CloudFront Origin"
+  type        = string
   default     = ""
 }
 
 variable "auth_header_name" {
   description = "Custom authentication header name for CloudFront Origin"
-  default     = ""
-}
-
-variable "cloudfront_origin_access_identity_arn" {
-  description = "Custom CloudFront Origin Access Identity ARN"
+  type        = string
   default     = ""
 }
 
 variable "cloudfront_access_identity_path" {
   description = "Custom CloudFront Origin Access Identity Path"
+  type        = string
   default     = ""
 }
 
@@ -152,51 +165,42 @@ variable "custom_error_response" {
 
 variable "error_pages_id" {
   description = "CloudFront Error Pages Id"
+  type        = string
 }
 
 variable "error_pages_domain_name" {
   description = "Cloudfront DNS domain name of S3 bucket for Custom Error Pages"
+  type        = string
 }
 
 variable "caching_disabled" {
   description = "Disable Cloudfront Caching for s3 origin to allow large file egress"
+  type        = bool
   default     = false
 }
 
 variable "additional_cloudfront_origins" {
   description = "MAP of custom CloudFront origins, this is for cases were extra configuration is needed at the CloudFront to support path-based routing"
-  type        = map
+  type        = map(any)
   default     = {}
 }
 
-variable "additional_origin_whitelisted_headers" {
-  description = "List of whitelisted http headers to have CloudFront forward to Additional origin"
-  type        = list(string)
-  default     = ["User-Agent"]
-}
-
-variable "cloudfront_access" {
-  description = "Describes if CloudFront has public or private restricted access."
-  default     = "private"
-}
 
 variable "price_class" {
   description = "CloudFront Price Class."
+  type        = string
   default     = "PriceClass_100"
 }
 
 variable "create_waf_rule" {
   description = "Create WAF for cloudfront"
+  type        = string
   default     = true
-}
-
-variable "filmdrop_deployment_role" {
-  description = "FilmDrop Deployment role"
-  default     = "appProjectFilmDropDemoDeployRole"
 }
 
 variable "logging_bucket_name" {
   description = "Name for bucket used for cloudfront logging"
+  type        = string
 }
 
 variable "ip_blocklist" {
@@ -213,4 +217,5 @@ variable "whitelist_ips" {
 
 variable "project_name" {
   description = "Project Name"
+  type        = string
 }

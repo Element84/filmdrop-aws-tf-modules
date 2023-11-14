@@ -1,18 +1,17 @@
 variable "waf_appendix" {
   description = "Unique appendix for the WAF.  Required if the account needs more than one WAF."
+  type        = string
 }
 
 variable "logging_bucket_name" {
   description = "Name for bucket used for cloudfront logging"
+  type        = string
 }
 
 variable "max_message_body_size" {
   description = "The maximum size of a HTTP request body allowed by the WAF"
-  default = 52428800
-}
-
-variable "max_message_body_size_check" {
-  default = true
+  type        = number
+  default     = 52428800
 }
 
 variable "country_blocklist" {
@@ -33,12 +32,3 @@ variable "whitelist_ips" {
   default     = []
 }
 
-variable "sql_injection_check" {
-  description = "Determines whether to add a SQL Injection filter. "
-  default     = true
-}
-
-variable "xss_check" {
-  description = "Determines whether to add a Cross Site Scripting filter. "
-  default     = true
-}

@@ -17,10 +17,11 @@ variable "log_bucket_acl" {
 }
 
 variable "environment" {
-    description = "Project environment"
-    type        = string
+  description = "Project environment"
+  type        = string
 }
 
 variable "project_name" {
   description = "Project Name"
+  type        = string
 }

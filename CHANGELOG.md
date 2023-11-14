@@ -9,14 +9,25 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Changed
 
--
+- Defining a non-empty `stac_server_s3_bucket_arns` and `titiler_s3_bucket_arns` parameters
+  is no longer required. This can now be empty.
+- Refined public bucket access policies
+- Disabled public access to EKS endpoint (CloudFront only)
+- SSM secret creation will now fail if a secret with the same name already exists
+- add an optional env var config for mosaic lambda (request_host_header_override) that will override the host header in the event, so that responses crafted use the desired external-facing domain instead of internal API gateway
+- set force_delete on daskhub and titiler ECR repos to allow automated destroy
+- set force_destroy access logs and logs archive S3 buckets to allow automated destroy
+
+### Removed
+
+- OpenSearch Service linked role is no longer managed by these modules, but instead should
+  be created using the bootstrap project.
 
 ## 1.4.2 2023-09-01
 
 ### Changed
 
 - Adding configurable disk_size and capacity_type to eks node groups
-
 
 ## 1.4.1 2023-08-29
 

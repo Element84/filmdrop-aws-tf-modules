@@ -1,12 +1,14 @@
 resource "aws_ecr_repository" "titiler_ecr_repo" {
   name                 = lower("${var.prefix}titiler")
   image_tag_mutability = "MUTABLE"
+  force_delete         = true
+
   image_scanning_configuration {
     scan_on_push = true
   }
 }
 
-resource random_id suffix {
+resource "random_id" "suffix" {
   byte_length = 8
 }
 
@@ -22,8 +24,8 @@ resource "aws_s3_bucket_ownership_controls" "docker_image_build_source_ownership
 }
 
 resource "aws_s3_bucket_acl" "docker_image_build_source_bucket_acl" {
-  bucket = aws_s3_bucket.docker_image_build_source.id
-  acl    = "private"
+  bucket     = aws_s3_bucket.docker_image_build_source.id
+  acl        = "private"
   depends_on = [aws_s3_bucket_ownership_controls.docker_image_build_source_ownership_controls]
 }
 
@@ -121,15 +123,15 @@ resource "aws_codebuild_project" "titiler_docker_image" {
 
 resource "null_resource" "trigger_codebuild" {
   triggers = {
-    new_docker_image  = filemd5("${path.module}/docker_build/titiler/Dockerfile")
-    new_build_spec    = filemd5("${path.module}/docker_build/buildspec.yml")
-    new_handler       = filemd5("${path.module}/docker_build/titiler/handler.py")
-    new_codebuild     = aws_codebuild_project.titiler_docker_image.id
+    new_docker_image = filemd5("${path.module}/docker_build/titiler/Dockerfile")
+    new_build_spec   = filemd5("${path.module}/docker_build/buildspec.yml")
+    new_handler      = filemd5("${path.module}/docker_build/titiler/handler.py")
+    new_codebuild    = aws_codebuild_project.titiler_docker_image.id
   }
 
   provisioner "local-exec" {
     interpreter = ["/bin/bash", "-ec"]
-    command = <<EOF
+    command     = <<EOF
 export AWS_DEFAULT_REGION=${data.aws_region.current.name}
 export AWS_REGION=${data.aws_region.current.name}
 

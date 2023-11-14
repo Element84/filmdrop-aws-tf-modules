@@ -12,20 +12,25 @@ variable "vpc_security_group_ids" {
 
 variable "vpc_id" {
   description = "FilmDrop VPC ID"
+  type        = string
 }
 
 variable "cirrus_dashboard_release" {
   description = "FilmDrop Cirrus Dashboard Release"
+  type        = string
 }
 
 variable "cirrus_api_endpoint" {
   description = "Cirrus API Endponint"
+  type        = string
 }
 
 variable "metrics_api_endpoint" {
   description = "Metrics API Endponint"
+  type        = string
 }
 
 variable "cirrus_dashboard_bucket_name" {
   description = "Cirrus Dashboard Bucket Name"
+  type        = string
 }

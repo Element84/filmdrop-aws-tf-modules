@@ -1,27 +1,27 @@
 output "nat_gateway_ids" {
   description = "List of FilmDrop NAT Gateway IDs"
-  value       = values(aws_nat_gateway.ngws).*.id
+  value       = values(aws_nat_gateway.ngws)[*].id
 
 }
 
 output "eip_ids" {
   description = "List of EIP IDs"
-  value       = values(aws_eip.eips).*.id  
+  value       = values(aws_eip.eips)[*].id
 }
 
 output "vpc_id" {
   description = "FilmDrop VPC ID"
-  value = aws_vpc.filmdrop_vpc.id
+  value       = aws_vpc.filmdrop_vpc.id
 }
 
 output "private_subnet_ids" {
   description = "List of FilmDrop Private Subnet IDs"
-  value       = values(aws_subnet.private_subnets).*.id
+  value       = values(aws_subnet.private_subnets)[*].id
 }
 
 output "public_subnet_ids" {
   description = "List of FilmDrop Public Subnet IDs"
-  value       = values(aws_subnet.public_subnets).*.id
+  value       = values(aws_subnet.public_subnets)[*].id
 }
 
 output "private_avaliability_zones" {

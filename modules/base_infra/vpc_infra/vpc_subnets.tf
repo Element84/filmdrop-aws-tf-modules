@@ -1,7 +1,7 @@
 resource "aws_vpc" "filmdrop_vpc" {
-    cidr_block           = var.vpc_cidr
-    enable_dns_hostnames = true
-    enable_dns_support   = true
+  cidr_block           = var.vpc_cidr
+  enable_dns_hostnames = true
+  enable_dns_support   = true
 
   tags = {
     Name = "filmdrop-vpc-${var.environment}"
@@ -9,23 +9,23 @@ resource "aws_vpc" "filmdrop_vpc" {
 }
 
 resource "aws_subnet" "public_subnets" {
-    for_each = var.public_subnets_cidr_map
+  for_each = var.public_subnets_cidr_map
 
-    vpc_id              = aws_vpc.filmdrop_vpc.id
-    cidr_block          = each.value
-    availability_zone   = each.key
+  vpc_id            = aws_vpc.filmdrop_vpc.id
+  cidr_block        = each.value
+  availability_zone = each.key
 
   tags = {
     Name = "filmdrop-public-subnet-${each.key}-${var.environment}"
   }
-} 
+}
 
 resource "aws_subnet" "private_subnets" {
-    for_each = var.private_subnets_cidr_map
+  for_each = var.private_subnets_cidr_map
 
-    vpc_id              = aws_vpc.filmdrop_vpc.id
-    cidr_block          = each.value
-    availability_zone   = each.key
+  vpc_id            = aws_vpc.filmdrop_vpc.id
+  cidr_block        = each.value
+  availability_zone = each.key
 
   tags = {
     Name = "filmdrop-private-subnet-${each.key}-${var.environment}"

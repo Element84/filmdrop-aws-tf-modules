@@ -1,0 +1,17 @@
+repos:
+- repo: https://github.com/antonbabenko/pre-commit-terraform
+  rev: v1.83.2
+  hooks:
+    - id: terraform_fmt
+    - id: terraform_tflint
+    # - id: terraform_tfsec
+    # - id: terraform_docs
+    # - id: terraform_checkov
+    # - id: terrascan
+    # - id: tfupdate
+- repo: local
+  hooks:
+    - id: validate
+      name: Terraform validate
+      entry: bash -c 'cd modules && ../scripts/validate.sh'
+      language: system

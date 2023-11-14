@@ -1,5 +1,8 @@
 variable "sns_topics_subscriptions_map" {
-    default = {}
+  type    = map(any)
+  default = {}
 }
 
-variable "sns_topic_arn" {}
+variable "sns_topic_arn" {
+  type = string
+}

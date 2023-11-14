@@ -1,63 +1,81 @@
 variable "zone_id" {
   description = "The DNS zone id to add the record to."
+  type        = string
 }
 
 variable "domain_alias" {
   description = "Alternate CNAME for Cloudfront distribution"
+  type        = string
   default     = ""
 }
 
 variable "application_name" {
   description = "Application name for Cloudfront"
+  type        = string
 }
 
 variable "cloudfront_origin_access_identity_arn" {
   description = "Custom CloudFront Origin Access Identity ARN"
+  type        = string
 }
 
 variable "cloudfront_access_identity_path" {
   description = "Custom CloudFront Origin Access Identity Path"
+  type        = string
 }
 
 variable "min_ttl" {
-  default = 0
+  description = "Minimum amount of time, in seconds, that you want objects to stay in the CloudFront cache before CloudFront sends another request to the origin to determine whether the object has been updated."
+  type        = number
+  default     = 0
 }
 
 variable "default_ttl" {
-  default = 0
+  description = "Default amount of time, in seconds, that you want objects to stay in CloudFront caches before CloudFront forwards another request to your origin to determine whether the object has been updated"
+  type        = number
+  default     = 0
 }
 
 variable "max_ttl" {
-  default = 0
+  description = "Maximum amount of time, in seconds, that you want objects to stay in CloudFront caches before CloudFront queries your origin to see whether the object has been updated."
+  type        = number
+  default     = 0
 }
 
 variable "logging_origin_id" {
   description = "CloudFront Logging Origin Id."
+  type        = string
 }
 
 variable "logging_domain_name" {
   description = "CloudFront Logging S3 Bucket Domain Name."
+  type        = string
 }
 
 variable "error_pages_id" {
   description = "CloudFront Error Pages Id"
+  type        = string
 }
 
 variable "error_pages_domain_name" {
   description = "Cloudfront DNS domain name of S3 bucket for Custom Error Pages"
+  type        = string
 }
 
 variable "logging_bucket_name" {
   description = "Name for bucket used for cloudfront logging"
+  type        = string
 }
 
 variable "create_content_website" {
   description = "Create content S3 bucket with the cloudfront module"
+  type        = bool
   default     = true
 }
 
 variable "domain_name" {
   description = "Cloudfront DNS domain name of S3 bucket or custom endpoint"
+  type        = string
   default     = ""
 }
 
@@ -77,7 +95,7 @@ variable "cf_function_name" {
 variable "cf_function_runtime" {
   description = "CF function runtime"
   type        = string
-  default = "cloudfront-js-1.0"
+  default     = "cloudfront-js-1.0"
 }
 
 variable "cf_function_code_path" {
@@ -88,31 +106,35 @@ variable "cf_function_code_path" {
 
 variable "attach_cf_function" {
   description = "Should attach a function to CF or not"
-  default = false
+  type        = bool
+  default     = false
 }
 
 variable "cf_function_event_type" {
   description = "Eventtype for the function"
   type        = string
-  default = "viewer-request"
+  default     = "viewer-request"
 }
 
 variable "create_cf_function" {
   description = "Should create a CF function or not"
-  default = false
+  type        = bool
+  default     = false
 }
 
 variable "cf_function_arn" {
   description = "CF Function arn in case to get in input"
   type        = string
-  default = ""
+  default     = ""
 }
 
 variable "project_name" {
   description = "Project Name"
+  type        = string
 }
 
 variable "dns_validation" {
   description = "Validate the certificate via a DNS record within the same module."
-  default     = "true"
+  type        = bool
+  default     = true
 }

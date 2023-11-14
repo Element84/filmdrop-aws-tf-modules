@@ -1,5 +1,6 @@
 resource "aws_s3_bucket" "s3_access_logs_bucket" {
   bucket_prefix = var.access_log_bucket_prefix == "" ? "filmdrop-${var.environment}-access-logs-" : var.access_log_bucket_prefix
+  force_destroy = true
 }
 
 resource "aws_s3_bucket_ownership_controls" "s3_access_logs_bucket_ownership_controls" {
@@ -11,17 +12,17 @@ resource "aws_s3_bucket_ownership_controls" "s3_access_logs_bucket_ownership_con
 
 resource "aws_s3_bucket_acl" "s3_access_logs_bucket_acl" {
   depends_on = [aws_s3_bucket_ownership_controls.s3_access_logs_bucket_ownership_controls]
-  bucket = aws_s3_bucket.s3_access_logs_bucket.id
-  acl    = var.log_bucket_acl
+  bucket     = aws_s3_bucket.s3_access_logs_bucket.id
+  acl        = var.log_bucket_acl
 }
 
 resource "aws_s3_bucket_server_side_encryption_configuration" "s3_access_logs_bucket_encryption" {
   bucket = aws_s3_bucket.s3_access_logs_bucket.id
 
   rule {
-      apply_server_side_encryption_by_default {
-        sse_algorithm = "AES256"
-      }
+    apply_server_side_encryption_by_default {
+      sse_algorithm = "AES256"
+    }
   }
 }
 

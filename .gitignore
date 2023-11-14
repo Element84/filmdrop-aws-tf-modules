@@ -1,3 +1,7 @@
+modules/jupyterhub-dask-eks/cluster.yaml
+modules/jupyterhub-dask-eks/daskhub.yaml
+modules/jupyterhub-dask-eks/spec.yaml
+modules/jupyterhub-dask-eks/storageclass.yaml
 .terraform/
 terraform-visual-report
 plan.json

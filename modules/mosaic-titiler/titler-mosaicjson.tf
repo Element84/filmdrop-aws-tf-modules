@@ -1,5 +1,5 @@
 resource "aws_s3_bucket" "lambda-source" {
-  bucket = lower("titiler-mosaic-source-${var.project_name}-${var.titiler_stage}")
+  bucket        = lower("titiler-mosaic-source-${var.project_name}-${var.titiler_stage}")
   force_destroy = true
 }
 
@@ -11,8 +11,8 @@ resource "aws_s3_bucket_ownership_controls" "lambda-source-ownership-controls" {
 }
 
 resource "aws_s3_bucket_acl" "lambda-source-source-bucket-acl" {
-  bucket = aws_s3_bucket.lambda-source.id
-  acl    = "private"
+  bucket     = aws_s3_bucket.lambda-source.id
+  acl        = "private"
   depends_on = [aws_s3_bucket_ownership_controls.lambda-source-ownership-controls]
 }
 
@@ -31,7 +31,7 @@ resource "null_resource" "download-lambda-source-bundle" {
 
   provisioner "local-exec" {
     interpreter = ["bash", "-exc"]
-    command = <<EOF
+    command     = <<EOF
 mkdir -p ${path.module}/lambda
 which wget || echo "wget is required, but not found - this is going to fail..."
 wget --secure-protocol=TLSv1_2 --quiet \
@@ -45,34 +45,35 @@ EOF
 }
 
 resource "aws_lambda_function" "titiler-mosaic-lambda" {
-  function_name    = "titiler-mosaic-${var.project_name}-${var.titiler_stage}-api"
-  description      = "Titiler mosaic API Lambda"
-  role             = aws_iam_role.titiler-mosaic-lambda-role.arn
-  timeout          = var.titiler_timeout
-  memory_size      = var.titiler_memory
+  function_name = "titiler-mosaic-${var.project_name}-${var.titiler_stage}-api"
+  description   = "Titiler mosaic API Lambda"
+  role          = aws_iam_role.titiler-mosaic-lambda-role.arn
+  timeout       = var.titiler_timeout
+  memory_size   = var.titiler_memory
 
-  s3_bucket        = aws_s3_bucket.lambda-source.id
-  s3_key           = "${var.mosaic_titiler_release_tag}-lambda-${var.lambda_runtime}-${null_resource.download-lambda-source-bundle.id}.zip"
-  handler          = "handler.handler"
-  runtime          = var.lambda_runtime
+  s3_bucket = aws_s3_bucket.lambda-source.id
+  s3_key    = "${var.mosaic_titiler_release_tag}-lambda-${var.lambda_runtime}-${null_resource.download-lambda-source-bundle.id}.zip"
+  handler   = "handler.handler"
+  runtime   = var.lambda_runtime
 
   environment {
     variables = {
-        CPL_VSIL_CURL_ALLOWED_EXTENSIONS = var.cpl_vsil_curl_allowed_extensions
-        CPL_VSIL_CURL_CACHE_SIZE = "200000000"
-        GDAL_CACHEMAX = var.gdal_cachemax
-        GDAL_DISABLE_READDIR_ON_OPEN = var.gdal_disable_readdir_on_open
-        GDAL_HTTP_MERGE_CONSECUTIVE_RANGES = var.gdal_http_merge_consecutive_ranges
-        GDAL_HTTP_MULTIPLEX = var.gdal_http_multiplex
-        GDAL_HTTP_VERSION = var.gdal_http_version
-        GDAL_BAND_BLOCK_CACHE = "HASHSET"
-        PYTHONWARNINGS = var.pythonwarnings
-        VSI_CACHE = var.vsi_cache
-        VSI_CACHE_SIZE = var.vsi_cache_size
-        AWS_REQUEST_PAYER = var.aws_request_payer
-        GDAL_INGESTED_BYTES_AT_OPEN = var.gdal_ingested_bytes_at_open
-        MOSAIC_BACKEND = "dynamodb://"
-        MOSAIC_HOST = "${data.aws_region.current.name}/${aws_dynamodb_table.titiler-mosaic-dynamodb-table.name}"
+      CPL_VSIL_CURL_ALLOWED_EXTENSIONS   = var.cpl_vsil_curl_allowed_extensions
+      CPL_VSIL_CURL_CACHE_SIZE           = "200000000"
+      GDAL_CACHEMAX                      = var.gdal_cachemax
+      GDAL_DISABLE_READDIR_ON_OPEN       = var.gdal_disable_readdir_on_open
+      GDAL_HTTP_MERGE_CONSECUTIVE_RANGES = var.gdal_http_merge_consecutive_ranges
+      GDAL_HTTP_MULTIPLEX                = var.gdal_http_multiplex
+      GDAL_HTTP_VERSION                  = var.gdal_http_version
+      GDAL_BAND_BLOCK_CACHE              = "HASHSET"
+      PYTHONWARNINGS                     = var.pythonwarnings
+      VSI_CACHE                          = var.vsi_cache
+      VSI_CACHE_SIZE                     = var.vsi_cache_size
+      AWS_REQUEST_PAYER                  = var.aws_request_payer
+      GDAL_INGESTED_BYTES_AT_OPEN        = var.gdal_ingested_bytes_at_open
+      MOSAIC_BACKEND                     = "dynamodb://"
+      MOSAIC_HOST                        = "${data.aws_region.current.name}/${aws_dynamodb_table.titiler-mosaic-dynamodb-table.name}"
+      REQUEST_HOST_HEADER_OVERRIDE       = var.request_host_header_override
     }
   }
 
@@ -127,19 +128,19 @@ resource "aws_wafv2_web_acl" "titiler-mosaic-wafv2-web-acl" {
   name        = "${var.project_name}-${var.titiler_stage}-mosaic"
   description = "WAF rules for ${var.project_name}-${var.titiler_stage} mosaic titiler"
   scope       = "CLOUDFRONT"
-  provider = aws.east
+  provider    = aws.east
 
-  dynamic default_action {
+  dynamic "default_action" {
     for_each = var.waf_allowed_url == null ? [] : [1]
-    content{
-        block{}
+    content {
+      block {}
     }
   }
 
-  dynamic default_action {
+  dynamic "default_action" {
     for_each = var.waf_allowed_url == null ? [1] : []
     content {
-        allow{}
+      allow {}
     }
   }
 
@@ -147,17 +148,17 @@ resource "aws_wafv2_web_acl" "titiler-mosaic-wafv2-web-acl" {
     name     = "allow-post-with-correct-stac-api-root"
     priority = 1
 
-    dynamic action {
+    dynamic "action" {
       for_each = var.waf_allowed_url == null ? [] : [1]
-      content{
-          allow {}
+      content {
+        allow {}
       }
     }
 
-    dynamic action {
+    dynamic "action" {
       for_each = var.waf_allowed_url == null ? [1] : []
-      content{
-          count {}
+      content {
+        count {}
       }
     }
 
@@ -167,13 +168,13 @@ resource "aws_wafv2_web_acl" "titiler-mosaic-wafv2-web-acl" {
           # POST /mosaicjson/mosaics
           byte_match_statement {
             positional_constraint = "EXACTLY"
-            search_string = "post"
+            search_string         = "post"
             field_to_match {
               method {}
             }
             text_transformation {
               priority = 0
-              type = "LOWERCASE"
+              type     = "LOWERCASE"
             }
           }
         }
@@ -182,13 +183,13 @@ resource "aws_wafv2_web_acl" "titiler-mosaic-wafv2-web-acl" {
           # POST /mosaicjson/mosaics
           byte_match_statement {
             positional_constraint = "EXACTLY"
-            search_string = "/mosaicjson/mosaics"
+            search_string         = "/mosaicjson/mosaics"
             field_to_match {
               uri_path {}
             }
             text_transformation {
               priority = 0
-              type = "LOWERCASE"
+              type     = "LOWERCASE"
             }
           }
         }
@@ -203,14 +204,14 @@ resource "aws_wafv2_web_acl" "titiler-mosaic-wafv2-web-acl" {
                 match_pattern {
                   included_paths = ["/stac_api_root"]
                 }
-                match_scope = "VALUE"
+                match_scope               = "VALUE"
                 invalid_fallback_behavior = "NO_MATCH"
-                oversize_handling = "NO_MATCH"
+                oversize_handling         = "NO_MATCH"
               }
             }
             text_transformation {
               priority = 0
-              type = "LOWERCASE"
+              type     = "LOWERCASE"
             }
           }
         }
@@ -224,80 +225,80 @@ resource "aws_wafv2_web_acl" "titiler-mosaic-wafv2-web-acl" {
     }
   }
 
-rule {
-  name     = "allow-mosaic-options-for-cors"
-  priority = 2
+  rule {
+    name     = "allow-mosaic-options-for-cors"
+    priority = 2
 
-  dynamic action {
-    for_each = var.waf_allowed_url == null ? [] : [1]
-    content{
+    dynamic "action" {
+      for_each = var.waf_allowed_url == null ? [] : [1]
+      content {
         allow {}
+      }
     }
-  }
 
-  dynamic action {
-    for_each = var.waf_allowed_url == null ? [1] : []
-    content{
+    dynamic "action" {
+      for_each = var.waf_allowed_url == null ? [1] : []
+      content {
         count {}
+      }
     }
-  }
 
-  statement {
-    and_statement {
-      statement {
-        # OPTIONS /mosaicjson/mosaics
-        byte_match_statement {
-          positional_constraint = "EXACTLY"
-          search_string = "options"
-          field_to_match {
-            method {}
+    statement {
+      and_statement {
+        statement {
+          # OPTIONS /mosaicjson/mosaics
+          byte_match_statement {
+            positional_constraint = "EXACTLY"
+            search_string         = "options"
+            field_to_match {
+              method {}
+            }
+            text_transformation {
+              priority = 0
+              type     = "LOWERCASE"
+            }
           }
-          text_transformation {
-            priority = 0
-            type = "LOWERCASE"
+        }
+
+        statement {
+          # OPTIONS /mosaicjson/mosaics
+          byte_match_statement {
+            positional_constraint = "EXACTLY"
+            search_string         = "/mosaicjson/mosaics"
+            field_to_match {
+              uri_path {}
+            }
+            text_transformation {
+              priority = 0
+              type     = "LOWERCASE"
+            }
           }
         }
       }
+    }
 
-      statement {
-        # OPTIONS /mosaicjson/mosaics
-        byte_match_statement {
-          positional_constraint = "EXACTLY"
-          search_string = "/mosaicjson/mosaics"
-          field_to_match {
-            uri_path {}
-          }
-          text_transformation {
-            priority = 0
-            type = "LOWERCASE"
-          }
-        }
-      }
+    visibility_config {
+      cloudwatch_metrics_enabled = false
+      metric_name                = "${var.project_name}-${var.titiler_stage}-mosaic-allow-options"
+      sampled_requests_enabled   = false
     }
   }
-
-  visibility_config {
-    cloudwatch_metrics_enabled = false
-    metric_name                = "${var.project_name}-${var.titiler_stage}-mosaic-allow-options"
-    sampled_requests_enabled   = false
-  }
-}
 
   rule {
     name     = "allow-get-stac-tiles-with-url-query-param"
     priority = 3
 
-    dynamic action {
+    dynamic "action" {
       for_each = var.waf_allowed_url == null ? [] : [1]
-      content{
-          allow {}
+      content {
+        allow {}
       }
     }
 
-    dynamic action {
+    dynamic "action" {
       for_each = var.waf_allowed_url == null ? [1] : []
-      content{
-          count {}
+      content {
+        count {}
       }
     }
 
@@ -307,13 +308,13 @@ rule {
           # GET /stac/tiles/*
           byte_match_statement {
             positional_constraint = "EXACTLY"
-            search_string = "get"
+            search_string         = "get"
             field_to_match {
               method {}
             }
             text_transformation {
               priority = 0
-              type = "LOWERCASE"
+              type     = "LOWERCASE"
             }
           }
         }
@@ -322,13 +323,13 @@ rule {
           # GET /stac/tiles/*
           byte_match_statement {
             positional_constraint = "STARTS_WITH"
-            search_string = "/stac/tiles/"
+            search_string         = "/stac/tiles/"
             field_to_match {
               uri_path {}
             }
             text_transformation {
               priority = 0
-              type = "LOWERCASE"
+              type     = "LOWERCASE"
             }
           }
         }
@@ -347,7 +348,7 @@ rule {
 
             text_transformation {
               priority = 0
-              type = "LOWERCASE"
+              type     = "LOWERCASE"
             }
           }
         }

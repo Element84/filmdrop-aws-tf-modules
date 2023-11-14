@@ -1,25 +1,24 @@
 variable "vpc_id" {
   description = "vpc id for codebuild to use"
+  type        = string
 }
 
 variable "private_subnet_ids" {
   description = "list of subnet ids for codebuild to use"
-  type        = list
+  type        = list(any)
 }
 
 variable "security_group_ids" {
   description = "list of security group ids for codebuild to use"
-  type        = list
+  type        = list(any)
 }
 
 variable "titiler_stage" {
   description = "Titiler stage"
+  type        = string
 }
 
 variable "prefix" {
   description = "Titiler prefix"
-}
-
-variable "project_name" {
-  description = "Project Name"
+  type        = string
 }

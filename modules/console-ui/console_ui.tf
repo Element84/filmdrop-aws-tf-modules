@@ -83,19 +83,19 @@ resource "aws_codebuild_project" "console_ui_codebuild" {
 
 resource "null_resource" "trigger_console_ui_upgrade" {
   triggers = {
-    new_codebuild                   = aws_codebuild_project.console_ui_codebuild.id
-    region                          = data.aws_region.current.name
-    account                         = data.aws_caller_identity.current.account_id
-    filmdrop_ui_release             = var.filmdrop_ui_release
-    filmdrop_ui_config              = var.filmdrop_ui_config
-    console_ui_bucket_name          = var.console_ui_bucket_name
-    new_source                      = aws_s3_bucket.console_ui_source_config.id
-    new_build_spec                  = aws_s3_object.console_ui_build_spec.etag
+    new_codebuild          = aws_codebuild_project.console_ui_codebuild.id
+    region                 = data.aws_region.current.name
+    account                = data.aws_caller_identity.current.account_id
+    filmdrop_ui_release    = var.filmdrop_ui_release
+    filmdrop_ui_config     = var.filmdrop_ui_config
+    console_ui_bucket_name = var.console_ui_bucket_name
+    new_source             = aws_s3_bucket.console_ui_source_config.id
+    new_build_spec         = aws_s3_object.console_ui_build_spec.etag
   }
 
   provisioner "local-exec" {
     interpreter = ["bash", "-ec"]
-    command = <<EOF
+    command     = <<EOF
 export AWS_DEFAULT_REGION=${data.aws_region.current.name}
 export AWS_REGION=${data.aws_region.current.name}
 
@@ -130,7 +130,7 @@ EOF
   ]
 }
 
-resource random_id suffix {
+resource "random_id" "suffix" {
   byte_length = 8
 }
 
@@ -156,8 +156,11 @@ resource "aws_s3_bucket_public_access_block" "console_ui_source_config_public_ac
 
 resource "aws_s3_bucket_acl" "console_ui_source_config_bucket_acl" {
   bucket = aws_s3_bucket.console_ui_source_config.id
-  acl    = "private"
-  depends_on = [ aws_s3_bucket_ownership_controls.console_ui_source_config_ownership_controls ]
+  acl    = "public-read"
+  depends_on = [
+    aws_s3_bucket_ownership_controls.console_ui_source_config_ownership_controls,
+    aws_s3_bucket_public_access_block.console_ui_source_config_public_access_block
+  ]
 }
 
 resource "aws_s3_bucket_versioning" "console_ui_source_config_versioning" {

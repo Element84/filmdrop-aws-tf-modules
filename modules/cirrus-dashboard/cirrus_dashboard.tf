@@ -73,21 +73,21 @@ resource "aws_codebuild_project" "cirrus_dashboard_codebuild" {
 
 resource "null_resource" "trigger_cirrus_dashboard_upgrade" {
   triggers = {
-    new_codebuild                   = aws_codebuild_project.cirrus_dashboard_codebuild.id
-    region                          = data.aws_region.current.name
-    account                         = data.aws_caller_identity.current.account_id
-    cirrus_dashboard_release        = var.cirrus_dashboard_release
-    cirrus_api_endpoint             = var.cirrus_api_endpoint
-    metrics_api_endpoint            = var.metrics_api_endpoint
-    cirrus_dashboard_bucket_name    = var.cirrus_dashboard_bucket_name
-    new_source                      = aws_s3_bucket.cirrus_dashboard_source_config.id
-    new_build_spec                  = aws_s3_object.cirrus_dashboard_build_spec.etag
+    new_codebuild                = aws_codebuild_project.cirrus_dashboard_codebuild.id
+    region                       = data.aws_region.current.name
+    account                      = data.aws_caller_identity.current.account_id
+    cirrus_dashboard_release     = var.cirrus_dashboard_release
+    cirrus_api_endpoint          = var.cirrus_api_endpoint
+    metrics_api_endpoint         = var.metrics_api_endpoint
+    cirrus_dashboard_bucket_name = var.cirrus_dashboard_bucket_name
+    new_source                   = aws_s3_bucket.cirrus_dashboard_source_config.id
+    new_build_spec               = aws_s3_object.cirrus_dashboard_build_spec.etag
 
   }
 
   provisioner "local-exec" {
     interpreter = ["bash", "-ec"]
-    command = <<EOF
+    command     = <<EOF
 export AWS_DEFAULT_REGION=${data.aws_region.current.name}
 export AWS_REGION=${data.aws_region.current.name}
 
@@ -104,7 +104,7 @@ EOF
   ]
 }
 
-resource random_id suffix {
+resource "random_id" "suffix" {
   byte_length = 8
 }
 
@@ -130,9 +130,12 @@ resource "aws_s3_bucket_public_access_block" "cirrus_dashboard_source_config_pub
 
 resource "aws_s3_bucket_acl" "cirrus_dashboard_source_config_bucket_acl" {
   bucket = aws_s3_bucket.cirrus_dashboard_source_config.id
-  acl    = "private"
+  acl    = "public-read"
 
-  depends_on = [aws_s3_bucket_ownership_controls.cirrus_dashboard_source_config_ownership_controls]
+  depends_on = [
+    aws_s3_bucket_ownership_controls.cirrus_dashboard_source_config_ownership_controls,
+    aws_s3_bucket_public_access_block.cirrus_dashboard_source_config_public_access_block
+  ]
 }
 
 resource "aws_s3_bucket_versioning" "cirrus_dashboard_source_config_versioning" {

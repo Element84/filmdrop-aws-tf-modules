@@ -1,5 +1,6 @@
 resource "aws_s3_bucket" "s3_logs_archive_bucket" {
   bucket_prefix = var.archive_log_bucket_prefix == "" ? "filmdrop-${var.environment}-logs-archive-" : var.archive_log_bucket_prefix
+  force_destroy = true
 }
 
 resource "aws_s3_bucket_ownership_controls" "s3_logs_archive_bucket_ownership_controls" {
@@ -11,7 +12,7 @@ resource "aws_s3_bucket_ownership_controls" "s3_logs_archive_bucket_ownership_co
 
 resource "aws_s3_bucket_acl" "s3_logs_archive_bucket_acl" {
   depends_on = [aws_s3_bucket_ownership_controls.s3_logs_archive_bucket_ownership_controls]
-  bucket = aws_s3_bucket.s3_logs_archive_bucket.id
+  bucket     = aws_s3_bucket.s3_logs_archive_bucket.id
 
   access_control_policy {
     grant {
@@ -222,9 +223,9 @@ resource "aws_s3_bucket_server_side_encryption_configuration" "s3_logs_archive_b
   bucket = aws_s3_bucket.s3_logs_archive_bucket.id
 
   rule {
-      apply_server_side_encryption_by_default {
-        sse_algorithm = "AES256"
-      }
+    apply_server_side_encryption_by_default {
+      sse_algorithm = "AES256"
+    }
   }
 }
 
@@ -241,7 +242,6 @@ resource "aws_ssm_parameter" "s3_logs_archive_bucket_name_parameter" {
   name        = "filmdrop_${var.project_name}_${var.environment}_logs_bucket_name"
   description = "Name of the FilmDrop ${var.environment} Logs Bucket"
   value       = aws_s3_bucket.s3_logs_archive_bucket.id
-  overwrite   = true
 }
 
 resource "aws_s3_bucket_public_access_block" "s3_logs_archive_bucket_public_access_block" {

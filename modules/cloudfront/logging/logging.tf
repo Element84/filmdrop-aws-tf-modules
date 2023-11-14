@@ -11,7 +11,6 @@ resource "aws_ssm_parameter" "logs_bucket_name" {
   name        = "cloudfront_logs_bucket_name_${local.origin_id}"
   description = "Name of the FilmDrop Cloudfront Logs Bucket"
   value       = "cloudfront-filmdrop-logs-${local.origin_id}"
-  overwrite   = true
 }
 
 resource "aws_s3_bucket" "log_bucket" {
@@ -20,15 +19,15 @@ resource "aws_s3_bucket" "log_bucket" {
 }
 
 resource "aws_s3_bucket_replication_configuration" "log_bucket_replication" {
-  count  = var.create_log_bucket ? 1 : 0
-  depends_on = [ aws_s3_bucket_versioning.log_bucket_versioning ]
+  count      = var.create_log_bucket ? 1 : 0
+  depends_on = [aws_s3_bucket_versioning.log_bucket_versioning]
 
-  role = aws_iam_role.cloudfront_bucket_replicator_role.arn
+  role   = aws_iam_role.cloudfront_bucket_replicator_role.arn
   bucket = aws_s3_bucket_versioning.log_bucket_versioning[0].id
 
   rule {
-    id = "filmdrop-archive-bucket-replication"
-    status = "Enabled"
+    id       = "filmdrop-archive-bucket-replication"
+    status   = "Enabled"
     priority = 1
     filter {}
 
@@ -57,8 +56,8 @@ resource "aws_s3_bucket_ownership_controls" "log_bucket_ownership_controls" {
 }
 
 resource "aws_s3_bucket_acl" "log_bucket_acl" {
-  count  = var.create_log_bucket ? 1 : 0
-  bucket = aws_s3_bucket.log_bucket[0].id
+  count      = var.create_log_bucket ? 1 : 0
+  bucket     = aws_s3_bucket.log_bucket[0].id
   depends_on = [aws_s3_bucket_ownership_controls.log_bucket_ownership_controls]
 
   access_control_policy {

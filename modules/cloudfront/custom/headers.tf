@@ -10,13 +10,13 @@ resource "aws_lambda_function" "cloudfront_headers_lambda" {
 
   environment {
     variables = {
-      DISTRIBUTIONID            = aws_cloudfront_distribution.filmdrop_managed_cloudfront_distribution.id
-      FORWARDEDHOST             = length(var.domain_aliases) > 0 ? element(concat(var.domain_aliases, [""]), 0) : aws_cloudfront_distribution.filmdrop_managed_cloudfront_distribution.domain_name
-      FORWARDEDPROTO            = "https"
-      AUTHKEYNAME               = var.auth_header_name
-      AUTHKEYVALUE              = var.auth_header_value
-      REGION                    = data.aws_region.current.name
-      SSM_FORWARDED_HOST_PARAM  = aws_ssm_parameter.cloudfront_x_forwarded_host.name
+      DISTRIBUTIONID           = aws_cloudfront_distribution.filmdrop_managed_cloudfront_distribution.id
+      FORWARDEDHOST            = length(var.domain_aliases) > 0 ? element(concat(var.domain_aliases, [""]), 0) : aws_cloudfront_distribution.filmdrop_managed_cloudfront_distribution.domain_name
+      FORWARDEDPROTO           = "https"
+      AUTHKEYNAME              = var.auth_header_name
+      AUTHKEYVALUE             = var.auth_header_value
+      REGION                   = data.aws_region.current.name
+      SSM_FORWARDED_HOST_PARAM = aws_ssm_parameter.cloudfront_x_forwarded_host.name
     }
   }
 }
@@ -29,7 +29,7 @@ resource "null_resource" "update_cloudfront_headers" {
 
   provisioner "local-exec" {
     interpreter = ["bash", "-ec"]
-    command = <<EOF
+    command     = <<EOF
 export AWS_DEFAULT_REGION=${data.aws_region.current.name}
 export AWS_REGION=${data.aws_region.current.name}
 
@@ -48,10 +48,9 @@ EOF
 }
 
 resource "aws_ssm_parameter" "cloudfront_x_forwarded_host" {
-  name      = "cloudfront_${var.project_name}_${var.log_prefix}_dns"
-  type      = "String"
-  value     = length(var.domain_aliases) > 0 ? element(concat(var.domain_aliases, [""]), 0) : var.domain_name
-  overwrite = true
+  name  = "cloudfront_${var.project_name}_${var.log_prefix}_dns"
+  type  = "String"
+  value = length(var.domain_aliases) > 0 ? element(concat(var.domain_aliases, [""]), 0) : var.domain_name
 
   lifecycle {
     ignore_changes = [

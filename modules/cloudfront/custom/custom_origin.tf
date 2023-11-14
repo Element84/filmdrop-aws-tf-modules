@@ -12,7 +12,7 @@ resource "null_resource" "check_ssl" {
   provisioner "local-exec" {
     # check that the cert is ready
     interpreter = ["bash", "-ec"]
-    command = <<EOF
+    command     = <<EOF
 export AWS_DEFAULT_REGION=${data.aws_region.current.name}
 export AWS_REGION=${data.aws_region.current.name}
 
@@ -55,7 +55,7 @@ resource "aws_cloudfront_distribution" "filmdrop_managed_cloudfront_distribution
       for_each = { for i, j in [var.auth_header_name] : i => j if var.auth_header_name != "" }
 
       content {
-        name = var.auth_header_name
+        name  = var.auth_header_name
         value = var.auth_header_value
       }
     }
@@ -101,7 +101,7 @@ resource "aws_cloudfront_distribution" "filmdrop_managed_cloudfront_distribution
         for_each = { for i, j in origin.value["custom_header"] : i => j if contains(keys(j), "name") }
 
         content {
-          name = custom_header.value["name"]
+          name  = custom_header.value["name"]
           value = custom_header.value["value"]
         }
       }
@@ -110,12 +110,12 @@ resource "aws_cloudfront_distribution" "filmdrop_managed_cloudfront_distribution
         for_each = { for i, j in origin.value["custom_origin_config"] : i => j if contains(keys(j), "origin_protocol_policy") }
 
         content {
-          http_port                 = custom_origin_config.value["http_port"]
-          https_port                = custom_origin_config.value["https_port"]
-          origin_protocol_policy    = custom_origin_config.value["origin_protocol_policy"]
-          origin_ssl_protocols      = ["SSLv3", "TLSv1", "TLSv1.1", "TLSv1.2"]
-          origin_keepalive_timeout  = custom_origin_config.value["origin_keepalive_timeout"]
-          origin_read_timeout       = custom_origin_config.value["origin_read_timeout"]
+          http_port                = custom_origin_config.value["http_port"]
+          https_port               = custom_origin_config.value["https_port"]
+          origin_protocol_policy   = custom_origin_config.value["origin_protocol_policy"]
+          origin_ssl_protocols     = ["SSLv3", "TLSv1", "TLSv1.1", "TLSv1.2"]
+          origin_keepalive_timeout = custom_origin_config.value["origin_keepalive_timeout"]
+          origin_read_timeout      = custom_origin_config.value["origin_read_timeout"]
         }
       }
     }
@@ -179,7 +179,7 @@ resource "aws_cloudfront_distribution" "filmdrop_managed_cloudfront_distribution
 
   dynamic "ordered_cache_behavior" {
     for_each = { for k, v in var.additional_cloudfront_origins : k => v if contains(keys(v), "origin_id") }
-    
+
     content {
       path_pattern     = "${ordered_cache_behavior.value["routing_path"]}*"
       allowed_methods  = ["HEAD", "GET", "OPTIONS", "PUT", "POST", "PATCH", "DELETE"]
@@ -215,7 +215,7 @@ resource "aws_cloudfront_distribution" "filmdrop_managed_cloudfront_distribution
 
       # Checking for other backends
       dynamic "forwarded_values" {
-        for_each = contains(split(".", ordered_cache_behavior.value["domain_name"]), "elb") || contains(split(".", ordered_cache_behavior.value["domain_name"]), "execute-api") ?  [] : [""]
+        for_each = contains(split(".", ordered_cache_behavior.value["domain_name"]), "elb") || contains(split(".", ordered_cache_behavior.value["domain_name"]), "execute-api") ? [] : [""]
         content {
           query_string = true
           headers      = ["User-Agent"]
@@ -283,7 +283,7 @@ resource "aws_cloudfront_distribution" "filmdrop_managed_cloudfront_distribution
 }
 
 module "cloudfront_waf" {
-  count = var.create_waf_rule == false ? 0 : 1
+  count  = var.create_waf_rule == false ? 0 : 1
   source = "../waf"
 
   logging_bucket_name = var.logging_bucket_name

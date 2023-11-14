@@ -17,7 +17,7 @@ resource "aws_instance" "ssm_bastion" {
 }
 
 resource "aws_network_interface" "ssm_bastion_interface" {
-  subnet_id   = var.subnet_id
+  subnet_id = var.subnet_id
 
   source_dest_check = false
 
@@ -70,6 +70,6 @@ resource "aws_security_group" "ssm_security_group" {
   }
 
   lifecycle {
-      ignore_changes = [ingress, egress]
+    ignore_changes = [ingress, egress]
   }
 }

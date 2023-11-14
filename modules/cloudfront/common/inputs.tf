@@ -18,5 +18,6 @@ variable "log_bucket_domain_name" {
 
 variable "filmdrop_archive_bucket_name" {
   description = "Name of existing FilmDrop Archive Bucket"
+  type        = string
   default     = "CHANGEME"
 }

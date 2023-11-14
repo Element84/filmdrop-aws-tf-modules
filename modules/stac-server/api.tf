@@ -11,31 +11,31 @@ resource "aws_lambda_function" "stac_server_api" {
 
   environment {
     variables = {
-        STAC_ID                           = var.stac_id
-        STAC_TITLE                        = var.stac_title
-        STAC_DESCRIPTION                  = var.stac_description
-        LOG_LEVEL                         = var.log_level
-        REQUEST_LOGGING_ENABLED           = var.request_logging_enabled
-        STAC_DOCS_URL                     = var.stac_docs_url
-        OPENSEARCH_HOST                   = (
-          var.opensearch_host != "" 
-            ? var.opensearch_host 
-            : aws_opensearch_domain.stac_server_opensearch_domain.endpoint
-        )
-        ENABLE_TRANSACTIONS_EXTENSION     = var.enable_transactions_extension
-        STAC_API_ROOTPATH                 = (
-          var.stac_api_rootpath != null
-            ? var.stac_api_rootpath
-            : "/${var.stac_api_stage}"
-        )
-        PRE_HOOK                          = (
-          var.stac_server_auth_pre_hook_enabled && var.stac_server_pre_hook_lambda_arn == "" 
-            ? one(aws_lambda_function.stac_server_api_auth_pre_hook[*].arn) 
-            : var.stac_server_pre_hook_lambda_arn
-        )
-        POST_HOOK                         = var.stac_server_post_hook_lambda_arn
-        OPENSEARCH_CREDENTIALS_SECRET_ID	= aws_secretsmanager_secret.opensearch_stac_user_password_secret.arn
-        COLLECTION_TO_INDEX_MAPPINGS      = var.collection_to_index_mappings
+      STAC_ID                 = var.stac_id
+      STAC_TITLE              = var.stac_title
+      STAC_DESCRIPTION        = var.stac_description
+      LOG_LEVEL               = var.log_level
+      REQUEST_LOGGING_ENABLED = var.request_logging_enabled
+      STAC_DOCS_URL           = var.stac_docs_url
+      OPENSEARCH_HOST = (
+        var.opensearch_host != ""
+        ? var.opensearch_host
+        : aws_opensearch_domain.stac_server_opensearch_domain.endpoint
+      )
+      ENABLE_TRANSACTIONS_EXTENSION = var.enable_transactions_extension
+      STAC_API_ROOTPATH = (
+        var.stac_api_rootpath != null
+        ? var.stac_api_rootpath
+        : "/${var.stac_api_stage}"
+      )
+      PRE_HOOK = (
+        var.stac_server_auth_pre_hook_enabled && var.stac_server_pre_hook_lambda_arn == ""
+        ? one(aws_lambda_function.stac_server_api_auth_pre_hook[*].arn)
+        : var.stac_server_pre_hook_lambda_arn
+      )
+      POST_HOOK                        = var.stac_server_post_hook_lambda_arn
+      OPENSEARCH_CREDENTIALS_SECRET_ID = aws_secretsmanager_secret.opensearch_stac_user_password_secret.arn
+      COLLECTION_TO_INDEX_MAPPINGS     = var.collection_to_index_mappings
     }
   }
 
@@ -53,16 +53,16 @@ resource "aws_api_gateway_rest_api" "stac_server_api_gateway" {
   }
 
   lifecycle {
-      ignore_changes = [policy]
+    ignore_changes = [policy]
   }
 
 }
 
 resource "aws_api_gateway_method" "stac_server_api_gateway_root_method" {
-  rest_api_id      = aws_api_gateway_rest_api.stac_server_api_gateway.id
-  resource_id      = aws_api_gateway_rest_api.stac_server_api_gateway.root_resource_id
-  http_method      = "ANY"
-  authorization    = "NONE"
+  rest_api_id   = aws_api_gateway_rest_api.stac_server_api_gateway.id
+  resource_id   = aws_api_gateway_rest_api.stac_server_api_gateway.root_resource_id
+  http_method   = "ANY"
+  authorization = "NONE"
 }
 
 resource "aws_api_gateway_integration" "stac_server_api_gateway_root_method_integration" {
@@ -81,86 +81,86 @@ resource "aws_api_gateway_resource" "stac_server_api_gateway_proxy_resource" {
 }
 
 resource "aws_api_gateway_method" "stac_server_api_gateway_proxy_resource_method" {
-  rest_api_id      = aws_api_gateway_rest_api.stac_server_api_gateway.id
-  resource_id      = aws_api_gateway_resource.stac_server_api_gateway_proxy_resource.id
-  http_method      = "ANY"
-  authorization    = "NONE"
+  rest_api_id   = aws_api_gateway_rest_api.stac_server_api_gateway.id
+  resource_id   = aws_api_gateway_resource.stac_server_api_gateway_proxy_resource.id
+  http_method   = "ANY"
+  authorization = "NONE"
 }
 
 resource "aws_api_gateway_method" "stac_root_options_method" {
-    rest_api_id   = aws_api_gateway_rest_api.stac_server_api_gateway.id
-    resource_id   = aws_api_gateway_rest_api.stac_server_api_gateway.root_resource_id
-    http_method   = "OPTIONS"
-    authorization = "NONE"
+  rest_api_id   = aws_api_gateway_rest_api.stac_server_api_gateway.id
+  resource_id   = aws_api_gateway_rest_api.stac_server_api_gateway.root_resource_id
+  http_method   = "OPTIONS"
+  authorization = "NONE"
 }
 resource "aws_api_gateway_method_response" "stac_root_options_200" {
-    rest_api_id   = aws_api_gateway_rest_api.stac_server_api_gateway.id
-    resource_id   = aws_api_gateway_rest_api.stac_server_api_gateway.root_resource_id
-    http_method   = aws_api_gateway_method.stac_root_options_method.http_method
-    status_code   = "200"
+  rest_api_id = aws_api_gateway_rest_api.stac_server_api_gateway.id
+  resource_id = aws_api_gateway_rest_api.stac_server_api_gateway.root_resource_id
+  http_method = aws_api_gateway_method.stac_root_options_method.http_method
+  status_code = "200"
 
-    response_parameters = {
-        "method.response.header.Access-Control-Allow-Headers" = true,
-        "method.response.header.Access-Control-Allow-Methods" = true,
-        "method.response.header.Access-Control-Allow-Origin" = true
-    }
+  response_parameters = {
+    "method.response.header.Access-Control-Allow-Headers" = true,
+    "method.response.header.Access-Control-Allow-Methods" = true,
+    "method.response.header.Access-Control-Allow-Origin"  = true
+  }
 }
 
 resource "aws_api_gateway_integration" "stac_root_options_integration" {
-    rest_api_id   = aws_api_gateway_rest_api.stac_server_api_gateway.id
-    resource_id   = aws_api_gateway_rest_api.stac_server_api_gateway.root_resource_id
-    http_method   = aws_api_gateway_method.stac_root_options_method.http_method
-    type          = "MOCK"
+  rest_api_id = aws_api_gateway_rest_api.stac_server_api_gateway.id
+  resource_id = aws_api_gateway_rest_api.stac_server_api_gateway.root_resource_id
+  http_method = aws_api_gateway_method.stac_root_options_method.http_method
+  type        = "MOCK"
 }
 
 resource "aws_api_gateway_integration_response" "stac_root_options_integration_response" {
-    rest_api_id   = aws_api_gateway_rest_api.stac_server_api_gateway.id
-    resource_id   = aws_api_gateway_rest_api.stac_server_api_gateway.root_resource_id
-    http_method   = aws_api_gateway_method.stac_root_options_method.http_method
-    status_code   = aws_api_gateway_method_response.stac_root_options_200.status_code
-    response_parameters = {
-        "method.response.header.Access-Control-Allow-Headers" = "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'",
-        "method.response.header.Access-Control-Allow-Methods" = "'GET,OPTIONS,POST,PUT'",
-        "method.response.header.Access-Control-Allow-Origin" = "'*'"
-    }
+  rest_api_id = aws_api_gateway_rest_api.stac_server_api_gateway.id
+  resource_id = aws_api_gateway_rest_api.stac_server_api_gateway.root_resource_id
+  http_method = aws_api_gateway_method.stac_root_options_method.http_method
+  status_code = aws_api_gateway_method_response.stac_root_options_200.status_code
+  response_parameters = {
+    "method.response.header.Access-Control-Allow-Headers" = "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'",
+    "method.response.header.Access-Control-Allow-Methods" = "'GET,OPTIONS,POST,PUT'",
+    "method.response.header.Access-Control-Allow-Origin"  = "'*'"
+  }
 }
 
 resource "aws_api_gateway_method" "stac_options_method" {
-    rest_api_id   = aws_api_gateway_rest_api.stac_server_api_gateway.id
-    resource_id   = aws_api_gateway_resource.stac_server_api_gateway_proxy_resource.id
-    http_method   = "OPTIONS"
-    authorization = "NONE"
+  rest_api_id   = aws_api_gateway_rest_api.stac_server_api_gateway.id
+  resource_id   = aws_api_gateway_resource.stac_server_api_gateway_proxy_resource.id
+  http_method   = "OPTIONS"
+  authorization = "NONE"
 }
 resource "aws_api_gateway_method_response" "stac_options_200" {
-    rest_api_id   = aws_api_gateway_rest_api.stac_server_api_gateway.id
-    resource_id   = aws_api_gateway_resource.stac_server_api_gateway_proxy_resource.id
-    http_method   = aws_api_gateway_method.stac_options_method.http_method
-    status_code   = "200"
+  rest_api_id = aws_api_gateway_rest_api.stac_server_api_gateway.id
+  resource_id = aws_api_gateway_resource.stac_server_api_gateway_proxy_resource.id
+  http_method = aws_api_gateway_method.stac_options_method.http_method
+  status_code = "200"
 
-    response_parameters = {
-        "method.response.header.Access-Control-Allow-Headers" = true,
-        "method.response.header.Access-Control-Allow-Methods" = true,
-        "method.response.header.Access-Control-Allow-Origin" = true
-    }
+  response_parameters = {
+    "method.response.header.Access-Control-Allow-Headers" = true,
+    "method.response.header.Access-Control-Allow-Methods" = true,
+    "method.response.header.Access-Control-Allow-Origin"  = true
+  }
 }
 
 resource "aws_api_gateway_integration" "stac_options_integration" {
-    rest_api_id   = aws_api_gateway_rest_api.stac_server_api_gateway.id
-    resource_id   = aws_api_gateway_resource.stac_server_api_gateway_proxy_resource.id
-    http_method   = aws_api_gateway_method.stac_options_method.http_method
-    type          = "MOCK"
+  rest_api_id = aws_api_gateway_rest_api.stac_server_api_gateway.id
+  resource_id = aws_api_gateway_resource.stac_server_api_gateway_proxy_resource.id
+  http_method = aws_api_gateway_method.stac_options_method.http_method
+  type        = "MOCK"
 }
 
 resource "aws_api_gateway_integration_response" "stac_options_integration_response" {
-    rest_api_id   = aws_api_gateway_rest_api.stac_server_api_gateway.id
-    resource_id   = aws_api_gateway_resource.stac_server_api_gateway_proxy_resource.id
-    http_method   = aws_api_gateway_method.stac_options_method.http_method
-    status_code   = aws_api_gateway_method_response.stac_options_200.status_code
-    response_parameters = {
-        "method.response.header.Access-Control-Allow-Headers" = "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'",
-        "method.response.header.Access-Control-Allow-Methods" = "'GET,OPTIONS,POST,PUT'",
-        "method.response.header.Access-Control-Allow-Origin" = "'*'"
-    }
+  rest_api_id = aws_api_gateway_rest_api.stac_server_api_gateway.id
+  resource_id = aws_api_gateway_resource.stac_server_api_gateway_proxy_resource.id
+  http_method = aws_api_gateway_method.stac_options_method.http_method
+  status_code = aws_api_gateway_method_response.stac_options_200.status_code
+  response_parameters = {
+    "method.response.header.Access-Control-Allow-Headers" = "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'",
+    "method.response.header.Access-Control-Allow-Methods" = "'GET,OPTIONS,POST,PUT'",
+    "method.response.header.Access-Control-Allow-Origin"  = "'*'"
+  }
 }
 
 resource "aws_api_gateway_integration" "stac_server_api_gateway_proxy_resource_method_integration" {
@@ -198,15 +198,15 @@ locals {
 
 resource "null_resource" "enable_access_logs" {
   triggers = {
-    stage_name = aws_api_gateway_deployment.stac_server_api_gateway.stage_name
-    rest_api_id = aws_api_gateway_deployment.stac_server_api_gateway.rest_api_id
+    stage_name              = aws_api_gateway_deployment.stac_server_api_gateway.stage_name
+    rest_api_id             = aws_api_gateway_deployment.stac_server_api_gateway.rest_api_id
     apigw_access_logs_group = aws_cloudwatch_log_group.stac_server_api_gateway_logs_group.arn
-    access_log_format = local.access_log_format
+    access_log_format       = local.access_log_format
   }
 
   provisioner "local-exec" {
     interpreter = ["bash", "-ec"]
-    command = <<EOF
+    command     = <<EOF
 export AWS_DEFAULT_REGION=${data.aws_region.current.name}
 export AWS_REGION=${data.aws_region.current.name}
 

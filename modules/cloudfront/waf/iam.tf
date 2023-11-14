@@ -1,7 +1,7 @@
 # Define role to log WAF Requests - Role is specific to each Cloudfront WAF
 resource "aws_iam_role" "waf_logging_firehose_role" {
-  path        = "/filmdrop/system/"
-  name        = "FilmDropWAFLog${var.waf_appendix}"
+  path = "/filmdrop/system/"
+  name = "FilmDropWAFLog${var.waf_appendix}"
 
   assume_role_policy = <<EOF
 {

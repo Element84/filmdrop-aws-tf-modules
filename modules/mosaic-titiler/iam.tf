@@ -1,3 +1,27 @@
+locals {
+  titiler_policy_stmts = [for x in [
+    length(var.titiler_s3_bucket_arns) == 0 ? null : {
+      Action   = ["s3:GetObject"]
+      Effect   = "Allow"
+      Resource = var.titiler_s3_bucket_arns
+    },
+    {
+      Action = [
+        "dynamodb:Query",
+        "dynamodb:GetItem",
+        "dynamodb:Scan",
+        "dynamodb:PutItem",
+        "dynamodb:BatchWriteItem",
+        "dynamodb:CreateTable",
+        "dynamodb:DescribeTable"
+      ]
+      Effect   = "Allow"
+      Resource = aws_dynamodb_table.titiler-mosaic-dynamodb-table.arn
+    },
+    ] : x if x != null
+  ]
+}
+
 resource "aws_iam_role" "titiler-mosaic-lambda-role" {
   name_prefix = "titiler-mosaic-lambdaRole"
 
@@ -22,27 +46,8 @@ EOF
     name = "titiler-mosaic-lambda-inline-policy"
 
     policy = jsonencode({
-      Version = "2012-10-17"
-      Statement = [
-        length(var.titiler_s3_bucket_arns) == 0 ? null : {
-          Action   = ["s3:GetObject"]
-          Effect   = "Allow"
-          Resource = var.titiler_s3_bucket_arns
-        },
-        {
-          Action = [
-            "dynamodb:Query",
-            "dynamodb:GetItem",
-            "dynamodb:Scan",
-            "dynamodb:PutItem",
-            "dynamodb:BatchWriteItem",
-            "dynamodb:CreateTable",
-            "dynamodb:DescribeTable"
-          ]
-          Effect   = "Allow"
-          Resource = aws_dynamodb_table.titiler-mosaic-dynamodb-table.arn
-        },
-      ]
+      Version   = "2012-10-17"
+      Statement = local.titiler_policy_stmts
     })
   }
 }

@@ -95,7 +95,7 @@ resource "aws_iam_role_policy_attachment" "AcceleratorSSMPolicy" {
 }
 
 resource "aws_iam_policy" "eks_worker_node_filmdrop_policy" {
-  name        = "eks_worker_filmdrop_${random_id.suffix.hex}"
+  name = "eks_worker_filmdrop_${random_id.suffix.hex}"
 
   policy = <<EOF
 {

@@ -1,9 +1,4 @@
-data "aws_region" "current" {
-}
-
-data "aws_caller_identity" "current" {
-}
 
 locals {
-    valid_web_acl_name = replace(replace(var.web_acl_name, "_", ""), "-", "")
+  valid_web_acl_name = replace(replace(var.web_acl_name, "_", ""), "-", "")
 }

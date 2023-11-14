@@ -1,11 +1,11 @@
 # EKS Cluster
 resource "aws_eks_cluster" "cluster" {
-  name      = var.cluster_name
-  role_arn  = aws_iam_role.cluster_role.arn
-  version   = var.cluster_version
+  name     = var.cluster_name
+  role_arn = aws_iam_role.cluster_role.arn
+  version  = var.cluster_version
 
-  vpc_config  {
-    subnet_ids  = var.subnet_ids
+  vpc_config {
+    subnet_ids = var.subnet_ids
   }
 
   # Ensure that IAM Role permissions are created before and deleted after EKS Cluster handling.
@@ -52,9 +52,9 @@ resource "aws_eks_node_group" "node_group" {
 }
 
 resource "aws_eks_addon" "ebs-csi-driver-addon" {
-  cluster_name = aws_eks_cluster.cluster.name
-  addon_name   = "aws-ebs-csi-driver"
-  addon_version      = "v1.17.0-eksbuild.1"
+  cluster_name  = aws_eks_cluster.cluster.name
+  addon_name    = "aws-ebs-csi-driver"
+  addon_version = "v1.17.0-eksbuild.1"
 
   depends_on = [
     aws_eks_node_group.node_group

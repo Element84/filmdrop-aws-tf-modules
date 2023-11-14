@@ -12,7 +12,7 @@ resource "aws_lambda_function" "stac_server_api_auth_pre_hook" {
 
   environment {
     variables = {
-      API_KEYS_SECRET_ID: one(aws_secretsmanager_secret.stac_server_api_auth_keys[*].arn)
+      API_KEYS_SECRET_ID : one(aws_secretsmanager_secret.stac_server_api_auth_keys[*].arn)
     }
   }
 
@@ -23,15 +23,15 @@ resource "aws_lambda_function" "stac_server_api_auth_pre_hook" {
 }
 
 resource "aws_secretsmanager_secret" "stac_server_api_auth_keys" {
-   count = var.stac_server_auth_pre_hook_enabled ? 1 : 0
-   name  = "stac-server-${var.stac_api_stage}-api-auth-keys"
+  count = var.stac_server_auth_pre_hook_enabled ? 1 : 0
+  name  = "stac-server-${var.stac_api_stage}-api-auth-keys"
 }
- 
+
 resource "aws_secretsmanager_secret_version" "stac_server_api_auth_keys_version" {
   count         = var.stac_server_auth_pre_hook_enabled ? 1 : 0
   secret_id     = one(aws_secretsmanager_secret.stac_server_api_auth_keys[*].id)
   secret_string = "{}"
   lifecycle {
-      ignore_changes = [secret_string, secret_binary]
+    ignore_changes = [secret_string, secret_binary]
   }
 }

@@ -1,5 +1,5 @@
 resource "aws_kinesis_firehose_delivery_stream" "waf_cf_logging_firehose_stream" {
-  name = "aws-waf-logs-cloudfront-${var.waf_appendix}"
+  name        = "aws-waf-logs-cloudfront-${var.waf_appendix}"
   destination = "extended_s3"
 
   extended_s3_configuration {
