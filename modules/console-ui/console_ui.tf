@@ -32,28 +32,13 @@ resource "aws_codebuild_project" "console_ui_codebuild" {
     }
 
     environment_variable {
-      name  = "REACT_APP_TITILER"
-      value = var.titiler_api_endpoint
+      name  = "FILMDROP_UI_ENV"
+      value = var.filmdrop_ui_env
     }
 
     environment_variable {
-      name  = "REACT_APP_STAC_API_ENDPOINT"
-      value = var.stac_api_endpoint
-    }
-
-    environment_variable {
-      name  = "REACT_APP_COLLECTIONS"
-      value = var.stac_api_collections
-    }
-
-    environment_variable {
-      name  = "REACT_APP_DASHBOARD_LINK"
-      value = var.cirrus_dashboard_endpoint
-    }
-
-    environment_variable {
-      name  = "REACT_APP_ANALYZE_LINK"
-      value = var.analytics_endpoint
+      name  = "FILMDROP_UI_CONFIG"
+      value = var.filmdrop_ui_config
     }
 
     environment_variable {

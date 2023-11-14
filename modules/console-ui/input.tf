@@ -18,6 +18,14 @@ variable "filmdrop_ui_release" {
   description = "FilmDrop UI Release"
 }
 
+variable "filmdrop_ui_env" {
+  description = "FilmDrop UI Deployment ENV file"
+}
+
+variable "filmdrop_ui_config" {
+  description = "FilmDrop UI Deployment Config File"
+}
+
 variable "titiler_api_endpoint" {
   description = "TiTiler API"
 }
