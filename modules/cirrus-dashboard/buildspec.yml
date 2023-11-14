@@ -18,8 +18,8 @@ phases:
       - echo "CIRRUS_API_ENDPOINT=${CIRRUS_API_ENDPOINT}" > .env.production
       - echo "METRICS_API_ENDPOINT=${METRICS_API_ENDPOINT}" >> .env.production
       - echo "Building FilmDrop Cirrus Dashboard release ..."
-      - npm install --legacy-peer-deps
+      - yarn install
       - rm -rf public
-      - npm run build
+      - yarn build
       - echo "Pushing FilmDrop Cirrus Dashboard release to S3..."
       - aws s3 sync --delete ./public s3://$CONTENT_BUCKET --acl bucket-owner-full-control
