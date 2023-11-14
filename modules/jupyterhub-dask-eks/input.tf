@@ -66,9 +66,14 @@ variable "filmdrop_analytics_dask_secret_tokens" {
   default     = "filmdrop-analytics-dask-tokens"
 }
 
+variable "jupyterhub_image_repo" {
+  description = "FilmDrop JupyterHub Image Docker Repository"
+  default     = "element84inc/filmdrop-analytics"
+}
+
 variable "jupyterhub_image_version" {
   description = "FilmDrop JupyterHub Image Docker Version"
-  default     = "latest"
+  default     = "2022.12.20"
 }
 
 variable "jupyterhub_elb_acm_cert_arn" {

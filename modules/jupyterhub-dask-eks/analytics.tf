@@ -299,7 +299,7 @@ EOF
   ]
 }
 
-resource "null_resource" "add_jupyterhub_domain" {
+resource "null_resource" "add_analytics_jupyterhub_domain" {
   triggers = {
     region                          = data.aws_region.current.name
     account                         = data.aws_caller_identity.current.account_id

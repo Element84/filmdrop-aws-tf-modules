@@ -26,7 +26,7 @@ data "template_file" "daskhub_helm_filmdrop" {
     module.daskhub_docker_ecr
   ]
   vars = {
-    jupyterhub_image_repo         = module.daskhub_docker_ecr.daskhub_repo
+    jupyterhub_image_repo         = var.jupyterhub_image_repo
     jupyterhub_image_version      = var.jupyterhub_image_version
     dask_proxy_token              = jsondecode(data.aws_secretsmanager_secret_version.filmdrop_analytics_dask_secret_tokens_version.secret_string)["PROXYTOKEN"]
     jupyterhub_elb_acm_cert_arn   = var.jupyterhub_elb_acm_cert_arn

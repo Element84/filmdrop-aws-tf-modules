@@ -20,7 +20,7 @@ xray_scan:
   only:
     - merge_requests
   variables:
-    STAC_SERVER_REF: "1cbb939"
+    STAC_SERVER_REF: "b515a9e"
   script:
     - echo "Building Stac Server..."
     - export FILMDROP_BUILD_DIR=`pwd`
@@ -43,7 +43,7 @@ xray_scan:
 jupyter_dev_release:
   stage: jupyter_dev_release
   variables:
-    STAC_SERVER_REF: "1cbb939"
+    STAC_SERVER_REF: "b515a9e"
   script:
     - echo "Building Stac Server..."
     - export FILMDROP_BUILD_DIR=`pwd`
@@ -72,7 +72,7 @@ dev_release_to_artifactory:
   only:
     - develop
   variables:
-    STAC_SERVER_REF: "1cbb939"
+    STAC_SERVER_REF: "b515a9e"
   script:
     - echo "Building Stac Server..."
     - export FILMDROP_BUILD_DIR=`pwd`
@@ -101,7 +101,7 @@ candidate_release_to_artifactory:
   only:
     - /^release\//
   variables:
-    STAC_SERVER_REF: "1cbb939"
+    STAC_SERVER_REF: "b515a9e"
   script:
     - echo "Building Stac Server..."
     - export FILMDROP_BUILD_DIR=`pwd`
@@ -130,7 +130,7 @@ latest_stable_release_to_artifactory:
   only:
     - master
   variables:
-    STAC_SERVER_REF: "1cbb939"
+    STAC_SERVER_REF: "b515a9e"
   script:
     - echo "Building Stac Server..."
     - export FILMDROP_BUILD_DIR=`pwd`
@@ -159,7 +159,7 @@ official_stable_release_to_artifactory:
   only:
     - tags
   variables:
-    STAC_SERVER_REF: "1cbb939"
+    STAC_SERVER_REF: "b515a9e"
   script:
     - echo "Building Stac Server..."
     - export FILMDROP_BUILD_DIR=`pwd`
@@ -188,7 +188,7 @@ test_download:
   only:
     - master
   variables:
-    STAC_SERVER_REF: "1cbb939"
+    STAC_SERVER_REF: "b515a9e"
   script:
     - echo "Validating the artifact upload to Artifactory ..."
     - export RELEASE_VERSION="latest"
