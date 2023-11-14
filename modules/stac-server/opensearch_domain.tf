@@ -1,12 +1,17 @@
 resource "aws_elasticsearch_domain" "stac_server_opensearch_domain" {
   domain_name           = "stac-server-${var.stac_api_stage}-${var.opensearch_domain_type}"
-  elasticsearch_version = var.elasticsearch_version
+  elasticsearch_version = var.opensearch_version
 
   cluster_config {
     instance_type             = var.opensearch_cluster_instance_type
     instance_count            = var.opensearch_cluster_instance_count
     dedicated_master_enabled  = var.opensearch_cluster_dedicated_master_enabled
+    dedicated_master_type     = var.opensearch_cluster_dedicated_master_type
     zone_awareness_enabled    = var.opensearch_cluster_zone_awareness_enabled
+
+    zone_awareness_config {
+      availability_zone_count = var.opensearch_cluster_availability_zone_count
+    }
   }
 
   domain_endpoint_options {
@@ -21,11 +26,11 @@ resource "aws_elasticsearch_domain" "stac_server_opensearch_domain" {
   }
 
   encrypt_at_rest {
-    enabled = var.opensearch_encrypt_at_rest_enabled
+    enabled = true
   }
 
   node_to_node_encryption {
-    enabled = var.opensearch_node_to_node_encryption_enabled
+    enabled = true
   }
 
   dynamic advanced_security_options {
@@ -46,7 +51,7 @@ resource "aws_elasticsearch_domain" "stac_server_opensearch_domain" {
   }
 
   vpc_options {
-    subnet_ids          = [var.vpc_subnet_ids[0], var.vpc_subnet_ids[1]]
+    subnet_ids          = var.vpc_subnet_ids
     security_group_ids  = [aws_security_group.opensearch_security_group.id]
   }
 
@@ -110,7 +115,7 @@ resource "aws_security_group" "opensearch_security_group" {
   }
 }
 
-resource "aws_iam_service_linked_role" "os" {
+resource "aws_iam_service_linked_role" "opensearch_linked_role" {
   count             = var.create_opensearch_service_linked_role == true ? 1 : 0
   aws_service_name  = "es.amazonaws.com"
 }
@@ -184,7 +189,7 @@ resource "aws_lambda_function" "stac_server_opensearch_user_initializer" {
   }
 
   vpc_config {
-    subnet_ids         = [var.vpc_subnet_ids[0], var.vpc_subnet_ids[1]]
+    subnet_ids         = var.vpc_subnet_ids
     security_group_ids = var.vpc_security_group_ids
   }
 

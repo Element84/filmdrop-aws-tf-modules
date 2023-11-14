@@ -13,19 +13,9 @@ variable "stac_description" {
   default     = "A STAC API using stac-server"
 }
 
-variable "stac_version" {
-  description = "STAC version"
-  default     = "1.0.0"
-}
-
 variable "log_level" {
   description = "Logging level"
   default     = "DEBUG"
-}
-
-variable "opensearch_batch_size" {
-  description = "ElasticSearch Batch Size"
-  default     = 500
 }
 
 variable "stac_docs_url" {
@@ -34,7 +24,7 @@ variable "stac_docs_url" {
 }
 
 variable "opensearch_host" {
-  description = "ElasticSearch Host"
+  description = "OpenSearch Host"
   default     = ""
 }
 
@@ -78,58 +68,68 @@ variable "api_rest_type" {
   default     = "EDGE"
 }
 
-variable "elasticsearch_version" {
-  description = "ElasticSearch version for ES Domain"
+variable "opensearch_version" {
+  description = "OpenSearch version for OpenSearch Domain"
   default     = "OpenSearch_2.3"
 }
 
 variable "opensearch_cluster_instance_type" {
-  description = "ES Domain instance type"
-  default     = "t3.small.elasticsearch"
+  description = "OpenSearch Domain instance type"
+  default     = "c6g.xlarge.elasticsearch"
+}
+
+variable "opensearch_cluster_dedicated_master_type" {
+  description = "OpenSearch Domain dedicated master instance type"
+  default     = "c6g.xlarge.elasticsearch"
 }
 
 variable "opensearch_cluster_instance_count" {
-  description = "ES Domain instance count"
-  default     = 2
+  description = "OpenSearch Domain instance count"
+  default     = 3
 }
 
 variable "opensearch_cluster_dedicated_master_enabled" {
-  description = "ES Domain dedicated master"
+  description = "OpenSearch Domain dedicated master"
   default     = false
 }
 
 variable "opensearch_cluster_zone_awareness_enabled" {
-  description = "ES Domain zone awareness"
+  description = "OpenSearch Domain zone awareness"
   default     = true
 }
 
+variable "opensearch_cluster_availability_zone_count" {
+  description = "OpenSearch Domain availability zone count"
+  default     = 3
+}
+
 variable "opensearch_domain_enforce_https" {
-  description = "ES Domain enforce https"
+  description = "OpenSearch Domain enforce https"
   default     = true
 }
 
 variable "opensearch_domain_min_tls" {
-  description = "ES Domain minimum TLS"
+  description = "OpenSearch Domain minimum TLS"
   default     = "Policy-Min-TLS-1-2-2019-07"
 }
 
 variable "opensearch_domain_type" {
-  description = "ES Domain type"
+  description = "OpenSearch Domain type"
   default     = "opensearch"
 }
 
 variable "opensearch_ebs_enabled" {
-  description = "ES EBS enabled"
+  description = "OpenSearch EBS enabled"
   default     = true
 }
 
 variable "opensearch_ebs_volume_size" {
-  description = "ES EBS volume size"
+  description = "OpenSearch EBS volume size"
   default     = 35
 }
 
 variable "opensearch_ebs_volume_type" {
-  description = "ES EBS volume type"
+  description = "OpenSearch EBS volume type"
   default     = "gp2"
 }
 
@@ -165,54 +165,14 @@ variable "vpc_security_group_ids" {
   default     = []
 }
 
-variable "stac_pre_hook_lambda" {
-  description = "STAC Pre Hook Lambda Name"
+variable "stac_pre_hook_lambda_arn" {
+  description = "STAC Pre Hook Lambda ARN"
   default     = ""
 }
 
-variable "stac_pre_hook_lambda_path" {
-  description = "STAC Pre Hook Lambda Path"
+variable "stac_post_hook_lambda_arn" {
+  description = "STAC Post-Hook Lambda ARN"
   default     = ""
-}
-
-variable "stac_pre_hook_lambda_token" {
-  description = "STAC Pre Hook Lambda Token"
-  default     = ""
-}
-
-variable "stac_pre_hook_lambda_token_txn" {
-  description = "STAC Pre Hook Lambda Token TXN"
-  default     = ""
-}
-
-variable "stac_post_hook_lambda" {
-  description = "STAC Post Hook Lambda Name"
-  default     = ""
-}
-
-variable "stac_post_hook_lambda_path" {
-  description = "STAC Post Hook Lambda Path"
-  default     = ""
-}
-
-variable "pre_hook_lambda_timeout" {
-  description = "STAC Pre Hook lambda timeout in seconds"
-  default     = 25
-}
-
-variable "pre_hook_lambda_memory" {
-  description = "STAC Pre Hook lambda max memory size in MB"
-  default     = 512
-}
-
-variable "post_hook_lambda_timeout" {
-  description = "STAC Post Hook lambda timeout in seconds"
-  default     = 25
-}
-
-variable "post_hook_lambda_memory" {
-  description = "STAC Post Hook lambda max memory size in MB"
-  default     = 512
 }
 
 variable "vpc_id" {
@@ -230,16 +190,6 @@ variable "allow_explicit_index" {
 
 variable "create_opensearch_service_linked_role" {
   description = "Enable creation of OpenSearch Service Linked Role"
-  default     = true
-}
-
-variable "opensearch_encrypt_at_rest_enabled" {
-  description = "OpenSearch encrypt at rest enabled"
-  default     = true
-}
-
-variable "opensearch_node_to_node_encryption_enabled" {
-  description = "OpenSearch node-to-node encryption enabled"
   default     = true
 }
 
@@ -261,21 +211,6 @@ variable "opensearch_stac_server_username" {
 variable "opensearch_admin_username" {
   description = "OpenSearch admin username"
   default     = "admin"
-}
-
-variable "opensearch_username" {
-  description = "OpenSearch username"
-  default     = ""
-}
-
-variable "opensearch_password" {
-  description = "OpenSearch password"
-  default     = ""
-}
-
-variable "es_compat_mode" {
-  description = "Enable Elasticsearch 7.10 compatibility mode within the server"
-  default     = false
 }
 
 variable "collection_to_index_mappings" {
