@@ -23,6 +23,8 @@ resource "aws_vpc_endpoint" "interface_endpoints" {
     aws_security_group.sg_vpcendpoint.id
   ]
 
+  subnet_ids = flatten([aws_subnet.pri_subnets[var.ngw_general_subnet_az].id, var.is_prod_like ? [aws_subnet.pri_subnets[var.ngw_prodlike_subnet_az].id]:[]])
+
   private_dns_enabled = true
   tags = merge({ "Name" = "vpc-endpoint-${each.value}" }, var.base_tags )
 }
