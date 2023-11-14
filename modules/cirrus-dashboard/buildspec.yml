@@ -1,0 +1,25 @@
+version: 0.2
+
+phases:
+  install:
+    runtime-versions:
+      docker: 20
+  build:
+    commands:
+      - echo "Pulling FilmDrop Cirrus Dashboard release ..."
+      - wget -q -O cirrus-dashboard.tgz "https://github.com/cirrus-geo/cirrus-dashboard/archive/refs/tags/${CIRRUS_DASHBOARD_TAG}.tar.gz"
+      - export CIRRUS_DASHBOARD_DIR="cirrus-dashboard-${CIRRUS_DASHBOARD_TAG:1}"
+      - tar -xzf cirrus-dashboard.tgz
+      - cd "$CIRRUS_DASHBOARD_DIR"
+      - rm  -f ./.env.*
+      - echo "Setting environment variables for the Cirrus Dashboard ..."
+      - echo "CIRRUS_API_ENDPOINT=${CIRRUS_API_ENDPOINT}" > .env.development
+      - echo "METRICS_API_ENDPOINT=${METRICS_API_ENDPOINT}" >> .env.development
+      - echo "CIRRUS_API_ENDPOINT=${CIRRUS_API_ENDPOINT}" > .env.production
+      - echo "METRICS_API_ENDPOINT=${METRICS_API_ENDPOINT}" >> .env.production
+      - echo "Building FilmDrop Cirrus Dashboard release ..."
+      - npm install --legacy-peer-deps
+      - rm -rf public
+      - npm run build
+      - echo "Pushing FilmDrop Cirrus Dashboard release to S3..."
+      - aws s3 sync --delete ./public s3://$CONTENT_BUCKET --acl bucket-owner-full-control

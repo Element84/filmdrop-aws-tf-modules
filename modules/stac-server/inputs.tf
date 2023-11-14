@@ -75,12 +75,12 @@ variable "opensearch_version" {
 
 variable "opensearch_cluster_instance_type" {
   description = "OpenSearch Domain instance type"
-  default     = "c6g.xlarge.elasticsearch"
+  default     = "c6g.large.search"
 }
 
 variable "opensearch_cluster_dedicated_master_type" {
   description = "OpenSearch Domain dedicated master instance type"
-  default     = "c6g.xlarge.elasticsearch"
+  default     = "m6g.large.search"
 }
 
 variable "opensearch_cluster_instance_count" {

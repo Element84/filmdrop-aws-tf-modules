@@ -1,0 +1,23 @@
+version: 0.2
+
+phases:
+  install:
+    runtime-versions:
+      docker: 20
+  build:
+    commands:
+      - echo "Pulling FilmDrop UI Console release ..."
+      - wget -q -O filmdrop-ui.tgz "https://github.com/Element84/filmdrop-ui/archive/refs/tags/${FILMDROP_UI_TAG}.tar.gz"
+      - export CONSOLE_UI_DIR="filmdrop-ui-${FILMDROP_UI_TAG:1}"
+      - tar -xzf filmdrop-ui.tgz
+      - cd "$CONSOLE_UI_DIR"
+      - rm  -f ./.env.*
+      - echo "Setting environment variables for the Console UI ..."
+      - echo "REACT_APP_TITILER=${REACT_APP_TITILER}" > .env.development
+      - echo "REACT_APP_TITILER=${REACT_APP_TITILER}" > .env.production
+      - echo "Building FilmDrop UI Console release ..."
+      - npm install
+      - npm run build
+      - cd build
+      - echo "Pushing FilmDrop UI Console release to S3..."
+      - aws s3 sync --delete . s3://$CONTENT_BUCKET --acl bucket-owner-full-control

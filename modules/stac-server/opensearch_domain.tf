@@ -126,7 +126,6 @@ resource "random_password" "opensearch_master_password" {
   min_numeric      = 1
   min_special      = 1
   min_upper        = 1
-  special          = true
   override_special = "_%@"
 }
  
@@ -145,14 +144,15 @@ EOF
 }
 
 resource "random_password" "opensearch_stac_user_password" {
-  length           = 16
+  length           = 24
   min_lower        = 1
   min_numeric      = 1
   min_special      = 1
   min_upper        = 1
-  special          = true
-  override_special = "_%@"
-}
+  # opensearch requires at least one special char, but we want to not require
+  # URL encoding for the password when it's passed for basic auth in the URL
+  override_special = "_-" 
+ }
 
 resource "aws_secretsmanager_secret" "opensearch_stac_user_password_secret" {
    name = "stac-server-${var.stac_api_stage}-${var.opensearch_domain_type}-user-creds"

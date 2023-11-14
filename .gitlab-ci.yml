@@ -5,7 +5,7 @@ stages:
   - latest_stable_release
   - official_stable_release
 
-default: 
+default:
   image: artifactory.prod.element84.com/e84-infra-docker/e84-build-base:main
 
 before_script:
@@ -19,13 +19,13 @@ xray_scan:
   only:
     - merge_requests
   variables:
-    STAC_SERVER_REF: "c9ee7d6"
+    STAC_SERVER_TAG: v0.5.1
   script:
     - echo "Building Stac Server..."
     - export FILMDROP_BUILD_DIR=`pwd`
     - nvm install v16.18.1 ; nvm use v16.18.1
-    - wget -q -O stac-server.tgz "https://github.com/stac-utils/stac-server/tarball/${STAC_SERVER_REF}"
-    - export STAC_SERVER_DIR="stac-utils-stac-server-${STAC_SERVER_REF}"
+    - wget -q -O stac-server.tgz "https://github.com/stac-utils/stac-server/archive/refs/tags/${STAC_SERVER_TAG}.tar.gz"
+    - export STAC_SERVER_DIR="stac-server-${STAC_SERVER_TAG:1}"
     - tar -xzf stac-server.tgz
     - cd "$STAC_SERVER_DIR"
     - npm install
@@ -44,13 +44,13 @@ dev_release_to_artifactory:
   only:
     - develop
   variables:
-    STAC_SERVER_REF: "c9ee7d6"
+    STAC_SERVER_TAG: v0.5.1
   script:
     - echo "Building Stac Server..."
     - export FILMDROP_BUILD_DIR=`pwd`
     - nvm install v16.18.1 ; nvm use v16.18.1
-    - wget -q -O stac-server.tgz "https://github.com/stac-utils/stac-server/tarball/${STAC_SERVER_REF}"
-    - export STAC_SERVER_DIR="stac-utils-stac-server-${STAC_SERVER_REF}"
+    - wget -q -O stac-server.tgz "https://github.com/stac-utils/stac-server/archive/refs/tags/${STAC_SERVER_TAG}.tar.gz"
+    - export STAC_SERVER_DIR="stac-server-${STAC_SERVER_TAG:1}"
     - tar -xzf stac-server.tgz
     - cd "$STAC_SERVER_DIR"
     - npm install
@@ -73,13 +73,13 @@ candidate_release_to_artifactory:
   only:
     - /^release\//
   variables:
-    STAC_SERVER_REF: "c9ee7d6"
+    STAC_SERVER_TAG: v0.5.1
   script:
     - echo "Building Stac Server..."
     - export FILMDROP_BUILD_DIR=`pwd`
     - nvm install v16.18.1 ; nvm use v16.18.1
-    - wget -q -O stac-server.tgz "https://github.com/stac-utils/stac-server/tarball/${STAC_SERVER_REF}"
-    - export STAC_SERVER_DIR="stac-utils-stac-server-${STAC_SERVER_REF}"
+    - wget -q -O stac-server.tgz "https://github.com/stac-utils/stac-server/archive/refs/tags/${STAC_SERVER_TAG}.tar.gz"
+    - export STAC_SERVER_DIR="stac-server-${STAC_SERVER_TAG:1}"
     - tar -xzf stac-server.tgz
     - cd "$STAC_SERVER_DIR"
     - npm install
@@ -102,13 +102,13 @@ latest_stable_release_to_artifactory:
   only:
     - master
   variables:
-    STAC_SERVER_REF: "c9ee7d6"
+    STAC_SERVER_TAG: v0.5.1
   script:
     - echo "Building Stac Server..."
     - export FILMDROP_BUILD_DIR=`pwd`
     - nvm install v16.18.1 ; nvm use v16.18.1
-    - wget -q -O stac-server.tgz "https://github.com/stac-utils/stac-server/tarball/${STAC_SERVER_REF}"
-    - export STAC_SERVER_DIR="stac-utils-stac-server-${STAC_SERVER_REF}"
+    - wget -q -O stac-server.tgz "https://github.com/stac-utils/stac-server/archive/refs/tags/${STAC_SERVER_TAG}.tar.gz"
+    - export STAC_SERVER_DIR="stac-server-${STAC_SERVER_TAG:1}"
     - tar -xzf stac-server.tgz
     - cd "$STAC_SERVER_DIR"
     - npm install
@@ -131,13 +131,13 @@ official_stable_release_to_artifactory:
   only:
     - tags
   variables:
-    STAC_SERVER_REF: "c9ee7d6"
+    STAC_SERVER_TAG: v0.5.1
   script:
     - echo "Building Stac Server..."
     - export FILMDROP_BUILD_DIR=`pwd`
     - nvm install v16.18.1 ; nvm use v16.18.1
-    - wget -q -O stac-server.tgz "https://github.com/stac-utils/stac-server/tarball/${STAC_SERVER_REF}"
-    - export STAC_SERVER_DIR="stac-utils-stac-server-${STAC_SERVER_REF}"
+    - wget -q -O stac-server.tgz "https://github.com/stac-utils/stac-server/archive/refs/tags/${STAC_SERVER_TAG}.tar.gz"
+    - export STAC_SERVER_DIR="stac-server-${STAC_SERVER_TAG:1}"
     - tar -xzf stac-server.tgz
     - cd "$STAC_SERVER_DIR"
     - npm install
@@ -160,7 +160,7 @@ test_download:
   only:
     - master
   variables:
-    STAC_SERVER_REF: "c9ee7d6"
+    STAC_SERVER_TAG: v0.5.1
   script:
     - echo "Validating the artifact upload to Artifactory ..."
     - export RELEASE_VERSION="latest"
