@@ -19,7 +19,7 @@ xray_scan:
   only:
     - merge_requests
   variables:
-    STAC_SERVER_REF: "7bf3801"
+    STAC_SERVER_REF: "c8801b8"
   script:
     - echo "Building Stac Server..."
     - export FILMDROP_BUILD_DIR=`pwd`
@@ -44,7 +44,7 @@ dev_release_to_artifactory:
   only:
     - develop
   variables:
-    STAC_SERVER_REF: "7bf3801"
+    STAC_SERVER_REF: "c8801b8"
   script:
     - echo "Building Stac Server..."
     - export FILMDROP_BUILD_DIR=`pwd`
@@ -73,7 +73,7 @@ candidate_release_to_artifactory:
   only:
     - /^release\//
   variables:
-    STAC_SERVER_REF: "7bf3801"
+    STAC_SERVER_REF: "c8801b8"
   script:
     - echo "Building Stac Server..."
     - export FILMDROP_BUILD_DIR=`pwd`
@@ -102,7 +102,7 @@ latest_stable_release_to_artifactory:
   only:
     - master
   variables:
-    STAC_SERVER_REF: "7bf3801"
+    STAC_SERVER_REF: "c8801b8"
   script:
     - echo "Building Stac Server..."
     - export FILMDROP_BUILD_DIR=`pwd`
@@ -131,7 +131,7 @@ official_stable_release_to_artifactory:
   only:
     - tags
   variables:
-    STAC_SERVER_REF: "7bf3801"
+    STAC_SERVER_REF: "c8801b8"
   script:
     - echo "Building Stac Server..."
     - export FILMDROP_BUILD_DIR=`pwd`
@@ -160,7 +160,7 @@ test_download:
   only:
     - master
   variables:
-    STAC_SERVER_REF: "7bf3801"
+    STAC_SERVER_REF: "c8801b8"
   script:
     - echo "Validating the artifact upload to Artifactory ..."
     - export RELEASE_VERSION="latest"
