@@ -1,6 +1,6 @@
 resource "aws_wafv2_web_acl" "cf_web_acl" {
   provider    = aws.east
-  name        = var.web_acl_name 
+  name        = var.web_acl_name
   description = var.web_acl_desc 
   scope       = "CLOUDFRONT"
 
@@ -64,9 +64,8 @@ resource "aws_wafv2_web_acl" "cf_web_acl" {
 
   visibility_config {
     cloudwatch_metrics_enabled = var.wacl_cloudwatch_metrics_enabled 
-    metric_name                = var.web_acl_name 
+    metric_name                = local.valid_web_acl_name
     sampled_requests_enabled   = var.wacl_sampled_requests_enabled 
   }
 }
-
 
