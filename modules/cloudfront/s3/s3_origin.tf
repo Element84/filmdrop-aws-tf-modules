@@ -127,6 +127,14 @@ resource "aws_cloudfront_distribution" "filmdrop_managed_cloudfront_distribution
       }
     }
 
+    dynamic "function_association" {
+      for_each = var.attach_cf_function == true ? [1] : []
+      content{
+        event_type = var.cf_function_event_type
+        function_arn = var.create_cf_function == false ? var.cf_function_arn : module.cloudfront_function[0].cf_function_arn
+      }
+    }
+
     viewer_protocol_policy = "redirect-to-https"
     min_ttl                = var.min_ttl
     default_ttl            = var.default_ttl
@@ -288,4 +296,13 @@ module "cloudfront_waf" {
   whitelist_ips       = var.whitelist_ips
   ip_blocklist        = var.ip_blocklist
   waf_appendix        = replace(replace(var.log_prefix, "_", ""), "-", "")
+}
+
+module "cloudfront_function" {
+  count = var.create_cf_function == false ? 0 : 1
+  source = "../cf_function"
+
+  name = var.cf_function_name
+  runtime = var.cf_function_runtime
+  code_path  = var.cf_function_code_path
 }

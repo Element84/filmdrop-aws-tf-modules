@@ -34,6 +34,14 @@ module "cloudfront_distribution" {
   max_ttl                                   = var.max_ttl
   domain_name                               = var.domain_name
   custom_error_response                     = var.custom_error_response
+  
+  attach_cf_function                        = var.attach_cf_function
+  cf_function_name                          = var.cf_function_name
+  cf_function_runtime                       = var.cf_function_runtime
+  cf_function_code_path                     = var.cf_function_code_path
+  cf_function_event_type                    = var.cf_function_event_type
+  create_cf_function                        = var.create_cf_function
+  cf_function_arn                           = var.cf_function_arn
 }
 
 module "cloudfront_dns" {

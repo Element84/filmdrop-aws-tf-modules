@@ -205,3 +205,43 @@ variable "whitelist_ips" {
   type        = set(string)
   default     = []
 }
+
+variable "cf_function_name" {
+  description = "Name of the CF function"
+  type        = string
+  default     = ""
+}
+
+variable "cf_function_runtime" {
+  description = "CF function runtime"
+  type        = string
+  default     = "cloudfront-js-1.0"
+}
+
+variable "cf_function_code_path" {
+  description = "CF function code path"
+  type        = string
+  default     = ""
+}
+
+variable "attach_cf_function" {
+  description = "Should attach a function to CF or not"
+  default = false
+}
+
+variable "cf_function_event_type" {
+  description = "Eventtype for the function"
+  type        = string
+  default = "viewer-request"
+}
+
+variable "create_cf_function" {
+  description = "Should create a CF function or not"
+  default = false
+}
+
+variable "cf_function_arn" {
+  description = "CF Function arn in case to get in input"
+  type        = string
+  default = ""
+}
