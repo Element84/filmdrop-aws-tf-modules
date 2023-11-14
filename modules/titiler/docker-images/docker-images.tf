@@ -48,7 +48,7 @@ resource "aws_s3_object" "docker_build_spec" {
 }
 
 resource "aws_codebuild_project" "titiler_docker_image" {
-  name           = "titiler-docker-image"
+  name           = "${var.prefix}titiler-docker-image"
   description    = "creates a titiler docker image"
   build_timeout  = "10"
   queued_timeout = "30"
