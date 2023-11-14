@@ -1,5 +1,6 @@
 stages:
   - scan
+  - build
   - dev_release
   - candidate_release
   - latest_stable_release
@@ -11,12 +12,29 @@ default:
 before_script:
   - export CI=true
   - jfrog c add --url ${ARTIFACTORY_URL} --user ${ARTIFACTORY_USERNAME} --password ${ARTIFACTORY_PASSWORD} e84artifactory
+  - curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.39.0/install.sh | bash
+  - source "$HOME/.nvm/nvm.sh"
 
 xray_scan:
   stage: scan
   only:
     - merge_requests
+  variables:
+    STAC_SERVER_REF: "65b2ec6"
   script:
+    - echo "Building Stac Server..."
+    - export FILMDROP_BUILD_DIR=`pwd`
+    - nvm install v16.18.1 ; nvm use v16.18.1
+    - wget -q -O stac-server.tgz "https://github.com/stac-utils/stac-server/tarball/${STAC_SERVER_REF}"
+    - export STAC_SERVER_DIR="stac-utils-stac-server-${STAC_SERVER_REF}"
+    - tar -xzf stac-server.tgz
+    - cd "$STAC_SERVER_DIR"
+    - npm install
+    - npm run build
+    - mkdir -p $FILMDROP_BUILD_DIR/modules/stac-server/lambda/api && mkdir -p $FILMDROP_BUILD_DIR/modules/stac-server/lambda/ingest
+    - cp dist/api/api.zip $FILMDROP_BUILD_DIR/modules/stac-server/lambda/api/
+    - cp dist/ingest/ingest.zip $FILMDROP_BUILD_DIR/modules/stac-server/lambda/ingest/
+    - cd $FILMDROP_BUILD_DIR/modules
     - echo "Xray Scan for FilmDrop Terraform Modules..."
     - jfrog rt bce "filmdrop/tf-modules/${CI_COMMIT_BRANCH}" ${CI_PIPELINE_IID}
     - jfrog rt bp "filmdrop/tf-modules/${CI_COMMIT_BRANCH}" ${CI_PIPELINE_IID}
@@ -26,7 +44,22 @@ dev_release_to_artifactory:
   stage: dev_release
   only:
     - develop
+  variables:
+    STAC_SERVER_REF: "65b2ec6"
   script:
+    - echo "Building Stac Server..."
+    - export FILMDROP_BUILD_DIR=`pwd`
+    - nvm install v16.18.1 ; nvm use v16.18.1
+    - wget -q -O stac-server.tgz "https://github.com/stac-utils/stac-server/tarball/${STAC_SERVER_REF}"
+    - export STAC_SERVER_DIR="stac-utils-stac-server-${STAC_SERVER_REF}"
+    - tar -xzf stac-server.tgz
+    - cd "$STAC_SERVER_DIR"
+    - npm install
+    - npm run build
+    - mkdir -p $FILMDROP_BUILD_DIR/modules/stac-server/lambda/api && mkdir -p $FILMDROP_BUILD_DIR/modules/stac-server/lambda/ingest
+    - cp dist/api/api.zip $FILMDROP_BUILD_DIR/modules/stac-server/lambda/api/
+    - cp dist/ingest/ingest.zip $FILMDROP_BUILD_DIR/modules/stac-server/lambda/ingest/
+    - cd $FILMDROP_BUILD_DIR/modules
     - echo "Xray Scan and Publish development releases for FilmDrop Terraform Modules..."
     - export RELEASE_VERSION="dev"
     - tar zcvf filmdrop-tf-modules-release-${RELEASE_VERSION}.tgz *
@@ -40,7 +73,22 @@ candidate_release_to_artifactory:
   stage: candidate_release
   only:
     - /^release\//
+  variables:
+    STAC_SERVER_REF: "65b2ec6"
   script:
+    - echo "Building Stac Server..."
+    - export FILMDROP_BUILD_DIR=`pwd`
+    - nvm install v16.18.1 ; nvm use v16.18.1
+    - wget -q -O stac-server.tgz "https://github.com/stac-utils/stac-server/tarball/${STAC_SERVER_REF}"
+    - export STAC_SERVER_DIR="stac-utils-stac-server-${STAC_SERVER_REF}"
+    - tar -xzf stac-server.tgz
+    - cd "$STAC_SERVER_DIR"
+    - npm install
+    - npm run build
+    - mkdir -p $FILMDROP_BUILD_DIR/modules/stac-server/lambda/api && mkdir -p $FILMDROP_BUILD_DIR/modules/stac-server/lambda/ingest
+    - cp dist/api/api.zip $FILMDROP_BUILD_DIR/modules/stac-server/lambda/api/
+    - cp dist/ingest/ingest.zip $FILMDROP_BUILD_DIR/modules/stac-server/lambda/ingest/
+    - cd $FILMDROP_BUILD_DIR/modules
     - echo "Xray Scan and Publish release candidate for FilmDrop Terraform Modules..."
     - export RELEASE_VERSION=$(echo $CI_COMMIT_REF_NAME | awk -F/ '{print $2}')
     - tar zcvf filmdrop-tf-modules-release-${RELEASE_VERSION}-rc.tgz *
@@ -54,7 +102,22 @@ latest_stable_release_to_artifactory:
   stage: latest_stable_release
   only:
     - master
+  variables:
+    STAC_SERVER_REF: "65b2ec6"
   script:
+    - echo "Building Stac Server..."
+    - export FILMDROP_BUILD_DIR=`pwd`
+    - nvm install v16.18.1 ; nvm use v16.18.1
+    - wget -q -O stac-server.tgz "https://github.com/stac-utils/stac-server/tarball/${STAC_SERVER_REF}"
+    - export STAC_SERVER_DIR="stac-utils-stac-server-${STAC_SERVER_REF}"
+    - tar -xzf stac-server.tgz
+    - cd "$STAC_SERVER_DIR"
+    - npm install
+    - npm run build
+    - mkdir -p $FILMDROP_BUILD_DIR/modules/stac-server/lambda/api && mkdir -p $FILMDROP_BUILD_DIR/modules/stac-server/lambda/ingest
+    - cp dist/api/api.zip $FILMDROP_BUILD_DIR/modules/stac-server/lambda/api/
+    - cp dist/ingest/ingest.zip $FILMDROP_BUILD_DIR/modules/stac-server/lambda/ingest/
+    - cd $FILMDROP_BUILD_DIR/modules
     - echo "Xray Scan and Publish official releases for FilmDrop Terraform Modules..."
     - export RELEASE_VERSION="latest"
     - tar zcvf filmdrop-tf-modules-release-${RELEASE_VERSION}.tgz *
@@ -68,7 +131,22 @@ official_stable_release_to_artifactory:
   stage: official_stable_release
   only:
     - tags
+  variables:
+    STAC_SERVER_REF: "65b2ec6"
   script:
+    - echo "Building Stac Server..."
+    - export FILMDROP_BUILD_DIR=`pwd`
+    - nvm install v16.18.1 ; nvm use v16.18.1
+    - wget -q -O stac-server.tgz "https://github.com/stac-utils/stac-server/tarball/${STAC_SERVER_REF}"
+    - export STAC_SERVER_DIR="stac-utils-stac-server-${STAC_SERVER_REF}"
+    - tar -xzf stac-server.tgz
+    - cd "$STAC_SERVER_DIR"
+    - npm install
+    - npm run build
+    - mkdir -p $FILMDROP_BUILD_DIR/modules/stac-server/lambda/api && mkdir -p $FILMDROP_BUILD_DIR/modules/stac-server/lambda/ingest
+    - cp dist/api/api.zip $FILMDROP_BUILD_DIR/modules/stac-server/lambda/api/
+    - cp dist/ingest/ingest.zip $FILMDROP_BUILD_DIR/modules/stac-server/lambda/ingest/
+    - cd $FILMDROP_BUILD_DIR/modules
     - echo "Xray Scan and Publish official releases for FilmDrop Terraform Modules..."
     - export RELEASE_VERSION=$CI_COMMIT_TAG
     - tar zcvf filmdrop-tf-modules-release-${RELEASE_VERSION}.tgz *
@@ -82,6 +160,8 @@ test_download:
   stage: .post
   only:
     - master
+  variables:
+    STAC_SERVER_REF: "65b2ec6"
   script:
     - echo "Validating the artifact upload to Artifactory ..."
     - export RELEASE_VERSION="latest"
