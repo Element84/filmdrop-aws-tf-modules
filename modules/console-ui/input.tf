@@ -26,26 +26,14 @@ variable "filmdrop_ui_config" {
   description = "FilmDrop UI Deployment Config File"
 }
 
-variable "titiler_api_endpoint" {
-  description = "TiTiler API"
+variable "filmdrop_ui_logo_file" {
+  description = "File of the supplied custom logo"
+}
+
+variable "filmdrop_ui_logo" {
+  description = "The file contents of the supplied custom logo"
 }
 
 variable "console_ui_bucket_name" {
   description = "Console UI Bucket Name"
-}
-
-variable "stac_api_endpoint" {
-  description = "STAC API Endpoint"
-}
-
-variable "stac_api_collections" {
-  description = "STAC API Collections"
-}
-
-variable "cirrus_dashboard_endpoint" {
-  description = "Cirrus Dashboard Endpoint"
-}
-
-variable "analytics_endpoint" {
-  description = "Analytics Endpoint"
 }
