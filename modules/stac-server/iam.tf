@@ -58,7 +58,7 @@ resource "aws_iam_policy" "stac_api_lambda_policy" {
                 "sqs:ReceiveMessage",
                 "sqs:DeleteMessage"
             ],
-            "Resource": "arn:aws:sqs:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:stac-server-${var.stac_api_stage}-queue",
+            "Resource": "${aws_sqs_queue.stac_server_ingest_sqs_queue.arn}",
             "Effect": "Allow"
         },
         {
@@ -68,7 +68,7 @@ resource "aws_iam_policy" "stac_api_lambda_policy" {
                 "sqs:GetQueueAttributes"
             ],
             "Resource": [
-                "arn:aws:sqs:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:stac-server-${var.stac_api_stage}-queue"
+                "${aws_sqs_queue.stac_server_ingest_sqs_queue.arn}"
             ],
             "Effect": "Allow"
         },

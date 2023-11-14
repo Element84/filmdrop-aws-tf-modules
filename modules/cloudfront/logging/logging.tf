@@ -17,31 +17,36 @@ resource "aws_ssm_parameter" "logs_bucket_name" {
 resource "aws_s3_bucket" "log_bucket" {
   count  = var.create_log_bucket ? 1 : 0
   bucket = local.log_bucket
+}
 
-  dynamic "replication_configuration" {
-    for_each = { for i, j in [var.filmdrop_archive_bucket_name] : i => j if var.filmdrop_archive_bucket_name != "CHANGEME" }
+resource "aws_s3_bucket_replication_configuration" "log_bucket_replication" {
+  count  = var.create_log_bucket ? 1 : 0
+  depends_on = [ aws_s3_bucket_versioning.log_bucket_versioning ]
 
-    content {
-      role = aws_iam_role.cloudfront_bucket_replicator_role.arn
+  role = aws_iam_role.cloudfront_bucket_replicator_role.arn
+  bucket = aws_s3_bucket.log_bucket[0].id
 
-      rules {
-        id       = "filmdrop-archive-bucket-replication"
-        status   = "Enabled"
-        priority = 1
-        filter {}
+  rule {
+    id = "filmdrop-archive-bucket-replication"
+    status = "Enabled"
+    priority = 1
+    filter {}
 
-        destination {
-          bucket     = "arn:aws:s3:::${var.filmdrop_archive_bucket_name}"
-          account_id = data.aws_caller_identity.current.id
+    delete_marker_replication {
+      status = "Enabled"
+    }
 
-          access_control_translation {
-            owner = "Destination"
-          }
-        }
+    destination {
+      bucket  = "arn:aws:s3:::${var.filmdrop_archive_bucket_name}"
+      account = data.aws_caller_identity.current.id
+
+      access_control_translation {
+        owner = "Destination"
       }
     }
   }
 }
+
 
 resource "aws_s3_bucket_ownership_controls" "log_bucket_ownership_controls" {
   count  = var.create_log_bucket ? 1 : 0

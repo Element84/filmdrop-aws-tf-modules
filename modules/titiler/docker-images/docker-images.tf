@@ -128,12 +128,33 @@ resource "null_resource" "trigger_codebuild" {
   }
 
   provisioner "local-exec" {
+    interpreter = ["/bin/bash", "-c"]
     command = <<EOF
 export AWS_DEFAULT_REGION=${data.aws_region.current.name}
 export AWS_REGION=${data.aws_region.current.name}
 
 echo "Triggering CodeBuild Project."
-aws codebuild start-build --project-name ${aws_codebuild_project.titiler_docker_image.id}
+START_RESULT=$(aws codebuild start-build --project-name ${aws_codebuild_project.titiler_docker_image.id})
+BUILD_ID=$(echo $START_RESULT | jq '.build.id' -r)
+
+BUILD_STATUS="IN_PROGRESS"
+while [ "$BUILD_STATUS" == "IN_PROGRESS" ]; do
+    sleep 5
+    BUILD=$(aws codebuild batch-get-builds --ids $BUILD_ID)
+    BUILD_STATUS=$(echo $BUILD | jq '.builds[0].buildStatus' -r)
+    if [ "$BUILD_STATUS" == "IN_PROGRESS" ]; then
+        echo "CodeBuild is still in progress..."
+    fi
+done
+
+if [ "$BUILD_STATUS" != "SUCCEEDED" ]; then
+    LOG_URL=$(echo $BUILD | jq '.builds[0].logs.deepLink' -r)
+    echo "Build failed - logs are available at [$LOG_URL]"
+    exit 1
+else
+    echo "ECR CodeBuild succeeded"
+fi
+
 EOF
 
   }

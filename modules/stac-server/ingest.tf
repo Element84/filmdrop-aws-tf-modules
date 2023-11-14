@@ -54,8 +54,6 @@ resource "aws_sqs_queue" "stac_server_ingest_dead_letter_sqs_queue" {
 }
 
 data "aws_iam_policy_document" "stac_server_ingest_sqs_policy" {
-  policy_id = "arn:aws:sqs:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:stac-server-${var.stac_api_stage}-queue/SQSDefaultPolicy"
-
   statement {
     effect = "Allow"
 
