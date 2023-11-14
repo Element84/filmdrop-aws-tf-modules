@@ -37,6 +37,14 @@ resource "aws_iam_policy" "titiler_lambda_policy" {
         },
         {
             "Action": [
+                "s3:Get*",
+                "s3:List*"
+            ],
+            "Resource": "*",
+            "Effect": "Allow"
+        },
+        {
+            "Action": [
                 "logs:PutLogEvents"
             ],
             "Resource": [
