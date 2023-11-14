@@ -67,7 +67,7 @@ resource "aws_opensearch_domain" "stac_server_opensearch_domain" {
             "Action": "es:ESHttp*",
             "Principal": { "AWS": "*" },
             "Effect": "Allow",
-            "Resource": "arn:aws:es:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:domain/stac-server-${var.stac_api_stage}-${var.opensearch_domain_type}/*"
+            "Resource": "arn:aws:es:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:domain/stac-server-${var.stac_api_stage}/*"
         }
     ]
 }
@@ -90,7 +90,7 @@ CONFIG
 }
 
 resource "aws_security_group" "opensearch_security_group" {
-  name        = "stac-server-${var.stac_api_stage}-${var.opensearch_domain_type}-sg"
+  name        = "stac-server-${var.stac_api_stage}-sg"
   description = "OpenSearch Security Group"
   vpc_id      = var.vpc_id
 
@@ -130,7 +130,7 @@ resource "random_password" "opensearch_master_password" {
 }
  
 resource "aws_secretsmanager_secret" "opensearch_master_password_secret" {
-   name = "stac-server-${var.stac_api_stage}-${var.opensearch_domain_type}-master-creds"
+   name = "stac-server-${var.stac_api_stage}-master-creds"
 }
  
 resource "aws_secretsmanager_secret_version" "opensearch_master_password_secret_version" {
@@ -155,7 +155,7 @@ resource "random_password" "opensearch_stac_user_password" {
  }
 
 resource "aws_secretsmanager_secret" "opensearch_stac_user_password_secret" {
-   name = "stac-server-${var.stac_api_stage}-${var.opensearch_domain_type}-user-creds"
+   name = "stac-server-${var.stac_api_stage}-user-creds"
 }
 
 resource "aws_secretsmanager_secret_version" "opensearch_stac_user_password_secret_version" {
@@ -172,7 +172,7 @@ EOF
 resource "aws_lambda_function" "stac_server_opensearch_user_initializer" {
   filename         = data.archive_file.user_init_lambda_zip.output_path
   source_code_hash = data.archive_file.user_init_lambda_zip.output_base64sha256
-  function_name    = "stac-server-${var.stac_api_stage}-${var.opensearch_domain_type}-init"
+  function_name    = "stac-server-${var.stac_api_stage}-init"
   role             = aws_iam_role.stac_api_lambda_role.arn
   description      = "Lambda function to initialize OpenSearch users, roles, and settings."
   handler          = "main.lambda_handler"
