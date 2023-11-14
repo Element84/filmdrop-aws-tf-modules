@@ -33,7 +33,27 @@ resource "aws_codebuild_project" "console_ui_codebuild" {
 
     environment_variable {
       name  = "REACT_APP_TITILER"
-      value = var.titiler_api
+      value = var.titiler_api_endpoint
+    }
+
+    environment_variable {
+      name  = "REACT_APP_STAC_API_ENDPOINT"
+      value = var.stac_api_endpoint
+    }
+
+    environment_variable {
+      name  = "REACT_APP_COLLECTIONS"
+      value = var.stac_api_collections
+    }
+
+    environment_variable {
+      name  = "REACT_APP_DASHBOARD_LINK"
+      value = var.cirrus_dashboard_endpoint
+    }
+
+    environment_variable {
+      name  = "REACT_APP_ANALYZE_LINK"
+      value = var.analytics_endpoint
     }
 
     environment_variable {
@@ -72,7 +92,7 @@ resource "null_resource" "trigger_console_ui_upgrade" {
     region                          = data.aws_region.current.name
     account                         = data.aws_caller_identity.current.account_id
     filmdrop_ui_release             = var.filmdrop_ui_release
-    titiler_api                     = var.titiler_api
+    titiler_api                     = var.titiler_api_endpoint
     console_ui_bucket_name          = var.console_ui_bucket_name
     new_source                      = aws_s3_bucket.console_ui_source_config.id
     new_build_spec                  = aws_s3_object.console_ui_build_spec.etag

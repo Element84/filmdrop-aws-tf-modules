@@ -18,10 +18,26 @@ variable "filmdrop_ui_release" {
   description = "FilmDrop UI Release"
 }
 
-variable "titiler_api" {
+variable "titiler_api_endpoint" {
   description = "TiTiler API"
 }
 
 variable "console_ui_bucket_name" {
   description = "Console UI Bucket Name"
+}
+
+variable "stac_api_endpoint" {
+  description = "STAC API Endpoint"
+}
+
+variable "stac_api_collections" {
+  description = "STAC API Collections"
+}
+
+variable "cirrus_dashboard_endpoint" {
+  description = "Cirrus Dashboard Endpoint"
+}
+
+variable "analytics_endpoint" {
+  description = "Analytics Endpoint"
 }
