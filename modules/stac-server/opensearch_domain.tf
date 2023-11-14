@@ -89,11 +89,6 @@ CONFIG
   ]
 }
 
-moved {
-  from = aws_elasticsearch_domain.stac_server_opensearch_domain
-  to   = aws_opensearch_domain.stac_server_opensearch_domain
-}
-
 resource "aws_security_group" "opensearch_security_group" {
   name        = "stac-server-${var.stac_api_stage}-${var.opensearch_domain_type}-sg"
   description = "OpenSearch Security Group"
