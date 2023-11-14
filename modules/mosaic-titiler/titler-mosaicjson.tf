@@ -32,6 +32,8 @@ resource "null_resource" "download-lambda-source-bundle" {
   provisioner "local-exec" {
     interpreter = ["bash", "-exc"]
     command = <<EOF
+mkdir -p ${path.module}/lambda
+which wget || echo "wget is required, but not found - this is going to fail..."
 wget --quiet \
   https://github.com/Element84/titiler-mosaicjson/releases/download/${var.mosaic_titiler_release_tag}/lambda-${var.lambda_runtime}.zip \
   -O ${path.module}/lambda/${var.mosaic_titiler_release_tag}-lambda-${var.lambda_runtime}.zip
