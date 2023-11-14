@@ -38,3 +38,12 @@ output "public_subnets" {
   }
 }
 
+output "security_group_id" {
+  description = "ID of Security Group"
+  value = aws_security_group.sg_vpcendpoint.id
+}
+
+output "vpc_cidr" {
+  description = "VPC CIDR Range"
+  value = var.vpc_cidr
+}

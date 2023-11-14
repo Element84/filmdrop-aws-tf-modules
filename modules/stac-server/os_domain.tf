@@ -47,8 +47,6 @@ CONFIG
   lifecycle {
       ignore_changes = [access_policies]
   }
-
-  depends_on = [aws_iam_service_linked_role.os]
 }
 
 resource "aws_security_group" "os_security_group" {
@@ -78,5 +76,6 @@ resource "aws_security_group" "os_security_group" {
 }
 
 resource "aws_iam_service_linked_role" "os" {
-  aws_service_name = "es.amazonaws.com"
+  count             = var.create_os_service_linked_role == true ? 1 : 0
+  aws_service_name  = "es.amazonaws.com"
 }

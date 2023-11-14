@@ -227,3 +227,8 @@ variable "allow_explicit_index" {
   description = "Allow OpenSearch Explicit Index"
   default     = "true"
 }
+
+variable "create_os_service_linked_role" {
+  description = "Enable creation of OpenSearch Service Linked Role"
+  default     = true
+}
