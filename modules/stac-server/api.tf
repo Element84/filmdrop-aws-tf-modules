@@ -17,11 +17,19 @@ resource "aws_lambda_function" "stac_server_api" {
         LOG_LEVEL                         = var.log_level
         REQUEST_LOGGING_ENABLED           = var.request_logging_enabled
         STAC_DOCS_URL                     = var.stac_docs_url
-        OPENSEARCH_HOST                   = var.opensearch_host != "" ? var.opensearch_host : aws_opensearch_domain.stac_server_opensearch_domain.endpoint
+        OPENSEARCH_HOST                   = (
+          var.opensearch_host != "" 
+            ? var.opensearch_host 
+            : aws_opensearch_domain.stac_server_opensearch_domain.endpoint
+        )
         ENABLE_TRANSACTIONS_EXTENSION     = var.enable_transactions_extension
         STAC_API_ROOTPATH                 = "/${var.stac_api_stage}"
-        PRE_HOOK                          = var.stac_pre_hook_lambda_arn
-        POST_HOOK                         = var.stac_post_hook_lambda_arn
+        PRE_HOOK                          = (
+          var.stac_server_auth_pre_hook_enabled && var.stac_server_pre_hook_lambda_arn == "" 
+            ? one(aws_lambda_function.stac_server_api_auth_pre_hook[*].arn) 
+            : var.stac_server_pre_hook_lambda_arn
+        )
+        POST_HOOK                         = var.stac_server_post_hook_lambda_arn
         OPENSEARCH_CREDENTIALS_SECRET_ID	= aws_secretsmanager_secret.opensearch_stac_user_password_secret.arn
         COLLECTION_TO_INDEX_MAPPINGS      = var.collection_to_index_mappings
     }

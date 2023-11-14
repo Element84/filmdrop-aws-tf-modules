@@ -68,6 +68,17 @@ variable "ingest_lambda_memory" {
   default     = 512
 }
 
+variable "pre_hook_lambda_timeout" {
+  description = "STAC API auth pre-hook lambda timeout in seconds"
+  default     = 25
+}
+
+variable "pre_hook_lambda_memory" {
+  description = "STAC API auth pre-hook lambda max memory size in MB"
+  default     = 128
+}
+
+
 variable "api_rest_type" {
   description = "STAC API Gateway type"
   default     = "EDGE"
@@ -160,13 +171,18 @@ variable "vpc_security_group_ids" {
   default     = []
 }
 
-variable "stac_pre_hook_lambda_arn" {
-  description = "STAC Pre Hook Lambda ARN"
+variable "stac_server_pre_hook_lambda_arn" {
+  description = "STAC API Pre-Hook Lambda ARN"
   default     = ""
 }
 
-variable "stac_post_hook_lambda_arn" {
-  description = "STAC Post-Hook Lambda ARN"
+variable "stac_server_auth_pre_hook_enabled" {
+  description = "STAC API Pre-Hook Auth Lambda Enabled"
+  default     = false
+}
+
+variable "stac_server_post_hook_lambda_arn" {
+  description = "STAC API Post-Hook Lambda ARN"
   default     = ""
 }
 
