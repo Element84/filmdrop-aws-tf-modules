@@ -1,6 +1,6 @@
-resource "aws_elasticsearch_domain" "stac_server_opensearch_domain" {
+resource "aws_opensearch_domain" "stac_server_opensearch_domain" {
   domain_name           = "stac-server-${var.stac_api_stage}-${var.opensearch_domain_type}"
-  elasticsearch_version = var.opensearch_version
+  engine_version = var.opensearch_version
 
   cluster_config {
     instance_type             = var.opensearch_cluster_instance_type
@@ -20,7 +20,7 @@ resource "aws_elasticsearch_domain" "stac_server_opensearch_domain" {
   }
 
   ebs_options {
-    ebs_enabled = var.opensearch_ebs_enabled
+    ebs_enabled = true
     volume_size = var.opensearch_ebs_volume_size
     volume_type = var.opensearch_ebs_volume_type
   }
@@ -87,6 +87,11 @@ CONFIG
     aws_secretsmanager_secret.opensearch_stac_user_password_secret,
     aws_secretsmanager_secret_version.opensearch_stac_user_password_secret_version
   ]
+}
+
+moved {
+  from = aws_elasticsearch_domain.stac_server_opensearch_domain
+  to   = aws_opensearch_domain.stac_server_opensearch_domain
 }
 
 resource "aws_security_group" "opensearch_security_group" {
@@ -181,7 +186,7 @@ resource "aws_lambda_function" "stac_server_opensearch_user_initializer" {
 
   environment {
     variables = {
-        OPENSEARCH_HOST                     = var.opensearch_host != "" ? var.opensearch_host : aws_elasticsearch_domain.stac_server_opensearch_domain.endpoint
+        OPENSEARCH_HOST                     = var.opensearch_host != "" ? var.opensearch_host : aws_opensearch_domain.stac_server_opensearch_domain.endpoint
         OPENSEARCH_MASTER_CREDS_SECRET_ARN  = aws_secretsmanager_secret.opensearch_master_password_secret.arn
         OPENSEARCH_USER_CREDS_SECRET_ARN    = aws_secretsmanager_secret.opensearch_stac_user_password_secret.arn
         REGION                              = data.aws_region.current.name
@@ -194,7 +199,7 @@ resource "aws_lambda_function" "stac_server_opensearch_user_initializer" {
   }
 
   depends_on = [
-    aws_elasticsearch_domain.stac_server_opensearch_domain,
+    aws_opensearch_domain.stac_server_opensearch_domain,
     random_password.opensearch_master_password,
     aws_secretsmanager_secret.opensearch_master_password_secret,
     aws_secretsmanager_secret_version.opensearch_master_password_secret_version,
@@ -207,7 +212,7 @@ resource "aws_lambda_function" "stac_server_opensearch_user_initializer" {
 resource "null_resource" "invoke_stac_server_opensearch_user_initializer" {
   triggers = {
     INITIALIZER_LAMBDA                  = aws_lambda_function.stac_server_opensearch_user_initializer.function_name
-    OPENSEARCH_HOST                     = aws_elasticsearch_domain.stac_server_opensearch_domain.endpoint
+    OPENSEARCH_HOST                     = aws_opensearch_domain.stac_server_opensearch_domain.endpoint
     OPENSEARCH_MASTER_CREDS_SECRET_ARN  = aws_secretsmanager_secret.opensearch_master_password_secret.arn
     OPENSEARCH_USER_CREDS_SECRET_ARN    = aws_secretsmanager_secret.opensearch_stac_user_password_secret.arn
     REGION                              = data.aws_region.current.name
@@ -225,7 +230,7 @@ EOF
   }
 
   depends_on = [
-    aws_elasticsearch_domain.stac_server_opensearch_domain,
+    aws_opensearch_domain.stac_server_opensearch_domain,
     random_password.opensearch_master_password,
     aws_secretsmanager_secret.opensearch_master_password_secret,
     aws_secretsmanager_secret_version.opensearch_master_password_secret_version,

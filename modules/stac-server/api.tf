@@ -16,7 +16,7 @@ resource "aws_lambda_function" "stac_server_api" {
         STAC_DESCRIPTION                  = var.stac_description
         LOG_LEVEL                         = var.log_level
         STAC_DOCS_URL                     = var.stac_docs_url
-        OPENSEARCH_HOST                   = var.opensearch_host != "" ? var.opensearch_host : aws_elasticsearch_domain.stac_server_opensearch_domain.endpoint
+        OPENSEARCH_HOST                   = var.opensearch_host != "" ? var.opensearch_host : aws_opensearch_domain.stac_server_opensearch_domain.endpoint
         ENABLE_TRANSACTIONS_EXTENSION     = var.enable_transactions_extension
         STAC_API_ROOTPATH                 = "/${var.stac_api_stage}"
         PRE_HOOK                          = var.stac_pre_hook_lambda_arn

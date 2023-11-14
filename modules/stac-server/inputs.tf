@@ -15,7 +15,7 @@ variable "stac_description" {
 
 variable "log_level" {
   description = "Logging level"
-  default     = "DEBUG"
+  default     = "WARN"
 }
 
 variable "stac_docs_url" {
@@ -75,12 +75,12 @@ variable "opensearch_version" {
 
 variable "opensearch_cluster_instance_type" {
   description = "OpenSearch Domain instance type"
-  default     = "c6g.large.elasticsearch"
+  default     = "c6g.large.search"
 }
 
 variable "opensearch_cluster_dedicated_master_type" {
   description = "OpenSearch Domain dedicated master instance type"
-  default     = "m6g.large.elasticsearch"
+  default     = "m6g.large.search"
 }
 
 variable "opensearch_cluster_instance_count" {
@@ -116,11 +116,6 @@ variable "opensearch_domain_min_tls" {
 variable "opensearch_domain_type" {
   description = "OpenSearch Domain type"
   default     = "opensearch"
-}
-
-variable "opensearch_ebs_enabled" {
-  description = "OpenSearch EBS enabled"
-  default     = true
 }
 
 variable "opensearch_ebs_volume_size" {
