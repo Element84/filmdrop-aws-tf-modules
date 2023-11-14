@@ -18,6 +18,7 @@ variable "vpc_id" {
 variable "cirrus_dashboard_release" {
   description = "FilmDrop Cirrus Dashboard Release"
   type        = string
+  default     = "v0.5.1"
 }
 
 variable "cirrus_api_endpoint" {

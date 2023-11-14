@@ -9,6 +9,11 @@ Check out the [changelog](CHANGELOG.md).
 Document any changes that need to be made by module instances using these modules to uptake
 a newer version. For example, if a new required variable is added, this should be documented here.
 
+### 1.7.0
+
+- Remove cirrus_dashboard_release uses in deployment to use new default version of v0.5.1
+- Please upgrade to AWS provider `~=5.20`
+
 ### 1.6.0
 
 - The jupyterhub-dask-eks module no longer takes a parameter `kubernetes_cluster_name`,

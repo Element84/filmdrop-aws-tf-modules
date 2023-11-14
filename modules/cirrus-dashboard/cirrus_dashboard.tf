@@ -109,7 +109,8 @@ resource "random_id" "suffix" {
 }
 
 resource "aws_s3_bucket" "cirrus_dashboard_source_config" {
-  bucket = "cirrus-dashboard-config-${random_id.suffix.hex}"
+  bucket        = "cirrus-dashboard-config-${random_id.suffix.hex}"
+  force_destroy = true
 }
 
 resource "aws_s3_bucket_ownership_controls" "cirrus_dashboard_source_config_ownership_controls" {

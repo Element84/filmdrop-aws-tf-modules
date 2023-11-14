@@ -14,8 +14,9 @@ resource "aws_ssm_parameter" "logs_bucket_name" {
 }
 
 resource "aws_s3_bucket" "log_bucket" {
-  count  = var.create_log_bucket ? 1 : 0
-  bucket = local.log_bucket
+  count         = var.create_log_bucket ? 1 : 0
+  bucket        = local.log_bucket
+  force_destroy = true
 }
 
 resource "aws_s3_bucket_replication_configuration" "log_bucket_replication" {

@@ -13,7 +13,8 @@ resource "random_id" "suffix" {
 }
 
 resource "aws_s3_bucket" "docker_image_build_source" {
-  bucket = "titiler-image-${random_id.suffix.hex}"
+  bucket        = "titiler-image-${random_id.suffix.hex}"
+  force_destroy = true
 }
 
 resource "aws_s3_bucket_ownership_controls" "docker_image_build_source_ownership_controls" {

@@ -6,8 +6,8 @@ phases:
       - echo "Installing dependencies ..."
       - export FILMDROP_BUILD_DIR=`pwd`
       - export EKSCTL_VERSION=v0.157.0
-      # KUBECTL_VERSION 2023-09-14: 1.23.17, 1.24.17, 1.25.13, 1.26.8, 1.27.5
-      - export KUBECTL_VERSION=1.25.13
+      # KUBECTL_VERSION 2023-09-14: 1.23.17, 1.24.17, 1.25.20, 1.26.8, 1.27.5
+      - export KUBECTL_VERSION=1.25.20
       - export HELM_VERSION=v3.10.3
       - cd /usr/local/bin
       - curl -Lfo eksctl.tar.gz "https://github.com/weaveworks/eksctl/releases/download/${EKSCTL_VERSION}/eksctl_Linux_amd64.tar.gz"

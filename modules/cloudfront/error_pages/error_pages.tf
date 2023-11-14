@@ -1,6 +1,7 @@
 
 resource "aws_s3_bucket" "error_bucket" {
-  bucket = lower(local.error_pages_id)
+  bucket        = lower(local.error_pages_id)
+  force_destroy = true
 }
 
 resource "aws_s3_object" "base_custom_error_pages_directory" {

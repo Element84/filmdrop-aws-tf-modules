@@ -34,6 +34,7 @@ EOF
 
 resource "aws_s3_bucket" "filmdrop_public_keys_bucket" {
   bucket_prefix = "filmdrop-public-keys-"
+  force_destroy = true
 }
 
 resource "aws_s3_bucket_server_side_encryption_configuration" "filmdrop_public_keys_bucket_encryption" {

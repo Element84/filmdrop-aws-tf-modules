@@ -1,6 +1,7 @@
 
 resource "aws_s3_bucket" "content_bucket" {
-  bucket = lower(substr(local.content_pages_id, 0, 63))
+  bucket        = lower(substr(local.content_pages_id, 0, 63))
+  force_destroy = true
 }
 
 resource "aws_s3_bucket_ownership_controls" "content_bucket_ownership_controls" {
