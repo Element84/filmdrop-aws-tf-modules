@@ -29,7 +29,8 @@ resource "aws_sns_topic" "stac_server_ingest_sns_topic" {
 }
 
 resource "aws_sns_topic_subscription" "stac_server_ingest_sqs_subscription" {
-  topic_arn            = aws_sns_topic.stac_server_ingest_sns_topic.arn
+  count                = length(concat([aws_sns_topic.stac_server_ingest_sns_topic.arn], var.ingest_sns_topic_arns))
+  topic_arn            = element(concat([aws_sns_topic.stac_server_ingest_sns_topic.arn], var.ingest_sns_topic_arns), count.index)
   protocol             = "sqs"
   endpoint             = aws_sqs_queue.stac_server_ingest_sqs_queue.arn
 }
@@ -38,6 +39,7 @@ resource "aws_sqs_queue" "stac_server_ingest_sqs_queue" {
   name                        = "stac-server-${var.stac_api_stage}-queue"
   visibility_timeout_seconds  = var.ingest_sqs_timeout
   receive_wait_time_seconds   = var.ingest_sqs_receive_wait_time_seconds
+  policy                      = data.aws_iam_policy_document.stac_server_ingest_sqs_policy.json
 
   redrive_policy= jsonencode({
     deadLetterTargetArn = aws_sqs_queue.stac_server_ingest_dead_letter_sqs_queue.arn
@@ -50,27 +52,32 @@ resource "aws_sqs_queue" "stac_server_ingest_dead_letter_sqs_queue" {
   visibility_timeout_seconds  = var.ingest_sqs_dlq_timeout
 }
 
-resource "aws_sqs_queue_policy" "stac_server_ingest_sns_sqs_policy" {
-  queue_url = aws_sqs_queue.stac_server_ingest_sqs_queue.id
+data "aws_iam_policy_document" "stac_server_ingest_sqs_policy" {
+  policy_id = "arn:aws:sqs:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:stac-server-${var.stac_api_stage}-queue/SQSDefaultPolicy"
 
-  policy = <<POLICY
-{
-  "Version": "2012-10-17",
-  "Statement": [
-    {
-      "Effect": "Allow",
-      "Principal": "*",
-      "Action": "sqs:SendMessage",
-      "Resource": "${aws_sqs_queue.stac_server_ingest_sqs_queue.arn}",
-      "Condition": {
-        "ArnEquals": {
-          "aws:SourceArn": "${aws_sns_topic.stac_server_ingest_sns_topic.arn}"
-        }
-      }
+  statement {
+    effect = "Allow"
+
+    principals {
+      type        = "AWS"
+      identifiers = ["*"]
     }
-  ]
-}
-POLICY
+
+    actions = [
+      "sqs:SendMessage"
+    ]
+
+    resources = [
+      "arn:aws:sqs:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:stac-server-${var.stac_api_stage}-queue",
+    ]
+
+    condition {
+      test     = "ArnEquals"
+      variable = "aws:SourceArn"
+
+      values = concat([aws_sns_topic.stac_server_ingest_sns_topic.arn], var.ingest_sns_topic_arns)
+    }
+  }
 }
 
 resource "aws_lambda_event_source_mapping" "stac_server_ingest_sqs_lambda_event_source_mapping" {
@@ -103,5 +110,8 @@ EOF
 
   }
 
-  depends_on = [aws_lambda_function.stac_server_ingest]
+  depends_on = [
+    aws_lambda_function.stac_server_ingest,
+    null_resource.invoke_stac_server_opensearch_user_initializer
+  ]
 }

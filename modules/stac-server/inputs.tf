@@ -212,3 +212,8 @@ variable "collection_to_index_mappings" {
   description = "A JSON object representing collection id to index name mappings if they do not have the same names"
   default     = ""
 }
+
+variable "ingest_sns_topic_arns" {
+  description = "List of additional Ingest SNS topic arns to subscribe to stac server"
+  default     = []
+}

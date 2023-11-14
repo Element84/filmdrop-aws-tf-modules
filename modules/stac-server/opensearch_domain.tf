@@ -168,12 +168,13 @@ resource "aws_secretsmanager_secret_version" "opensearch_stac_user_password_secr
 EOF
 }
 
+# This initializes the stac_server user account and sets OpenSearch configuration.
 resource "aws_lambda_function" "stac_server_opensearch_user_initializer" {
   filename         = data.archive_file.user_init_lambda_zip.output_path
   source_code_hash = data.archive_file.user_init_lambda_zip.output_base64sha256
   function_name    = "stac-server-${var.stac_api_stage}-${var.opensearch_domain_type}-init"
   role             = aws_iam_role.stac_api_lambda_role.arn
-  description      = "Lambda function to initialize OpenSearch Stac Server user and roles."
+  description      = "Lambda function to initialize OpenSearch users, roles, and settings."
   handler          = "main.lambda_handler"
   runtime          = "python3.9"
   memory_size      = "512"
