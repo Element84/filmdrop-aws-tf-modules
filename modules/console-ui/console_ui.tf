@@ -87,10 +87,10 @@ resource "null_resource" "trigger_console_ui_upgrade" {
     region                          = data.aws_region.current.name
     account                         = data.aws_caller_identity.current.account_id
     filmdrop_ui_release             = var.filmdrop_ui_release
+    filmdrop_ui_config              = var.filmdrop_ui_config
     console_ui_bucket_name          = var.console_ui_bucket_name
     new_source                      = aws_s3_bucket.console_ui_source_config.id
     new_build_spec                  = aws_s3_object.console_ui_build_spec.etag
-
   }
 
   provisioner "local-exec" {
@@ -100,9 +100,27 @@ export AWS_DEFAULT_REGION=${data.aws_region.current.name}
 export AWS_REGION=${data.aws_region.current.name}
 
 echo "Triggering CodeBuild Project."
-aws codebuild start-build --project-name ${aws_codebuild_project.console_ui_codebuild.id}
-EOF
+START_RESULT=$(aws codebuild start-build --project-name ${aws_codebuild_project.console_ui_codebuild.id})
+BUILD_ID=$(echo $START_RESULT | jq '.build.id' -r)
 
+BUILD_STATUS="IN_PROGRESS"
+while [[ "$BUILD_STATUS" == "IN_PROGRESS" ]]; do
+    sleep 5
+    BUILD=$(aws codebuild batch-get-builds --ids $BUILD_ID)
+    BUILD_STATUS=$(echo $BUILD | jq '.builds[0].buildStatus' -r)
+    if [[ "$BUILD_STATUS" == "IN_PROGRESS" ]]; then
+        echo "CodeBuild is still in progress..."
+    fi
+done
+
+if [[ "$BUILD_STATUS" != "SUCCEEDED" ]]; then
+    LOG_URL=$(echo $BUILD | jq '.builds[0].logs.deepLink' -r)
+    echo "Build failed - logs are available at [$LOG_URL]"
+    exit 1
+else
+    echo "console UI CodeBuild succeeded"
+fi
+EOF
   }
 
   depends_on = [

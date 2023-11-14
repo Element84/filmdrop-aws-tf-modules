@@ -9,11 +9,26 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Changed
 
+-
+
+## 1.4.2 2023-09-01
+
+### Changed
+
+- Adding configurable disk_size and capacity_type to eks node groups
+
+
+## 1.4.1 2023-08-29
+
+### Changed
+
 - Add WAF rules to check requests for mosaic titiler - consumer must set "waf_allowed_url" to enable (updated to allow OPTIONS)
 - Sets element 84 distribution email as maintainer for daskhub dockerfile
 - explicitly set bash interpreter for local-exec shell scripts, and don't swallow errors (-e)
+- add a trigger for trigger_console_ui_upgrade on config file contents
+- add status check to wait for console ui codebuild to complete and return success/failure
 - Updated wget TLS to v1.3 (Github began denying the default)
-
+- updated TF resource schemas to work with AWS provider v5
 
 ## 1.3.0 2023-08-14
 

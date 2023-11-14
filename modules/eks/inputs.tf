@@ -55,3 +55,15 @@ variable attach_accelerator_policy {
   description = "Attach LZA policy to EKS worker nodes."
   default     = false
 }
+
+variable node_group_capacity_type {
+  type        = string
+  description = "Type of capacity associated with the EKS Node Group. Valid values are ON_DEMAND or SPOT."
+  default     = "ON_DEMAND"
+}
+
+variable node_group_disk_size {
+  type        = number
+  description = "Disk size in GiB for worker nodes."
+  default     = 50
+}

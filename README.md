@@ -10,6 +10,7 @@ Document any changes that need to be made by module instances using these module
 a newer version. For example, if a new required variable is added, this should be documented here.
 
 ### 1.next
+- Please upgrade to AWS provider v5
 - The WAF rules for mosaic titiler have been defined in the mosaic-titler module.  The consumer
   must now pass in an "aws.east" provider because cloudfront requires global resources created in
   us-east-1.  Consumers should set the new "waf_allowed_url" variable to set the WAF rules to enable
