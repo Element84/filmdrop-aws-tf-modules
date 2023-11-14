@@ -39,13 +39,13 @@ phases:
       - echo "Creating eks cluster ..."
       - eksctl create cluster -f ./cluster.yaml
       - kubectl apply -f https://raw.githubusercontent.com/kubernetes/autoscaler/master/cluster-autoscaler/cloudprovider/aws/examples/cluster-autoscaler-autodiscover.yaml
-      - kubectl annotate serviceaccount cluster-autoscaler -n kube-system eks.amazonaws.com/role-arn=arn:aws:iam::${AWS_ACCOUNT_ID}:role/eksctl-cluster-autoscaler-role
+      - kubectl annotate serviceaccount cluster-autoscaler -n kube-system eks.amazonaws.com/role-arn=arn:aws:iam::${AWS_ACCOUNT_ID}:role/${ANALYTICS_CLUSTER_NAME}-eksctl-cluster-autoscaler-role
       - kubectl patch deployment cluster-autoscaler -n kube-system -p '{"spec":{"template":{"metadata":{"annotations":{"cluster-autoscaler.kubernetes.io/safe-to-evict":"false"}}}}}'
       - kubectl patch deployment cluster-autoscaler -n kube-system --patch-file ./spec.yaml
       - kubectl set image deployment cluster-autoscaler -n kube-system cluster-autoscaler=k8s.gcr.io/autoscaling/cluster-autoscaler:${AUTOSCALER_VERSION}
       - aws eks update-kubeconfig --name ${ANALYTICS_CLUSTER_NAME} --region ${AWS_DEFAULT_REGION}
       - helm repo add aws-ebs-csi-driver https://kubernetes-sigs.github.io/aws-ebs-csi-driver
-      - helm upgrade --install --timeout=30m --debug aws-ebs-csi-driver aws-ebs-csi-driver/aws-ebs-csi-driver --namespace kube-system --set image.repository=602401143452.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/eks/aws-ebs-csi-driver --set controller.serviceAccount.create=true --set controller.serviceAccount.name=ebs-csi-controller-sa --set controller.serviceAccount.annotations."eks\.amazonaws\.com/role-arn"="arn:aws:iam::${AWS_ACCOUNT_ID}:role/ebs-csi-driver-role"
+      - helm upgrade --install --timeout=30m --debug aws-ebs-csi-driver aws-ebs-csi-driver/aws-ebs-csi-driver --namespace kube-system --set image.repository=602401143452.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/eks/aws-ebs-csi-driver --set controller.serviceAccount.create=true --set controller.serviceAccount.name=ebs-csi-controller-sa --set controller.serviceAccount.annotations."eks\.amazonaws\.com/role-arn"="arn:aws:iam::${AWS_ACCOUNT_ID}:role/${ANALYTICS_CLUSTER_NAME}-ebs-csi-driver-role"
       - kubectl replace -f ./storageclass.yaml --force
       - aws ecr get-login-password --region ${AWS_DEFAULT_REGION} | docker login --username AWS --password-stdin ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com
       - aws eks update-kubeconfig --name ${ANALYTICS_CLUSTER_NAME} --region ${AWS_DEFAULT_REGION}

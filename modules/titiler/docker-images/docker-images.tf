@@ -58,11 +58,12 @@ resource "aws_s3_object" "docker_build_spec" {
 }
 
 resource "aws_codebuild_project" "titiler_docker_image" {
-  name           = "${var.prefix}titiler-docker-image"
-  description    = "creates a titiler docker image"
-  build_timeout  = "10"
-  queued_timeout = "30"
-  service_role   = aws_iam_role.docker_image_codebuild_iam_role.arn
+  name                   = "${var.prefix}titiler-docker-image"
+  description            = "creates a titiler docker image"
+  concurrent_build_limit = 1
+  build_timeout          = "10"
+  queued_timeout         = "30"
+  service_role           = aws_iam_role.docker_image_codebuild_iam_role.arn
 
   artifacts {
     type = "NO_ARTIFACTS"

@@ -63,11 +63,12 @@ resource "aws_s3_object" "docker_build_spec" {
 }
 
 resource "aws_codebuild_project" "daskhub_docker_image" {
-  name           = "daskhub-docker-image-${var.project_name}-${var.daskhub_stage}"
-  description    = "creates a daskhub docker image"
-  build_timeout  = "10"
-  queued_timeout = "30"
-  service_role   = aws_iam_role.docker_image_codebuild_iam_role.arn
+  name                   = "daskhub-docker-image-${var.project_name}-${var.daskhub_stage}"
+  description            = "creates a daskhub docker image"
+  concurrent_build_limit = 1
+  build_timeout          = "10"
+  queued_timeout         = "30"
+  service_role           = aws_iam_role.docker_image_codebuild_iam_role.arn
 
   artifacts {
     type = "NO_ARTIFACTS"

@@ -62,12 +62,6 @@ variable "kubernetes_autoscaler_version" {
   default     = "v1.25.0"
 }
 
-variable "kubernetes_cluster_name" {
-  description = "Kubernetes Cluster name"
-  type        = string
-  default     = "filmdrop-analytics"
-}
-
 variable "filmdrop_analytics_jupyterhub_admin_credentials_secret" {
   description = "FilmDrop JupyterHub Admin Credetials Secret Manager Secret"
   type        = string
@@ -97,6 +91,10 @@ variable "project_name" {
   type        = string
 }
 
+variable "environment" {
+  description = "Project environment"
+  type        = string
+}
 variable "jupyterhub_nodegroup_instance_types" {
   description = "Jupyterhub Nodegroup Instance Types"
   type        = list(string)

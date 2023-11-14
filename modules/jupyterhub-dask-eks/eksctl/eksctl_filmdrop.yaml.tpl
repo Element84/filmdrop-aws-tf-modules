@@ -26,7 +26,7 @@ iam:
       labels: {aws-usage: "cluster-ops"}
     wellKnownPolicies:
       autoScaler: true
-    roleName: eksctl-cluster-autoscaler-role
+    roleName: ${filmdrop_analytics_cluster_name}-eksctl-cluster-autoscaler-role
     roleOnly: true
   - metadata:
       name: ebs-csi-controller-sa
@@ -36,7 +36,7 @@ iam:
         app.kubernetes.io/name: aws-ebs-csi-driver
     wellKnownPolicies:
       ebsCSIController: true
-    roleName: ebs-csi-driver-role
+    roleName: ${filmdrop_analytics_cluster_name}-ebs-csi-driver-role
     roleOnly: true
 
 managedNodeGroups:

@@ -14,11 +14,6 @@ variable "application_name" {
   type        = string
 }
 
-variable "cloudfront_origin_access_identity_arn" {
-  description = "Custom CloudFront Origin Access Identity ARN"
-  type        = string
-}
-
 variable "cloudfront_access_identity_path" {
   description = "Custom CloudFront Origin Access Identity Path"
   type        = string
@@ -53,12 +48,6 @@ variable "default_root" {
   description = "Default object for CloudFront to return for requests at the root URL"
   type        = string
   default     = ""
-}
-
-variable "allowed_methods" {
-  description = "Which HTTP methods CloudFront processes"
-  type        = list(string)
-  default     = ["HEAD", "GET", "OPTIONS", "PUT", "POST", "PATCH", "DELETE"]
 }
 
 variable "load_balancer_path" {

@@ -9,6 +9,13 @@ Check out the [changelog](CHANGELOG.md).
 Document any changes that need to be made by module instances using these modules to uptake
 a newer version. For example, if a new required variable is added, this should be documented here.
 
+### Unreleased
+
+- The jupyterhub-dask-eks module no longer takes a parameter `kubernetes_cluster_name`,
+  but now requires a parameter `environment`. Resource names that previously used
+  `kubernetes_cluster_name` now construct those using the `project_name` and `environment`
+  variables
+
 ### 1.5.0
 
 - console-ui.filmdrop_ui_release must be gte 4.x, e.g., `v4.0.1`. Along with this,

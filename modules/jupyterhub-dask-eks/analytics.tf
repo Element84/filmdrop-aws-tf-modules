@@ -1,9 +1,14 @@
+locals {
+  kubernetes_cluster_name = "fd-${var.project_name}-${var.environment}-analytics"
+}
+
 resource "aws_codebuild_project" "analytics_eks_codebuild" {
-  name           = "${var.kubernetes_cluster_name}-build"
-  description    = "creates eks analytics cluster"
-  build_timeout  = "480"
-  queued_timeout = "480"
-  service_role   = aws_iam_role.analytics_eks_codebuild_iam_role.arn
+  name                   = "${local.kubernetes_cluster_name}-build"
+  description            = "creates eks analytics cluster"
+  concurrent_build_limit = 1
+  build_timeout          = "480"
+  queued_timeout         = "480"
+  service_role           = aws_iam_role.analytics_eks_codebuild_iam_role.arn
 
   artifacts {
     type = "NO_ARTIFACTS"
@@ -28,7 +33,7 @@ resource "aws_codebuild_project" "analytics_eks_codebuild" {
 
     environment_variable {
       name  = "ANALYTICS_CLUSTER_NAME"
-      value = var.kubernetes_cluster_name
+      value = local.kubernetes_cluster_name
     }
 
     environment_variable {
@@ -195,7 +200,7 @@ resource "aws_s3_object" "jupyter_dask_source_config_ekscluster" {
   key    = "cluster.yaml"
   source = "${path.module}/cluster.yaml"
   etag = md5(templatefile("${path.module}/eksctl/eksctl_filmdrop.yaml.tpl", {
-    filmdrop_analytics_cluster_name = var.kubernetes_cluster_name
+    filmdrop_analytics_cluster_name = local.kubernetes_cluster_name
     filmdrop_kubernetes_version     = var.kubernetes_version
     filmdrop_region                 = data.aws_region.current.name
     filmdrop_private_subnet_map     = jsonencode(zipmap(var.vpc_private_subnet_azs, var.vpc_private_subnet_ids))
@@ -221,7 +226,7 @@ resource "aws_s3_object" "jupyter_dask_source_config_spec" {
   key    = "spec.yaml"
   source = "${path.module}/spec.yaml"
   etag = md5(templatefile("${path.module}/kubectl/kubectl_filmdrop_spec.yaml.tpl", {
-    filmdrop_analytics_cluster_name               = var.kubernetes_cluster_name
+    filmdrop_analytics_cluster_name               = local.kubernetes_cluster_name
     filmdrop_analytics_cluster_autoscaler_version = var.kubernetes_autoscaler_version
   }))
   depends_on = [
@@ -274,7 +279,7 @@ resource "local_file" "rendered_eksctl_filmdrop" {
     aws_kms_key.analytics_filmdrop_kms_key
   ]
   content = templatefile("${path.module}/eksctl/eksctl_filmdrop.yaml.tpl", {
-    filmdrop_analytics_cluster_name = var.kubernetes_cluster_name
+    filmdrop_analytics_cluster_name = local.kubernetes_cluster_name
     filmdrop_kubernetes_version     = var.kubernetes_version
     filmdrop_region                 = data.aws_region.current.name
     filmdrop_private_subnet_map     = jsonencode(zipmap(var.vpc_private_subnet_azs, var.vpc_private_subnet_ids))
@@ -315,7 +320,7 @@ resource "local_file" "rendered_kubectl_filmdrop_storageclass" {
 
 resource "local_file" "rendered_kubectl_spec_filmdrop" {
   content = templatefile("${path.module}/kubectl/kubectl_filmdrop_spec.yaml.tpl", {
-    filmdrop_analytics_cluster_name               = var.kubernetes_cluster_name
+    filmdrop_analytics_cluster_name               = local.kubernetes_cluster_name
     filmdrop_analytics_cluster_autoscaler_version = var.kubernetes_autoscaler_version
   })
   filename = "${path.module}/spec.yaml"

@@ -21,3 +21,7 @@ output "cloudfront_distribution_arn" {
 output "cloudfront_distribution_zone" {
   value = aws_cloudfront_distribution.filmdrop_managed_cloudfront_distribution.hosted_zone_id
 }
+
+output "content_bucket_name" {
+  value = var.create_content_website ? module.content_website[0].content_bucket : "none"
+}
