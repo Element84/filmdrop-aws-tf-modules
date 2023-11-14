@@ -299,62 +299,6 @@ EOF
   ]
 }
 
-resource "null_resource" "add_analytics_jupyterhub_domain" {
-  triggers = {
-    region                          = data.aws_region.current.name
-    account                         = data.aws_caller_identity.current.account_id
-    filmdrop_analytics_cluster_name = var.kubernetes_cluster_name
-    vpc_cidr_range                  = var.vpc_cidr_range
-    new_helm_daskhub                = null_resource.create_dask_helm.id
-    new_eks_cluster                 = null_resource.create_eks_cluster.id
-    new_kubectl_autoscaler          = null_resource.create_kubectl_autoscaler.id
-    new_storage_class               = null_resource.create_storage_class.id
-    new_vpc_sg                      = null_resource.authorize_vpc_sg.id
-    zone_id                         = var.zone_id
-    domain_alias                    = var.domain_alias
-  }
-
-  provisioner "local-exec" {
-    command = <<EOF
-export AWS_DEFAULT_REGION=${self.triggers.region}
-export AWS_REGION=${self.triggers.region}
-
-sleep 1m
-aws eks update-kubeconfig --name ${self.triggers.filmdrop_analytics_cluster_name} --region ${self.triggers.region}
-export JUPYTER_DNS=`kubectl get svc proxy-public -o json | jq -r .status.loadBalancer.ingress[].hostname`
-echo "Jupyter ELB DNS: $JUPYTER_DNS"
-aws route53 change-resource-record-sets --hosted-zone-id ${self.triggers.zone_id} --change-batch '{"Changes": [ { "Action": "UPSERT", "ResourceRecordSet": { "Name": "${self.triggers.domain_alias}", "Type": "CNAME", "TTL": 300, "ResourceRecords": [ { "Value": "'"$JUPYTER_DNS"'" } ] } } ] }'
-
-
-EOF
-
-  }
-
-
-  depends_on = [
-    aws_kms_key.analytics_filmdrop_kms_key,
-    data.template_file.eksctl_filmdrop,
-    data.template_file.kubectl_spec_filmdrop,
-    data.template_file.daskhub_helm_filmdrop,
-    data.template_file.kubectl_filmdrop_storageclass,
-    local_file.rendered_eksctl_filmdrop,
-    local_file.rendered_daskhub_helm_filmdrop,
-    local_file.rendered_kubectl_filmdrop_storageclass,
-    local_file.rendered_kubectl_spec_filmdrop,
-    module.daskhub_docker_ecr,
-    aws_s3_bucket.jupyter_dask_source_config,
-    aws_s3_object.jupyter_dask_source_config_ekscluster,
-    aws_s3_object.jupyter_dask_source_config_spec,
-    aws_s3_object.jupyter_dask_source_config_daskhub,
-    aws_s3_object.jupyter_dask_source_config_storageclass,
-    null_resource.create_eks_cluster,
-    null_resource.create_kubectl_autoscaler,
-    null_resource.create_storage_class,
-    null_resource.create_dask_helm,
-    null_resource.authorize_vpc_sg
-  ]
-}
-
 module "daskhub_docker_ecr" {
   source = "./docker-images"
 
