@@ -16,11 +16,15 @@ resource "aws_lambda_function" "stac_server_api" {
         STAC_DESCRIPTION                = var.stac_description
         STAC_VERSION                    = var.stac_version
         LOG_LEVEL                       = var.log_level
-        ES_BATCH_SIZE                   = var.es_batch_size
+        INGEST_BATCH_SIZE               = var.os_batch_size
         STAC_DOCS_URL                   = var.stac_docs_url
-        ES_HOST                         = var.es_host != "" ? var.es_host : aws_elasticsearch_domain.stac_server_es_domain.endpoint
+        OPENSEARCH_HOST                 = var.os_host != "" ? var.os_host : aws_elasticsearch_domain.stac_server_os_domain.endpoint
         ENABLE_TRANSACTIONS_EXTENSION   = var.enable_transactions_extension
         STAC_API_ROOTPATH               = "/${var.stac_api_stage}"
+        PRE_HOOK                        = var.stac_pre_hook_lambda
+        PRE_HOOK_AUTH_TOKEN             = var.stac_pre_hook_lambda_token
+        PRE_HOOK_AUTH_TOKEN_TXN         = var.stac_pre_hook_lambda_token_txn
+        POST_HOOK                       = var.stac_post_hook_lambda
     }
   }
 
@@ -29,7 +33,6 @@ resource "aws_lambda_function" "stac_server_api" {
     security_group_ids = var.vpc_security_group_ids
   }
 }
-
 
 resource "aws_api_gateway_rest_api" "stac_server_api_gateway" {
   name = "${var.stac_api_stage}-stac-server"

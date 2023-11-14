@@ -1,5 +1,6 @@
 stages:
   - scan
+  - jupyter_dev_release
   - dev_release
   - candidate_release
   - latest_stable_release
@@ -19,7 +20,7 @@ xray_scan:
   only:
     - merge_requests
   variables:
-    STAC_SERVER_REF: "c8801b8"
+    STAC_SERVER_REF: "1cbb939"
   script:
     - echo "Building Stac Server..."
     - export FILMDROP_BUILD_DIR=`pwd`
@@ -39,12 +40,39 @@ xray_scan:
     - jfrog rt bp "filmdrop/tf-modules/${CI_COMMIT_BRANCH}" ${CI_PIPELINE_IID}
     - jfrog rt build-scan "filmdrop/tf-modules/${CI_COMMIT_BRANCH}" ${CI_PIPELINE_IID}
 
+jupyter_dev_release:
+  stage: jupyter_dev_release
+  variables:
+    STAC_SERVER_REF: "1cbb939"
+  script:
+    - echo "Building Stac Server..."
+    - export FILMDROP_BUILD_DIR=`pwd`
+    - nvm install v16.18.1 ; nvm use v16.18.1
+    - wget -q -O stac-server.tgz "https://github.com/stac-utils/stac-server/tarball/${STAC_SERVER_REF}"
+    - export STAC_SERVER_DIR="stac-utils-stac-server-${STAC_SERVER_REF}"
+    - tar -xzf stac-server.tgz
+    - cd "$STAC_SERVER_DIR"
+    - npm install
+    - npm run build
+    - mkdir -p $FILMDROP_BUILD_DIR/modules/stac-server/lambda/api && mkdir -p $FILMDROP_BUILD_DIR/modules/stac-server/lambda/ingest
+    - cp dist/api/api.zip $FILMDROP_BUILD_DIR/modules/stac-server/lambda/api/
+    - cp dist/ingest/ingest.zip $FILMDROP_BUILD_DIR/modules/stac-server/lambda/ingest/
+    - cd $FILMDROP_BUILD_DIR/modules
+    - echo "Xray Scan and Publish development releases for FilmDrop Terraform Modules..."
+    - export RELEASE_VERSION="jupyter-rc"
+    - tar zcvf filmdrop-tf-modules-release-${RELEASE_VERSION}.tgz *
+    - jfrog rt u --build-name "filmdrop/tf-modules/${CI_COMMIT_BRANCH}" --build-number ${CI_PIPELINE_IID} filmdrop-tf-modules-release-${RELEASE_VERSION}.tgz "${ARTIFACTORY_FILMDROP_TF_MODULE_REPO}/packaged-releases/filmdrop-tf-modules-release-${RELEASE_VERSION}.tgz"
+    - jfrog rt bp --build-url "$CI_PIPELINE_URL" "filmdrop/tf-modules/${CI_COMMIT_BRANCH}" ${CI_PIPELINE_IID}
+    - jfrog rt build-scan "filmdrop/tf-modules/${CI_COMMIT_BRANCH}" ${CI_PIPELINE_IID}
+    - jfrog tfc --repo-deploy ${ARTIFACTORY_FILMDROP_TF_MODULE_REPO}
+    - jfrog tf p --namespace=aws --provider=aws --tag="${RELEASE_VERSION}" --exclusions="*test*;*ignore*"
+
 dev_release_to_artifactory:
   stage: dev_release
   only:
     - develop
   variables:
-    STAC_SERVER_REF: "c8801b8"
+    STAC_SERVER_REF: "1cbb939"
   script:
     - echo "Building Stac Server..."
     - export FILMDROP_BUILD_DIR=`pwd`
@@ -73,7 +101,7 @@ candidate_release_to_artifactory:
   only:
     - /^release\//
   variables:
-    STAC_SERVER_REF: "c8801b8"
+    STAC_SERVER_REF: "1cbb939"
   script:
     - echo "Building Stac Server..."
     - export FILMDROP_BUILD_DIR=`pwd`
@@ -102,7 +130,7 @@ latest_stable_release_to_artifactory:
   only:
     - master
   variables:
-    STAC_SERVER_REF: "c8801b8"
+    STAC_SERVER_REF: "1cbb939"
   script:
     - echo "Building Stac Server..."
     - export FILMDROP_BUILD_DIR=`pwd`
@@ -131,7 +159,7 @@ official_stable_release_to_artifactory:
   only:
     - tags
   variables:
-    STAC_SERVER_REF: "c8801b8"
+    STAC_SERVER_REF: "1cbb939"
   script:
     - echo "Building Stac Server..."
     - export FILMDROP_BUILD_DIR=`pwd`
@@ -160,7 +188,7 @@ test_download:
   only:
     - master
   variables:
-    STAC_SERVER_REF: "c8801b8"
+    STAC_SERVER_REF: "1cbb939"
   script:
     - echo "Validating the artifact upload to Artifactory ..."
     - export RELEASE_VERSION="latest"

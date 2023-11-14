@@ -71,6 +71,11 @@ resource "aws_iam_policy" "stac_api_lambda_policy" {
                 "arn:aws:sqs:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:stac-server-${var.stac_api_stage}-queue"
             ],
             "Effect": "Allow"
+        },
+        {
+            "Action": "lambda:InvokeFunction",
+            "Resource": "*",
+            "Effect": "Allow"
         }
     ]
 }

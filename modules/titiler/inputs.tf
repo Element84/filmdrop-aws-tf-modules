@@ -76,3 +76,8 @@ variable "vsi_cache_size" {
   description = "VSI_CACHE_SIZE env var"
   default     = 5000000
 }
+
+variable "aws_request_payer" {
+  description = "AWS_REQUEST_PAYER env var"
+  default     = "requester"
+}

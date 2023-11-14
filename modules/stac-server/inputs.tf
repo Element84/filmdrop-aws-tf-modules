@@ -23,7 +23,7 @@ variable "log_level" {
   default     = "DEBUG"
 }
 
-variable "es_batch_size" {
+variable "os_batch_size" {
   description = "ElasticSearch Batch Size"
   default     = 500
 }
@@ -33,7 +33,7 @@ variable "stac_docs_url" {
   default     = "https://stac-utils.github.io/stac-server/"
 }
 
-variable "es_host" {
+variable "os_host" {
   description = "ElasticSearch Host"
   default     = ""
 }
@@ -83,52 +83,52 @@ variable "elasticsearch_version" {
   default     = "OpenSearch_2.3"
 }
 
-variable "es_cluster_instance_type" {
+variable "os_cluster_instance_type" {
   description = "ES Domain instance type"
   default     = "t3.small.elasticsearch"
 }
 
-variable "es_cluster_instance_count" {
+variable "os_cluster_instance_count" {
   description = "ES Domain instance count"
   default     = 2
 }
 
-variable "es_cluster_dedicated_master_enabled" {
+variable "os_cluster_dedicated_master_enabled" {
   description = "ES Domain dedicated master"
   default     = false
 }
 
-variable "es_cluster_zone_awareness_enabled" {
+variable "os_cluster_zone_awareness_enabled" {
   description = "ES Domain zone awareness"
   default     = true
 }
 
-variable "es_domain_enforce_https" {
+variable "os_domain_enforce_https" {
   description = "ES Domain enforce https"
   default     = true
 }
 
-variable "es_domain_min_tls" {
+variable "os_domain_min_tls" {
   description = "ES Domain minimum TLS"
   default     = "Policy-Min-TLS-1-2-2019-07"
 }
 
-variable "es_domain_type" {
+variable "os_domain_type" {
   description = "ES Domain type"
   default     = "os"
 }
 
-variable "es_ebs_enabled" {
+variable "os_ebs_enabled" {
   description = "ES EBS enabled"
   default     = true
 }
 
-variable "es_ebs_volume_size" {
+variable "os_ebs_volume_size" {
   description = "ES EBS volume size"
   default     = 35
 }
 
-variable "es_ebs_volume_type" {
+variable "os_ebs_volume_type" {
   description = "ES EBS volume type"
   default     = "gp2"
 }
@@ -163,4 +163,67 @@ variable "vpc_security_group_ids" {
   description = "List of security groups in the FilmDrop vpc"
   type        = list(string)
   default     = []
+}
+
+variable "stac_pre_hook_lambda" {
+  description = "STAC Pre Hook Lambda Name"
+  default     = ""
+}
+
+variable "stac_pre_hook_lambda_path" {
+  description = "STAC Pre Hook Lambda Path"
+  default     = ""
+}
+
+variable "stac_pre_hook_lambda_token" {
+  description = "STAC Pre Hook Lambda Token"
+  default     = ""
+}
+
+variable "stac_pre_hook_lambda_token_txn" {
+  description = "STAC Pre Hook Lambda Token TXN"
+  default     = ""
+}
+
+variable "stac_post_hook_lambda" {
+  description = "STAC Post Hook Lambda Name"
+  default     = ""
+}
+
+variable "stac_post_hook_lambda_path" {
+  description = "STAC Post Hook Lambda Path"
+  default     = ""
+}
+
+variable "pre_hook_lambda_timeout" {
+  description = "STAC Pre Hook lambda timeout in seconds"
+  default     = 25
+}
+
+variable "pre_hook_lambda_memory" {
+  description = "STAC Pre Hook lambda max memory size in MB"
+  default     = 512
+}
+
+variable "post_hook_lambda_timeout" {
+  description = "STAC Post Hook lambda timeout in seconds"
+  default     = 25
+}
+
+variable "post_hook_lambda_memory" {
+  description = "STAC Post Hook lambda max memory size in MB"
+  default     = 512
+}
+
+variable "vpc_id" {
+  description = "FilmDrop VPC ID"
+}
+
+variable "vpc_cidr_range" {
+  description = "CIDR Range for FilmDrop vpc"
+}
+
+variable "allow_explicit_index" {
+  description = "Allow OpenSearch Explicit Index"
+  default     = "true"
 }

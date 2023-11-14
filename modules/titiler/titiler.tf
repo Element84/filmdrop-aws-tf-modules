@@ -27,6 +27,7 @@ resource "aws_lambda_function" "titiler_lambda" {
         PYTHONWARNINGS                      = var.pythonwarnings
         VSI_CACHE                           = var.vsi_cache
         VSI_CACHE_SIZE                      = var.vsi_cache_size
+        AWS_REQUEST_PAYER                   = var.aws_request_payer
     }
   }
 
