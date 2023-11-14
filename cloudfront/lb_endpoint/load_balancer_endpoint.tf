@@ -33,6 +33,9 @@ module "cloudfront_distribution" {
   origin_ssl_protocols                      = var.origin_ssl_protocols
   custom_http_whitelisted_headers           = var.custom_http_whitelisted_headers
   domain_name                               = var.load_balancer_dns_name
+  min_ttl                                   = var.min_ttl
+  default_ttl                               = var.default_ttl
+  max_ttl                                   = var.max_ttl
 }
 
 module "cloudfront_dns" {

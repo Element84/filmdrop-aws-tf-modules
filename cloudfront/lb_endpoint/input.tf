@@ -72,3 +72,15 @@ variable "custom_http_whitelisted_headers" {
 variable "load_balancer_dns_name" {
   description = "Custom Load Balancer endpoint"
 }
+
+variable "min_ttl" {
+  default = 0
+}
+
+variable "default_ttl" {
+  default = 0
+}
+
+variable "max_ttl" {
+  default = 0
+}

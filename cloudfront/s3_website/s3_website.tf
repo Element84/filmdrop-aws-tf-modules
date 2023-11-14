@@ -17,7 +17,7 @@ module "cloudfront_distribution" {
 
   source = "../s3"
 
-  create_content_website                    = true
+  create_content_website                    = var.create_content_website
   create_waf_rule                           = true
   ssl_certificate_arn                       = module.cloudfront_certificate.certificate_arn
   log_prefix                                = var.application_name
@@ -29,6 +29,10 @@ module "cloudfront_distribution" {
   error_pages_id                            = var.error_pages_id
   error_pages_domain_name                   = var.error_pages_domain_name
   logging_bucket_name                       = var.logging_bucket_name
+  min_ttl                                   = var.min_ttl
+  default_ttl                               = var.default_ttl
+  max_ttl                                   = var.max_ttl
+  domain_name                               = var.domain_name
 }
 
 module "cloudfront_dns" {
