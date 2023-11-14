@@ -45,7 +45,8 @@ CONFIG
 
 
   lifecycle {
-      ignore_changes = [access_policies]
+      ignore_changes  = [access_policies]
+      prevent_destroy = true
   }
 }
 
