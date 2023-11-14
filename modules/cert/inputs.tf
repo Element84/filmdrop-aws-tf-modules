@@ -21,3 +21,9 @@ variable "validation_method" {
   type        = string
   default     = "DNS"
 }
+
+variable "cert_ttl" {
+  description = "The TTL of the record."
+  type        = number
+  default     = 60
+}

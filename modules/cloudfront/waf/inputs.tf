@@ -1,5 +1,5 @@
-variable "waf_appendix" {
-  description = "Unique appendix for the WAF.  Required if the account needs more than one WAF."
+variable "cf_origin_appendix" {
+  description = "Unique CloudFront Orign appendix for the WAF.  Required if the account needs more than one WAF."
   type        = string
 }
 

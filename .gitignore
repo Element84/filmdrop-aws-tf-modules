@@ -25,3 +25,8 @@ package-lock.json
 plan.out
 .pytest*
 __pycache__
+.DS_Store
+.terraform.lock*
+.terraform.tfstate*
+stac-server-*
+.opensearch.info

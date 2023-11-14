@@ -27,19 +27,10 @@ resource "aws_s3_bucket_ownership_controls" "docker_image_build_source_ownership
 resource "aws_s3_bucket_public_access_block" "docker_image_build_source_public_access_block" {
   bucket = aws_s3_bucket.docker_image_build_source.id
 
-  block_public_acls       = false
-  block_public_policy     = false
-  ignore_public_acls      = false
-  restrict_public_buckets = false
-}
-
-resource "aws_s3_bucket_acl" "docker_image_build_source_bucket_acl" {
-  bucket = aws_s3_bucket.docker_image_build_source.id
-  acl    = "public-read"
-  depends_on = [
-    aws_s3_bucket_ownership_controls.docker_image_build_source_ownership_controls,
-    aws_s3_bucket_public_access_block.docker_image_build_source_public_access_block
-  ]
+  block_public_acls       = true
+  block_public_policy     = true
+  ignore_public_acls      = true
+  restrict_public_buckets = true
 }
 
 resource "aws_s3_bucket_versioning" "docker_image_build_source_versioning" {
@@ -171,5 +162,43 @@ EOF
     aws_s3_object.docker_build_dockerfile,
     aws_s3_object.docker_build_spec,
     aws_codebuild_project.daskhub_docker_image
+  ]
+}
+
+resource "null_resource" "cleanup_bucket" {
+  triggers = {
+    bucket_name = aws_s3_bucket.docker_image_build_source.id
+    region      = data.aws_region.current.name
+    account     = data.aws_caller_identity.current.account_id
+  }
+
+  provisioner "local-exec" {
+    command = <<EOF
+export AWS_DEFAULT_REGION=${self.triggers.account}
+export AWS_REGION=${self.triggers.region}
+
+echo "FilmDrop CloudFront bucket has been created."
+
+aws s3 ls s3://${self.triggers.bucket_name}
+EOF
+
+  }
+
+
+  provisioner "local-exec" {
+    when    = destroy
+    command = <<EOF
+export AWS_DEFAULT_REGION=${self.triggers.account}
+export AWS_REGION=${self.triggers.region}
+
+echo "Cleaning FilmDrop bucket."
+
+aws s3 rm s3://${self.triggers.bucket_name}/ --recursive
+EOF
+  }
+
+
+  depends_on = [
+    aws_s3_bucket.docker_image_build_source
   ]
 }

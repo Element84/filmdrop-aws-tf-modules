@@ -38,6 +38,7 @@ resource "aws_iam_role_policy" "analytics_eks_codebuild_iam_policy" {
                 "kms:*",
                 "iam:*",
                 "ecr:*",
+                "cloudfront:*",
                 "iam:*",
                 "lambda:*",
                 "sns:*",
@@ -66,4 +67,55 @@ resource "aws_iam_role_policy" "analytics_eks_codebuild_iam_policy" {
     ]
 }
 POLICY
+}
+
+resource "aws_iam_role" "cloudfront_origin_lambda_role" {
+  name = "FilmDropCfOrigin${var.cloudfront_distribution_id}"
+
+  assume_role_policy = <<EOF
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Action": "sts:AssumeRole",
+      "Principal": {
+        "Service": "lambda.amazonaws.com"
+      },
+      "Effect": "Allow"
+    }
+  ]
+}
+EOF
+
+}
+
+resource "aws_iam_policy" "cloudfront_origin_lambda_policy" {
+  name        = "FilmDropCfOrigin${var.cloudfront_distribution_id}"
+  description = "Policy allowing Lambda to Update CloudFront Custom Origin"
+
+  policy = <<EOF
+{
+  "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Effect": "Allow",
+            "Action": [
+                "cloudfront:*",
+                "dynamodb:*",
+                "ssm:*",
+                "secretsmanager:*",
+                "lambda:*",
+                "sts:AssumeRole"
+            ],
+            "Resource": "*"
+        }
+    ]
+}
+EOF
+
+}
+
+resource "aws_iam_role_policy_attachment" "cloudfront_origin_lambda" {
+  role       = aws_iam_role.cloudfront_origin_lambda_role.name
+  policy_arn = aws_iam_policy.cloudfront_origin_lambda_policy.arn
 }

@@ -1,5 +1,5 @@
 resource "aws_s3_bucket" "s3_logs_archive_bucket" {
-  bucket_prefix = var.archive_log_bucket_prefix == "" ? "filmdrop-${var.environment}-logs-archive-" : var.archive_log_bucket_prefix
+  bucket_prefix = var.archive_log_bucket_prefix == "" ? lower(substr(replace("fd-${var.project_name}-${var.environment}-logs-archive-", "_", "-"), 0, 63)) : var.archive_log_bucket_prefix
   force_destroy = true
 }
 
@@ -252,3 +252,40 @@ resource "aws_s3_bucket_public_access_block" "s3_logs_archive_bucket_public_acce
   restrict_public_buckets = true
 }
 
+resource "null_resource" "cleanup_s3_logs_archive_bucket" {
+  triggers = {
+    bucket_name = aws_s3_bucket.s3_logs_archive_bucket.id
+    region      = data.aws_region.current.name
+    account     = data.aws_caller_identity.current.account_id
+  }
+
+  provisioner "local-exec" {
+    command = <<EOF
+export AWS_DEFAULT_REGION=${self.triggers.account}
+export AWS_REGION=${self.triggers.region}
+
+echo "FilmDrop CloudFront bucket has been created."
+
+aws s3 ls s3://${self.triggers.bucket_name}
+EOF
+
+  }
+
+
+  provisioner "local-exec" {
+    when    = destroy
+    command = <<EOF
+export AWS_DEFAULT_REGION=${self.triggers.account}
+export AWS_REGION=${self.triggers.region}
+
+echo "Cleaning FilmDrop bucket."
+
+aws s3 rm s3://${self.triggers.bucket_name}/ --recursive
+EOF
+  }
+
+
+  depends_on = [
+    aws_s3_bucket.s3_logs_archive_bucket
+  ]
+}

@@ -1,7 +1,6 @@
 # Define role to log WAF Requests - Role is specific to each Cloudfront WAF
-resource "aws_iam_role" "waf_logging_firehose_role" {
-  path = "/filmdrop/system/"
-  name = "FilmDropWAFLog${var.waf_appendix}"
+resource "aws_iam_role" "fd_waf_logging_firehose_role" {
+  name_prefix = "FilmDropWAFLog${local.origin_appendix}"
 
   assume_role_policy = <<EOF
 {
@@ -22,9 +21,8 @@ EOF
 }
 
 # Policies for allowing Cloudfront WAF logging capabiliites
-resource "aws_iam_policy" "waf_logging_firehose_policy" {
-  name_prefix = "FilmDropWAFLoggingFirehosePolicy${var.waf_appendix}"
-  path        = "/filmdrop/system/"
+resource "aws_iam_policy" "fd_waf_logging_firehose_policy" {
+  name_prefix = "FilmDropWAFLog${local.origin_appendix}"
   description = "IAM Policy to allow firehose to log cloudfront waf"
 
   policy = <<EOF
@@ -71,7 +69,7 @@ resource "aws_iam_policy" "waf_logging_firehose_policy" {
         "logs:PutLogEvents"
       ],
       "Resource": [
-        "arn:aws:logs:us-east-1:252208689150:log-group:/aws/kinesisfirehose/aws-waf-logs-cloudfront-${var.waf_appendix}:log-stream:*"
+        "arn:aws:logs:us-east-1:252208689150:log-group:/aws/kinesisfirehose/aws-waf-logs-cloudfront-${local.origin_appendix}:log-stream:*"
       ]
     },
     {
@@ -107,8 +105,8 @@ EOF
 
 }
 
-resource "aws_iam_role_policy_attachment" "waf_logging_firehose_policy_attachment" {
-  role       = aws_iam_role.waf_logging_firehose_role.name
-  policy_arn = aws_iam_policy.waf_logging_firehose_policy.arn
+resource "aws_iam_role_policy_attachment" "fd_waf_logging_firehose_policy_attachment" {
+  role       = aws_iam_role.fd_waf_logging_firehose_role.name
+  policy_arn = aws_iam_policy.fd_waf_logging_firehose_policy.arn
 }
 

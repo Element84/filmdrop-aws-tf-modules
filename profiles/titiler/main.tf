@@ -1,0 +1,35 @@
+module "titiler" {
+  source = "../../modules/mosaic-titiler"
+
+  providers = {
+    aws.east = aws.east
+  }
+
+  project_name                 = var.project_name
+  titiler_stage                = var.environment
+  mosaic_titiler_release_tag   = var.titiler_inputs.mosaic_titiler_release_tag
+  titiler_s3_bucket_arns       = var.titiler_inputs.stac_server_and_titiler_s3_arns
+  waf_allowed_url              = var.titiler_inputs.mosaic_titiler_waf_allowed_url == "" ? var.stac_url : var.titiler_inputs.mosaic_titiler_waf_allowed_url
+  request_host_header_override = var.titiler_inputs.mosaic_titiler_host_header
+}
+
+module "cloudfront_api_gateway_endpoint" {
+  source = "../../modules/cloudfront/apigw_endpoint"
+
+  providers = {
+    aws.east = aws.east
+  }
+
+  zone_id                       = var.domain_zone
+  domain_alias                  = var.titiler_inputs.domain_alias
+  application_name              = var.titiler_inputs.app_name
+  api_gateway_dns_name          = module.titiler.titiler_mosaic_api_gateway_endpoint
+  api_gateway_path              = ""
+  web_acl_id                    = module.titiler.titiler_mosaic_wafv2_web_acl_arn
+  project_name                  = var.project_name
+  environment                   = var.environment
+  create_log_bucket             = var.create_log_bucket
+  log_bucket_name               = var.log_bucket_name
+  log_bucket_domain_name        = var.log_bucket_domain_name
+  filmdrop_archive_bucket_name  = var.s3_logs_archive_bucket
+}

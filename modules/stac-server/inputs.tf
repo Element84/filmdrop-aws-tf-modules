@@ -299,6 +299,12 @@ variable "stac_server_s3_bucket_arns" {
   default     = []
 }
 
+variable "opensearch_cluster_dedicated_master_count" {
+  description = "Number of dedicated main nodes in the cluster."
+  type        = number
+  default     = 3
+}
+
 locals {
   name_prefix = "fd-${var.project_name}-${var.stac_api_stage}"
 }

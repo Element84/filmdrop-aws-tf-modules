@@ -1,14 +1,4 @@
-variable "logging_origin_id" {
-  description = "CloudFront Logging Origin Id."
-  type        = string
-}
-
-variable "cloudfront_origin_access_identity_arn" {
-  description = "Custom CloudFront Origin Access Identity ARN."
-  type        = string
-}
-
-variable "website_name" {
-  description = "Identifier for the website content name application."
+variable "origin_id" {
+  description = "CloudFront Origin Id."
   type        = string
 }

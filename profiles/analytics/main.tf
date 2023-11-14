@@ -1,0 +1,157 @@
+module "analytics_certificate" {
+  source  = "./cert"
+  count   = var.analytics_inputs.jupyterhub_elb_acm_cert_arn == "" ? 1 : 0
+
+  domain_zone    = var.domain_zone
+  domain_alias   = var.analytics_inputs.jupyterhub_elb_domain_alias
+}
+
+module "create_credentials" {
+  source  = "./credentials"
+
+  create_credentials      = var.analytics_inputs.create_credentials
+  credentials_name_prefix = "fd-analytics-${var.project_name}-${var.environment}"
+}
+
+
+module "jupyterhub-dask-eks" {
+  source = "../../modules/jupyterhub-dask-eks"
+
+  vpc_id                      = var.vpc_id
+  vpc_private_subnet_ids      = var.private_subnet_ids
+  vpc_security_group_ids      = [var.security_group_id]
+  vpc_cidr_range              = var.vpc_cidr
+  vpc_public_subnet_ids       = var.public_subnet_ids
+  vpc_private_subnet_azs      = var.private_availability_zones
+  vpc_public_subnet_azs       = var.public_availability_zones
+  jupyterhub_elb_acm_cert_arn = var.analytics_inputs.jupyterhub_elb_acm_cert_arn == "" ? module.analytics_certificate[0].certificate_arn : var.analytics_inputs.jupyterhub_elb_acm_cert_arn
+  project_name                = var.project_name
+  environment                 = var.environment
+  zone_id                     = var.domain_zone
+  domain_alias                = var.analytics_inputs.jupyterhub_elb_domain_alias
+  daskhub_stage               = var.environment
+  domain_param_name           = module.cloudfront_load_balancer_endpoint.cloudfront_domain_origin_param
+  cloudfront_distribution_id  = module.cloudfront_load_balancer_endpoint.cloudfront_distribution_id
+
+  depends_on = [
+    module.create_credentials
+  ]
+}
+
+module "cloudfront_load_balancer_endpoint" {
+  source = "../../modules/cloudfront/lb_endpoint"
+
+  providers = {
+    aws.east = aws.east
+  }
+
+  zone_id                         = var.domain_zone
+  domain_alias                    = var.analytics_inputs.domain_alias
+  application_name                = var.analytics_inputs.app_name
+  create_log_bucket               = var.create_log_bucket
+  log_bucket_name                 = var.log_bucket_name
+  log_bucket_domain_name          = var.log_bucket_domain_name
+  filmdrop_archive_bucket_name    = var.s3_logs_archive_bucket
+  load_balancer_dns_name          = var.analytics_inputs.jupyterhub_elb_domain_alias
+  project_name                    = var.project_name
+  environment                     = var.environment
+}
+
+resource "null_resource" "cleanup_analytics_credentials" {
+  count   = var.analytics_inputs.create_credentials ? 1 : 0
+
+  triggers = {
+    filmdrop_analytics_dask_secret_token  = "fd-analytics-${var.project_name}-${var.environment}-admin-credentials"
+    filmdrop_analytics_credentials        = "fd-analytics-${var.project_name}-${var.environment}-dask-token"
+    region                                = data.aws_region.current.name
+    account                               = data.aws_caller_identity.current.account_id
+  }
+
+  provisioner "local-exec" {
+    command = <<EOF
+export AWS_DEFAULT_REGION=${self.triggers.account}
+export AWS_REGION=${self.triggers.region}
+
+echo "FilmDrop Analytics Secrets have been created."
+
+aws secretsmanager describe-secret --secret-id ${self.triggers.filmdrop_analytics_dask_secret_token}
+aws secretsmanager describe-secret --secret-id ${self.triggers.filmdrop_analytics_credentials}
+EOF
+
+  }
+
+
+  provisioner "local-exec" {
+    when    = destroy
+    command = <<EOF
+export AWS_DEFAULT_REGION=${self.triggers.account}
+export AWS_REGION=${self.triggers.region}
+
+echo "Cleaning FilmDrop Analytics Secrets."
+
+aws secretsmanager delete-secret --secret-id ${self.triggers.filmdrop_analytics_dask_secret_token} --force-delete-without-recovery --region ${self.triggers.region}
+aws secretsmanager delete-secret --secret-id ${self.triggers.filmdrop_analytics_credentials} --force-delete-without-recovery --region ${self.triggers.region}
+EOF
+  }
+
+
+  depends_on = [
+    module.jupyterhub-dask-eks,
+    module.create_credentials,
+    module.cloudfront_load_balancer_endpoint
+  ]
+}
+
+resource "null_resource" "cleanup_analytics_stack" {
+  triggers = {
+    filmdrop_analytics_cluster_name       = "fd-analytics-${var.project_name}-${var.environment}"
+    domain_param_name                     = module.cloudfront_load_balancer_endpoint.cloudfront_domain_origin_param
+    region                                = data.aws_region.current.name
+    account                               = data.aws_caller_identity.current.account_id
+  }
+
+  provisioner "local-exec" {
+    command = <<EOF
+export AWS_DEFAULT_REGION=${self.triggers.account}
+export AWS_REGION=${self.triggers.region}
+
+echo "FilmDrop Analytics Stack has been created."
+
+EOF
+
+  }
+
+
+  provisioner "local-exec" {
+    when    = destroy
+    command = <<EOF
+export AWS_DEFAULT_REGION=${self.triggers.account}
+export AWS_REGION=${self.triggers.region}
+
+
+echo "Deleting Analytics Stack and Load Balancer."
+aws cloudformation delete-stack --stack-name eksctl-${self.triggers.filmdrop_analytics_cluster_name}-nodegroup-dask-workers
+aws cloudformation delete-stack --stack-name eksctl-${self.triggers.filmdrop_analytics_cluster_name}-nodegroup-main
+aws cloudformation delete-stack --stack-name eksctl-${self.triggers.filmdrop_analytics_cluster_name}-addon-iamserviceaccount-kube-system-ebs-csi-controller-sa
+aws cloudformation delete-stack --stack-name eksctl-${self.triggers.filmdrop_analytics_cluster_name}-addon-iamserviceaccount-kube-system-cluster-autoscaler
+aws cloudformation delete-stack --stack-name eksctl-${self.triggers.filmdrop_analytics_cluster_name}-addon-iamserviceaccount-kube-system-aws-node
+aws cloudformation wait stack-delete-complete --stack-name eksctl-${self.triggers.filmdrop_analytics_cluster_name}-nodegroup-dask-workers
+aws cloudformation wait stack-delete-complete --stack-name eksctl-${self.triggers.filmdrop_analytics_cluster_name}-nodegroup-main
+aws cloudformation wait stack-delete-complete --stack-name eksctl-${self.triggers.filmdrop_analytics_cluster_name}-addon-iamserviceaccount-kube-system-ebs-csi-controller-sa
+aws cloudformation wait stack-delete-complete --stack-name eksctl-${self.triggers.filmdrop_analytics_cluster_name}-addon-iamserviceaccount-kube-system-cluster-autoscaler
+aws cloudformation wait stack-delete-complete --stack-name eksctl-${self.triggers.filmdrop_analytics_cluster_name}-addon-iamserviceaccount-kube-system-aws-node
+aws cloudformation delete-stack --stack-name eksctl-${self.triggers.filmdrop_analytics_cluster_name}-cluster
+aws cloudformation wait stack-delete-complete --stack-name eksctl-${self.triggers.filmdrop_analytics_cluster_name}-cluster
+JUPYTERHUB_LB_DNS=`aws ssm get-parameter --name ${self.triggers.domain_param_name} --region us-east-1 | jq -r '.Parameter.Value'`
+JUPYTERHUB_LB_ID=`cut -d'-' -f1 <<<"$JUPYTERHUB_LB_DNS"`
+aws elb delete-load-balancer --load-balancer-name $JUPYTERHUB_LB_ID
+EOF
+  }
+
+
+  depends_on = [
+    module.jupyterhub-dask-eks,
+    module.create_credentials,
+    module.cloudfront_load_balancer_endpoint
+  ]
+}

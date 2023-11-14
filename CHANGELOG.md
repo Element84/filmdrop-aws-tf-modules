@@ -5,6 +5,30 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Added
+
+### Changed
+
+### Fixed
+
+## 2.0.0
+
+### Added
+
+- Added READMEs for titiler and mosaic-titiler linking to unit test instructions and general documentation
+- Added flop CLI utility for creating and interacting with FilmDrop test environments
+- Added built-in validation of project_name and environment parameters
+
+### Changed
+
+- Adding FilmDrop profiles for deploying components via flags and enabling a 1-step deployment via tf-modules repo
+
+### Fixed
+
+- Fixes kubectl version on codebuild for jupyterhub analytics module
+
 ## 1.7.0
 
 ### Changed
@@ -25,12 +49,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - The jupyterhub-dask-eks module no longer takes inputs
   `filmdrop_analytics_jupyterhub_admin_credentials_secret` or
   `filmdrop_analytics_dask_secret_tokens`, but instead constructs these from the
-  `project_name` and `environment` as `${project_name}-${environment}-admin-credentials`
-  and `${project_name}-${environment}-dask-token`
+  `project_name` and `environment` as `${var.project_name}-${var.environment}-admin-credentials`
+  and `${var.project_name}-${var.environment}-dask-token`
 - jupyterhub-dask-eks CodeBuild project must be manually run, instead of it being run
   automatically in response to a configuration change.
 - jupyterhub-dask-eks configuration bucket has been renamed from
-  `jupyter-config-${random_id.suffix.hex}` to `fd-${project_name}-${environment}-jd-cfg-${random_id.suffix.hex}`
+  `jupyter-config-${random_id.suffix.hex}` to `fd-${var.project_name}-${var.environment}-jd-cfg-${random_id.suffix.hex}`
 - jupyterhub-dask-eks AWS EKS version has been updated to 1.25
 - lowercase aws_s3_bucket.jupyter_dask_source_config S3 bucket name
 - add .snyk file to ignore rules for public S3 buckets and open auth to API gateway

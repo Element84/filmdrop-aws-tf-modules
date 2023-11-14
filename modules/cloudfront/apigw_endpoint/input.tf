@@ -14,36 +14,6 @@ variable "application_name" {
   type        = string
 }
 
-variable "cloudfront_access_identity_path" {
-  description = "Custom CloudFront Origin Access Identity Path"
-  type        = string
-}
-
-variable "logging_origin_id" {
-  description = "CloudFront Logging Origin Id."
-  type        = string
-}
-
-variable "logging_domain_name" {
-  description = "CloudFront Logging S3 Bucket Domain Name."
-  type        = string
-}
-
-variable "error_pages_id" {
-  description = "CloudFront Error Pages Id"
-  type        = string
-}
-
-variable "error_pages_domain_name" {
-  description = "Cloudfront DNS domain name of S3 bucket for Custom Error Pages"
-  type        = string
-}
-
-variable "logging_bucket_name" {
-  description = "Name for bucket used for cloudfront logging"
-  type        = string
-}
-
 variable "default_root" {
   description = "Default object for CloudFront to return for requests at the root URL"
   type        = string
@@ -118,4 +88,33 @@ variable "dns_validation" {
   description = "Validate the certificate via a DNS record within the same module."
   type        = bool
   default     = true
+}
+
+variable "environment" {
+  description = "Project environment"
+  type        = string
+}
+
+variable "create_log_bucket" {
+  description = "Whether to create [true/false] logging bucket for Cloudfront Distribution"
+  type        = string
+  default     = true
+}
+
+variable "log_bucket_name" {
+  description = "Name of existing CloudFront Distribution Logging bucket"
+  type        = string
+  default     = ""
+}
+
+variable "log_bucket_domain_name" {
+  description = "Domain Name of existing CloudFront Distribution Logging bucket"
+  type        = string
+  default     = ""
+}
+
+variable "filmdrop_archive_bucket_name" {
+  description = "Name of existing FilmDrop Archive Bucket"
+  type        = string
+  default     = "CHANGEME"
 }

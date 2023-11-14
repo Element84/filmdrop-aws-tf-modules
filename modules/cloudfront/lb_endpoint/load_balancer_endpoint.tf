@@ -15,17 +15,10 @@ module "cloudfront_distribution" {
     aws = aws.east
   }
 
-  source = "../custom"
+  source = "../custom_origin"
 
   ssl_certificate_arn             = module.cloudfront_certificate.certificate_arn
-  log_prefix                      = "${var.project_name}-${var.application_name}"
   domain_aliases                  = var.domain_alias == "" ? [] : [var.domain_alias]
-  cloudfront_access_identity_path = var.cloudfront_access_identity_path
-  logging_origin_id               = var.logging_origin_id
-  logging_domain_name             = var.logging_domain_name
-  error_pages_id                  = var.error_pages_id
-  error_pages_domain_name         = var.error_pages_domain_name
-  logging_bucket_name             = var.logging_bucket_name
   default_root                    = var.default_root
   origin_path                     = var.load_balancer_path
   origin_protocol_policy          = var.origin_protocol_policy
@@ -37,6 +30,12 @@ module "cloudfront_distribution" {
   max_ttl                         = var.max_ttl
   custom_error_response           = var.custom_error_response
   project_name                    = var.project_name
+  environment                     = var.environment
+  create_log_bucket               = var.create_log_bucket
+  log_bucket_name                 = var.log_bucket_name
+  log_bucket_domain_name          = var.log_bucket_domain_name
+  filmdrop_archive_bucket_name    = var.filmdrop_archive_bucket_name
+  application_name                = var.application_name
 }
 
 module "cloudfront_dns" {

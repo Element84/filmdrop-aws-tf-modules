@@ -62,3 +62,15 @@ variable "node_group_disk_size" {
   description = "Disk size in GiB for worker nodes."
   default     = 50
 }
+
+variable "endpoint_private_access" {
+  type        = bool
+  description = "Whether the Amazon EKS private API server endpoint is enabled."
+  default     = true
+}
+
+variable "endpoint_public_access" {
+  type        = bool
+  description = "Whether the Amazon EKS public API server endpoint is enabled."
+  default     = false
+}

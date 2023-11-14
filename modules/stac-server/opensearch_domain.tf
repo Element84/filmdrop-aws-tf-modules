@@ -11,6 +11,7 @@ resource "aws_opensearch_domain" "stac_server_opensearch_domain" {
     instance_count           = var.opensearch_cluster_instance_count
     dedicated_master_enabled = var.opensearch_cluster_dedicated_master_enabled
     dedicated_master_type    = var.opensearch_cluster_dedicated_master_type
+    dedicated_master_count   = var.opensearch_cluster_dedicated_master_count
     zone_awareness_enabled   = var.opensearch_cluster_zone_awareness_enabled
 
     zone_awareness_config {
@@ -142,6 +143,44 @@ resource "aws_secretsmanager_secret_version" "opensearch_master_password_secret_
 EOF
 }
 
+resource "null_resource" "cleanup_opensearch_master_password_secret" {
+  triggers = {
+    opensearch_master_password_secret     = "${local.name_prefix}-stac-server-master-creds-${random_id.suffix.hex}"
+    region                                = data.aws_region.current.name
+    account                               = data.aws_caller_identity.current.account_id
+  }
+
+  provisioner "local-exec" {
+    command = <<EOF
+export AWS_DEFAULT_REGION=${self.triggers.account}
+export AWS_REGION=${self.triggers.region}
+
+echo "FilmDrop Stac Server Secret have been created."
+
+aws secretsmanager describe-secret --secret-id ${self.triggers.opensearch_master_password_secret}
+EOF
+
+  }
+
+
+  provisioner "local-exec" {
+    when    = destroy
+    command = <<EOF
+export AWS_DEFAULT_REGION=${self.triggers.account}
+export AWS_REGION=${self.triggers.region}
+
+echo "Cleaning FilmDrop Stac Server Secret."
+
+aws secretsmanager delete-secret --secret-id ${self.triggers.opensearch_master_password_secret} --force-delete-without-recovery --region ${self.triggers.region}
+EOF
+  }
+
+
+  depends_on = [
+    aws_secretsmanager_secret.opensearch_master_password_secret
+  ]
+}
+
 resource "random_password" "opensearch_stac_user_password" {
   length      = 24
   min_lower   = 1
@@ -165,6 +204,44 @@ resource "aws_secretsmanager_secret_version" "opensearch_stac_user_password_secr
     "password": "${random_password.opensearch_stac_user_password.result}"
    }
 EOF
+}
+
+resource "null_resource" "cleanup_opensearch_stac_user_password_secret" {
+  triggers = {
+    opensearch_stac_user_password_secret  = "${local.name_prefix}-stac-server-user-creds-${random_id.suffix.hex}"
+    region                                = data.aws_region.current.name
+    account                               = data.aws_caller_identity.current.account_id
+  }
+
+  provisioner "local-exec" {
+    command = <<EOF
+export AWS_DEFAULT_REGION=${self.triggers.account}
+export AWS_REGION=${self.triggers.region}
+
+echo "FilmDrop Stac Server Secret have been created."
+
+aws secretsmanager describe-secret --secret-id ${self.triggers.opensearch_stac_user_password_secret}
+EOF
+
+  }
+
+
+  provisioner "local-exec" {
+    when    = destroy
+    command = <<EOF
+export AWS_DEFAULT_REGION=${self.triggers.account}
+export AWS_REGION=${self.triggers.region}
+
+echo "Cleaning FilmDrop Stac Server Secret."
+
+aws secretsmanager delete-secret --secret-id ${self.triggers.opensearch_stac_user_password_secret} --force-delete-without-recovery --region ${self.triggers.region}
+EOF
+  }
+
+
+  depends_on = [
+    aws_secretsmanager_secret.opensearch_stac_user_password_secret
+  ]
 }
 
 # This initializes the stac_server user account and sets OpenSearch configuration.

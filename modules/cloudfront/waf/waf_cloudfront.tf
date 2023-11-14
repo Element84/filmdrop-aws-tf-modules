@@ -1,6 +1,5 @@
-# setup geo blocks
-resource "aws_waf_geo_match_set" "geo_match_set" {
-  name = "FilmDropWAFGeo${var.waf_appendix}"
+resource "aws_waf_geo_match_set" "fd_waf_geo_match_set" {
+  name = "FDWAFGeo${local.origin_appendix}"
 
   dynamic "geo_match_constraint" {
     for_each = var.country_blocklist
@@ -12,8 +11,8 @@ resource "aws_waf_geo_match_set" "geo_match_set" {
   }
 }
 
-resource "aws_waf_ipset" "block_ipset" {
-  name = "FilmDropWAFCFStackBlockIpset${var.waf_appendix}"
+resource "aws_waf_ipset" "fd_waf_block_ipset" {
+  name = "FDWAFCFBlock${local.origin_appendix}"
 
   dynamic "ip_set_descriptors" {
     for_each = var.ip_blocklist
@@ -25,8 +24,8 @@ resource "aws_waf_ipset" "block_ipset" {
   }
 }
 
-resource "aws_waf_ipset" "allow_ipset" {
-  name = "FilmDropWAFCFStackAllowIpset${var.waf_appendix}"
+resource "aws_waf_ipset" "fd_waf_allow_ipset" {
+  name = "FDWAFCFAllow${local.origin_appendix}"
 
   dynamic "ip_set_descriptors" {
     for_each = var.whitelist_ips
@@ -38,33 +37,30 @@ resource "aws_waf_ipset" "allow_ipset" {
   }
 }
 
-# setup ip blocks
-resource "aws_waf_rule" "ip_block_wafrule" {
-  name        = "FilmDropWAFIPBlockRule${var.waf_appendix}"
-  metric_name = "FilmDropWAFIPBlockRule${var.waf_appendix}"
+resource "aws_waf_rule" "fd_waf_ip_block_wafrule" {
+  name        = "FDWAFIPBlock${local.origin_appendix}"
+  metric_name = "FDWAFIPBlock${local.origin_appendix}"
 
   predicates {
-    data_id = aws_waf_ipset.block_ipset.id
+    data_id = aws_waf_ipset.fd_waf_block_ipset.id
     negated = false
     type    = "IPMatch"
   }
 }
 
-# setup ip whitelist
-resource "aws_waf_rule" "ip_accept_wafrule" {
-  name        = "FilmDropWAFIPAcceptRule${var.waf_appendix}"
-  metric_name = "FilmDropWAFIPAcceptRule${var.waf_appendix}"
+resource "aws_waf_rule" "fd_waf_ip_accept_wafrule" {
+  name        = "FDWAFIPAccept${local.origin_appendix}"
+  metric_name = "FDWAFIPAccept${local.origin_appendix}"
 
   predicates {
-    data_id = aws_waf_ipset.allow_ipset.id
+    data_id = aws_waf_ipset.fd_waf_allow_ipset.id
     negated = length(var.whitelist_ips) > 0
     type    = "IPMatch"
   }
 }
 
-# size constraints
-resource "aws_waf_size_constraint_set" "size_constraint_set" {
-  name = "FilmDropWAFSize${var.waf_appendix}"
+resource "aws_waf_size_constraint_set" "fd_waf_size_constraint_set" {
+  name = "FDWAFSize${local.origin_appendix}"
 
   size_constraints {
     text_transformation = "NONE"
@@ -77,9 +73,8 @@ resource "aws_waf_size_constraint_set" "size_constraint_set" {
   }
 }
 
-# SQL Injection filter
-resource "aws_waf_sql_injection_match_set" "sql_injection_match_set" {
-  name = "FilmDropWAFSQLInj${var.waf_appendix}"
+resource "aws_waf_sql_injection_match_set" "fd_waf_sql_injection_match_set" {
+  name = "FDWAFSQLInj${local.origin_appendix}"
 
   sql_injection_match_tuples {
     text_transformation = "NONE"
@@ -90,9 +85,8 @@ resource "aws_waf_sql_injection_match_set" "sql_injection_match_set" {
   }
 }
 
-# Cross site scripting check
-resource "aws_waf_xss_match_set" "xss_match_set" {
-  name = "FilmDropWAFXSS${var.waf_appendix}"
+resource "aws_waf_xss_match_set" "fd_waf_xss_match_set" {
+  name = "FDWAFXSS${local.origin_appendix}"
 
   xss_match_tuples {
     text_transformation = "NONE"
@@ -112,65 +106,65 @@ resource "aws_waf_xss_match_set" "xss_match_set" {
 }
 
 # Create the WAF Rules
-resource "aws_waf_rule" "geo_wafrule" {
-  name        = "FilmDropWAFGeoRule${var.waf_appendix}"
-  metric_name = "FilmDropWAFGeoRule${var.waf_appendix}"
+resource "aws_waf_rule" "fd_waf_geo_wafrule" {
+  name        = "FDWAFGeo${local.origin_appendix}"
+  metric_name = "FDWAFGeo${local.origin_appendix}"
 
   predicates {
-    data_id = aws_waf_geo_match_set.geo_match_set.id
+    data_id = aws_waf_geo_match_set.fd_waf_geo_match_set.id
     negated = false
     type    = "GeoMatch"
   }
 }
 
-resource "aws_waf_rule" "size_wafrule" {
-  name        = "FilmDropWAFSizeRule${var.waf_appendix}"
-  metric_name = "FilmDropWAFSizeRule${var.waf_appendix}"
+resource "aws_waf_rule" "fd_waf_size_wafrule" {
+  name        = "FDWAFSize${local.origin_appendix}"
+  metric_name = "FDWAFSize${local.origin_appendix}"
 
   predicates {
-    data_id = aws_waf_size_constraint_set.size_constraint_set.id
+    data_id = aws_waf_size_constraint_set.fd_waf_size_constraint_set.id
     negated = false
     type    = "SizeConstraint"
   }
 }
 
-resource "aws_waf_rule" "sql_wafrule" {
-  name        = "FilmDropWAFSQLInjRule${var.waf_appendix}"
-  metric_name = "FilmDropWAFSQLInjRule${var.waf_appendix}"
+resource "aws_waf_rule" "fd_waf_sql_wafrule" {
+  name        = "FDWAFSQLInj${local.origin_appendix}"
+  metric_name = "FDWAFSQLInj${local.origin_appendix}"
 
   predicates {
-    data_id = aws_waf_sql_injection_match_set.sql_injection_match_set.id
+    data_id = aws_waf_sql_injection_match_set.fd_waf_sql_injection_match_set.id
     negated = false
     type    = "SqlInjectionMatch"
   }
 }
 
-resource "aws_waf_rule" "xss_wafrule" {
-  name        = "FilmDropWAFXSSRule${var.waf_appendix}"
-  metric_name = "FilmDropWAFXSSRule${var.waf_appendix}"
+resource "aws_waf_rule" "fd_waf_xss_wafrule" {
+  name        = "FDWAFXSS${local.origin_appendix}"
+  metric_name = "FDWAFXSS${local.origin_appendix}"
 
   predicates {
-    data_id = aws_waf_xss_match_set.xss_match_set.id
+    data_id = aws_waf_xss_match_set.fd_waf_xss_match_set.id
     negated = false
     type    = "XssMatch"
   }
 }
 
 # Create WAF ACL
-resource "aws_waf_web_acl" "waf_acl" {
-  name        = "FilmDropWAFACL${var.waf_appendix}"
-  metric_name = "FilmDropWAFACL${var.waf_appendix}"
+resource "aws_waf_web_acl" "fd_waf_acl" {
+  name        = "FDWAFACL${local.origin_appendix}"
+  metric_name = "FDWAFACL${local.origin_appendix}"
 
   default_action {
     type = "ALLOW"
   }
 
   logging_configuration {
-    log_destination = aws_kinesis_firehose_delivery_stream.waf_cf_logging_firehose_stream.arn
+    log_destination = aws_kinesis_firehose_delivery_stream.fd_waf_cf_logging_firehose_stream.arn
   }
 
   dynamic "rules" {
-    for_each = [aws_waf_rule.xss_wafrule.id, aws_waf_rule.sql_wafrule.id, aws_waf_rule.size_wafrule.id, aws_waf_rule.geo_wafrule.id, aws_waf_rule.ip_block_wafrule.id, aws_waf_rule.ip_accept_wafrule.id]
+    for_each = [aws_waf_rule.fd_waf_xss_wafrule.id, aws_waf_rule.fd_waf_sql_wafrule.id, aws_waf_rule.fd_waf_size_wafrule.id, aws_waf_rule.fd_waf_geo_wafrule.id, aws_waf_rule.fd_waf_ip_block_wafrule.id, aws_waf_rule.fd_waf_ip_accept_wafrule.id]
 
     content {
       action {

@@ -170,3 +170,41 @@ EOF
     aws_codebuild_project.titiler_docker_image
   ]
 }
+
+resource "null_resource" "cleanup_bucket" {
+  triggers = {
+    bucket_name = aws_s3_bucket.docker_image_build_source.id
+    region      = data.aws_region.current.name
+    account     = data.aws_caller_identity.current.account_id
+  }
+
+  provisioner "local-exec" {
+    command = <<EOF
+export AWS_DEFAULT_REGION=${self.triggers.account}
+export AWS_REGION=${self.triggers.region}
+
+echo "FilmDrop CloudFront bucket has been created."
+
+aws s3 ls s3://${self.triggers.bucket_name}
+EOF
+
+  }
+
+
+  provisioner "local-exec" {
+    when    = destroy
+    command = <<EOF
+export AWS_DEFAULT_REGION=${self.triggers.account}
+export AWS_REGION=${self.triggers.region}
+
+echo "Cleaning FilmDrop bucket."
+
+aws s3 rm s3://${self.triggers.bucket_name}/ --recursive
+EOF
+  }
+
+
+  depends_on = [
+    aws_s3_bucket.docker_image_build_source
+  ]
+}

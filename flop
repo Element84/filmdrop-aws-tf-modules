@@ -1,0 +1,171 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+
+find_this () {
+    THIS="${1:?'must provide script path, like "${BASH_SOURCE[0]}"'}"
+    trap "fatal >&2 'FATAL: could not resolve parent directory of ${THIS}'" EXIT
+    [ "${THIS:0:1}"  == "/" ] || THIS="$(pwd -P)/${THIS}"
+    THIS_DIR="$(dirname -- "${THIS}")"
+    THIS_DIR="$(cd -P -- "${THIS_DIR}" && pwd)"
+    THIS="${THIS_DIR}/$(basename -- "${THIS}")"
+    trap "" EXIT
+}
+
+
+export -f find_this
+
+find_this "${BASH_SOURCE[0]}"
+
+
+export FLOP_CLI="flop"
+
+
+main () {
+    local USAGE=$(cat <<EOF
+USAGE: ${FLOP_CLI} COMMAND [TFVARS_FILE_NAME]
+
+FilmDrop test utility
+
+Supported commands:
+    help (-h, --help)    show this message
+    create (mk)          create a new flop cluster
+    destroy (rm)         destroy a flop cluster and associated state
+    init                 initialize flop configuration
+    list (ls)            list all resources in flop cluster state
+    output (out)         list all outputs for the flop cluster
+    test                 review flop cluster changes current flop cluster state
+    update               apply updates to existing flop
+    validate             validate flop configuration
+
+Command arguments:
+    TFVARS_FILENAME      name of tfvars input file, ex: default.tfvars
+
+All commmands support 'help' for more information.
+EOF
+    )
+
+    export FLOP_COMMAND="${1:-}"; shift ||:
+    case "${FLOP_COMMAND:-}" in
+        create|mk)      export TFVARS_FILE=$@
+                        export STAC_SERVER_TAG=`cat $TFVARS_FILE | grep version | grep -o '".*"' | sed 's/"//g'`
+                        export STAC_SERVER_DIR="stac-server-${STAC_SERVER_TAG:1}"
+                        export PROJECT_NAME_VAR=`cat $TFVARS_FILE | grep project_name | grep -o '".*"' | sed 's/"//g'`
+                        export ENVIRONMENT_VAR=`cat $TFVARS_FILE | grep environment | grep -o '".*"' | sed 's/"//g'`
+                        if [ $(echo -n "$PROJECT_NAME_VAR" | wc -c) -le 8 ]
+                        then
+                            echo 'project_name is 8 characters or less'
+                        else
+                            echo 'Error: project_name is greater than 8 characters'
+                            exit 1
+                        fi
+                        if [ $(echo -n "$ENVIRONMENT_VAR" | wc -c) -le 5 ]
+                        then
+                            echo 'environment is 5 characters or less'
+                        else
+                            echo 'Error: environment is greater than 5 characters'
+                            exit 1
+                        fi
+                        source $HOME/.nvm/nvm.sh
+                        nvm install v16
+                        nvm use v16
+                        echo "Building stac-server..."
+                        curl -L -f --no-progress-meter -o - "https://github.com/stac-utils/stac-server/archive/refs/tags/${STAC_SERVER_TAG}.tar.gz" | tar -xz
+                        cd "$STAC_SERVER_DIR"
+                        npm install
+                        BUILD_PRE_HOOK=true npm run build
+                        mkdir -p ../modules/stac-server/lambda/api
+                        cp dist/api/api.zip ../modules/stac-server/lambda/api/
+                        mkdir -p ../modules/stac-server/lambda/ingest
+                        cp dist/ingest/ingest.zip ../modules/stac-server/lambda/ingest/
+                        mkdir -p ../modules/stac-server/lambda/pre-hook
+                        cp dist/pre-hook/pre-hook.zip ../modules/stac-server/lambda/pre-hook/
+                        cd ..
+                        terraform apply -var-file=$TFVARS_FILE ;;
+        destroy|rm)     export stac_opensearch_domain_name=`terraform output stac_opensearch_domain_name`
+                        export stac_opensearch_domain_name="${stac_opensearch_domain_name//\"}"
+                        export DELETE_OPENSEARCH_DOMAIN="no"
+                        if [[ "$stac_opensearch_domain_name" != "" && "$stac_opensearch_domain_name" != *"Warning"* ]]; then
+                            echo "We detected a Stac Server OpenSearch Domain $stac_opensearch_domain_name running in flop environment..."
+                            echo "Do you really want to destroy the Stac Server OpenSearch domain along with other resources?"
+                            echo "There is no undo. Only 'yes' will be accepted to confirm."
+                            echo ""
+                            read -p "Enter a value: " opensearch_delete
+                            export DELETE_OPENSEARCH_DOMAIN=$opensearch_delete
+                        fi
+                        if [ "$DELETE_OPENSEARCH_DOMAIN" == "yes" ]; then
+                            terraform state rm "module.filmdrop.module.stac-server[0].module.stac-server.aws_opensearch_domain.stac_server_opensearch_domain"
+                            aws opensearch delete-domain --domain-name $stac_opensearch_domain_name --output text > .opensearch.info
+                        fi
+                        terraform destroy -var-file=$@ ;;
+        init)           terraform init ;;
+        list|ls)        terraform state list ;;
+        output|out)     terraform output ;;
+        test)           terraform plan -var-file=$@ ;;
+        update)         export TFVARS_FILE=$@
+                        export STAC_SERVER_TAG=`cat $TFVARS_FILE | grep version | grep -o '".*"' | sed 's/"//g'`
+                        export STAC_SERVER_DIR="stac-server-${STAC_SERVER_TAG:1}"
+                        export PROJECT_NAME_VAR=`cat $TFVARS_FILE | grep project_name | grep -o '".*"' | sed 's/"//g'`
+                        export ENVIRONMENT_VAR=`cat $TFVARS_FILE | grep environment | grep -o '".*"' | sed 's/"//g'`
+                        if [ $(echo -n "$PROJECT_NAME_VAR" | wc -c) -le 8 ]
+                        then
+                            echo 'project_name is 8 characters or less'
+                        else
+                            echo 'Error: project_name is greater than 8 characters'
+                            exit 1
+                        fi
+                        if [ $(echo -n "$ENVIRONMENT_VAR" | wc -c) -le 5 ]
+                        then
+                            echo 'environment is 5 characters or less'
+                        else
+                            echo 'Error: environment is greater than 5 characters'
+                            exit 1
+                        fi
+                        source $HOME/.nvm/nvm.sh
+                        nvm install v16
+                        nvm use v16
+                        echo "Building stac-server..."
+                        curl -L -f --no-progress-meter -o - "https://github.com/stac-utils/stac-server/archive/refs/tags/${STAC_SERVER_TAG}.tar.gz" | tar -xz
+                        cd "$STAC_SERVER_DIR"
+                        npm install
+                        BUILD_PRE_HOOK=true npm run build
+                        mkdir -p ../modules/stac-server/lambda/api
+                        cp dist/api/api.zip ../modules/stac-server/lambda/api/
+                        mkdir -p ../modules/stac-server/lambda/ingest
+                        cp dist/ingest/ingest.zip ../modules/stac-server/lambda/ingest/
+                        mkdir -p ../modules/stac-server/lambda/pre-hook
+                        cp dist/pre-hook/pre-hook.zip ../modules/stac-server/lambda/pre-hook/
+                        cd ..
+                        terraform apply -var-file=$TFVARS_FILE ;;
+        validate)       export TFVARS_FILE=$@
+                        export PROJECT_NAME_VAR=`cat $TFVARS_FILE | grep project_name | grep -o '".*"' | sed 's/"//g'`
+                        export ENVIRONMENT_VAR=`cat $TFVARS_FILE | grep environment | grep -o '".*"' | sed 's/"//g'`
+                        if [ $(echo -n "$PROJECT_NAME_VAR" | wc -c) -le 8 ]
+                        then
+                            echo 'project_name is 8 characters or less'
+                        else
+                            echo 'Error: project_name is greater than 8 characters'
+                            exit 1
+                        fi
+                        if [ $(echo -n "$ENVIRONMENT_VAR" | wc -c) -le 5 ]
+                        then
+                            echo 'environment is 5 characters or less'
+                        else
+                            echo 'Error: environment is greater than 5 characters'
+                            exit 1
+                        fi
+                        terraform validate ;;
+        help|-h|--help) echo "$USAGE"; exit ;;
+        ?*) fatal "unknown command: '$FLOP_COMMAND'" 1 ;;
+        *)  echo "$USAGE"; exit ;;
+    esac
+}
+
+
+# check if we have been sourced and exit
+# allows us to do testing by sourcing this file
+(return 0 2>/dev/null) && return
+
+
+main "$@"

@@ -138,9 +138,21 @@ variable "domain_alias" {
   default     = ""
 }
 
+variable "cloudfront_distribution_id" {
+  description = "CloudFront Distribution ID for Analytics cluster"
+  type        = string
+  default     = ""
+}
+
 variable "daskhub_stage" {
   description = "The stage name for daskhub"
   type        = string
+}
+
+variable "domain_param_name" {
+  description = "Domain Parameter Name"
+  type        = string
+  default     = ""
 }
 
 locals {

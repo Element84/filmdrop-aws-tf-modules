@@ -35,3 +35,43 @@ resource "aws_secretsmanager_secret_version" "stac_server_api_auth_keys_version"
     ignore_changes = [secret_string, secret_binary]
   }
 }
+
+resource "null_resource" "cleanup_stac_server_api_auth_keys" {
+  count   = var.stac_server_auth_pre_hook_enabled ? 1 : 0
+
+  triggers = {
+    stac_server_api_auth_keys             = "${local.name_prefix}-stac-server-api-auth-keys"
+    region                                = data.aws_region.current.name
+    account                               = data.aws_caller_identity.current.account_id
+  }
+
+  provisioner "local-exec" {
+    command = <<EOF
+export AWS_DEFAULT_REGION=${self.triggers.account}
+export AWS_REGION=${self.triggers.region}
+
+echo "FilmDrop Stac Server Secret have been created."
+
+aws secretsmanager describe-secret --secret-id ${self.triggers.stac_server_api_auth_keys}
+EOF
+
+  }
+
+
+  provisioner "local-exec" {
+    when    = destroy
+    command = <<EOF
+export AWS_DEFAULT_REGION=${self.triggers.account}
+export AWS_REGION=${self.triggers.region}
+
+echo "Cleaning FilmDrop Stac Server Secret."
+
+aws secretsmanager delete-secret --secret-id ${self.triggers.stac_server_api_auth_keys} --force-delete-without-recovery --region ${self.triggers.region}
+EOF
+  }
+
+
+  depends_on = [
+    aws_secretsmanager_secret.stac_server_api_auth_keys
+  ]
+}
