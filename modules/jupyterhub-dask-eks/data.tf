@@ -5,9 +5,9 @@ data "aws_region" "current" {
 }
 
 data "aws_secretsmanager_secret_version" "filmdrop_analytics_credentials_version" {
-  secret_id = var.filmdrop_analytics_jupyterhub_admin_credentials_secret
+  secret_id = "${local.kubernetes_cluster_name}-admin-credentials"
 }
 
-data "aws_secretsmanager_secret_version" "filmdrop_analytics_dask_secret_tokens_version" {
-  secret_id = var.filmdrop_analytics_dask_secret_tokens
+data "aws_secretsmanager_secret_version" "filmdrop_analytics_dask_secret_token_version" {
+  secret_id = "${local.kubernetes_cluster_name}-dask-token"
 }

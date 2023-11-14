@@ -1,7 +1,7 @@
 # Default FilmDrop VPC Security Group
 resource "aws_security_group" "filmdrop_vpc_default_sg" {
-  name        = "filmdrop-sg-${var.environment}"
-  description = "Default Security Group for the FilmDrop ${var.environment} VPC"
+  name        = "${local.name_prefix}-sg"
+  description = "Default Security Group for the FilmDrop ${var.project_name} ${var.environment} VPC"
   vpc_id      = aws_vpc.filmdrop_vpc.id
 }
 

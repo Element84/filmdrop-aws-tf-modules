@@ -53,25 +53,14 @@ variable "vpc_id" {
 variable "kubernetes_version" {
   description = "Kubernetes Cluster version"
   type        = string
-  default     = "1.23"
+  default     = "1.25"
 }
 
 variable "kubernetes_autoscaler_version" {
   description = "Kubernetes Cluster Autoscaler version"
   type        = string
   default     = "v1.25.0"
-}
-
-variable "filmdrop_analytics_jupyterhub_admin_credentials_secret" {
-  description = "FilmDrop JupyterHub Admin Credetials Secret Manager Secret"
-  type        = string
-  default     = "filmdrop-analytics-admin-credentials"
-}
-
-variable "filmdrop_analytics_dask_secret_tokens" {
-  description = "FilmDrop Secret holding Dask Tokens"
-  type        = string
-  default     = "filmdrop-analytics-dask-tokens"
+  # note: v1.25.3 seems not to work correctly, see FD-1594
 }
 
 variable "jupyterhub_image_version" {
@@ -154,3 +143,6 @@ variable "daskhub_stage" {
   type        = string
 }
 
+locals {
+  kubernetes_cluster_name = "fd-analytics-${var.project_name}-${var.environment}"
+}

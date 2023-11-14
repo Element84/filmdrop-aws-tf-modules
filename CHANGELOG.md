@@ -5,19 +5,39 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
-## Unreleased
+## 1.6.0
 
-- The jupyterhub-dask-eks module no longer takes a parameter `kubernetes_cluster_name`,
+### Changed
+
+- The jupyterhub-dask-eks module no longer takes an input `kubernetes_cluster_name`,
   but now requires a parameter `environment`. Resource names that previously used
   `kubernetes_cluster_name` now construct those using the `project_name` and `environment`
   variables
-- All jupyterhub-dask-eks and mosaic-titiler module CodeBuild pipelines are now set with
+- All jupyterhub-dask-eks and mosaic-titiler module CodeBuild projects are now set with
   a concurrency of 1.
+- The jupyterhub-dask-eks module no longer takes inputs
+  `filmdrop_analytics_jupyterhub_admin_credentials_secret` or
+  `filmdrop_analytics_dask_secret_tokens`, but instead constructs these from the
+  `project_name` and `environment` as `${project_name}-${environment}-admin-credentials`
+  and `${project_name}-${environment}-dask-token`
+- jupyterhub-dask-eks CodeBuild project must be manually run, instead of it being run
+  automatically in response to a configuration change.
+- jupyterhub-dask-eks configuration bucket has been renamed from
+  `jupyter-config-${random_id.suffix.hex}` to `fd-${project_name}-${environment}-jd-cfg-${random_id.suffix.hex}`
+- jupyterhub-dask-eks AWS EKS version has been updated to 1.25
+- lowercase aws_s3_bucket.jupyter_dask_source_config S3 bucket name
+- add .snyk file to ignore rules for public S3 buckets and open auth to API gateway
+- The stac-server module renamed numerous resources to use project/stage naming format.
+  See README.md for upgrade instructions it you have a preexisting stac-server OpenSearch
+  cluster than needs to be preserved upon taking this update.
+- Various issues fixed related to stac-server resource name changes
+- Removed invalid default values for stac-server variables `vpc_security_group_ids` and `vpc_subnet_ids`
 
 ## 1.5.0
 
 ### Changed
 
+- fix args being passed to the cloudfront/custom module which were removed in a lint/cleanup commit
 - console-ui.filmdrop_ui_release must be gte 4.x, e.g., `v4.0.1`
 
 ## 1.4.3
@@ -49,7 +69,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Changed
 
-- Add WAF rules to check requests for mosaic titiler - consumer must set "waf_allowed_url" to enable (updated to allow OPTIONS)
+- Add WAF rules to check requests for mosaic titiler - consumer must set "waf_allowed_url"
+  to enable (updated to allow OPTIONS)
 - Sets element 84 distribution email as maintainer for daskhub dockerfile
 - explicitly set bash interpreter for local-exec shell scripts, and don't swallow errors (-e)
 - add a trigger for trigger_console_ui_upgrade on config file contents
@@ -180,7 +201,7 @@ Many changes, see commit history
   by default (tbd not having it deploy). Setting `stac_server_auth_pre_hook_enabled` or
   `stac_server_pre_hook_lambda_arn` will cause it not to be used. When enabled, this uses
   an AWS Secrets Manager secret named `stac-server-${stage}-api-auth-keys` to store a JSON
-  value that contains a mapping of key (token) values to permission values. Currently, the 
+  value that contains a mapping of key (token) values to permission values. Currently, the
   only permission allowed is `write`, which allows read of everything and write if the
   Transaction Extension is enabled.
 

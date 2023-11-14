@@ -1,5 +1,5 @@
 resource "aws_ecr_repository" "daskhub_ecr_repo" {
-  name                 = lower("daskhub-${var.project_name}-${var.daskhub_stage}")
+  name                 = lower("fd-daskhub-${var.project_name}-${var.daskhub_stage}")
   image_tag_mutability = "MUTABLE"
   force_delete         = true
 
@@ -13,7 +13,7 @@ resource "random_id" "suffix" {
 }
 
 resource "aws_s3_bucket" "docker_image_build_source" {
-  bucket = "daskhub-image-${random_id.suffix.hex}"
+  bucket = "fd-daskhub-image-${random_id.suffix.hex}"
 }
 
 resource "aws_s3_bucket_ownership_controls" "docker_image_build_source_ownership_controls" {
@@ -63,8 +63,8 @@ resource "aws_s3_object" "docker_build_spec" {
 }
 
 resource "aws_codebuild_project" "daskhub_docker_image" {
-  name                   = "daskhub-docker-image-${var.project_name}-${var.daskhub_stage}"
-  description            = "creates a daskhub docker image"
+  name                   = "fd-daskhub-docker-image-${var.project_name}-${var.daskhub_stage}"
+  description            = "Builds a daskhub Docker image"
   concurrent_build_limit = 1
   build_timeout          = "10"
   queued_timeout         = "30"
@@ -76,7 +76,7 @@ resource "aws_codebuild_project" "daskhub_docker_image" {
 
   environment {
     compute_type                = "BUILD_GENERAL1_SMALL"
-    image                       = "aws/codebuild/amazonlinux2-x86_64-standard:4.0"
+    image                       = "aws/codebuild/amazonlinux2-x86_64-standard:5.0"
     type                        = "LINUX_CONTAINER"
     image_pull_credentials_type = "CODEBUILD"
     privileged_mode             = "true"
@@ -141,7 +141,27 @@ export AWS_DEFAULT_REGION=${data.aws_region.current.name}
 export AWS_REGION=${data.aws_region.current.name}
 
 echo "Triggering CodeBuild Project."
-aws codebuild start-build --project-name ${aws_codebuild_project.daskhub_docker_image.id}
+START_RESULT=$(aws codebuild start-build --project-name ${aws_codebuild_project.daskhub_docker_image.id})
+BUILD_ID=$(echo $START_RESULT | jq '.build.id' -r)
+
+BUILD_STATUS="IN_PROGRESS"
+while [[ "$BUILD_STATUS" == "IN_PROGRESS" ]]; do
+    sleep 5
+    BUILD=$(aws codebuild batch-get-builds --ids $BUILD_ID)
+    BUILD_STATUS=$(echo $BUILD | jq '.builds[0].buildStatus' -r)
+    if [[ "$BUILD_STATUS" == "IN_PROGRESS" ]]; then
+        echo "CodeBuild is still in progress..."
+    fi
+done
+
+if [[ "$BUILD_STATUS" != "SUCCEEDED" ]]; then
+    LOG_URL=$(echo $BUILD | jq '.builds[0].logs.deepLink' -r)
+    echo "Build failed - logs are available at [$LOG_URL]"
+    exit 1
+else
+    echo "CodeBuild ${aws_codebuild_project.daskhub_docker_image.id} succeeded"
+fi
+
 EOF
 
   }

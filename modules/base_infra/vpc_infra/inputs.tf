@@ -1,3 +1,8 @@
+variable "project_name" {
+  description = "Project Name"
+  type        = string
+}
+
 variable "environment" {
   description = "Project environment"
   type        = string
@@ -57,4 +62,8 @@ variable "interface_endpoints_list" {
   description = "List of VPC Interface Endpoints to create in the FilmDrop VPC."
   type        = list(string)
   default     = ["secretsmanager", "ec2", "sts"]
+}
+
+locals {
+  name_prefix = "fd-${var.project_name}-${var.environment}"
 }

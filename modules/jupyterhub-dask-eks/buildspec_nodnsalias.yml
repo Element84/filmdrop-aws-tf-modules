@@ -1,20 +1,21 @@
 version: 0.2
 
 phases:
-  install:
-    runtime-versions:
-      docker: 20
   pre_build:
     commands:
       - echo "Installing dependencies ..."
       - export FILMDROP_BUILD_DIR=`pwd`
+      - export EKSCTL_VERSION=v0.157.0
+      # KUBECTL_VERSION 2023-09-14: 1.23.17, 1.24.17, 1.25.13, 1.26.8, 1.27.5
+      - export KUBECTL_VERSION=1.25.13
+      - export HELM_VERSION=v3.10.3
       - cd /usr/local/bin
-      - curl -L -o eksctl.tar.gz "https://github.com/weaveworks/eksctl/releases/download/v0.123.0/eksctl_Linux_amd64.tar.gz"
+      - curl -Lfo eksctl.tar.gz "https://github.com/weaveworks/eksctl/releases/download/${EKSCTL_VERSION}/eksctl_Linux_amd64.tar.gz"
       - tar zxvf eksctl.tar.gz
       - chmod a+x eksctl
-      - curl -L -o kubectl https://s3.us-west-2.amazonaws.com/amazon-eks/1.23.13/2022-10-31/bin/linux/amd64/kubectl
+      - curl -Lfo kubectl https://s3.us-west-2.amazonaws.com/amazon-eks/${KUBECTL_VERSION}/2023-09-14/bin/linux/amd64/kubectl
       - chmod a+x kubectl
-      - curl -L -o /tmp/helm.tar.gz https://get.helm.sh/helm-v3.10.3-linux-amd64.tar.gz
+      - curl -Lfo /tmp/helm.tar.gz https://get.helm.sh/helm-${HELM_VERSION}-linux-amd64.tar.gz
       - cd /tmp
       - tar zxvf /tmp/helm.tar.gz
       - cp /tmp/linux-amd64/helm /usr/local/bin/
@@ -25,15 +26,16 @@ phases:
     commands:
       - echo "Remove any previous analytics clusters ..."
       - aws cloudformation delete-stack --stack-name eksctl-${ANALYTICS_CLUSTER_NAME}-nodegroup-dask-workers
-      - aws cloudformation wait stack-delete-complete --stack-name eksctl-${ANALYTICS_CLUSTER_NAME}-nodegroup-dask-workers
       - aws cloudformation delete-stack --stack-name eksctl-${ANALYTICS_CLUSTER_NAME}-nodegroup-main
-      - aws cloudformation wait stack-delete-complete --stack-name eksctl-${ANALYTICS_CLUSTER_NAME}-nodegroup-main
       - aws cloudformation delete-stack --stack-name eksctl-${ANALYTICS_CLUSTER_NAME}-addon-iamserviceaccount-kube-system-ebs-csi-controller-sa
-      - aws cloudformation wait stack-delete-complete --stack-name eksctl-${ANALYTICS_CLUSTER_NAME}-addon-iamserviceaccount-kube-system-ebs-csi-controller-sa
       - aws cloudformation delete-stack --stack-name eksctl-${ANALYTICS_CLUSTER_NAME}-addon-iamserviceaccount-kube-system-cluster-autoscaler
-      - aws cloudformation wait stack-delete-complete --stack-name eksctl-${ANALYTICS_CLUSTER_NAME}-addon-iamserviceaccount-kube-system-cluster-autoscaler
       - aws cloudformation delete-stack --stack-name eksctl-${ANALYTICS_CLUSTER_NAME}-addon-iamserviceaccount-kube-system-aws-node
+      - aws cloudformation wait stack-delete-complete --stack-name eksctl-${ANALYTICS_CLUSTER_NAME}-nodegroup-dask-workers
+      - aws cloudformation wait stack-delete-complete --stack-name eksctl-${ANALYTICS_CLUSTER_NAME}-nodegroup-main
+      - aws cloudformation wait stack-delete-complete --stack-name eksctl-${ANALYTICS_CLUSTER_NAME}-addon-iamserviceaccount-kube-system-ebs-csi-controller-sa
+      - aws cloudformation wait stack-delete-complete --stack-name eksctl-${ANALYTICS_CLUSTER_NAME}-addon-iamserviceaccount-kube-system-cluster-autoscaler
       - aws cloudformation wait stack-delete-complete --stack-name eksctl-${ANALYTICS_CLUSTER_NAME}-addon-iamserviceaccount-kube-system-aws-node
+      # for some reason, trying to delete the cluster stack concurrent with the other stacks doesn't work
       - aws cloudformation delete-stack --stack-name eksctl-${ANALYTICS_CLUSTER_NAME}-cluster
       - aws cloudformation wait stack-delete-complete --stack-name eksctl-${ANALYTICS_CLUSTER_NAME}-cluster
       - echo "Creating eks cluster ..."

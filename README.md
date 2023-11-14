@@ -9,12 +9,13 @@ Check out the [changelog](CHANGELOG.md).
 Document any changes that need to be made by module instances using these modules to uptake
 a newer version. For example, if a new required variable is added, this should be documented here.
 
-### Unreleased
+### 1.6.0
 
 - The jupyterhub-dask-eks module no longer takes a parameter `kubernetes_cluster_name`,
   but now requires a parameter `environment`. Resource names that previously used
   `kubernetes_cluster_name` now construct those using the `project_name` and `environment`
   variables
+- The default OpenSearch cluster name has changed to include both environment/stage, to allow for multiple deployments to a single AWS account.  Unfortunately, an OpenSearch cluster name can't be changed after creation, so running a TF apply would attempt to destroy the old cluster and create a new one.  If it is desired to preserve the old cluster (and data) upon taking this update, a new optional variable has been added to override the cluster name.  Setting the input variable `opensearch_stac_server_domain_name_override` to match the pre-existing cluster name will allow taking this update to preserve the old default name moving forward.
 
 ### 1.5.0
 

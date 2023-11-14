@@ -1,7 +1,7 @@
 resource "aws_lambda_function" "stac_server_api_auth_pre_hook" {
   count            = var.stac_server_auth_pre_hook_enabled ? 1 : 0
   filename         = "${path.module}/lambda/pre-hook/pre-hook.zip"
-  function_name    = "stac-server-${var.stac_api_stage}-pre-hook"
+  function_name    = "${local.name_prefix}-stac-server-pre-hook"
   description      = "stac-server Auth Pre-Hook Lambda"
   role             = aws_iam_role.stac_api_lambda_role.arn
   handler          = "index.handler"
@@ -24,7 +24,7 @@ resource "aws_lambda_function" "stac_server_api_auth_pre_hook" {
 
 resource "aws_secretsmanager_secret" "stac_server_api_auth_keys" {
   count = var.stac_server_auth_pre_hook_enabled ? 1 : 0
-  name  = "stac-server-${var.stac_api_stage}-api-auth-keys"
+  name  = "${local.name_prefix}-stac-server-api-auth-keys"
 }
 
 resource "aws_secretsmanager_secret_version" "stac_server_api_auth_keys_version" {

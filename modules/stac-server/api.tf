@@ -1,6 +1,6 @@
 resource "aws_lambda_function" "stac_server_api" {
   filename         = "${path.module}/lambda/api/api.zip"
-  function_name    = "stac-server-${var.stac_api_stage}-api"
+  function_name    = "${local.name_prefix}-stac-server-api"
   description      = "stac-server API Lambda"
   role             = aws_iam_role.stac_api_lambda_role.arn
   handler          = "index.handler"
@@ -46,7 +46,7 @@ resource "aws_lambda_function" "stac_server_api" {
 }
 
 resource "aws_api_gateway_rest_api" "stac_server_api_gateway" {
-  name = "${var.stac_api_stage}-stac-server"
+  name = "${local.name_prefix}-stac-server"
 
   endpoint_configuration {
     types = [var.api_rest_type]
@@ -188,8 +188,7 @@ resource "aws_api_gateway_deployment" "stac_server_api_gateway" {
 }
 
 resource "aws_cloudwatch_log_group" "stac_server_api_gateway_logs_group" {
-  name = "/aws/apigateway/${var.stac_api_stage}-stac-server-${aws_api_gateway_deployment.stac_server_api_gateway.rest_api_id}/${aws_api_gateway_deployment.stac_server_api_gateway.stage_name}"
-
+  name = "/aws/apigateway/${local.name_prefix}-stac-server-${aws_api_gateway_deployment.stac_server_api_gateway.rest_api_id}/${aws_api_gateway_deployment.stac_server_api_gateway.stage_name}"
 }
 
 locals {

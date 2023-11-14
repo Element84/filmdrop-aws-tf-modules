@@ -4,7 +4,7 @@ resource "aws_eip" "eips" {
   domain = "vpc"
 
   tags = {
-    Name = "filmdrop-eip-${each.key}-${var.environment}"
+    Name = "${local.name_prefix}-eip-${each.key}"
   }
 }
 
@@ -14,7 +14,7 @@ resource "aws_nat_gateway" "ngws" {
   allocation_id = element(values(aws_eip.eips)[*].id, index(values(aws_subnet.public_subnets)[*].id, each.value.id))
   subnet_id     = each.value.id
   tags = {
-    Name = "filmdrop-nat-gateway-${each.value.id}-${var.environment}"
+    Name = "${local.name_prefix}-nat-gateway-${each.value.id}"
   }
 
   depends_on = [aws_internet_gateway.igw]
@@ -28,7 +28,7 @@ resource "aws_route_table" "private_route_tables" {
   vpc_id = aws_vpc.filmdrop_vpc.id
 
   tags = {
-    Name = "filmdrop-private-route-table-${each.value.id}-${var.environment}"
+    Name = "${local.name_prefix}-private-route-table-${each.value.id}"
   }
 
   depends_on = [aws_nat_gateway.ngws]

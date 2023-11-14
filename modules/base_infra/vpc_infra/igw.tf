@@ -3,7 +3,7 @@ resource "aws_internet_gateway" "igw" {
   vpc_id = aws_vpc.filmdrop_vpc.id
 
   tags = {
-    Name = "filmdrop-internet-gateway-${var.environment}"
+    Name = "${local.name_prefix}-internet-gateway"
   }
 }
 
@@ -11,7 +11,7 @@ resource "aws_route_table" "public_route_table" {
   vpc_id = aws_vpc.filmdrop_vpc.id
 
   tags = {
-    Name = "filmdrop-public-route-table-${var.environment}"
+    Name = "${local.name_prefix}-public-route-table"
   }
 }
 

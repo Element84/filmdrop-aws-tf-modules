@@ -1,5 +1,5 @@
 resource "aws_iam_role" "stac_api_lambda_role" {
-  name_prefix = "stac-server-${var.stac_api_stage}-${data.aws_region.current.name}-lambdaRole"
+  name_prefix = "${local.name_prefix}-stac-server-${data.aws_region.current.name}"
 
   assume_role_policy = <<EOF
 {
@@ -25,12 +25,12 @@ locals {
         "logs:CreateLogStream",
         "logs:CreateLogGroup",
       ]
-      Resource = "arn:aws:logs:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:log-group:/aws/lambda/stac-server-${var.stac_api_stage}*:*"
+      Resource = "arn:aws:logs:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:log-group:/aws/lambda/${local.name_prefix}-stac-server*:*"
       Effect   = "Allow"
       },
       {
         Action   = ["logs:PutLogEvents"]
-        Resource = "arn:aws:logs:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:log-group:/aws/lambda/stac-server-${var.stac_api_stage}*:*:*"
+        Resource = "arn:aws:logs:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:log-group:/aws/lambda/${local.name_prefix}-stac-server-*:*:*"
         Effect   = "Allow"
       },
       {
@@ -77,7 +77,7 @@ locals {
 }
 
 resource "aws_iam_policy" "stac_api_lambda_policy" {
-  name_prefix = "stac-server-${var.stac_api_stage}-${data.aws_region.current.name}-lambdaPolicy"
+  name_prefix = "${local.name_prefix}-stac-server-${data.aws_region.current.name}"
 
   policy = jsonencode({
     Version   = "2012-10-17"
@@ -96,7 +96,7 @@ resource "aws_iam_role_policy_attachment" "stac_api_lambda_base_policy" {
 }
 
 resource "aws_iam_role" "stac_api_gw_role" {
-  name_prefix = "stac-server-${var.stac_api_stage}-${data.aws_region.current.name}-apigwRole"
+  name_prefix = "${local.name_prefix}-stac-server-${data.aws_region.current.name}"
 
   assume_role_policy = <<EOF
 {
@@ -115,7 +115,7 @@ EOF
 }
 
 resource "aws_iam_policy" "stac_api_gw_policy" {
-  name_prefix = "stac-server-${var.stac_api_stage}-${data.aws_region.current.name}-apigwPolicy"
+  name_prefix = "${local.name_prefix}-stac-server-${data.aws_region.current.name}-apigw"
 
   policy = <<EOF
 {

@@ -1,6 +1,6 @@
 resource "aws_lambda_function" "stac_server_ingest" {
   filename                       = "${path.module}/lambda/ingest/ingest.zip"
-  function_name                  = "stac-server-${var.stac_api_stage}-ingest"
+  function_name                  = "${local.name_prefix}-stac-server-ingest"
   description                    = "stac-server Ingest Lambda"
   role                           = aws_iam_role.stac_api_lambda_role.arn
   handler                        = "index.handler"
@@ -26,7 +26,7 @@ resource "aws_lambda_function" "stac_server_ingest" {
 }
 
 resource "aws_sns_topic" "stac_server_ingest_sns_topic" {
-  name = "stac-server-${var.stac_api_stage}-ingest"
+  name = "${local.name_prefix}-stac-server-ingest"
 }
 
 resource "aws_sns_topic_subscription" "stac_server_ingest_sqs_subscription" {
@@ -37,7 +37,7 @@ resource "aws_sns_topic_subscription" "stac_server_ingest_sqs_subscription" {
 }
 
 resource "aws_sqs_queue" "stac_server_ingest_sqs_queue" {
-  name_prefix                = "stac-server-${var.stac_api_stage}-queue"
+  name_prefix                = "${local.name_prefix}-stac-server-queue"
   visibility_timeout_seconds = var.ingest_sqs_timeout
   receive_wait_time_seconds  = var.ingest_sqs_receive_wait_time_seconds
 
@@ -48,7 +48,7 @@ resource "aws_sqs_queue" "stac_server_ingest_sqs_queue" {
 }
 
 resource "aws_sqs_queue" "stac_server_ingest_dead_letter_sqs_queue" {
-  name_prefix                = "stac-server-${var.stac_api_stage}-dead-letter-queue"
+  name_prefix                = "${local.name_prefix}-stac-server-dlq"
   visibility_timeout_seconds = var.ingest_sqs_dlq_timeout
 }
 

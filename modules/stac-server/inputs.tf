@@ -205,13 +205,11 @@ variable "ingest_sqs_dlq_timeout" {
 variable "vpc_subnet_ids" {
   description = "List of subnet ids in the FilmDrop vpc"
   type        = list(string)
-  default     = []
 }
 
 variable "vpc_security_group_ids" {
   description = "List of security groups in the FilmDrop vpc"
   type        = list(string)
-  default     = []
 }
 
 variable "stac_server_pre_hook_lambda_arn" {
@@ -266,6 +264,12 @@ variable "opensearch_stac_server_username" {
   default     = "stac_server"
 }
 
+variable "opensearch_stac_server_domain_name_override" {
+  description = "This optionally overrides the OpenSearch server name.  Since this name can't change after the server has been created, it is provided so that any changes to the default name don't require tearing down the server on future TF updates."
+  type        = string
+  default     = null
+}
+
 variable "opensearch_admin_username" {
   description = "OpenSearch admin username"
   type        = string
@@ -293,4 +297,8 @@ variable "stac_server_s3_bucket_arns" {
   description = "List of S3 bucket ARNs to give GetObject permissions to"
   type        = list(string)
   default     = []
+}
+
+locals {
+  name_prefix = "fd-${var.project_name}-${var.stac_api_stage}"
 }

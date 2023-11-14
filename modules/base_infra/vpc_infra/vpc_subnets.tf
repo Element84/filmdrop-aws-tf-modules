@@ -4,7 +4,7 @@ resource "aws_vpc" "filmdrop_vpc" {
   enable_dns_support   = true
 
   tags = {
-    Name = "filmdrop-vpc-${var.environment}"
+    Name = "${local.name_prefix}-vpc"
   }
 }
 
@@ -16,7 +16,7 @@ resource "aws_subnet" "public_subnets" {
   availability_zone = each.key
 
   tags = {
-    Name = "filmdrop-public-subnet-${each.key}-${var.environment}"
+    Name = "${local.name_prefix}-public-subnet-${each.key}"
   }
 }
 
@@ -28,7 +28,7 @@ resource "aws_subnet" "private_subnets" {
   availability_zone = each.key
 
   tags = {
-    Name = "filmdrop-private-subnet-${each.key}-${var.environment}"
+    Name = "${local.name_prefix}-private-subnet-${each.key}"
   }
 
 }
@@ -55,7 +55,7 @@ resource "aws_flow_log" "filmdrop_vpc_flow_logs_to_s3" {
   vpc_id                   = aws_vpc.filmdrop_vpc.id
 
   tags = {
-    Name = "filmdrop-flow-logs-${aws_vpc.filmdrop_vpc.id}"
+    Name = "${local.name_prefix}-flow-logs-${aws_vpc.filmdrop_vpc.id}"
   }
 }
 
