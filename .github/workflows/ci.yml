@@ -1,0 +1,21 @@
+name: Continuous integration
+
+on:
+  pull_request:
+  push:
+    branches:
+      main
+
+jobs:
+  update-lambdas:
+    runs-on: ubuntu-latest
+    env:
+      CI: true
+      STAC_SERVER_TAG: v2.2.3
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '16'
+      - name: Update stac-server lambdas
+        run: ./scripts/update-lambdas.sh
