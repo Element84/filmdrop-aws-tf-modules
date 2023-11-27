@@ -21,10 +21,10 @@ jobs:
       actions: read # only required for a private repository by github/codeql-action/upload-sarif to get the Action run status
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@master
+      - uses: actions/checkout@v4.1.1
 
       - name: Snyk IaC report vulnerabilities
-        uses: snyk/actions/iac@master
+        uses: snyk/actions/iac@0.4.0
         continue-on-error: true # To make sure that SARIF upload gets called
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
@@ -38,7 +38,7 @@ jobs:
           sarif_file: snyk.sarif
 
       - name: Snyk IaC gatekeeper
-        uses: snyk/actions/iac@master
+        uses: snyk/actions/iac@0.4.0
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
         with:
