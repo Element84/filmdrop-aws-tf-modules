@@ -1,5 +1,5 @@
 resource "aws_opensearchserverless_security_policy" "stac_server_opensearch_serverless_encryption_policy" {
-  count   = var.deploy_stac_opensearch_serverless ? 1 : 0
+  count   = var.deploy_stac_server_opensearch_serverless ? 1 : 0
   name    = lower(var.opensearch_stac_server_domain_name_override == null ? "${local.name_prefix}-stac-server-ep" : var.opensearch_stac_server_domain_name_override)
   type    = "encryption"
   policy  = jsonencode({
