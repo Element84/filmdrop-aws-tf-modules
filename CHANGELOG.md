@@ -11,6 +11,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Changed
 
+- Update stac-server to use OpenSearch 2.11
+ 
 ### Fixed
 
 ## 2.1.0
