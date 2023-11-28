@@ -3,8 +3,9 @@ resource "random_id" "suffix" {
 }
 
 resource "aws_opensearch_domain" "stac_server_opensearch_domain" {
-  domain_name    = lower(var.opensearch_stac_server_domain_name_override == null ? "${local.name_prefix}-stac-server" : var.opensearch_stac_server_domain_name_override)
-  engine_version = var.opensearch_version
+  count           = var.deploy_stac_opensearch_serverless ? 0 : 1
+  domain_name     = lower(var.opensearch_stac_server_domain_name_override == null ? "${local.name_prefix}-stac-server" : var.opensearch_stac_server_domain_name_override)
+  engine_version  = var.opensearch_version
 
   cluster_config {
     instance_type            = var.opensearch_cluster_instance_type
@@ -57,7 +58,7 @@ resource "aws_opensearch_domain" "stac_server_opensearch_domain" {
 
   vpc_options {
     subnet_ids         = var.vpc_subnet_ids
-    security_group_ids = [aws_security_group.opensearch_security_group.id]
+    security_group_ids = [aws_security_group.opensearch_security_group[0].id]
   }
 
   advanced_options = {
@@ -95,6 +96,7 @@ CONFIG
 }
 
 resource "aws_security_group" "opensearch_security_group" {
+  count       = var.deploy_stac_opensearch_serverless ? 0 : 1
   name        = "${local.name_prefix}-stac-server"
   description = "OpenSearch Security Group"
   vpc_id      = var.vpc_id
@@ -258,20 +260,23 @@ resource "aws_lambda_function" "stac_server_opensearch_user_initializer" {
 
   environment {
     variables = {
-      OPENSEARCH_HOST                    = var.opensearch_host != "" ? var.opensearch_host : aws_opensearch_domain.stac_server_opensearch_domain.endpoint
+      OPENSEARCH_HOST                    = var.opensearch_host != "" ? var.opensearch_host : local.opensearch_endpoint
       OPENSEARCH_MASTER_CREDS_SECRET_ARN = aws_secretsmanager_secret.opensearch_master_password_secret.arn
       OPENSEARCH_USER_CREDS_SECRET_ARN   = aws_secretsmanager_secret.opensearch_stac_user_password_secret.arn
       REGION                             = data.aws_region.current.name
     }
   }
 
-  vpc_config {
-    subnet_ids         = var.vpc_subnet_ids
-    security_group_ids = var.vpc_security_group_ids
+  dynamic "vpc_config" {
+    for_each = { for i, j in [var.deploy_stac_opensearch_serverless] : i => j if var.deploy_stac_opensearch_serverless != true }
+
+    content {
+      subnet_ids         = var.vpc_subnet_ids
+      security_group_ids = var.vpc_security_group_ids
+    }
   }
 
   depends_on = [
-    aws_opensearch_domain.stac_server_opensearch_domain,
     random_password.opensearch_master_password,
     aws_secretsmanager_secret.opensearch_master_password_secret,
     aws_secretsmanager_secret_version.opensearch_master_password_secret_version,
@@ -283,9 +288,10 @@ resource "aws_lambda_function" "stac_server_opensearch_user_initializer" {
 }
 
 resource "null_resource" "invoke_stac_server_opensearch_user_initializer" {
-  triggers = {
+  count     = var.deploy_stac_opensearch_serverless ? 0 : 1
+  triggers  = {
     INITIALIZER_LAMBDA                 = aws_lambda_function.stac_server_opensearch_user_initializer.function_name
-    OPENSEARCH_HOST                    = aws_opensearch_domain.stac_server_opensearch_domain.endpoint
+    OPENSEARCH_HOST                    = var.deploy_stac_opensearch_serverless ? aws_opensearchserverless_collection.stac_server_opensearch_serverless_collection[0].collection_endpoint : aws_opensearch_domain.stac_server_opensearch_domain[0].endpoint
     OPENSEARCH_MASTER_CREDS_SECRET_ARN = aws_secretsmanager_secret.opensearch_master_password_secret.arn
     OPENSEARCH_USER_CREDS_SECRET_ARN   = aws_secretsmanager_secret.opensearch_stac_user_password_secret.arn
     REGION                             = data.aws_region.current.name
@@ -304,7 +310,6 @@ EOF
   }
 
   depends_on = [
-    aws_opensearch_domain.stac_server_opensearch_domain,
     random_password.opensearch_master_password,
     aws_secretsmanager_secret.opensearch_master_password_secret,
     aws_secretsmanager_secret_version.opensearch_master_password_secret_version,

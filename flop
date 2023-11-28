@@ -68,8 +68,8 @@ EOF
                             exit 1
                         fi
                         source $HOME/.nvm/nvm.sh
-                        nvm install v16
-                        nvm use v16
+                        nvm install v18
+                        nvm use v18
                         echo "Building stac-server..."
                         curl -L -f --no-progress-meter -o - "https://github.com/stac-utils/stac-server/archive/refs/tags/${STAC_SERVER_TAG}.tar.gz" | tar -xz
                         cd "$STAC_SERVER_DIR"
@@ -86,7 +86,7 @@ EOF
         destroy|rm)     export stac_opensearch_domain_name=`terraform output stac_opensearch_domain_name`
                         export stac_opensearch_domain_name="${stac_opensearch_domain_name//\"}"
                         export DELETE_OPENSEARCH_DOMAIN="no"
-                        if [[ "$stac_opensearch_domain_name" != "" && "$stac_opensearch_domain_name" != *"Warning"* ]]; then
+                        if [[ "$stac_opensearch_domain_name" != "" && !("$stac_opensearch_domain_name" =~ ".aoss.amazonaws.com") && "$stac_opensearch_domain_name" != *"Warning"* ]]; then
                             echo "We detected a Stac Server OpenSearch Domain $stac_opensearch_domain_name running in flop environment..."
                             echo "Do you really want to destroy the Stac Server OpenSearch domain along with other resources?"
                             echo "There is no undo. Only 'yes' will be accepted to confirm."
@@ -123,8 +123,8 @@ EOF
                             exit 1
                         fi
                         source $HOME/.nvm/nvm.sh
-                        nvm install v16
-                        nvm use v16
+                        nvm install v18
+                        nvm use v18
                         echo "Building stac-server..."
                         curl -L -f --no-progress-meter -o - "https://github.com/stac-utils/stac-server/archive/refs/tags/${STAC_SERVER_TAG}.tar.gz" | tar -xz
                         cd "$STAC_SERVER_DIR"

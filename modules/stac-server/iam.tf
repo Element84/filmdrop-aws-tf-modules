@@ -63,6 +63,16 @@ locals {
         Effect   = "Allow"
       },
       {
+        Action   = ["kms:*"]
+        Resource = "*"
+        Effect   = "Allow"
+      },
+      {
+        Action   = ["aoss:*"]
+        Resource = "*"
+        Effect   = "Allow"
+      },
+      {
         Action   = ["secretsmanager:*"]
         Resource = "*"
         Effect   = "Allow"

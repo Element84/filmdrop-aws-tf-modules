@@ -24,7 +24,7 @@ sns_critical_subscriptions_map  = {}
 ##### APPLICATION VARIABLES ####
 stac_server_inputs  = {
   app_name                                      = "stac_server"
-  version                                       = "v2.2.3"
+  version                                       = "v3.1.0"
   domain_alias                                  = ""
   enable_transactions_extension                 = false
   collection_to_index_mappings                  = ""
@@ -96,6 +96,7 @@ deploy_vpc                          = false
 deploy_vpc_search                   = true
 deploy_log_archive                  = true
 deploy_alarms                       = false
+deploy_stac_opensearch_serverless   = true
 deploy_stac_server                  = true
 deploy_analytics                    = true
 deploy_titiler                      = true

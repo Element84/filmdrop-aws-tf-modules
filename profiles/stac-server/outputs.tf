@@ -7,5 +7,5 @@ output "stac_opensearch_domain_name" {
 }
 
 output "stac_opensearch_endpoint" {
-  value = "https://${module.stac-server.stac_server_opensearch_endpoint}"
+  value = module.stac-server.stac_server_opensearch_endpoint
 }

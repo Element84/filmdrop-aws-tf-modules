@@ -1,7 +1,7 @@
 variable stac_server_version {
   description = "STAC Server version"
   type        = string
-  default     = "v2.2.3" 
+  default     = "v3.1.0"
 }
 
 variable deploy_local_stac_server_artifacts {
