@@ -258,7 +258,7 @@ variable deploy_stac_server {
   description = "Deploy FilmDrop Stac-Server"
 }
 
-variable deploy_stac_opensearch_serverless {
+variable deploy_stac_server_opensearch_serverless {
   type        = bool
   default     = true
   description = "Deploy FilmDrop Stac-Server with OpenSearch Serverless. If False, Stac-server will be deployed with a classic OpenSearch domain."

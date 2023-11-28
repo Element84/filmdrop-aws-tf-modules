@@ -92,18 +92,18 @@ cirrus_dashboard_inputs   = {
 
 ##### INFRASTRUCTURE FLAGS ####
 # To disable each flag: set to 'false'; to enable: set to 'true'
-deploy_vpc                          = false
-deploy_vpc_search                   = true
-deploy_log_archive                  = true
-deploy_alarms                       = false
-deploy_stac_opensearch_serverless   = true
-deploy_stac_server                  = true
-deploy_analytics                    = true
-deploy_titiler                      = true
-deploy_console_ui                   = true
-deploy_cirrus_dashboard             = true
-deploy_local_stac_server_artifacts  = false
-deploy_sample_data_bucket           = false
+deploy_vpc                                = false
+deploy_vpc_search                         = true
+deploy_log_archive                        = true
+deploy_alarms                             = false
+deploy_stac_server_opensearch_serverless  = true
+deploy_stac_server                        = true
+deploy_analytics                          = true
+deploy_titiler                            = true
+deploy_console_ui                         = true
+deploy_cirrus_dashboard                   = true
+deploy_local_stac_server_artifacts        = false
+deploy_sample_data_bucket                 = false
 
 
 ##### STAC SAMPLE DATA ####

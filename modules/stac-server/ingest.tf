@@ -14,13 +14,13 @@ resource "aws_lambda_function" "stac_server_ingest" {
     variables = {
       LOG_LEVEL                        = var.log_level
       OPENSEARCH_HOST                  = var.opensearch_host != "" ? var.opensearch_host : local.opensearch_endpoint
-      OPENSEARCH_CREDENTIALS_SECRET_ID = var.deploy_stac_opensearch_serverless ? "" : aws_secretsmanager_secret.opensearch_stac_user_password_secret.arn
+      OPENSEARCH_CREDENTIALS_SECRET_ID = var.deploy_stac_server_opensearch_serverless ? "" : aws_secretsmanager_secret.opensearch_stac_user_password_secret.arn
       COLLECTION_TO_INDEX_MAPPINGS     = var.collection_to_index_mappings
     }
   }
 
   dynamic "vpc_config" {
-    for_each = { for i, j in [var.deploy_stac_opensearch_serverless] : i => j if var.deploy_stac_opensearch_serverless != true }
+    for_each = { for i, j in [var.deploy_stac_server_opensearch_serverless] : i => j if var.deploy_stac_server_opensearch_serverless != true }
 
     content {
       subnet_ids         = var.vpc_subnet_ids
@@ -102,7 +102,7 @@ resource "aws_lambda_permission" "stac_server_ingest_sqs_lambda_permission" {
 resource "null_resource" "stac_server_ingest_create_indices" {
   triggers = {
     stac_server_ingest = aws_lambda_function.stac_server_ingest.function_name
-    opensearch_host    = var.opensearch_host != "" ? var.opensearch_host : var.deploy_stac_opensearch_serverless ? aws_opensearchserverless_collection.stac_server_opensearch_serverless_collection[0].collection_endpoint : aws_opensearch_domain.stac_server_opensearch_domain[0].endpoint
+    opensearch_host    = var.opensearch_host != "" ? var.opensearch_host : var.deploy_stac_server_opensearch_serverless ? aws_opensearchserverless_collection.stac_server_opensearch_serverless_collection[0].collection_endpoint : aws_opensearch_domain.stac_server_opensearch_domain[0].endpoint
   }
 
   provisioner "local-exec" {
