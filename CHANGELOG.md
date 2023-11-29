@@ -13,6 +13,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Fixed
 
+## 2.1.0
+
+### Added
+- Added OpenSearch Serverless capability to stac-server module
+
 ## 2.0.0
 
 ### Added

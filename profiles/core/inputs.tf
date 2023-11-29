@@ -108,7 +108,7 @@ variable stac_server_inputs {
   })
   default       = {
     app_name                                      = "stac_server"
-    version                                       = "v2.2.3"
+    version                                       = "v3.2.0"
     domain_alias                                  = ""
     enable_transactions_extension                 = false
     collection_to_index_mappings                  = ""
@@ -292,6 +292,12 @@ variable deploy_sample_data_bucket {
   type        = bool
   default     = false
   description = "Deploy FilmDrop STAC sample data bucket"
+}
+
+variable deploy_stac_server_opensearch_serverless {
+  type        = bool
+  default     = false
+  description = "Deploy FilmDrop Stac-Server with OpenSearch Serverless. If False, Stac-server will be deployed with a classic OpenSearch domain."
 }
 
 variable project_sample_data_bucket_name {

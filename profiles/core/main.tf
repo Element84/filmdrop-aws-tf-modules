@@ -36,15 +36,16 @@ module "stac-server" {
     aws.east = aws.east
   }
 
-  vpc_id                  = module.base_infra.vpc_id
-  private_subnet_ids      = module.base_infra.private_subnet_ids
-  security_group_id       = module.base_infra.security_group_id
-  vpc_cidr                = module.base_infra.vpc_cidr
-  environment             = var.environment
-  stac_server_inputs      = var.stac_server_inputs
-  project_name            = var.project_name
-  s3_logs_archive_bucket  = module.base_infra.s3_logs_archive_bucket
-  domain_zone             = var.domain_zone
+  vpc_id                            = module.base_infra.vpc_id
+  private_subnet_ids                = module.base_infra.private_subnet_ids
+  security_group_id                 = module.base_infra.security_group_id
+  vpc_cidr                          = module.base_infra.vpc_cidr
+  environment                       = var.environment
+  stac_server_inputs                = var.stac_server_inputs
+  project_name                      = var.project_name
+  s3_logs_archive_bucket            = module.base_infra.s3_logs_archive_bucket
+  domain_zone                       = var.domain_zone
+  deploy_stac_server_opensearch_serverless = var.deploy_stac_server_opensearch_serverless
 
   depends_on = [
     module.setup
