@@ -307,6 +307,6 @@ variable "opensearch_cluster_dedicated_master_count" {
 
 variable deploy_stac_server_opensearch_serverless {
   type        = bool
-  default     = true
+  default     = false
   description = "Deploy FilmDrop Stac-Server with OpenSearch Serverless. If False, Stac-server will be deployed with a classic OpenSearch domain."
 }

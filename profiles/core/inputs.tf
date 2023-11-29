@@ -296,7 +296,7 @@ variable deploy_sample_data_bucket {
 
 variable deploy_stac_server_opensearch_serverless {
   type        = bool
-  default     = true
+  default     = false
   description = "Deploy FilmDrop Stac-Server with OpenSearch Serverless. If False, Stac-server will be deployed with a classic OpenSearch domain."
 }
 
