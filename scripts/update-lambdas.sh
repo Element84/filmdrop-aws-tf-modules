@@ -4,11 +4,11 @@
 #
 # Usage:
 #
-#     ./scripts/update-lambdas.sh v3.2.0-pre1
+#     ./scripts/update-lambdas.sh v3.2.0
 #
 # or
 #
-#     export STAC_SERVER_TAG=v3.2.0-pre1
+#     export STAC_SERVER_TAG=v3.2.0
 #     ./scripts/update-lambdas.sh
 
 set -e

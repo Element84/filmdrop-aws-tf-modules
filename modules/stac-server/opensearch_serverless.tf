@@ -86,8 +86,10 @@ resource "aws_opensearchserverless_access_policy" "stac_server_opensearch_server
 }
 
 resource "aws_opensearchserverless_collection" "stac_server_opensearch_serverless_collection" {
-  count   = var.deploy_stac_server_opensearch_serverless ? 1 : 0
-  name    = lower(var.opensearch_stac_server_domain_name_override == null ? "${local.name_prefix}-stac-server" : var.opensearch_stac_server_domain_name_override)
+  count       = var.deploy_stac_server_opensearch_serverless ? 1 : 0
+  name        = lower(var.opensearch_stac_server_domain_name_override == null ? "${local.name_prefix}-stac-server" : var.opensearch_stac_server_domain_name_override)
+  description = "Stac-server database for ${local.name_prefix}-stac-server"
+  type        = "SEARCH"
 
   depends_on = [
     aws_opensearchserverless_security_policy.stac_server_opensearch_serverless_encryption_policy,
