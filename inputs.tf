@@ -108,7 +108,7 @@ variable stac_server_inputs {
   })
   default       = {
     app_name                                      = "stac_server"
-    version                                       = "v3.1.0"
+    version                                       = "v3.2.0-pre1"
     domain_alias                                  = ""
     enable_transactions_extension                 = false
     collection_to_index_mappings                  = ""

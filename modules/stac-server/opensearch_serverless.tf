@@ -75,7 +75,7 @@ resource "aws_opensearchserverless_access_policy" "stac_server_opensearch_server
       ],
       Principal = [
         data.aws_caller_identity.current.arn,
-        aws_iam_role.stac_api_gw_role.arn
+        aws_iam_role.stac_api_lambda_role.arn
       ]
     }
   ])
