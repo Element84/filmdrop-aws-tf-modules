@@ -29,3 +29,7 @@ output "stac_server_api_path" {
 output "stac_server_opensearch_name" {
   value = lower(var.opensearch_stac_server_domain_name_override == null ? "${local.name_prefix}-stac-server" : var.opensearch_stac_server_domain_name_override)
 }
+
+output "stac_server_ingest_queue_arn" {
+  value = aws_sqs_queue.stac_server_ingest_sqs_queue.arn
+}

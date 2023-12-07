@@ -61,3 +61,8 @@ output "cirrus_dashboard_url" {
 output "titiler_url" {
   value = module.filmdrop.titiler_url
 }
+
+output "stac_ingest_queue_arn" {
+  value = module.filmdrop.stac_ingest_queue_arn
+}
+

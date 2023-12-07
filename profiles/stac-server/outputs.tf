@@ -9,3 +9,8 @@ output "stac_opensearch_domain_name" {
 output "stac_opensearch_endpoint" {
   value = module.stac-server.stac_server_opensearch_endpoint
 }
+
+output "stac_ingest_queue_arn" {
+  value = module.stac-server.stac_server_ingest_queue_arn
+}
+
