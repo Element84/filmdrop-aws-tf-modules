@@ -21,7 +21,7 @@ module "stac-server" {
 }
 
 module "cloudfront_api_gateway_endpoint" {
-  count     = var.skip_deploy_stac_server ? 0 : 1
+  count     = var.skip_deploy_stac_server_cloudfront ? 0 : 1
   source = "../../modules/cloudfront/apigw_endpoint"
 
   providers = {

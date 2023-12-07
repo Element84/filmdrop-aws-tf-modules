@@ -100,8 +100,14 @@ variable "log_bucket_domain_name" {
   default     = ""
 }
 
-variable deploy_stac_server_opensearch_serverless {
+variable "deploy_stac_server_opensearch_serverless" {
   type        = bool
   default     = false
   description = "Deploy FilmDrop Stac-Server with OpenSearch Serverless. If False, Stac-server will be deployed with a classic OpenSearch domain."
+}
+
+variable "skip_deploy_stac_server_cloudfront" {
+  type        = bool
+  default     = false
+  description = "Deploy FilmDrop Stac-Server without Cloudfront, only an API gateway. You will not be able to use custom domains, WAF, or other Cloudfront features"
 }

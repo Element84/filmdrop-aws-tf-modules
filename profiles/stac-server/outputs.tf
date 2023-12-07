@@ -1,5 +1,5 @@
 output "stac_url" {
-  value = "https://${module.cloudfront_api_gateway_endpoint.domain_name}"
+  value = "https://${module.cloudfront_api_gateway_endpoint[0].domain_name}"
 }
 
 output "stac_opensearch_domain_name" {
