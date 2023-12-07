@@ -13,6 +13,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Fixed
 
+## 2.2.0
+- Added parameter to skip Cloudfront deployment for opensearch for situations where there is no custom domain and stac-server clients will hit the APIGW directly
+
 ## 2.1.0
 
 ### Added
