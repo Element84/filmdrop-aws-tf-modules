@@ -211,17 +211,19 @@ or by changing all infrastructure flags to false in your tfvars and performing a
 ```tf
 ##### INFRASTRUCTURE FLAGS ####
 # To disable each flag: set to 'false'; to enable: set to 'true'
-deploy_vpc                          = false
-deploy_vpc_search                   = false
-deploy_log_archive                  = false
-deploy_alarms                       = false
-deploy_stac_server                  = false
-deploy_analytics                    = false
-deploy_titiler                      = false
-deploy_console_ui                   = false
-deploy_cirrus_dashboard             = false
-deploy_local_stac_server_artifacts  = false
-deploy_sample_data_bucket           = false
+deploy_vpc                                = false
+deploy_vpc_search                         = false
+deploy_log_archive                        = false
+deploy_alarms                             = false
+deploy_stac_server                        = false
+deploy_stac_server_opensearch_serverless  = false
+skip_deploy_stac_server_cloudfront        = false
+deploy_analytics                          = false
+deploy_titiler                            = false
+deploy_console_ui                         = false
+deploy_cirrus_dashboard                   = false
+deploy_local_stac_server_artifacts        = false
+deploy_sample_data_bucket                 = false
 ```
 
 ```shell

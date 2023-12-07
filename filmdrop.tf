@@ -32,6 +32,7 @@ module "filmdrop" {
   deploy_alarms                             = var.deploy_alarms
   deploy_stac_server                        = var.deploy_stac_server
   deploy_stac_server_opensearch_serverless  = var.deploy_stac_server_opensearch_serverless
+  skip_deploy_stac_server_cloudfront        = var.skip_deploy_stac_server_cloudfront
   deploy_analytics                          = var.deploy_analytics
   deploy_titiler                            = var.deploy_titiler
   deploy_console_ui                         = var.deploy_console_ui
