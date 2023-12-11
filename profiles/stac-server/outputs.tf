@@ -1,5 +1,5 @@
 output "stac_url" {
-  value = "https://${module.cloudfront_api_gateway_endpoint.domain_name}"
+  value = var.stac_server_inputs.deploy_cloudfront ? "https://${module.cloudfront_api_gateway_endpoint[0].domain_name}" : "https://${module.stac-server.stac_server_api_domain_name}${module.stac-server.stac_server_api_path}"
 }
 
 output "stac_opensearch_domain_name" {
