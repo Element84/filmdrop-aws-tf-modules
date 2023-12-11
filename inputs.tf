@@ -93,6 +93,7 @@ variable stac_server_inputs {
   type        = object({
     app_name                                      = string
     version                                       = string
+    deploy_cloudfront                             = bool
     domain_alias                                  = string
     enable_transactions_extension                 = bool
     collection_to_index_mappings                  = string
@@ -109,6 +110,7 @@ variable stac_server_inputs {
   default       = {
     app_name                                      = "stac_server"
     version                                       = "v3.2.0"
+    deploy_cloudfront                             = true
     domain_alias                                  = ""
     enable_transactions_extension                 = false
     collection_to_index_mappings                  = ""
