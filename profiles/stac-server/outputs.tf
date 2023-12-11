@@ -14,3 +14,6 @@ output "stac_ingest_queue_arn" {
   value = module.stac-server.stac_server_ingest_queue_arn
 }
 
+output "stac_ingest_queue_url" {
+  value = module.stac-server.stac_server_ingest_queue_url
+}

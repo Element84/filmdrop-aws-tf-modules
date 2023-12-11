@@ -66,3 +66,6 @@ output "stac_ingest_queue_arn" {
   value = module.filmdrop.stac_ingest_queue_arn
 }
 
+output "stac_ingest_queue_url" {
+  value = module.filmdrop.stac_ingest_queue_url
+}

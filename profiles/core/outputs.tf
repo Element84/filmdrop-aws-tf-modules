@@ -65,3 +65,7 @@ output "titiler_url" {
 output "stac_ingest_queue_arn" {
   value = var.deploy_stac_server ? module.stac-server[0].stac_ingest_queue_arn : ""
 }
+
+output "stac_ingest_queue_url" {
+  value = var.deploy_stac_server ? module.stac-server[0].stac_ingest_queue_url : ""
+}

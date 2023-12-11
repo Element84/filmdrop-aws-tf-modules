@@ -33,3 +33,7 @@ output "stac_server_opensearch_name" {
 output "stac_server_ingest_queue_arn" {
   value = aws_sqs_queue.stac_server_ingest_sqs_queue.arn
 }
+
+output "stac_server_ingest_queue_url" {
+  value = aws_sqs_queue.stac_server_ingest_sqs_queue.url
+}
