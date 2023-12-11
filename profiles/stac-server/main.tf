@@ -17,11 +17,12 @@ module "stac-server" {
   opensearch_ebs_volume_size                  = var.stac_server_inputs.opensearch_ebs_volume_size
   project_name                                = var.project_name
   stac_server_s3_bucket_arns                  = var.stac_server_inputs.stac_server_and_titiler_s3_arns
-  deploy_stac_server_opensearch_serverless           = var.deploy_stac_server_opensearch_serverless
+  deploy_stac_server_opensearch_serverless    = var.deploy_stac_server_opensearch_serverless
 }
 
 module "cloudfront_api_gateway_endpoint" {
-  source = "../../modules/cloudfront/apigw_endpoint"
+  count     = var.stac_server_inputs.deploy_cloudfront ? 1 : 0
+  source    = "../../modules/cloudfront/apigw_endpoint"
 
   providers = {
     aws.east = aws.east

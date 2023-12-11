@@ -13,6 +13,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Fixed
 
+## 2.2.0
+
+### Added
+- Added capability for optional CloudFront deployment for stac-server, with a parameter in the stac_server_inputs
+
 ## 2.1.0
 
 ### Added

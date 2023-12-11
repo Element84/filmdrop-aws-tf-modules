@@ -25,6 +25,7 @@ sns_critical_subscriptions_map  = {}
 stac_server_inputs  = {
   app_name                                      = "stac_server"
   version                                       = "v3.2.0"
+  deploy_cloudfront                             = true
   domain_alias                                  = ""
   enable_transactions_extension                 = false
   collection_to_index_mappings                  = ""
