@@ -67,8 +67,8 @@ EOF
                             echo 'Error: environment is greater than 5 characters'
                             exit 1
                         fi
-                        cat $TFVARS_FILE | grep deploy_stac_server | grep "true"
-                        if [ "$?" -eq 0 ]
+                        if
+                            cat $TFVARS_FILE | grep deploy_stac_server | grep "true"
                         then
                             echo 'deploy_stac_server is true, building stac-server dependencies'
                             source $HOME/.nvm/nvm.sh
@@ -87,8 +87,9 @@ EOF
                             cp dist/pre-hook/pre-hook.zip ../modules/stac-server/lambda/pre-hook/
                             cd ..
                         fi
-                        cat $TFVARS_FILE | grep include_historical_ingest | grep "true"
-                        if [ "$?" -eq 0 ]
+                        if
+                            cat $TFVARS_FILE | grep include_historical_ingest | grep "true" ||
+                            cat $TFVARS_FILE | grep include_ongoing_ingest | grep "true"
                         then
                             cd modules/stac-server/historical-ingest/lambda/
                             pip install -r requirements.txt --target package
@@ -138,8 +139,8 @@ EOF
                             echo 'Error: environment is greater than 5 characters'
                             exit 1
                         fi
-                        cat $TFVARS_FILE | grep deploy_stac_server | grep "true"
-                        if [ "$?" -eq 0 ]
+                        if
+                            cat $TFVARS_FILE | grep deploy_stac_server | grep "true"
                         then
                             echo 'deploy_stac_server is true, building stac-server dependencies'
                             source $HOME/.nvm/nvm.sh
@@ -158,8 +159,9 @@ EOF
                             cp dist/pre-hook/pre-hook.zip ../modules/stac-server/lambda/pre-hook/
                             cd ..
                         fi
-                        cat $TFVARS_FILE | grep include_historical_ingest | grep "true"
-                        if [ "$?" -eq 0 ]
+                        if
+                            cat $TFVARS_FILE | grep include_historical_ingest | grep "true" ||
+                            cat $TFVARS_FILE | grep include_ongoing_ingest | grep "true"
                         then
                             cd modules/stac-server/historical-ingest/lambda/
                             pip install -r requirements.txt --target package

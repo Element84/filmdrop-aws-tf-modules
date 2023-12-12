@@ -44,7 +44,7 @@ module "cloudfront_api_gateway_endpoint" {
 }
 
 module "historical_ingest" {
-  count     = var.stac_server_inputs.ingest.include_historical_ingest ? 1 : 0
+  count     = var.stac_server_inputs.ingest.include_historical_ingest || var.stac_server_inputs.ingest.destination_collections_list != "" ? 1 : 0
   source    = "../../modules/stac-server/historical-ingest"
 
   source_catalog_url                = var.stac_server_inputs.ingest.source_catalog_url
