@@ -17,22 +17,22 @@ variable destination_collections_list {
 
 variable destination_collections_min_lat {
   description = "The minimum latitude of the bounding box area"
-  type        = string
+  type        = number
 }
 
 variable destination_collections_min_long {
   description = "The minimum longitude of the bounding box area"
-  type        = string
+  type        = number
 }
 
 variable destination_collections_max_lat {
   description = "The maximum latitude of the bounding box area"
-  type        = string
+  type        = number
 }
 
 variable destination_collections_max_long {
   description = "The maximum longitude of the bounding box area"
-  type        = string
+  type        = number
 }
 
 variable ingest_sqs_arn {
