@@ -38,6 +38,19 @@ stac_server_inputs  = {
   opensearch_ebs_volume_size                    = 35
   stac_server_and_titiler_s3_arns               = []
   web_acl_id                                    = ""
+  ingest                                        = {
+      source_catalog_url                        = ""
+      destination_collections_list              = ""
+      destination_collections_min_lat           = ""
+      destination_collections_min_long          = ""
+      destination_collections_max_lat           = ""
+      destination_collections_max_long          = ""
+      date_start                                = ""
+      date_end                                  = ""
+      include_historical_ingest                 = false
+      source_sns_arn                            = ""
+      include_ongoing_ingest                    = false
+  }
 }
 
 titiler_inputs        = {

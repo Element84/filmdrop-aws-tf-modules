@@ -39,4 +39,12 @@ cp "$STAC_SERVER_DIR/dist/ingest/ingest.zip" modules/stac-server/lambda/ingest/
 mkdir -p modules/stac-server/lambda/pre-hook
 cp "$STAC_SERVER_DIR/dist/pre-hook/pre-hook.zip" modules/stac-server/lambda/pre-hook/
 
+cd modules/stac-server/historical-ingest/lambda/
+pip install -r requirements.txt --target package
+cd package
+zip -r ../../lambda.zip .
+cd ../
+zip ../lambda.zip main.py
+cd ../../../../
+
 echo "Done!"

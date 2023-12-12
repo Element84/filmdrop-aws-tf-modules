@@ -82,6 +82,13 @@ EOF
                         mkdir -p ../modules/stac-server/lambda/pre-hook
                         cp dist/pre-hook/pre-hook.zip ../modules/stac-server/lambda/pre-hook/
                         cd ..
+                        cd modules/stac-server/historical-ingest/lambda/
+                        pip install -r requirements.txt --target package
+                        cd package
+                        zip -r ../../lambda.zip .
+                        cd ../
+                        zip ../lambda.zip main.py
+                        cd ../../../../
                         terraform apply -var-file=$TFVARS_FILE ;;
         destroy|rm)     export stac_opensearch_domain_name=`terraform output stac_opensearch_domain_name`
                         export stac_opensearch_domain_name="${stac_opensearch_domain_name//\"}"
@@ -137,6 +144,13 @@ EOF
                         mkdir -p ../modules/stac-server/lambda/pre-hook
                         cp dist/pre-hook/pre-hook.zip ../modules/stac-server/lambda/pre-hook/
                         cd ..
+                        cd modules/stac-server/historical-ingest/lambda/
+                        pip install -r requirements.txt --target package
+                        cd package
+                        zip -r ../../lambda.zip .
+                        cd ../
+                        zip ../lambda.zip main.py
+                        cd ../../../../
                         terraform apply -var-file=$TFVARS_FILE ;;
         validate)       export TFVARS_FILE=$@
                         export PROJECT_NAME_VAR=`cat $TFVARS_FILE | grep project_name | grep -o '".*"' | sed 's/"//g'`

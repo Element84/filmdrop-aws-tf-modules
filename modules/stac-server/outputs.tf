@@ -37,3 +37,11 @@ output "stac_server_ingest_queue_arn" {
 output "stac_server_ingest_queue_url" {
   value = aws_sqs_queue.stac_server_ingest_sqs_queue.url
 }
+
+output "stac_server_name_prefix" {
+  value = "${local.name_prefix}-stac-server"
+}
+
+output "stac_server_lambda_iam_role_arn" {
+  value = aws_iam_role.stac_api_lambda_role.arn
+}

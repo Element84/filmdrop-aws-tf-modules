@@ -1,0 +1,105 @@
+Metadata-Version: 2.1
+Name: pystac-client
+Version: 0.7.5
+Summary: Python library for working with SpatioTemporal Asset Catalog (STAC) APIs.
+Author-email: Jon Duckworth <duckontheweb@gmail.com>, Matthew Hanson <matt.a.hanson@gmail.com>
+Maintainer-email: Pete Gadomski <pete.gadomski@gmail.com>
+License: Apache-2.0
+Project-URL: homepage, https://github.com/stac-utils/pystac-client
+Project-URL: documentation, https://pystac-client.readthedocs.io
+Project-URL: repository, https://github.com/stac-utils/pystac-client.git
+Project-URL: changelog, https://github.com/stac-utils/pystac-client/blob/main/CHANGELOG.md
+Project-URL: discussions, https://github.com/radiantearth/stac-spec/discussions/categories/stac-software
+Keywords: pystac,imagery,raster,catalog,STAC
+Classifier: Programming Language :: Python
+Classifier: Programming Language :: Python :: 3
+Classifier: Programming Language :: Python :: 3.8
+Classifier: Programming Language :: Python :: 3.9
+Classifier: Programming Language :: Python :: 3.10
+Classifier: Programming Language :: Python :: 3.11
+Classifier: Operating System :: OS Independent
+Classifier: Natural Language :: English
+Classifier: Development Status :: 4 - Beta
+Classifier: Intended Audience :: Developers
+Classifier: License :: OSI Approved :: Apache Software License
+Classifier: Topic :: Scientific/Engineering :: GIS
+Classifier: Topic :: Software Development :: Libraries
+Classifier: Topic :: Software Development :: Libraries :: Python Modules
+Requires-Python: >=3.8
+Description-Content-Type: text/markdown
+License-File: LICENSE
+Requires-Dist: requests >=2.28.2
+Requires-Dist: pystac[validation] >=1.8.2
+Requires-Dist: python-dateutil >=2.8.2
+Provides-Extra: dev
+Requires-Dist: black ~=23.3 ; extra == 'dev'
+Requires-Dist: codespell ~=2.2.4 ; extra == 'dev'
+Requires-Dist: coverage ~=7.2 ; extra == 'dev'
+Requires-Dist: doc8 ~=1.1.1 ; extra == 'dev'
+Requires-Dist: importlib-metadata ~=6.7 ; extra == 'dev'
+Requires-Dist: mypy ~=1.2 ; extra == 'dev'
+Requires-Dist: orjson ~=3.8 ; extra == 'dev'
+Requires-Dist: pre-commit ~=3.2 ; extra == 'dev'
+Requires-Dist: pytest-benchmark ~=4.0.0 ; extra == 'dev'
+Requires-Dist: pytest-console-scripts ~=1.4.0 ; extra == 'dev'
+Requires-Dist: pytest-cov ~=4.1.0 ; extra == 'dev'
+Requires-Dist: pytest-recording ~=0.13 ; extra == 'dev'
+Requires-Dist: pytest ~=7.4 ; extra == 'dev'
+Requires-Dist: recommonmark ~=0.7.1 ; extra == 'dev'
+Requires-Dist: requests-mock ~=1.11.0 ; extra == 'dev'
+Requires-Dist: ruff ==0.0.287 ; extra == 'dev'
+Requires-Dist: types-python-dateutil ~=2.8.19 ; extra == 'dev'
+Requires-Dist: types-requests ~=2.31.0 ; extra == 'dev'
+Requires-Dist: urllib3 <2 ; extra == 'dev'
+Requires-Dist: tomli ~=2.0 ; (python_version < "3.11") and extra == 'dev'
+Provides-Extra: docs
+Requires-Dist: Sphinx ~=6.2 ; extra == 'docs'
+Requires-Dist: boto3 ~=1.26 ; extra == 'docs'
+Requires-Dist: cartopy ~=0.21 ; extra == 'docs'
+Requires-Dist: geojson ~=3.0.1 ; extra == 'docs'
+Requires-Dist: geopandas ~=0.13.0 ; extra == 'docs'
+Requires-Dist: geoviews ~=1.9 ; extra == 'docs'
+Requires-Dist: hvplot ~=0.8.3 ; extra == 'docs'
+Requires-Dist: ipykernel ~=6.22 ; extra == 'docs'
+Requires-Dist: ipython ~=8.12 ; extra == 'docs'
+Requires-Dist: jinja2 <4.0 ; extra == 'docs'
+Requires-Dist: matplotlib ~=3.7.1 ; extra == 'docs'
+Requires-Dist: myst-parser ~=2.0 ; extra == 'docs'
+Requires-Dist: nbsphinx ~=0.9 ; extra == 'docs'
+Requires-Dist: pydata-sphinx-theme ~=0.13 ; extra == 'docs'
+Requires-Dist: pygeoif ~=1.0 ; extra == 'docs'
+Requires-Dist: scipy ~=1.10 ; extra == 'docs'
+Requires-Dist: sphinxcontrib-fulltoc ~=1.2 ; extra == 'docs'
+
+# STAC Client <!-- omit in toc -->
+
+[![CI](https://github.com/stac-utils/pystac-client/actions/workflows/continuous-integration.yml/badge.svg)](https://github.com/stac-utils/pystac-client/actions/workflows/continuous-integration.yml)
+[![Release](https://github.com/stac-utils/pystac-client/actions/workflows/release.yml/badge.svg)](https://github.com/stac-utils/pystac-client/actions/workflows/release.yml)
+[![PyPI version](https://badge.fury.io/py/pystac-client.svg)](https://badge.fury.io/py/pystac-client)
+[![Documentation](https://readthedocs.org/projects/pystac-client/badge/?version=stable)](https://pystac-client.readthedocs.io)
+[![codecov](https://codecov.io/gh/stac-utils/pystac-client/branch/main/graph/badge.svg)](https://codecov.io/gh/stac-utils/pystac-client)
+
+A Python client for working with [STAC](https://stacspec.org/) Catalogs and APIs.
+
+## Table of Contents
+
+- [Table of Contents](#table-of-contents)
+- [Installation](#installation)
+- [Documentation](#documentation)
+- [Development](#development)
+
+## Installation
+
+Install from PyPi. Other than [PySTAC](https://pystac.readthedocs.io) itself, the only dependencies for pystac-client is the Python [requests](https://docs.python-requests.org) and [dateutil](https://dateutil.readthedocs.io) libraries.
+
+```shell
+pip install pystac-client
+```
+
+## Documentation
+
+See the [documentation page](https://pystac-client.readthedocs.io/en/latest/) for the latest docs.
+
+## Development
+
+See the [contributing page](https://pystac-client.readthedocs.io/en/latest/contributing.html) for the latest development instructions.
