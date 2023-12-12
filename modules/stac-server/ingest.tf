@@ -79,10 +79,10 @@ data "aws_iam_policy_document" "stac_server_ingest_sqs_policy" {
     ]
 
     condition {
-      test     = "ArnEquals"
+      test     = "ArnLike"
       variable = "aws:SourceArn"
 
-      values = concat([aws_sns_topic.stac_server_ingest_sns_topic.arn], var.ingest_sns_topic_arns)
+      values = concat(["arn:aws:lambda:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:function:${local.name_prefix}-stac-server-*"], [aws_sns_topic.stac_server_ingest_sns_topic.arn], var.ingest_sns_topic_arns)
     }
   }
 }

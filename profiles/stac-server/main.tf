@@ -6,6 +6,7 @@ module "stac-server" {
   vpc_subnet_ids                              = var.private_subnet_ids
   vpc_security_group_ids                      = [var.security_group_id]
   stac_api_stage                              = var.environment
+  stac_api_rootpath                           = var.stac_server_inputs.deploy_cloudfront ? "" : "/${var.environment}"
   enable_transactions_extension               = var.stac_server_inputs.enable_transactions_extension
   collection_to_index_mappings                = var.stac_server_inputs.collection_to_index_mappings
   opensearch_cluster_instance_type            = var.stac_server_inputs.opensearch_cluster_instance_type

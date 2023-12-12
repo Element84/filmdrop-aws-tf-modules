@@ -48,7 +48,7 @@ def lambda_handler(event, context):
 
     if include_historical_ingest:
         logger.info('Starting historical ingest!')
-        start_data_siphon(dest_collections, [min_long, min_lat, max_long, max_lat], date_start, date_end, ingest_sqs_url)
+        start_data_siphon(input_collections, [float(min_long), float(min_lat), float(max_long), float(max_lat)], date_start, date_end, ingest_sqs_url)
     else:
         logger.info('Skipping historical ingest!')
 
@@ -80,7 +80,7 @@ def create_new_collections(collections, ingest_sqs_url):
     for c in collections:
         result = client.send_message(
             QueueUrl=ingest_sqs_url,
-            MessageBody=json.dumps({'default': json.dumps(c)})
+            MessageBody=json.dumps(c)
         )
         logger.info(f'Result of creating new collection: {str(result)}')
 
@@ -110,7 +110,7 @@ def wait_for_new_collections(collections, stac_dest_url):
 def start_data_siphon(collections, bbox, date_start, date_end, ingest_sqs_url):
     input = {
         "stac_api": "earth-search",
-        "collections": collections.split(','),
+        "collections": collections,
         "datetime": f'{date_start}/{date_end}',
         "intersects": {
             "type": "Polygon",
@@ -132,6 +132,10 @@ def start_data_siphon(collections, bbox, date_start, date_end, ingest_sqs_url):
                     [ # maxLong, minLat
                         bbox[1],
                         bbox[2]
+                    ],
+                    [ # minLong, minLat
+                        bbox[0],
+                        bbox[1]
                     ]
                 ]
             ]
@@ -139,7 +143,7 @@ def start_data_siphon(collections, bbox, date_start, date_end, ingest_sqs_url):
         "limit": 80
     }
 
-    lib_siphon(input, ingest_sqs_url, NUM_RECORDS_TO_SIPHON)
+    lib_siphon(json.dumps(input), ingest_sqs_url, NUM_RECORDS_TO_SIPHON, False, True, 5, False)
 
 
 
@@ -221,11 +225,8 @@ def lib_siphon(
         else:
             qprint(json.dumps(entries, indent=2))
 
-    if query is None or query == "-":
-        query_json = json.load(sys.stdin)
-    else:
-        with open(query) as f:
-            query_json = json.load(f)
+    query_json = json.loads(query)
+    logger.info(f'query_json: {query_json}')
 
     if not isinstance(query_json, dict):
         raise ValueError(f"Query JSON should be a dict, not a {type(query_json)}")
@@ -238,17 +239,22 @@ def lib_siphon(
     if stac_api == "earth-search":
         stac_api = "https://earth-search.aws.element84.com/v1/"
 
+    logger.info(f'stac_api: {stac_api}')
+
     if max_items is not None:
         query_json["max_items"] = max_items
 
     client = Client.open(stac_api)
+    logger.info(f'query_json: {query_json}')
     search = client.search(**query_json)
+    logger.info(f'search: {search}')
     if stream:
         qprint("Streaming items...")
         for item in tqdm.tqdm(search.items_as_dicts(), disable=quiet):
             process(item)
     else:
         qprint("Fetching all items...")
+        logger.info(f'search.items_as_dicts(): {search.items_as_dicts()}')
         items = list(search.items_as_dicts())
         for item in tqdm.tqdm(items, disable=quiet):
             process(item)
