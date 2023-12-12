@@ -13,6 +13,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Fixed
 
+## 2.3.0
+
+### Added
+- Added historic and ongoing ingest capability as stac-server submodules
+
 ## 2.2.0
 
 ### Added
