@@ -287,27 +287,11 @@ resource "aws_lambda_function" "stac_server_opensearch_user_initializer" {
   ]
 }
 
-resource "null_resource" "invoke_stac_server_opensearch_user_initializer" {
-  count     = var.deploy_stac_server_opensearch_serverless ? 0 : 1
-  triggers  = {
-    INITIALIZER_LAMBDA                 = aws_lambda_function.stac_server_opensearch_user_initializer.function_name
-    OPENSEARCH_HOST                    = var.deploy_stac_server_opensearch_serverless ? aws_opensearchserverless_collection.stac_server_opensearch_serverless_collection[0].collection_endpoint : aws_opensearch_domain.stac_server_opensearch_domain[0].endpoint
-    OPENSEARCH_MASTER_CREDS_SECRET_ARN = aws_secretsmanager_secret.opensearch_master_password_secret.arn
-    OPENSEARCH_USER_CREDS_SECRET_ARN   = aws_secretsmanager_secret.opensearch_stac_user_password_secret.arn
-    REGION                             = data.aws_region.current.name
-  }
+resource "aws_lambda_invocation" "invoke_stac_server_opensearch_user_initializer" {
+  count         = var.deploy_stac_server_opensearch_serverless ? 0 : 1
+  function_name = aws_lambda_function.stac_server_opensearch_user_initializer.function_name
 
-  provisioner "local-exec" {
-    interpreter = ["bash", "-ec"]
-    command     = <<EOF
-export AWS_DEFAULT_REGION=${data.aws_region.current.name}
-export AWS_REGION=${data.aws_region.current.name}
-
-echo "Creating stac_server user on OpenSearch cluster."
-aws lambda invoke --function-name ${aws_lambda_function.stac_server_opensearch_user_initializer.function_name} --payload '{ }' output
-
-EOF
-  }
+  input = "{}"
 
   depends_on = [
     random_password.opensearch_master_password,
@@ -320,29 +304,15 @@ EOF
   ]
 }
 
-resource "null_resource" "stac_server_opensearch_domain_ingest_create_indices" {
-  count     = var.deploy_stac_server_opensearch_serverless ? 0 : 1
-  triggers = {
-    stac_server_ingest = aws_lambda_function.stac_server_ingest.function_name
-    opensearch_host    = var.opensearch_host != "" ? var.opensearch_host : var.deploy_stac_server_opensearch_serverless ? aws_opensearchserverless_collection.stac_server_opensearch_serverless_collection[0].collection_endpoint : aws_opensearch_domain.stac_server_opensearch_domain[0].endpoint
-  }
+resource "aws_lambda_invocation" "stac_server_opensearch_domain_ingest_create_indices" {
+  count         = var.deploy_stac_server_opensearch_serverless ? 0 : 1
+  function_name = aws_lambda_function.stac_server_ingest.function_name
 
-  provisioner "local-exec" {
-    interpreter = ["bash", "-ec"]
-    command     = <<EOF
-export AWS_DEFAULT_REGION=${data.aws_region.current.name}
-export AWS_REGION=${data.aws_region.current.name}
-
-echo "Creating indices on Stac Server OpenSearch Service."
-aws lambda invoke --function-name ${aws_lambda_function.stac_server_ingest.function_name} --cli-binary-format raw-in-base64-out --payload '{ "create_indices": true }' output
-
-EOF
-
-  }
+  input = "{ \"create_indices\": true }"
 
   depends_on = [
     aws_lambda_function.stac_server_ingest,
-    null_resource.invoke_stac_server_opensearch_user_initializer,
+    aws_lambda_invocation.invoke_stac_server_opensearch_user_initializer,
     aws_opensearch_domain.stac_server_opensearch_domain
   ]
 }

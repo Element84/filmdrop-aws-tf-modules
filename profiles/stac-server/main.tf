@@ -82,6 +82,7 @@ module "ongoing_ingest" {
   destination_collections_max_long  = var.stac_server_inputs.ingest.destination_collections_max_long
 
   depends_on = [
-    module.stac-server
+    module.stac-server,
+    module.historical_ingest # `historical_ingest` creates the collection, and without this `depends_on` a race condition can occur where the subscription for ongoing ingest can run prior to initializing the collection, leading to poorly mapped index and a bad stac-server state
   ]
 }
