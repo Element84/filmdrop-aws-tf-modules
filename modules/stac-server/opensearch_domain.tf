@@ -288,6 +288,7 @@ resource "aws_lambda_function" "stac_server_opensearch_user_initializer" {
 }
 
 resource "aws_lambda_invocation" "invoke_stac_server_opensearch_user_initializer" {
+  count         = var.deploy_stac_server_opensearch_serverless ? 0 : 1
   function_name = aws_lambda_function.stac_server_opensearch_user_initializer.function_name
 
   input = "{}"
