@@ -319,3 +319,30 @@ EOF
     aws_lambda_function.stac_server_opensearch_user_initializer
   ]
 }
+
+resource "null_resource" "stac_server_opensearch_domain_ingest_create_indices" {
+  count     = var.deploy_stac_server_opensearch_serverless ? 0 : 1
+  triggers = {
+    stac_server_ingest = aws_lambda_function.stac_server_ingest.function_name
+    opensearch_host    = var.opensearch_host != "" ? var.opensearch_host : var.deploy_stac_server_opensearch_serverless ? aws_opensearchserverless_collection.stac_server_opensearch_serverless_collection[0].collection_endpoint : aws_opensearch_domain.stac_server_opensearch_domain[0].endpoint
+  }
+
+  provisioner "local-exec" {
+    interpreter = ["bash", "-ec"]
+    command     = <<EOF
+export AWS_DEFAULT_REGION=${data.aws_region.current.name}
+export AWS_REGION=${data.aws_region.current.name}
+
+echo "Creating indices on Stac Server OpenSearch Service."
+aws lambda invoke --function-name ${aws_lambda_function.stac_server_ingest.function_name} --cli-binary-format raw-in-base64-out --payload '{ "create_indices": true }' output
+
+EOF
+
+  }
+
+  depends_on = [
+    aws_lambda_function.stac_server_ingest,
+    null_resource.invoke_stac_server_opensearch_user_initializer,
+    aws_opensearch_domain.stac_server_opensearch_domain
+  ]
+}

@@ -78,6 +78,7 @@ def get_source_collections(source_url, input_collections):
 def create_new_collections(collections, ingest_sqs_url):
     client = boto3.client('sqs')
     for c in collections:
+        logger.info(f'Sending collection {json.dumps(c)} to ingest_sqs_url: {ingest_sqs_url}')
         result = client.send_message(
             QueueUrl=ingest_sqs_url,
             MessageBody=json.dumps(c)
@@ -90,6 +91,7 @@ def wait_for_new_collections(collections, stac_dest_url):
         all_created = True
 
         for c in collections:
+            logger.info(f'Checking status of {stac_dest_url}/collections/{c["id"]}')
             response = requests.get(f'{stac_dest_url}/collections/{c["id"]}')
 
             # Debug / Test
