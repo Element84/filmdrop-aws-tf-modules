@@ -25,7 +25,14 @@ mkdir -p ../modules/stac-server/lambda/ingest
 cp dist/ingest/ingest.zip ../modules/stac-server/lambda/ingest/
 mkdir -p ../modules/stac-server/lambda/pre-hook
 cp dist/pre-hook/pre-hook.zip ../modules/stac-server/lambda/pre-hook/
-
+cd ..
+cd modules/stac-server/historical-ingest/lambda/
+pip install -r requirements.txt --target package
+cd package
+zip -r ../../lambda.zip .
+cd ../
+zip ../lambda.zip main.py
+cd ../../../../
 EOF
   }
 }

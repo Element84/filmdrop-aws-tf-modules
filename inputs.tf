@@ -106,6 +106,19 @@ variable stac_server_inputs {
     opensearch_ebs_volume_size                    = number
     stac_server_and_titiler_s3_arns               = list(string)
     web_acl_id                                    = string
+    ingest                                        = object({
+        source_catalog_url                        = string
+        destination_collections_list              = string
+        destination_collections_min_lat           = number
+        destination_collections_min_long          = number
+        destination_collections_max_lat           = number
+        destination_collections_max_long          = number
+        date_start                                = string
+        date_end                                  = string
+        include_historical_ingest                 = bool
+        source_sns_arn                            = string
+        include_ongoing_ingest                    = bool
+    })
   })
   default       = {
     app_name                                      = "stac_server"
@@ -123,6 +136,19 @@ variable stac_server_inputs {
     opensearch_ebs_volume_size                    = 35
     stac_server_and_titiler_s3_arns               = []
     web_acl_id                                    = ""
+    ingest                                        = {
+        source_catalog_url                        = ""
+        destination_collections_list              = ""
+        destination_collections_min_lat           = -90
+        destination_collections_min_long          = -180
+        destination_collections_max_lat           = 90
+        destination_collections_max_long          = 180
+        date_start                                = ""
+        date_end                                  = ""
+        include_historical_ingest                 = false
+        source_sns_arn                            = ""
+        include_ongoing_ingest                    = false
+    }
   }
 }
 

@@ -29,3 +29,19 @@ output "stac_server_api_path" {
 output "stac_server_opensearch_name" {
   value = lower(var.opensearch_stac_server_domain_name_override == null ? "${local.name_prefix}-stac-server" : var.opensearch_stac_server_domain_name_override)
 }
+
+output "stac_server_ingest_queue_arn" {
+  value = aws_sqs_queue.stac_server_ingest_sqs_queue.arn
+}
+
+output "stac_server_ingest_queue_url" {
+  value = aws_sqs_queue.stac_server_ingest_sqs_queue.url
+}
+
+output "stac_server_name_prefix" {
+  value = "${local.name_prefix}-stac-server"
+}
+
+output "stac_server_lambda_iam_role_arn" {
+  value = aws_iam_role.stac_api_lambda_role.arn
+}

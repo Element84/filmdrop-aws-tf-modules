@@ -67,21 +67,38 @@ EOF
                             echo 'Error: environment is greater than 5 characters'
                             exit 1
                         fi
-                        source $HOME/.nvm/nvm.sh
-                        nvm install v18
-                        nvm use v18
-                        echo "Building stac-server..."
-                        curl -L -f --no-progress-meter -o - "https://github.com/stac-utils/stac-server/archive/refs/tags/${STAC_SERVER_TAG}.tar.gz" | tar -xz
-                        cd "$STAC_SERVER_DIR"
-                        npm install
-                        BUILD_PRE_HOOK=true npm run build
-                        mkdir -p ../modules/stac-server/lambda/api
-                        cp dist/api/api.zip ../modules/stac-server/lambda/api/
-                        mkdir -p ../modules/stac-server/lambda/ingest
-                        cp dist/ingest/ingest.zip ../modules/stac-server/lambda/ingest/
-                        mkdir -p ../modules/stac-server/lambda/pre-hook
-                        cp dist/pre-hook/pre-hook.zip ../modules/stac-server/lambda/pre-hook/
-                        cd ..
+                        if
+                            cat $TFVARS_FILE | grep deploy_stac_server | grep "true"
+                        then
+                            echo 'deploy_stac_server is true, building stac-server dependencies'
+                            source $HOME/.nvm/nvm.sh
+                            nvm install v18
+                            nvm use v18
+                            echo "Building stac-server..."
+                            curl -L -f --no-progress-meter -o - "https://github.com/stac-utils/stac-server/archive/refs/tags/${STAC_SERVER_TAG}.tar.gz" | tar -xz
+                            cd "$STAC_SERVER_DIR"
+                            npm install
+                            BUILD_PRE_HOOK=true npm run build
+                            mkdir -p ../modules/stac-server/lambda/api
+                            cp dist/api/api.zip ../modules/stac-server/lambda/api/
+                            mkdir -p ../modules/stac-server/lambda/ingest
+                            cp dist/ingest/ingest.zip ../modules/stac-server/lambda/ingest/
+                            mkdir -p ../modules/stac-server/lambda/pre-hook
+                            cp dist/pre-hook/pre-hook.zip ../modules/stac-server/lambda/pre-hook/
+                            cd ..
+                        fi
+                        if
+                            cat $TFVARS_FILE | grep include_historical_ingest | grep "true" ||
+                            cat $TFVARS_FILE | grep include_ongoing_ingest | grep "true"
+                        then
+                            cd modules/stac-server/historical-ingest/lambda/
+                            pip install -r requirements.txt --target package
+                            cd package
+                            zip -r ../../lambda.zip .
+                            cd ../
+                            zip ../lambda.zip main.py
+                            cd ../../../../
+                        fi
                         terraform apply -var-file=$TFVARS_FILE ;;
         destroy|rm)     export stac_opensearch_domain_name=`terraform output stac_opensearch_domain_name`
                         export stac_opensearch_domain_name="${stac_opensearch_domain_name//\"}"
@@ -122,21 +139,38 @@ EOF
                             echo 'Error: environment is greater than 5 characters'
                             exit 1
                         fi
-                        source $HOME/.nvm/nvm.sh
-                        nvm install v18
-                        nvm use v18
-                        echo "Building stac-server..."
-                        curl -L -f --no-progress-meter -o - "https://github.com/stac-utils/stac-server/archive/refs/tags/${STAC_SERVER_TAG}.tar.gz" | tar -xz
-                        cd "$STAC_SERVER_DIR"
-                        npm install
-                        BUILD_PRE_HOOK=true npm run build
-                        mkdir -p ../modules/stac-server/lambda/api
-                        cp dist/api/api.zip ../modules/stac-server/lambda/api/
-                        mkdir -p ../modules/stac-server/lambda/ingest
-                        cp dist/ingest/ingest.zip ../modules/stac-server/lambda/ingest/
-                        mkdir -p ../modules/stac-server/lambda/pre-hook
-                        cp dist/pre-hook/pre-hook.zip ../modules/stac-server/lambda/pre-hook/
-                        cd ..
+                        if
+                            cat $TFVARS_FILE | grep deploy_stac_server | grep "true"
+                        then
+                            echo 'deploy_stac_server is true, building stac-server dependencies'
+                            source $HOME/.nvm/nvm.sh
+                            nvm install v18
+                            nvm use v18
+                            echo "Building stac-server..."
+                            curl -L -f --no-progress-meter -o - "https://github.com/stac-utils/stac-server/archive/refs/tags/${STAC_SERVER_TAG}.tar.gz" | tar -xz
+                            cd "$STAC_SERVER_DIR"
+                            npm install
+                            BUILD_PRE_HOOK=true npm run build
+                            mkdir -p ../modules/stac-server/lambda/api
+                            cp dist/api/api.zip ../modules/stac-server/lambda/api/
+                            mkdir -p ../modules/stac-server/lambda/ingest
+                            cp dist/ingest/ingest.zip ../modules/stac-server/lambda/ingest/
+                            mkdir -p ../modules/stac-server/lambda/pre-hook
+                            cp dist/pre-hook/pre-hook.zip ../modules/stac-server/lambda/pre-hook/
+                            cd ..
+                        fi
+                        if
+                            cat $TFVARS_FILE | grep include_historical_ingest | grep "true" ||
+                            cat $TFVARS_FILE | grep include_ongoing_ingest | grep "true"
+                        then
+                            cd modules/stac-server/historical-ingest/lambda/
+                            pip install -r requirements.txt --target package
+                            cd package
+                            zip -r ../../lambda.zip .
+                            cd ../
+                            zip ../lambda.zip main.py
+                            cd ../../../../
+                        fi
                         terraform apply -var-file=$TFVARS_FILE ;;
         validate)       export TFVARS_FILE=$@
                         export PROJECT_NAME_VAR=`cat $TFVARS_FILE | grep project_name | grep -o '".*"' | sed 's/"//g'`
