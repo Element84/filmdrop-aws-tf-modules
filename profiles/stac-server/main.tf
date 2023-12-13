@@ -82,7 +82,7 @@ module "ongoing_ingest" {
   destination_collections_max_long  = var.stac_server_inputs.ingest.destination_collections_max_long
 
   depends_on = [
-    module.stac-server
+    module.stac-server,
     module.historical_ingest
   ]
 }
