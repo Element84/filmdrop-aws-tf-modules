@@ -83,5 +83,6 @@ module "ongoing_ingest" {
 
   depends_on = [
     module.stac-server
+    module.historical_ingest
   ]
 }
