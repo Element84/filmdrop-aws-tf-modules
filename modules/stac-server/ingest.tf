@@ -82,7 +82,7 @@ data "aws_iam_policy_document" "stac_server_ingest_sqs_policy" {
       test     = "ArnEquals"
       variable = "aws:SourceArn"
 
-      values = concat([aws_sns_topic.stac_server_ingest_sns_topic.arn], var.ingest_sns_topic_arns)
+      values = concat([aws_sns_topic.stac_server_ingest_sns_topic.arn], var.ingest_sns_topic_arns, var.additional_ingest_sqs_senders_arns)
     }
   }
 }

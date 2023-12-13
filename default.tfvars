@@ -35,6 +35,7 @@ stac_server_inputs  = {
   opensearch_cluster_dedicated_master_type      = "t3.small.search"
   opensearch_cluster_dedicated_master_count     = 3
   ingest_sns_topic_arns                         = []
+  additional_ingest_sqs_senders_arns            = []
   opensearch_ebs_volume_size                    = 35
   stac_server_and_titiler_s3_arns               = []
   web_acl_id                                    = ""

@@ -288,6 +288,12 @@ variable "ingest_sns_topic_arns" {
   default     = []
 }
 
+variable "additional_ingest_sqs_senders_arns" {
+  description = "List of additional principals to grant access to send to the Ingest SQS"
+  type        = list(string)
+  default     = []
+}
+
 variable "project_name" {
   description = "Project Name"
   type        = string
