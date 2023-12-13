@@ -83,6 +83,6 @@ module "ongoing_ingest" {
 
   depends_on = [
     module.stac-server,
-    module.historical_ingest
+    module.historical_ingest # `historical_ingest` creates the collection, and without this `depends_on` a race condition can occur where the subscription for ongoing ingest can run prior to initializing the collection, leading to poorly mapped index and a bad stac-server state
   ]
 }
