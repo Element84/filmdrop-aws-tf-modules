@@ -113,7 +113,7 @@ export AWS_REGION=${data.aws_region.current.name}
 
 echo "Creating indices on Stac Server OpenSearch Service."
 aws lambda invoke --function-name ${aws_lambda_function.stac_server_ingest.function_name} --cli-binary-format raw-in-base64-out --payload '{ "create_indices": true }' output
-
+sleep ${var.stac_server_index_initialization_period}
 EOF
 
   }

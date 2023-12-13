@@ -316,3 +316,9 @@ variable deploy_stac_server_opensearch_serverless {
   default     = false
   description = "Deploy FilmDrop Stac-Server with OpenSearch Serverless. If False, Stac-server will be deployed with a classic OpenSearch domain."
 }
+
+variable "stac_server_index_initialization_period" {
+  description = "Settlement period to wait for initialization of the required indices in OpenSearch prior to start ingest."
+  type        = number
+  default     = 10
+}
