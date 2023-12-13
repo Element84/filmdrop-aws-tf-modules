@@ -19,7 +19,7 @@ variable "stac_description" {
 variable "log_level" {
   description = "Logging level (error, warn, info, http, verbose, debug, silly)"
   type        = string
-  default     = "debug"
+  default     = "warn"
 }
 
 variable "request_logging_enabled" {
