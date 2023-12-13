@@ -61,6 +61,10 @@ module "historical_ingest" {
   include_historical_ingest         = var.stac_server_inputs.ingest.include_historical_ingest
   stac_server_name_prefix           = module.stac-server.stac_server_name_prefix
   stac_server_lambda_iam_role_arn   = module.stac-server.stac_server_lambda_iam_role_arn
+
+  depends_on = [
+    module.stac-server
+  ]
 }
 
 module "ongoing_ingest" {
@@ -75,4 +79,8 @@ module "ongoing_ingest" {
   destination_collections_min_long  = var.stac_server_inputs.ingest.destination_collections_min_long
   destination_collections_max_lat   = var.stac_server_inputs.ingest.destination_collections_max_lat
   destination_collections_max_long  = var.stac_server_inputs.ingest.destination_collections_max_long
+
+  depends_on = [
+    module.stac-server
+  ]
 }

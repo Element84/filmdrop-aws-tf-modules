@@ -46,7 +46,7 @@ def lambda_handler(event, context):
 
     wait_for_new_collections(dest_collections, stac_dest_url)
 
-    if include_historical_ingest:
+    if include_historical_ingest == "true":
         logger.info('Starting historical ingest!')
         start_data_siphon(input_collections, [float(min_long), float(min_lat), float(max_long), float(max_lat)], date_start, date_end, ingest_sqs_url)
     else:
