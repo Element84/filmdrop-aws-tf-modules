@@ -104,7 +104,7 @@ resource "aws_lambda_function" "stac_server_waiting_for_opensearch_serverless_ac
   source_code_hash = data.archive_file.waiting_for_opensearch_lambda_zip.output_base64sha256
   function_name    = "${local.name_prefix}-stac-server-oss-wait-collections"
   role             = aws_iam_role.stac_api_lambda_role.arn
-  description      = "Lambda function to wait for Opensearch Serverless Collection to be active."
+  description      = "Polls an opensearch serverless collection to ensure it is active prior to attempting to ingest."
   handler          = "main.lambda_handler"
   runtime          = "python3.11"
   memory_size      = "512"
