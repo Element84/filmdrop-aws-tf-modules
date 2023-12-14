@@ -10,13 +10,13 @@ ignore:
         reason: Open API - no auth required
         created: 2023-09-14T14:35:23.783Z
   SNYK-CC-00250:
-    - 'modules/stac-server/api.tf > resource > aws_api_gateway_method[stac_server_api_gateway_proxy_resource_method] > authorization':
+    - './profiles/core/../stac-server/../../modules/stac-server/api.tf > *':
         reason: Open API - no auth required
         created: 2023-12-14T14:35:23.783Z
-    - 'modules/stac-server/api.tf > resource > aws_api_gateway_method[stac_server_api_gateway_root_method] > authorization':
+    - './profiles/core/../stac-server/../../modules/stac-server/api.tf > *':
         reason: Open API - no auth required
         created: 2023-12-14T14:35:23.783Z
   SNYK-CC-00185:
-    - 'modules/mosaic-titiler/titler-mosaicjson.tf > resource > aws_wafv2_web_acl[titiler-mosaic-wafv2-web-acl] > rule[0] > statement[0] > managed_rule_group_statement[0]':
+    - './profiles/core/../titiler/../../modules/mosaic-titiler/titler-mosaicjson.tf > *':
         reason: Open API - no auth required
         created: 2023-12-14T14:35:23.783Z
