@@ -19,8 +19,7 @@ def wait_for_opensearch_serverless_collection(collection):
         logger.info(f'Checking if opensearch serverless collection {collection} is active')
         collection_list = opensearchserverless.list_collections(
             collectionFilters={
-                'name': COLLECTION_NAME,
-                'status': 'ACTIVE'
+                'name': COLLECTION_NAME
             }
         )
         if 'collectionSummaries' in collection_list and len(collection_list['collectionSummaries']) > 0 and collection_list['collectionSummaries'][0]['status'] == 'ACTIVE':
