@@ -98,6 +98,51 @@ resource "aws_opensearchserverless_collection" "stac_server_opensearch_serverles
   ]
 }
 
+resource "aws_lambda_function" "stac_server_waiting_for_opensearch_serverless_active_collections" {
+  count            = var.deploy_stac_server_opensearch_serverless ? 1 : 0
+  filename         = data.archive_file.waiting_for_opensearch_lambda_zip.output_path
+  source_code_hash = data.archive_file.waiting_for_opensearch_lambda_zip.output_base64sha256
+  function_name    = "${local.name_prefix}-stac-server-oss-wait-collections"
+  role             = aws_iam_role.stac_api_lambda_role.arn
+  description      = "Lambda function to wait for Opensearch Serverless Collection to be active."
+  handler          = "main.lambda_handler"
+  runtime          = "python3.11"
+  memory_size      = "512"
+  timeout          = "900"
+
+  environment {
+    variables = {
+      COLLECTION_NAME = lower(var.opensearch_stac_server_domain_name_override == null ? "${local.name_prefix}-stac-server" : var.opensearch_stac_server_domain_name_override)
+      REGION          = data.aws_region.current.name
+    }
+  }
+
+  depends_on = [
+    aws_lambda_function.stac_server_ingest,
+    aws_opensearchserverless_security_policy.stac_server_opensearch_serverless_encryption_policy,
+    aws_opensearchserverless_security_policy.stac_server_opensearch_serverless_network_policy,
+    aws_opensearchserverless_access_policy.stac_server_opensearch_serverless_access_policy,
+    aws_opensearchserverless_collection.stac_server_opensearch_serverless_collection
+  ]
+}
+
+resource "aws_lambda_invocation" "stac_server_opensearch_serverless_wait_for_collections" {
+  count         = var.deploy_stac_server_opensearch_serverless ? 1 : 0
+  function_name = aws_lambda_function.stac_server_waiting_for_opensearch_serverless_active_collections[0].function_name
+
+    input = "{}"
+
+  depends_on = [
+    aws_lambda_function.stac_server_ingest,
+    aws_opensearchserverless_security_policy.stac_server_opensearch_serverless_encryption_policy,
+    aws_opensearchserverless_security_policy.stac_server_opensearch_serverless_network_policy,
+    aws_opensearchserverless_access_policy.stac_server_opensearch_serverless_access_policy,
+    aws_opensearchserverless_collection.stac_server_opensearch_serverless_collection,
+    aws_lambda_function.stac_server_waiting_for_opensearch_serverless_active_collections
+  ]
+}
+
+
 resource "aws_lambda_invocation" "stac_server_opensearch_serverless_ingest_create_indices" {
   count         = var.deploy_stac_server_opensearch_serverless ? 1 : 0
   function_name = aws_lambda_function.stac_server_ingest.function_name
@@ -106,7 +151,11 @@ resource "aws_lambda_invocation" "stac_server_opensearch_serverless_ingest_creat
 
   depends_on = [
     aws_lambda_function.stac_server_ingest,
-    aws_lambda_invocation.invoke_stac_server_opensearch_user_initializer,
-    aws_opensearchserverless_collection.stac_server_opensearch_serverless_collection
+    aws_opensearchserverless_security_policy.stac_server_opensearch_serverless_encryption_policy,
+    aws_opensearchserverless_security_policy.stac_server_opensearch_serverless_network_policy,
+    aws_opensearchserverless_access_policy.stac_server_opensearch_serverless_access_policy,
+    aws_opensearchserverless_collection.stac_server_opensearch_serverless_collection,
+    aws_lambda_function.stac_server_waiting_for_opensearch_serverless_active_collections,
+    aws_lambda_invocation.stac_server_opensearch_serverless_wait_for_collections
   ]
 }
