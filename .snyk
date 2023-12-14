@@ -9,3 +9,20 @@ ignore:
     - 'modules/stac-server/api.tf > resource > aws_api_gateway_method[stac_server_api_gateway_root_method] > authorization':
         reason: Open API - no auth required
         created: 2023-09-14T14:35:23.783Z
+  SNYK-CC-00250:
+    - 'module > filmdrop > module > stac-server > module > stac-server >
+           aws_api_gateway_method >
+           stac_server_api_gateway_proxy_resource_method > authorization':
+        reason: Open API - no auth required
+        created: 2023-12-14T14:35:23.783Z
+    - 'module > filmdrop > module > stac-server > module > stac-server >
+           aws_api_gateway_method > stac_server_api_gateway_root_method >
+           authorization':
+        reason: Open API - no auth required
+        created: 2023-12-14T14:35:23.783Z
+  SNYK-CC-00185:
+    - module > filmdrop > module > titiler > module > titiler >
+           aws_wafv2_web_acl > titiler-mosaic-wafv2-web-acl > rule > 0 >
+           statement > 0 > managed_rule_group_statement > 0'
+        reason: Open API - no auth required
+        created: 2023-12-14T14:35:23.783Z
