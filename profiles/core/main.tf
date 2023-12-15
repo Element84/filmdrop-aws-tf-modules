@@ -10,6 +10,7 @@ module "base_infra" {
   vpc_cidr                       = var.vpc_cidr
   vpc_id                         = var.vpc_id
   sns_topics_map                 = var.sns_topics_map
+  security_group_id              = var.security_group_id
   private_subnets_cidr_map       = var.private_subnets_cidr_map
   public_subnets_cidr_map        = var.public_subnets_cidr_map
   cloudwatch_warning_alarms_map  = var.cloudwatch_warning_alarms_map

@@ -40,6 +40,12 @@ variable "private_subnets_cidr_map" {
   default     = {}
 }
 
+variable "security_group_id" {
+  type        = string
+  description = "ID for the Security Group in the FilmDrop VPC"
+  default     = ""
+}
+
 variable "sns_topics_map" {
   type    = map(any)
   default = {}
