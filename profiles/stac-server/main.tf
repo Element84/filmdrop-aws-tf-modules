@@ -55,7 +55,6 @@ module "historical_ingest" {
   destination_collections_min_long = var.stac_server_inputs.ingest.destination_collections_min_long
   destination_collections_max_lat  = var.stac_server_inputs.ingest.destination_collections_max_lat
   destination_collections_max_long = var.stac_server_inputs.ingest.destination_collections_max_long
-  ingest_sqs_arn                   = module.stac-server.stac_server_ingest_queue_arn
   ingest_sqs_url                   = module.stac-server.stac_server_ingest_queue_url
   date_start                       = var.stac_server_inputs.ingest.date_start
   date_end                         = var.stac_server_inputs.ingest.date_end
@@ -74,7 +73,6 @@ module "ongoing_ingest" {
 
   source_sns_arn                   = var.stac_server_inputs.ingest.source_sns_arn
   ingest_sqs_arn                   = module.stac-server.stac_server_ingest_queue_arn
-  ingest_sqs_url                   = module.stac-server.stac_server_ingest_queue_url
   destination_collections_list     = var.stac_server_inputs.ingest.destination_collections_list
   destination_collections_min_lat  = var.stac_server_inputs.ingest.destination_collections_min_lat
   destination_collections_min_long = var.stac_server_inputs.ingest.destination_collections_min_long

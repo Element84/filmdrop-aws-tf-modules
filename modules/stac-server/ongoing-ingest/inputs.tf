@@ -5,11 +5,6 @@ variable "source_sns_arn" {
   type        = string
 }
 
-variable "ingest_sqs_url" {
-  description = "The URL of the SQS topic that we want to publish ingest messages to"
-  type        = string
-}
-
 variable "destination_collections_list" {
   description = "The (comma-separated) list of collections to ingest"
   type        = string

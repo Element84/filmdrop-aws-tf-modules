@@ -46,12 +46,6 @@ variable "security_group_id" {
   default     = ""
 }
 
-variable "archive_log_bucket_name" {
-  description = "FilmDrop S3 Archive Log Bucket Name"
-  type        = string
-  default     = ""
-}
-
 variable "sns_topics_map" {
   type    = map(any)
   default = {}

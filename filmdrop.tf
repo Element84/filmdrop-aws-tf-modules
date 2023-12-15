@@ -12,7 +12,6 @@ module "filmdrop" {
   vpc_cidr                                 = var.vpc_cidr
   public_subnets_cidr_map                  = var.public_subnets_cidr_map
   private_subnets_cidr_map                 = var.private_subnets_cidr_map
-  security_group_id                        = var.security_group_id
   sns_topics_map                           = var.sns_topics_map
   cloudwatch_warning_alarms_map            = var.cloudwatch_warning_alarms_map
   cloudwatch_critical_alarms_map           = var.cloudwatch_critical_alarms_map

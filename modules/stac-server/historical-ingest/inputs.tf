@@ -47,11 +47,6 @@ variable "date_end" {
   type        = string
 }
 
-variable "ingest_sqs_arn" {
-  description = "The ARN of the SQS topic that we want to publish ingest messages to"
-  type        = string
-}
-
 variable "ingest_sqs_url" {
   description = "The URL of the SQS topic that we want to publish ingest messages to"
   type        = string

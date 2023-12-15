@@ -10,7 +10,6 @@ s3_logs_archive_bucket = ""
 # If left blank, the infrastructure will try to query the values from the control tower vpc
 vpc_id                   = ""
 vpc_cidr                 = ""
-security_group_id        = ""
 public_subnets_cidr_map  = {}
 private_subnets_cidr_map = {}
 

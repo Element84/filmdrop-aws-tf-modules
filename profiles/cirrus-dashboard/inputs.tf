@@ -71,12 +71,6 @@ variable "domain_zone" {
   type        = string
 }
 
-variable "domain_alias" {
-  description = "Alternate CNAME for Cloudfront distribution"
-  type        = string
-  default     = ""
-}
-
 variable "create_log_bucket" {
   description = "Whether to create [true/false] logging bucket for Cloudfront Distribution"
   type        = bool
