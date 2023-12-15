@@ -1,8 +1,8 @@
 resource "aws_opensearchserverless_security_policy" "stac_server_opensearch_serverless_encryption_policy" {
-  count   = var.deploy_stac_server_opensearch_serverless ? 1 : 0
-  name    = lower(var.opensearch_stac_server_domain_name_override == null ? "${local.name_prefix}-stac-server-ep" : var.opensearch_stac_server_domain_name_override)
-  type    = "encryption"
-  policy  = jsonencode({
+  count = var.deploy_stac_server_opensearch_serverless ? 1 : 0
+  name  = lower(var.opensearch_stac_server_domain_name_override == null ? "${local.name_prefix}-stac-server-ep" : var.opensearch_stac_server_domain_name_override)
+  type  = "encryption"
+  policy = jsonencode({
     "Rules" = [
       {
         "Resource" = [
@@ -16,10 +16,10 @@ resource "aws_opensearchserverless_security_policy" "stac_server_opensearch_serv
 }
 
 resource "aws_opensearchserverless_security_policy" "stac_server_opensearch_serverless_network_policy" {
-  count   = var.deploy_stac_server_opensearch_serverless ? 1 : 0
-  name    = lower(var.opensearch_stac_server_domain_name_override == null ? "${local.name_prefix}-stac-np" : var.opensearch_stac_server_domain_name_override)
-  type    = "network"
-  policy  = jsonencode([
+  count = var.deploy_stac_server_opensearch_serverless ? 1 : 0
+  name  = lower(var.opensearch_stac_server_domain_name_override == null ? "${local.name_prefix}-stac-np" : var.opensearch_stac_server_domain_name_override)
+  type  = "network"
+  policy = jsonencode([
     {
       Description = "Public access for collection endpoint",
       Rules = [
@@ -48,10 +48,10 @@ resource "aws_opensearchserverless_security_policy" "stac_server_opensearch_serv
 }
 
 resource "aws_opensearchserverless_access_policy" "stac_server_opensearch_serverless_access_policy" {
-  count   = var.deploy_stac_server_opensearch_serverless ? 1 : 0
-  name    = lower(var.opensearch_stac_server_domain_name_override == null ? "${local.name_prefix}-stac-ap" : var.opensearch_stac_server_domain_name_override)
-  type    = "data"
-  policy  = jsonencode([
+  count = var.deploy_stac_server_opensearch_serverless ? 1 : 0
+  name  = lower(var.opensearch_stac_server_domain_name_override == null ? "${local.name_prefix}-stac-ap" : var.opensearch_stac_server_domain_name_override)
+  type  = "data"
+  policy = jsonencode([
     {
       Rules = [
         {
@@ -130,7 +130,7 @@ resource "aws_lambda_invocation" "stac_server_opensearch_serverless_wait_for_col
   count         = var.deploy_stac_server_opensearch_serverless ? 1 : 0
   function_name = aws_lambda_function.stac_server_waiting_for_opensearch_serverless_active_collections[0].function_name
 
-    input = "{}"
+  input = "{}"
 
   depends_on = [
     aws_lambda_function.stac_server_ingest,

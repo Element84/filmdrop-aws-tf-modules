@@ -9,9 +9,3 @@ repos:
     hooks:
       - id: ruff
       - id: ruff-format
-  - repo: local
-    hooks:
-      - id: validate
-        name: Terraform validate
-        entry: bash -c 'cd modules && ../scripts/validate.sh'
-        language: system

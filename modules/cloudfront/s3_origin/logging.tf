@@ -1,7 +1,7 @@
 resource "aws_s3_bucket" "log_bucket" {
-  count           = var.create_log_bucket ? 1 : 0
-  bucket_prefix   = "${local.origin_id_prefix}-"
-  force_destroy   = true
+  count         = var.create_log_bucket ? 1 : 0
+  bucket_prefix = "${local.origin_id_prefix}-"
+  force_destroy = true
 }
 
 resource "aws_s3_bucket_replication_configuration" "log_bucket_replication" {
@@ -119,7 +119,7 @@ EOF
 }
 
 resource "null_resource" "cleanup_bucket" {
-  count    = var.create_log_bucket ? 1 : 0
+  count = var.create_log_bucket ? 1 : 0
 
   triggers = {
     bucket_name = aws_s3_bucket.log_bucket[0].id

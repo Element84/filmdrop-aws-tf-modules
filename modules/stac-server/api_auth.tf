@@ -41,12 +41,12 @@ resource "aws_secretsmanager_secret_version" "stac_server_api_auth_keys_version"
 }
 
 resource "null_resource" "cleanup_stac_server_api_auth_keys" {
-  count   = var.stac_server_auth_pre_hook_enabled ? 1 : 0
+  count = var.stac_server_auth_pre_hook_enabled ? 1 : 0
 
   triggers = {
-    stac_server_api_auth_keys             = "${local.name_prefix}-stac-server-api-auth-keys"
-    region                                = data.aws_region.current.name
-    account                               = data.aws_caller_identity.current.account_id
+    stac_server_api_auth_keys = "${local.name_prefix}-stac-server-api-auth-keys"
+    region                    = data.aws_region.current.name
+    account                   = data.aws_caller_identity.current.account_id
   }
 
   provisioner "local-exec" {

@@ -1,4 +1,4 @@
-variable project_name {
+variable "project_name" {
   description = "Project Name"
   type        = string
   validation {
@@ -7,7 +7,7 @@ variable project_name {
   }
 }
 
-variable environment {
+variable "environment" {
   description = "Project environment."
   type        = string
   validation {
@@ -16,12 +16,12 @@ variable environment {
   }
 }
 
-variable vpc_id {
+variable "vpc_id" {
   type        = string
   description = "ID for the VPC"
 }
 
-variable private_subnet_ids {
+variable "private_subnet_ids" {
   description = "List of private subnet ids in the FilmDrop vpc"
   type        = list(string)
 }
@@ -31,33 +31,33 @@ variable "security_group_id" {
   type        = string
 }
 
-variable cirrus_dashboard_inputs {
+variable "cirrus_dashboard_inputs" {
   description = "Inputs for cirrus dashboard FilmDrop deployment."
-  type        = object({
-    app_name                                      = string
-    domain_alias                                  = string
-    custom_error_response                         = list(object({
-      error_caching_min_ttl                       = string
-      error_code                                  = string
-      response_code                               = string
-      response_page_path                          = string
+  type = object({
+    app_name     = string
+    domain_alias = string
+    custom_error_response = list(object({
+      error_caching_min_ttl = string
+      error_code            = string
+      response_code         = string
+      response_page_path    = string
     }))
-    cirrus_api_endpoint_base                      = string
-    cirrus_dashboard_release                      = string
+    cirrus_api_endpoint_base = string
+    cirrus_dashboard_release = string
   })
-  default       = {
-    app_name                                      = "dashboard"
-    domain_alias                                  = ""
-    custom_error_response                         = [
+  default = {
+    app_name     = "dashboard"
+    domain_alias = ""
+    custom_error_response = [
       {
-        error_caching_min_ttl                   = "10"
-        error_code                              = "404"
-        response_code                           = "200"
-        response_page_path                      = "/"
+        error_caching_min_ttl = "10"
+        error_code            = "404"
+        response_code         = "200"
+        response_page_path    = "/"
       }
     ]
-    cirrus_api_endpoint_base                      = ""
-    cirrus_dashboard_release                      = "v0.5.1"
+    cirrus_api_endpoint_base = ""
+    cirrus_dashboard_release = "v0.5.1"
   }
 }
 

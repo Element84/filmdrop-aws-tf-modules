@@ -144,7 +144,7 @@ module "content_website" {
   count  = var.create_content_website == false ? 0 : 1
   source = "../content"
 
-  origin_id                             = local.origin_id_prefix
+  origin_id = local.origin_id_prefix
 }
 
 
@@ -155,7 +155,7 @@ module "cloudfront_waf" {
   logging_bucket_name = var.create_log_bucket ? aws_s3_bucket.log_bucket[0].id : var.log_bucket_name
   whitelist_ips       = var.whitelist_ips
   ip_blocklist        = var.ip_blocklist
-  cf_origin_appendix        = replace(replace(local.origin_id_prefix, "_", ""), "-", "")
+  cf_origin_appendix  = replace(replace(local.origin_id_prefix, "_", ""), "-", "")
 }
 
 module "cloudfront_function" {

@@ -3,9 +3,9 @@ resource "random_id" "suffix" {
 }
 
 resource "aws_opensearch_domain" "stac_server_opensearch_domain" {
-  count           = var.deploy_stac_server_opensearch_serverless ? 0 : 1
-  domain_name     = lower(var.opensearch_stac_server_domain_name_override == null ? "${local.name_prefix}-stac-server" : var.opensearch_stac_server_domain_name_override)
-  engine_version  = var.opensearch_version
+  count          = var.deploy_stac_server_opensearch_serverless ? 0 : 1
+  domain_name    = lower(var.opensearch_stac_server_domain_name_override == null ? "${local.name_prefix}-stac-server" : var.opensearch_stac_server_domain_name_override)
+  engine_version = var.opensearch_version
 
   cluster_config {
     instance_type            = var.opensearch_cluster_instance_type
@@ -147,9 +147,9 @@ EOF
 
 resource "null_resource" "cleanup_opensearch_master_password_secret" {
   triggers = {
-    opensearch_master_password_secret     = "${local.name_prefix}-stac-server-master-creds-${random_id.suffix.hex}"
-    region                                = data.aws_region.current.name
-    account                               = data.aws_caller_identity.current.account_id
+    opensearch_master_password_secret = "${local.name_prefix}-stac-server-master-creds-${random_id.suffix.hex}"
+    region                            = data.aws_region.current.name
+    account                           = data.aws_caller_identity.current.account_id
   }
 
   provisioner "local-exec" {
@@ -210,9 +210,9 @@ EOF
 
 resource "null_resource" "cleanup_opensearch_stac_user_password_secret" {
   triggers = {
-    opensearch_stac_user_password_secret  = "${local.name_prefix}-stac-server-user-creds-${random_id.suffix.hex}"
-    region                                = data.aws_region.current.name
-    account                               = data.aws_caller_identity.current.account_id
+    opensearch_stac_user_password_secret = "${local.name_prefix}-stac-server-user-creds-${random_id.suffix.hex}"
+    region                               = data.aws_region.current.name
+    account                              = data.aws_caller_identity.current.account_id
   }
 
   provisioner "local-exec" {

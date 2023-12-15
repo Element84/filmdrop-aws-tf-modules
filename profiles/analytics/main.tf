@@ -1,13 +1,13 @@
 module "analytics_certificate" {
-  source  = "./cert"
-  count   = var.analytics_inputs.jupyterhub_elb_acm_cert_arn == "" ? 1 : 0
+  source = "./cert"
+  count  = var.analytics_inputs.jupyterhub_elb_acm_cert_arn == "" ? 1 : 0
 
-  domain_zone    = var.domain_zone
-  domain_alias   = var.analytics_inputs.jupyterhub_elb_domain_alias
+  domain_zone  = var.domain_zone
+  domain_alias = var.analytics_inputs.jupyterhub_elb_domain_alias
 }
 
 module "create_credentials" {
-  source  = "./credentials"
+  source = "./credentials"
 
   create_credentials      = var.analytics_inputs.create_credentials
   credentials_name_prefix = "fd-analytics-${var.project_name}-${var.environment}"
@@ -45,26 +45,26 @@ module "cloudfront_load_balancer_endpoint" {
     aws.east = aws.east
   }
 
-  zone_id                         = var.domain_zone
-  domain_alias                    = var.analytics_inputs.domain_alias
-  application_name                = var.analytics_inputs.app_name
-  create_log_bucket               = var.create_log_bucket
-  log_bucket_name                 = var.log_bucket_name
-  log_bucket_domain_name          = var.log_bucket_domain_name
-  filmdrop_archive_bucket_name    = var.s3_logs_archive_bucket
-  load_balancer_dns_name          = var.analytics_inputs.jupyterhub_elb_domain_alias
-  project_name                    = var.project_name
-  environment                     = var.environment
+  zone_id                      = var.domain_zone
+  domain_alias                 = var.analytics_inputs.domain_alias
+  application_name             = var.analytics_inputs.app_name
+  create_log_bucket            = var.create_log_bucket
+  log_bucket_name              = var.log_bucket_name
+  log_bucket_domain_name       = var.log_bucket_domain_name
+  filmdrop_archive_bucket_name = var.s3_logs_archive_bucket
+  load_balancer_dns_name       = var.analytics_inputs.jupyterhub_elb_domain_alias
+  project_name                 = var.project_name
+  environment                  = var.environment
 }
 
 resource "null_resource" "cleanup_analytics_credentials" {
-  count   = var.analytics_inputs.create_credentials ? 1 : 0
+  count = var.analytics_inputs.create_credentials ? 1 : 0
 
   triggers = {
-    filmdrop_analytics_dask_secret_token  = "fd-analytics-${var.project_name}-${var.environment}-admin-credentials"
-    filmdrop_analytics_credentials        = "fd-analytics-${var.project_name}-${var.environment}-dask-token"
-    region                                = data.aws_region.current.name
-    account                               = data.aws_caller_identity.current.account_id
+    filmdrop_analytics_dask_secret_token = "fd-analytics-${var.project_name}-${var.environment}-admin-credentials"
+    filmdrop_analytics_credentials       = "fd-analytics-${var.project_name}-${var.environment}-dask-token"
+    region                               = data.aws_region.current.name
+    account                              = data.aws_caller_identity.current.account_id
   }
 
   provisioner "local-exec" {
@@ -104,10 +104,10 @@ EOF
 
 resource "null_resource" "cleanup_analytics_stack" {
   triggers = {
-    filmdrop_analytics_cluster_name       = "fd-analytics-${var.project_name}-${var.environment}"
-    domain_param_name                     = module.cloudfront_load_balancer_endpoint.cloudfront_domain_origin_param
-    region                                = data.aws_region.current.name
-    account                               = data.aws_caller_identity.current.account_id
+    filmdrop_analytics_cluster_name = "fd-analytics-${var.project_name}-${var.environment}"
+    domain_param_name               = module.cloudfront_load_balancer_endpoint.cloudfront_domain_origin_param
+    region                          = data.aws_region.current.name
+    account                         = data.aws_caller_identity.current.account_id
   }
 
   provisioner "local-exec" {

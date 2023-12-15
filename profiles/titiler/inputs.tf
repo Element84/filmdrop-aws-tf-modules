@@ -1,4 +1,4 @@
-variable environment {
+variable "environment" {
   description = "Project environment."
   type        = string
   validation {
@@ -7,7 +7,7 @@ variable environment {
   }
 }
 
-variable project_name {
+variable "project_name" {
   description = "Project Name"
   type        = string
   validation {
@@ -16,25 +16,25 @@ variable project_name {
   }
 }
 
-variable titiler_inputs {
+variable "titiler_inputs" {
   description = "Inputs for titiler FilmDrop deployment."
-  type        = object({
-    app_name                                      = string
-    domain_alias                                  = string
-    mosaic_titiler_release_tag                    = string
-    stac_server_and_titiler_s3_arns               = list(string)
-    mosaic_titiler_waf_allowed_url                = string
-    mosaic_titiler_host_header                    = string
-    web_acl_id                                    = string
+  type = object({
+    app_name                        = string
+    domain_alias                    = string
+    mosaic_titiler_release_tag      = string
+    stac_server_and_titiler_s3_arns = list(string)
+    mosaic_titiler_waf_allowed_url  = string
+    mosaic_titiler_host_header      = string
+    web_acl_id                      = string
   })
-  default       = {
-    app_name                                      = "titiler"
-    domain_alias                                  = ""
-    mosaic_titiler_release_tag                    = "v0.14.0-1.0.4"
-    stac_server_and_titiler_s3_arns               = []
-    mosaic_titiler_waf_allowed_url                = ""
-    mosaic_titiler_host_header                    = ""
-    web_acl_id                                    = ""
+  default = {
+    app_name                        = "titiler"
+    domain_alias                    = ""
+    mosaic_titiler_release_tag      = "v0.14.0-1.0.4"
+    stac_server_and_titiler_s3_arns = []
+    mosaic_titiler_waf_allowed_url  = ""
+    mosaic_titiler_host_header      = ""
+    web_acl_id                      = ""
   }
 }
 

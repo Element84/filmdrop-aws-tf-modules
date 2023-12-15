@@ -20,16 +20,16 @@ module "cloudfront_api_gateway_endpoint" {
     aws.east = aws.east
   }
 
-  zone_id                       = var.domain_zone
-  domain_alias                  = var.titiler_inputs.domain_alias
-  application_name              = var.titiler_inputs.app_name
-  api_gateway_dns_name          = module.titiler.titiler_mosaic_api_gateway_endpoint
-  api_gateway_path              = ""
-  web_acl_id                    = module.titiler.titiler_mosaic_wafv2_web_acl_arn
-  project_name                  = var.project_name
-  environment                   = var.environment
-  create_log_bucket             = var.create_log_bucket
-  log_bucket_name               = var.log_bucket_name
-  log_bucket_domain_name        = var.log_bucket_domain_name
-  filmdrop_archive_bucket_name  = var.s3_logs_archive_bucket
+  zone_id                      = var.domain_zone
+  domain_alias                 = var.titiler_inputs.domain_alias
+  application_name             = var.titiler_inputs.app_name
+  api_gateway_dns_name         = module.titiler.titiler_mosaic_api_gateway_endpoint
+  api_gateway_path             = ""
+  web_acl_id                   = module.titiler.titiler_mosaic_wafv2_web_acl_arn
+  project_name                 = var.project_name
+  environment                  = var.environment
+  create_log_bucket            = var.create_log_bucket
+  log_bucket_name              = var.log_bucket_name
+  log_bucket_domain_name       = var.log_bucket_domain_name
+  filmdrop_archive_bucket_name = var.s3_logs_archive_bucket
 }
