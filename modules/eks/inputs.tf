@@ -69,8 +69,3 @@ variable "endpoint_private_access" {
   default     = true
 }
 
-variable "endpoint_public_access" {
-  type        = bool
-  description = "Whether the Amazon EKS public API server endpoint is enabled."
-  default     = false
-}

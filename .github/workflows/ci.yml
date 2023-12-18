@@ -32,3 +32,20 @@ jobs:
       - name: Terraform Validate
         id: tf_validate
         run: terraform validate -no-color
+  pre-commit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: "1.5.5"
+      - uses: terraform-linters/setup-tflint@v3
+        with:
+          tflint_version: "v0.49.0"
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11" 
+      - name: Install pre-commit
+        run: pip install pre-commit
+      - name: Run pre-commit
+        run: pre-commit run --all-files

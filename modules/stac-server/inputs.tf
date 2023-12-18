@@ -288,6 +288,12 @@ variable "ingest_sns_topic_arns" {
   default     = []
 }
 
+variable "additional_ingest_sqs_senders_arns" {
+  description = "List of additional principals to grant access to send to the Ingest SQS. This is required to allow STAC API SNS notifications (e.g. earth search's ingest SNS topic) to be able to publish SQS ingest messages to our stac-server for indexing."
+  type        = list(string)
+  default     = []
+}
+
 variable "project_name" {
   description = "Project Name"
   type        = string
@@ -305,7 +311,7 @@ variable "opensearch_cluster_dedicated_master_count" {
   default     = 3
 }
 
-variable deploy_stac_server_opensearch_serverless {
+variable "deploy_stac_server_opensearch_serverless" {
   type        = bool
   default     = false
   description = "Deploy FilmDrop Stac-Server with OpenSearch Serverless. If False, Stac-server will be deployed with a classic OpenSearch domain."

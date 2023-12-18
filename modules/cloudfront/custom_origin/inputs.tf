@@ -123,12 +123,6 @@ variable "auth_header_name" {
   default     = ""
 }
 
-variable "cloudfront_access_identity_path" {
-  description = "Custom CloudFront Origin Access Identity Path"
-  type        = string
-  default     = ""
-}
-
 # Custom Headers, by default we support API Authorization and CORS headers.
 variable "custom_http_whitelisted_headers" {
   description = "List of whitelisted http headers to have CloudFront forward to origin"
@@ -136,22 +130,10 @@ variable "custom_http_whitelisted_headers" {
   default     = ["Authorization", "Origin", "Access-Control-Request-Headers", "Access-Control-Request-Method", "User-Agent"]
 }
 
-variable "custom_s3_whitelisted_headers" {
-  description = "List of whitelisted http headers to have CloudFront forward to S3 origin"
-  type        = list(string)
-  default     = ["User-Agent"]
-}
-
 variable "custom_error_response" {
   description = "A custom error response list for error handling"
   type        = list(map(string))
   default     = []
-}
-
-variable "caching_disabled" {
-  description = "Disable Cloudfront Caching for s3 origin to allow large file egress"
-  type        = bool
-  default     = false
 }
 
 variable "price_class" {

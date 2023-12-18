@@ -61,3 +61,11 @@ output "cirrus_dashboard_url" {
 output "titiler_url" {
   value = var.deploy_titiler ? module.titiler[0].titiler_url : ""
 }
+
+output "stac_ingest_queue_arn" {
+  value = var.deploy_stac_server ? module.stac-server[0].stac_ingest_queue_arn : ""
+}
+
+output "stac_ingest_queue_url" {
+  value = var.deploy_stac_server ? module.stac-server[0].stac_ingest_queue_url : ""
+}

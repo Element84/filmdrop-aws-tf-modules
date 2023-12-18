@@ -1,6 +1,6 @@
 module "vpc_infra" {
-  count   = var.deploy_vpc ? 1 : 0
-  source  = "../../../modules/base_infra/vpc_infra"
+  count  = var.deploy_vpc ? 1 : 0
+  source = "../../../modules/base_infra/vpc_infra"
 
   project_name             = var.project_name
   environment              = var.environment
@@ -11,6 +11,6 @@ module "vpc_infra" {
 }
 
 module "vpc_search" {
-  count   = !var.deploy_vpc && var.deploy_vpc_search ? 1 : 0
-  source  = "../vpc_search"
+  count  = !var.deploy_vpc && var.deploy_vpc_search ? 1 : 0
+  source = "../vpc_search"
 }

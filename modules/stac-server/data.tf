@@ -13,6 +13,15 @@ data "archive_file" "user_init_lambda_zip" {
   ]
 }
 
+data "archive_file" "waiting_for_opensearch_lambda_zip" {
+  type        = "zip"
+  source_dir  = "${path.module}/lambda/waiting_for_opensearch"
+  output_path = "${path.module}/waiting_for_opensearch_lambda_zip.zip"
+  depends_on = [
+    random_string.user_init_lambda_zip_poke
+  ]
+}
+
 # this forces the user_init_lambda_zip to always be built
 resource "random_string" "user_init_lambda_zip_poke" {
   length  = 16
