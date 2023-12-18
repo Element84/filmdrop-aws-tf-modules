@@ -1,4 +1,4 @@
-variable project_name {
+variable "project_name" {
   description = "Project Name"
   type        = string
   validation {
@@ -7,7 +7,7 @@ variable project_name {
   }
 }
 
-variable environment {
+variable "environment" {
   description = "Project environment."
   type        = string
   validation {
@@ -16,22 +16,22 @@ variable environment {
   }
 }
 
-variable vpc_id {
+variable "vpc_id" {
   type        = string
   description = "ID for the VPC"
 }
 
-variable vpc_cidr {
+variable "vpc_cidr" {
   type        = string
   description = "CIDR for the VPC"
 }
 
-variable private_subnet_ids {
+variable "private_subnet_ids" {
   description = "List of private subnet ids in the FilmDrop vpc"
   type        = list(string)
 }
 
-variable public_subnet_ids {
+variable "public_subnet_ids" {
   description = "List of public subnet ids in the FilmDrop vpc"
   type        = list(string)
 }
@@ -41,12 +41,12 @@ variable "security_group_id" {
   type        = string
 }
 
-variable private_availability_zones {
+variable "private_availability_zones" {
   description = "List of private availability zones in the FilmDrop vpc"
   type        = list(string)
 }
 
-variable public_availability_zones {
+variable "public_availability_zones" {
   description = "List of public availability zones in the FilmDrop vpc"
   type        = list(string)
 }
@@ -61,21 +61,21 @@ variable "domain_zone" {
   type        = string
 }
 
-variable analytics_inputs {
+variable "analytics_inputs" {
   description = "Inputs for analytics FilmDrop deployment."
-  type        = object({
-    app_name                                      = string
-    domain_alias                                  = string
-    jupyterhub_elb_acm_cert_arn                   = string
-    jupyterhub_elb_domain_alias                   = string
-    create_credentials                            = bool
+  type = object({
+    app_name                    = string
+    domain_alias                = string
+    jupyterhub_elb_acm_cert_arn = string
+    jupyterhub_elb_domain_alias = string
+    create_credentials          = bool
   })
-  default       = {
-    app_name                                      = "analytics"
-    domain_alias                                  = ""
-    jupyterhub_elb_acm_cert_arn                   = ""
-    jupyterhub_elb_domain_alias                   = ""
-    create_credentials                            = true
+  default = {
+    app_name                    = "analytics"
+    domain_alias                = ""
+    jupyterhub_elb_acm_cert_arn = ""
+    jupyterhub_elb_domain_alias = ""
+    create_credentials          = true
   }
 }
 

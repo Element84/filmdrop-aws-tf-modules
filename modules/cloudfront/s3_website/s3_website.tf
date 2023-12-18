@@ -18,29 +18,29 @@ module "cloudfront_distribution" {
 
   source = "../s3_origin"
 
-  create_content_website          = var.create_content_website
-  create_waf_rule                 = true
-  ssl_certificate_arn             = module.cloudfront_certificate.certificate_arn
-  domain_aliases                  = var.domain_alias == "" ? [] : [var.domain_alias]
-  min_ttl                         = var.min_ttl
-  default_ttl                     = var.default_ttl
-  max_ttl                         = var.max_ttl
-  domain_name                     = var.domain_name
-  custom_error_response           = var.custom_error_response
-  attach_cf_function              = var.attach_cf_function
-  cf_function_name                = var.cf_function_name
-  cf_function_runtime             = var.cf_function_runtime
-  cf_function_code_path           = var.cf_function_code_path
-  cf_function_event_type          = var.cf_function_event_type
-  create_cf_function              = var.create_cf_function
-  cf_function_arn                 = var.cf_function_arn
-  project_name                    = var.project_name
-  environment                     = var.environment
-  create_log_bucket               = var.create_log_bucket
-  log_bucket_name                 = var.log_bucket_name
-  log_bucket_domain_name          = var.log_bucket_domain_name
-  filmdrop_archive_bucket_name    = var.filmdrop_archive_bucket_name
-  application_name                = var.application_name
+  create_content_website       = var.create_content_website
+  create_waf_rule              = true
+  ssl_certificate_arn          = module.cloudfront_certificate.certificate_arn
+  domain_aliases               = var.domain_alias == "" ? [] : [var.domain_alias]
+  min_ttl                      = var.min_ttl
+  default_ttl                  = var.default_ttl
+  max_ttl                      = var.max_ttl
+  domain_name                  = var.domain_name
+  custom_error_response        = var.custom_error_response
+  attach_cf_function           = var.attach_cf_function
+  cf_function_name             = var.cf_function_name
+  cf_function_runtime          = var.cf_function_runtime
+  cf_function_code_path        = var.cf_function_code_path
+  cf_function_event_type       = var.cf_function_event_type
+  create_cf_function           = var.create_cf_function
+  cf_function_arn              = var.cf_function_arn
+  project_name                 = var.project_name
+  environment                  = var.environment
+  create_log_bucket            = var.create_log_bucket
+  log_bucket_name              = var.log_bucket_name
+  log_bucket_domain_name       = var.log_bucket_domain_name
+  filmdrop_archive_bucket_name = var.filmdrop_archive_bucket_name
+  application_name             = var.application_name
 }
 
 module "cloudfront_dns" {

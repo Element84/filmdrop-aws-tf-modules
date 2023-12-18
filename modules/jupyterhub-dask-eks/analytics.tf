@@ -287,8 +287,8 @@ resource "aws_lambda_function" "cloudfront_origin_lambda" {
 
   environment {
     variables = {
-      DISTRIBUTIONID           = var.cloudfront_distribution_id
-      SSM_ORIGIN_PARAM         = var.domain_param_name
+      DISTRIBUTIONID   = var.cloudfront_distribution_id
+      SSM_ORIGIN_PARAM = var.domain_param_name
     }
   }
 }

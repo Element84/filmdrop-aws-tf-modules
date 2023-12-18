@@ -1,9 +1,3 @@
-data "aws_region" "current" {
-}
-
-data "aws_caller_identity" "current" {
-}
-
 data "aws_vpc" "vpc" {
   tags = var.vpc_tags
 }
@@ -21,7 +15,7 @@ data "aws_subnet" "private_subnets" {
   for_each = toset(data.aws_subnets.private.ids)
 
   vpc_id = data.aws_vpc.vpc.id
-  id = each.value
+  id     = each.value
 }
 
 data "aws_subnets" "public" {
@@ -37,7 +31,7 @@ data "aws_subnet" "public_subnets" {
   for_each = toset(data.aws_subnets.public.ids)
 
   vpc_id = data.aws_vpc.vpc.id
-  id = each.value
+  id     = each.value
 }
 
 data "aws_security_group" "security_group" {

@@ -23,45 +23,44 @@ module "stac-server" {
 }
 
 module "cloudfront_api_gateway_endpoint" {
-  count     = var.stac_server_inputs.deploy_cloudfront ? 1 : 0
-  source    = "../../modules/cloudfront/apigw_endpoint"
+  count  = var.stac_server_inputs.deploy_cloudfront ? 1 : 0
+  source = "../../modules/cloudfront/apigw_endpoint"
 
   providers = {
     aws.east = aws.east
   }
 
-  zone_id                       = var.domain_zone
-  domain_alias                  = var.stac_server_inputs.domain_alias
-  application_name              = var.stac_server_inputs.app_name
-  api_gateway_dns_name          = module.stac-server.stac_server_api_domain_name
-  api_gateway_path              = module.stac-server.stac_server_api_path
-  web_acl_id                    = var.stac_server_inputs.web_acl_id
-  project_name                  = var.project_name
-  environment                   = var.environment
-  create_log_bucket             = var.create_log_bucket
-  log_bucket_name               = var.log_bucket_name
-  log_bucket_domain_name        = var.log_bucket_domain_name
-  filmdrop_archive_bucket_name  = var.s3_logs_archive_bucket
+  zone_id                      = var.domain_zone
+  domain_alias                 = var.stac_server_inputs.domain_alias
+  application_name             = var.stac_server_inputs.app_name
+  api_gateway_dns_name         = module.stac-server.stac_server_api_domain_name
+  api_gateway_path             = module.stac-server.stac_server_api_path
+  web_acl_id                   = var.stac_server_inputs.web_acl_id
+  project_name                 = var.project_name
+  environment                  = var.environment
+  create_log_bucket            = var.create_log_bucket
+  log_bucket_name              = var.log_bucket_name
+  log_bucket_domain_name       = var.log_bucket_domain_name
+  filmdrop_archive_bucket_name = var.s3_logs_archive_bucket
 }
 
 module "historical_ingest" {
-  count     = var.stac_server_inputs.ingest.include_historical_ingest || var.stac_server_inputs.ingest.destination_collections_list != "" ? 1 : 0
-  source    = "../../modules/stac-server/historical-ingest"
+  count  = var.stac_server_inputs.ingest.include_historical_ingest || var.stac_server_inputs.ingest.destination_collections_list != "" ? 1 : 0
+  source = "../../modules/stac-server/historical-ingest"
 
-  source_catalog_url                = var.stac_server_inputs.ingest.source_catalog_url
-  destination_catalog_url           = var.stac_server_inputs.deploy_cloudfront ? "https://${module.cloudfront_api_gateway_endpoint[0].domain_name}" : "https://${module.stac-server.stac_server_api_domain_name}${module.stac-server.stac_server_api_path}"
-  destination_collections_list      = var.stac_server_inputs.ingest.destination_collections_list
-  destination_collections_min_lat   = var.stac_server_inputs.ingest.destination_collections_min_lat
-  destination_collections_min_long  = var.stac_server_inputs.ingest.destination_collections_min_long
-  destination_collections_max_lat   = var.stac_server_inputs.ingest.destination_collections_max_lat
-  destination_collections_max_long  = var.stac_server_inputs.ingest.destination_collections_max_long
-  ingest_sqs_arn                    = module.stac-server.stac_server_ingest_queue_arn
-  ingest_sqs_url                    = module.stac-server.stac_server_ingest_queue_url
-  date_start                        = var.stac_server_inputs.ingest.date_start
-  date_end                          = var.stac_server_inputs.ingest.date_end
-  include_historical_ingest         = var.stac_server_inputs.ingest.include_historical_ingest
-  stac_server_name_prefix           = module.stac-server.stac_server_name_prefix
-  stac_server_lambda_iam_role_arn   = module.stac-server.stac_server_lambda_iam_role_arn
+  source_catalog_url               = var.stac_server_inputs.ingest.source_catalog_url
+  destination_catalog_url          = var.stac_server_inputs.deploy_cloudfront ? "https://${module.cloudfront_api_gateway_endpoint[0].domain_name}" : "https://${module.stac-server.stac_server_api_domain_name}${module.stac-server.stac_server_api_path}"
+  destination_collections_list     = var.stac_server_inputs.ingest.destination_collections_list
+  destination_collections_min_lat  = var.stac_server_inputs.ingest.destination_collections_min_lat
+  destination_collections_min_long = var.stac_server_inputs.ingest.destination_collections_min_long
+  destination_collections_max_lat  = var.stac_server_inputs.ingest.destination_collections_max_lat
+  destination_collections_max_long = var.stac_server_inputs.ingest.destination_collections_max_long
+  ingest_sqs_url                   = module.stac-server.stac_server_ingest_queue_url
+  date_start                       = var.stac_server_inputs.ingest.date_start
+  date_end                         = var.stac_server_inputs.ingest.date_end
+  include_historical_ingest        = var.stac_server_inputs.ingest.include_historical_ingest
+  stac_server_name_prefix          = module.stac-server.stac_server_name_prefix
+  stac_server_lambda_iam_role_arn  = module.stac-server.stac_server_lambda_iam_role_arn
 
   depends_on = [
     module.stac-server
@@ -69,17 +68,16 @@ module "historical_ingest" {
 }
 
 module "ongoing_ingest" {
-  count     = var.stac_server_inputs.ingest.include_ongoing_ingest ? 1 : 0
-  source    = "../../modules/stac-server/ongoing-ingest"
+  count  = var.stac_server_inputs.ingest.include_ongoing_ingest ? 1 : 0
+  source = "../../modules/stac-server/ongoing-ingest"
 
-  source_sns_arn                    = var.stac_server_inputs.ingest.source_sns_arn
-  ingest_sqs_arn                    = module.stac-server.stac_server_ingest_queue_arn
-  ingest_sqs_url                    = module.stac-server.stac_server_ingest_queue_url
-  destination_collections_list      = var.stac_server_inputs.ingest.destination_collections_list
-  destination_collections_min_lat   = var.stac_server_inputs.ingest.destination_collections_min_lat
-  destination_collections_min_long  = var.stac_server_inputs.ingest.destination_collections_min_long
-  destination_collections_max_lat   = var.stac_server_inputs.ingest.destination_collections_max_lat
-  destination_collections_max_long  = var.stac_server_inputs.ingest.destination_collections_max_long
+  source_sns_arn                   = var.stac_server_inputs.ingest.source_sns_arn
+  ingest_sqs_arn                   = module.stac-server.stac_server_ingest_queue_arn
+  destination_collections_list     = var.stac_server_inputs.ingest.destination_collections_list
+  destination_collections_min_lat  = var.stac_server_inputs.ingest.destination_collections_min_lat
+  destination_collections_min_long = var.stac_server_inputs.ingest.destination_collections_min_long
+  destination_collections_max_lat  = var.stac_server_inputs.ingest.destination_collections_max_lat
+  destination_collections_max_long = var.stac_server_inputs.ingest.destination_collections_max_long
 
   depends_on = [
     module.stac-server,

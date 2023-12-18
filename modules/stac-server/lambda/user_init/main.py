@@ -14,7 +14,6 @@ secretsmanager = boto3.client("secretsmanager", region_name=REGION)
 
 
 def lambda_handler(event, context):
-
     disable_auto_create_index()
     create_stac_server_role()
     create_stac_server_user()
@@ -116,7 +115,9 @@ def create_stac_server_role():
                 host, context=ssl._create_unverified_context()
             )
 
-            connection.request("PUT", path, json.dumps(request).encode("utf-8"), headers)
+            connection.request(
+                "PUT", path, json.dumps(request).encode("utf-8"), headers
+            )
 
             response = connection.getresponse()
 
@@ -172,7 +173,9 @@ def create_stac_server_user():
                 host, context=ssl._create_unverified_context()
             )
 
-            connection.request("PUT", path, json.dumps(request).encode("utf-8"), headers)
+            connection.request(
+                "PUT", path, json.dumps(request).encode("utf-8"), headers
+            )
 
             response = connection.getresponse()
 
@@ -228,7 +231,9 @@ def create_stac_server_user_role_mapping():
                 host, context=ssl._create_unverified_context()
             )
 
-            connection.request("PUT", path, json.dumps(request).encode("utf-8"), headers)
+            connection.request(
+                "PUT", path, json.dumps(request).encode("utf-8"), headers
+            )
 
             response = connection.getresponse()
 

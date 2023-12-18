@@ -113,9 +113,3 @@ variable "filmdrop_archive_bucket_name" {
   type        = string
   default     = "CHANGEME"
 }
-
-variable "domain_name" {
-  description = "Cloudfront DNS domain name of S3 bucket or custom endpoint"
-  type        = string
-  default     = ""
-}
