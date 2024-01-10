@@ -2,7 +2,7 @@
 
 <p align="center">
   <a href="https://element84.com/filmdrop/" target="_blank">
-      <img src="./images/filmdrop_logo.png" alt="FilmDrop by Element 84" class="headerLogoImage filmDrop">
+      <img src="./images/FilmDrop_E84_Combined_Logo.png" alt="FilmDrop by Element 84" class="headerLogoImage filmDrop">
   </a>
   <p align="center">FilmDrop Terraform infrastructure modules for AWS.</p>
 </p>
