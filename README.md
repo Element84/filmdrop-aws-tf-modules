@@ -12,8 +12,7 @@
       <img src="https://github.com/Element84/filmdrop-aws-tf-modules/workflows/Snyk%20Scan/badge.svg" alt="Test">
   </a>
   <a href="https://github.com/Element84/filmdrop-aws-tf-modules/releases" target="_blank">
-      <img src="https://img.shields.io/github/v/release/Element84/filmdrop-aws-tf-modules
-?color=2334D058" alt="Release version">
+      <img src="https://img.shields.io/github/v/release/Element84/filmdrop-aws-tf-modules?color=2334D058" alt="Release version">
   </a>
   <a href="https://github.com/Element84/filmdrop-aws-tf-modules/blob/main/LICENSE" target="_blank">
       <img src="https://img.shields.io/github/license/Element84/filmdrop-aws-tf-modules?color=2334D058" alt="License">
