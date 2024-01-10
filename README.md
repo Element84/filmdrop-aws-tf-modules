@@ -8,7 +8,7 @@
   <a href="https://github.com/Element84/filmdrop-aws-tf-modules/actions?query=workflow%3AContinuous%20integration" target="_blank">
       <img src="https://github.com/Element84/filmdrop-aws-tf-modules/workflows/Continuous%20integration/badge.svg" alt="Test">
   </a>
-  <a href="https://github.com/Element84/filmdrop-aws-tf-modules/actions?query=workflow%Snyk%20Scan" target="_blank">
+  <a href="https://github.com/Element84/filmdrop-aws-tf-modules/actions?query=workflow%3ASnyk%20Scan" target="_blank">
       <img src="https://github.com/Element84/filmdrop-aws-tf-modules/workflows/Snyk%20Scan/badge.svg" alt="Test">
   </a>
   <a href="https://github.com/Element84/filmdrop-aws-tf-modules/releases" target="_blank">
