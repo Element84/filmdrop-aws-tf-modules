@@ -12,7 +12,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Changed
 
 - Update stac-server to use OpenSearch 2.11
- 
+- Enable auto-assignment of public IP addresses in public subnets
+
 ### Fixed
 
 ## 2.3.0

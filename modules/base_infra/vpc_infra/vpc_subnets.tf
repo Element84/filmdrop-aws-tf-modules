@@ -11,9 +11,10 @@ resource "aws_vpc" "filmdrop_vpc" {
 resource "aws_subnet" "public_subnets" {
   for_each = var.public_subnets_cidr_map
 
-  vpc_id            = aws_vpc.filmdrop_vpc.id
-  cidr_block        = each.value
-  availability_zone = each.key
+  vpc_id                  = aws_vpc.filmdrop_vpc.id
+  cidr_block              = each.value
+  availability_zone       = each.key
+  map_public_ip_on_launch = true
 
   tags = {
     Name = "${local.name_prefix}-public-subnet-${each.key}"
