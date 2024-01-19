@@ -1,4 +1,28 @@
-# FilmDrop Terraform Modules
+<!-- markdownlint-disable MD033 MD041 -->
+
+<p align="center">
+  <a href="https://element84.com/filmdrop/" target="_blank">
+      <img src="./images/FilmDrop_E84_Combined_Logo.png" alt="FilmDrop by Element 84" class="headerLogoImage filmDrop">
+  </a>
+  <p align="center">FilmDrop Terraform infrastructure modules for AWS.</p>
+</p>
+<p align="center">
+  <a href="https://github.com/Element84/filmdrop-aws-tf-modules/actions?query=workflow%3AContinuous%20integration" target="_blank">
+      <img src="https://github.com/Element84/filmdrop-aws-tf-modules/workflows/Continuous%20integration/badge.svg" alt="Test">
+  </a>
+  <a href="https://github.com/Element84/filmdrop-aws-tf-modules/actions?query=workflow%3ASnyk%20Scan" target="_blank">
+      <img src="https://github.com/Element84/filmdrop-aws-tf-modules/workflows/Snyk%20Scan/badge.svg" alt="Test">
+  </a>
+  <a href="https://github.com/Element84/filmdrop-aws-tf-modules/releases" target="_blank">
+      <img src="https://img.shields.io/github/v/release/Element84/filmdrop-aws-tf-modules?color=2334D058" alt="Release version">
+  </a>
+  <a href="https://github.com/Element84/filmdrop-aws-tf-modules/blob/main/LICENSE" target="_blank">
+      <img src="https://img.shields.io/github/license/Element84/filmdrop-aws-tf-modules?color=2334D058" alt="License">
+  </a>
+</p>
+
+
+---
 
 This repository contains the packaging of FilmDrop terraform modules.
 

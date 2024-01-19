@@ -1,4 +1,4 @@
-variable environment {
+variable "environment" {
   description = "Project environment."
   type        = string
   validation {
@@ -7,7 +7,7 @@ variable environment {
   }
 }
 
-variable project_name {
+variable "project_name" {
   description = "Project Name"
   type        = string
   validation {
@@ -16,17 +16,17 @@ variable project_name {
   }
 }
 
-variable vpc_id {
+variable "vpc_id" {
   type        = string
   description = "ID for the VPC"
 }
 
-variable vpc_cidr {
+variable "vpc_cidr" {
   type        = string
   description = "CIDR for the VPC"
 }
 
-variable private_subnet_ids {
+variable "private_subnet_ids" {
   description = "List of private subnet ids in the FilmDrop vpc"
   type        = list(string)
 }
@@ -36,39 +36,69 @@ variable "security_group_id" {
   type        = string
 }
 
-variable stac_server_inputs {
+variable "stac_server_inputs" {
   description = "Inputs for stac-server FilmDrop deployment."
-  type        = object({
-    app_name                                      = string
-    version                                       = string
-    domain_alias                                  = string
-    enable_transactions_extension                 = bool
-    collection_to_index_mappings                  = string
-    opensearch_cluster_instance_type              = string
-    opensearch_cluster_instance_count             = number
-    opensearch_cluster_dedicated_master_enabled   = bool
-    opensearch_cluster_dedicated_master_type      = string
-    opensearch_cluster_dedicated_master_count     = number
-    ingest_sns_topic_arns                         = list(string)
-    opensearch_ebs_volume_size                    = number
-    stac_server_and_titiler_s3_arns               = list(string)
-    web_acl_id                                    = string
+  type = object({
+    app_name                                    = string
+    version                                     = string
+    deploy_cloudfront                           = bool
+    domain_alias                                = string
+    enable_transactions_extension               = bool
+    collection_to_index_mappings                = string
+    opensearch_cluster_instance_type            = string
+    opensearch_cluster_instance_count           = number
+    opensearch_cluster_dedicated_master_enabled = bool
+    opensearch_cluster_dedicated_master_type    = string
+    opensearch_cluster_dedicated_master_count   = number
+    ingest_sns_topic_arns                       = list(string)
+    additional_ingest_sqs_senders_arns          = list(string)
+    opensearch_ebs_volume_size                  = number
+    stac_server_and_titiler_s3_arns             = list(string)
+    web_acl_id                                  = string
+    ingest = object({
+      source_catalog_url               = string
+      destination_collections_list     = string
+      destination_collections_min_lat  = number
+      destination_collections_min_long = number
+      destination_collections_max_lat  = number
+      destination_collections_max_long = number
+      date_start                       = string
+      date_end                         = string
+      include_historical_ingest        = bool
+      source_sns_arn                   = string
+      include_ongoing_ingest           = bool
+    })
   })
-  default       = {
-    app_name                                      = "stac_server"
-    version                                       = "v2.2.3"
-    domain_alias                                  = ""
-    enable_transactions_extension                 = false
-    collection_to_index_mappings                  = ""
-    opensearch_cluster_instance_type              = "t3.small.search"
-    opensearch_cluster_instance_count             = 3
-    opensearch_cluster_dedicated_master_enabled   = true
-    opensearch_cluster_dedicated_master_type      = "t3.small.search"
-    opensearch_cluster_dedicated_master_count     = 3
-    ingest_sns_topic_arns                         = []
-    opensearch_ebs_volume_size                    = 35
-    stac_server_and_titiler_s3_arns               = []
-    web_acl_id                                    = ""
+  default = {
+    app_name                                    = "stac_server"
+    version                                     = "v3.2.0"
+    deploy_cloudfront                           = true
+    domain_alias                                = ""
+    enable_transactions_extension               = false
+    collection_to_index_mappings                = ""
+    opensearch_cluster_instance_type            = "t3.small.search"
+    opensearch_cluster_instance_count           = 3
+    opensearch_cluster_dedicated_master_enabled = true
+    opensearch_cluster_dedicated_master_type    = "t3.small.search"
+    opensearch_cluster_dedicated_master_count   = 3
+    ingest_sns_topic_arns                       = []
+    additional_ingest_sqs_senders_arns          = []
+    opensearch_ebs_volume_size                  = 35
+    stac_server_and_titiler_s3_arns             = []
+    web_acl_id                                  = ""
+    ingest = {
+      source_catalog_url               = ""
+      destination_collections_list     = ""
+      destination_collections_min_lat  = -90
+      destination_collections_min_long = -180
+      destination_collections_max_lat  = 90
+      destination_collections_max_long = 180
+      date_start                       = ""
+      date_end                         = ""
+      include_historical_ingest        = false
+      source_sns_arn                   = ""
+      include_ongoing_ingest           = false
+    }
   }
 }
 
@@ -98,4 +128,10 @@ variable "log_bucket_domain_name" {
   description = "Domain Name of existing CloudFront Distribution Logging bucket"
   type        = string
   default     = ""
+}
+
+variable "deploy_stac_server_opensearch_serverless" {
+  type        = bool
+  default     = false
+  description = "Deploy FilmDrop Stac-Server with OpenSearch Serverless. If False, Stac-server will be deployed with a classic OpenSearch domain."
 }

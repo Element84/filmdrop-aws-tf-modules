@@ -67,9 +67,9 @@ resource "aws_iam_role_policy_attachment" "cloudfront_bucket_replicator" {
 }
 
 resource "aws_s3_bucket_policy" "cloudfront_custom_content_policy" {
-  provider  = aws.main
-  count     = var.create_content_website ? 1 : 0
-  bucket    = module.content_website[0].content_bucket
+  provider = aws.main
+  count    = var.create_content_website ? 1 : 0
+  bucket   = module.content_website[0].content_bucket
 
   policy = <<EOF
 {

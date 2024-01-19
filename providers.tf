@@ -32,20 +32,20 @@ provider "aws" {
 
   default_tags {
     tags = {
-      filmdrop-project-name     = var.project_name
-      filmdrop-stage            = var.environment
+      filmdrop-project-name = var.project_name
+      filmdrop-stage        = var.environment
     }
   }
 
 }
 
 provider "aws" {
-  alias  = "main"
+  alias = "main"
 
   default_tags {
     tags = {
-      filmdrop-project-name     = var.project_name
-      filmdrop-stage            = var.environment
+      filmdrop-project-name = var.project_name
+      filmdrop-stage        = var.environment
     }
   }
 

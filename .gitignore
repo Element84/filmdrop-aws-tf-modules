@@ -31,3 +31,4 @@ stac-server-*
 stac-server.tgz
 terraform-visual-report
 terraform.tgz
+modules/stac-server/historical-ingest/lambda/package/*

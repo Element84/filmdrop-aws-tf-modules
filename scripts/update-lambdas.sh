@@ -4,11 +4,11 @@
 #
 # Usage:
 #
-#     ./scripts/update-lambdas.sh v2.2.3
+#     ./scripts/update-lambdas.sh v3.2.0
 #
 # or
 #
-#     export STAC_SERVER_TAG=v2.2.3
+#     export STAC_SERVER_TAG=v3.2.0
 #     ./scripts/update-lambdas.sh
 
 set -e
@@ -38,5 +38,13 @@ mkdir -p modules/stac-server/lambda/ingest
 cp "$STAC_SERVER_DIR/dist/ingest/ingest.zip" modules/stac-server/lambda/ingest/
 mkdir -p modules/stac-server/lambda/pre-hook
 cp "$STAC_SERVER_DIR/dist/pre-hook/pre-hook.zip" modules/stac-server/lambda/pre-hook/
+
+cd modules/stac-server/historical-ingest/lambda/
+pip install -r requirements.txt --target package
+cd package
+zip -r ../../lambda.zip .
+cd ../
+zip ../lambda.zip main.py
+cd ../../../../
 
 echo "Done!"

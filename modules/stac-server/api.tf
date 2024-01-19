@@ -5,7 +5,7 @@ resource "aws_lambda_function" "stac_server_api" {
   role             = aws_iam_role.stac_api_lambda_role.arn
   handler          = "index.handler"
   source_code_hash = filebase64sha256("${path.module}/lambda/api/api.zip")
-  runtime          = "nodejs16.x"
+  runtime          = "nodejs18.x"
   timeout          = var.api_lambda_timeout
   memory_size      = var.api_lambda_memory
 
@@ -20,7 +20,7 @@ resource "aws_lambda_function" "stac_server_api" {
       OPENSEARCH_HOST = (
         var.opensearch_host != ""
         ? var.opensearch_host
-        : aws_opensearch_domain.stac_server_opensearch_domain.endpoint
+        : local.opensearch_endpoint
       )
       ENABLE_TRANSACTIONS_EXTENSION = var.enable_transactions_extension
       STAC_API_ROOTPATH = (
@@ -34,14 +34,18 @@ resource "aws_lambda_function" "stac_server_api" {
         : var.stac_server_pre_hook_lambda_arn
       )
       POST_HOOK                        = var.stac_server_post_hook_lambda_arn
-      OPENSEARCH_CREDENTIALS_SECRET_ID = aws_secretsmanager_secret.opensearch_stac_user_password_secret.arn
+      OPENSEARCH_CREDENTIALS_SECRET_ID = var.deploy_stac_server_opensearch_serverless ? "" : aws_secretsmanager_secret.opensearch_stac_user_password_secret.arn
       COLLECTION_TO_INDEX_MAPPINGS     = var.collection_to_index_mappings
     }
   }
 
-  vpc_config {
-    subnet_ids         = var.vpc_subnet_ids
-    security_group_ids = var.vpc_security_group_ids
+  dynamic "vpc_config" {
+    for_each = { for i, j in [var.deploy_stac_server_opensearch_serverless] : i => j if var.deploy_stac_server_opensearch_serverless != true }
+
+    content {
+      subnet_ids         = var.vpc_subnet_ids
+      security_group_ids = var.vpc_security_group_ids
+    }
   }
 }
 

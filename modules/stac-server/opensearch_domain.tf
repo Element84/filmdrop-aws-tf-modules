@@ -3,6 +3,7 @@ resource "random_id" "suffix" {
 }
 
 resource "aws_opensearch_domain" "stac_server_opensearch_domain" {
+  count          = var.deploy_stac_server_opensearch_serverless ? 0 : 1
   domain_name    = lower(var.opensearch_stac_server_domain_name_override == null ? "${local.name_prefix}-stac-server" : var.opensearch_stac_server_domain_name_override)
   engine_version = var.opensearch_version
 
@@ -57,7 +58,7 @@ resource "aws_opensearch_domain" "stac_server_opensearch_domain" {
 
   vpc_options {
     subnet_ids         = var.vpc_subnet_ids
-    security_group_ids = [aws_security_group.opensearch_security_group.id]
+    security_group_ids = [aws_security_group.opensearch_security_group[0].id]
   }
 
   advanced_options = {
@@ -95,6 +96,7 @@ CONFIG
 }
 
 resource "aws_security_group" "opensearch_security_group" {
+  count       = var.deploy_stac_server_opensearch_serverless ? 0 : 1
   name        = "${local.name_prefix}-stac-server"
   description = "OpenSearch Security Group"
   vpc_id      = var.vpc_id
@@ -145,9 +147,9 @@ EOF
 
 resource "null_resource" "cleanup_opensearch_master_password_secret" {
   triggers = {
-    opensearch_master_password_secret     = "${local.name_prefix}-stac-server-master-creds-${random_id.suffix.hex}"
-    region                                = data.aws_region.current.name
-    account                               = data.aws_caller_identity.current.account_id
+    opensearch_master_password_secret = "${local.name_prefix}-stac-server-master-creds-${random_id.suffix.hex}"
+    region                            = data.aws_region.current.name
+    account                           = data.aws_caller_identity.current.account_id
   }
 
   provisioner "local-exec" {
@@ -208,9 +210,9 @@ EOF
 
 resource "null_resource" "cleanup_opensearch_stac_user_password_secret" {
   triggers = {
-    opensearch_stac_user_password_secret  = "${local.name_prefix}-stac-server-user-creds-${random_id.suffix.hex}"
-    region                                = data.aws_region.current.name
-    account                               = data.aws_caller_identity.current.account_id
+    opensearch_stac_user_password_secret = "${local.name_prefix}-stac-server-user-creds-${random_id.suffix.hex}"
+    region                               = data.aws_region.current.name
+    account                              = data.aws_caller_identity.current.account_id
   }
 
   provisioner "local-exec" {
@@ -258,20 +260,23 @@ resource "aws_lambda_function" "stac_server_opensearch_user_initializer" {
 
   environment {
     variables = {
-      OPENSEARCH_HOST                    = var.opensearch_host != "" ? var.opensearch_host : aws_opensearch_domain.stac_server_opensearch_domain.endpoint
+      OPENSEARCH_HOST                    = var.opensearch_host != "" ? var.opensearch_host : local.opensearch_endpoint
       OPENSEARCH_MASTER_CREDS_SECRET_ARN = aws_secretsmanager_secret.opensearch_master_password_secret.arn
       OPENSEARCH_USER_CREDS_SECRET_ARN   = aws_secretsmanager_secret.opensearch_stac_user_password_secret.arn
       REGION                             = data.aws_region.current.name
     }
   }
 
-  vpc_config {
-    subnet_ids         = var.vpc_subnet_ids
-    security_group_ids = var.vpc_security_group_ids
+  dynamic "vpc_config" {
+    for_each = { for i, j in [var.deploy_stac_server_opensearch_serverless] : i => j if var.deploy_stac_server_opensearch_serverless != true }
+
+    content {
+      subnet_ids         = var.vpc_subnet_ids
+      security_group_ids = var.vpc_security_group_ids
+    }
   }
 
   depends_on = [
-    aws_opensearch_domain.stac_server_opensearch_domain,
     random_password.opensearch_master_password,
     aws_secretsmanager_secret.opensearch_master_password_secret,
     aws_secretsmanager_secret_version.opensearch_master_password_secret_version,
@@ -282,29 +287,13 @@ resource "aws_lambda_function" "stac_server_opensearch_user_initializer" {
   ]
 }
 
-resource "null_resource" "invoke_stac_server_opensearch_user_initializer" {
-  triggers = {
-    INITIALIZER_LAMBDA                 = aws_lambda_function.stac_server_opensearch_user_initializer.function_name
-    OPENSEARCH_HOST                    = aws_opensearch_domain.stac_server_opensearch_domain.endpoint
-    OPENSEARCH_MASTER_CREDS_SECRET_ARN = aws_secretsmanager_secret.opensearch_master_password_secret.arn
-    OPENSEARCH_USER_CREDS_SECRET_ARN   = aws_secretsmanager_secret.opensearch_stac_user_password_secret.arn
-    REGION                             = data.aws_region.current.name
-  }
+resource "aws_lambda_invocation" "invoke_stac_server_opensearch_user_initializer" {
+  count         = var.deploy_stac_server_opensearch_serverless ? 0 : 1
+  function_name = aws_lambda_function.stac_server_opensearch_user_initializer.function_name
 
-  provisioner "local-exec" {
-    interpreter = ["bash", "-ec"]
-    command     = <<EOF
-export AWS_DEFAULT_REGION=${data.aws_region.current.name}
-export AWS_REGION=${data.aws_region.current.name}
-
-echo "Creating stac_server user on OpenSearch cluster."
-aws lambda invoke --function-name ${aws_lambda_function.stac_server_opensearch_user_initializer.function_name} --payload '{ }' output
-
-EOF
-  }
+  input = "{}"
 
   depends_on = [
-    aws_opensearch_domain.stac_server_opensearch_domain,
     random_password.opensearch_master_password,
     aws_secretsmanager_secret.opensearch_master_password_secret,
     aws_secretsmanager_secret_version.opensearch_master_password_secret_version,
@@ -312,5 +301,18 @@ EOF
     aws_secretsmanager_secret.opensearch_stac_user_password_secret,
     aws_secretsmanager_secret_version.opensearch_stac_user_password_secret_version,
     aws_lambda_function.stac_server_opensearch_user_initializer
+  ]
+}
+
+resource "aws_lambda_invocation" "stac_server_opensearch_domain_ingest_create_indices" {
+  count         = var.deploy_stac_server_opensearch_serverless ? 0 : 1
+  function_name = aws_lambda_function.stac_server_ingest.function_name
+
+  input = "{ \"create_indices\": true }"
+
+  depends_on = [
+    aws_lambda_function.stac_server_ingest,
+    aws_lambda_invocation.invoke_stac_server_opensearch_user_initializer,
+    aws_opensearch_domain.stac_server_opensearch_domain
   ]
 }
