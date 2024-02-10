@@ -7,11 +7,14 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## 2.4.0
+
 ### Added
 
 ### Changed
 
 - Update stac-server to use OpenSearch 2.11
+- Updated terraform supported version to 1.6.6
  
 ### Fixed
 
