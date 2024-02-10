@@ -10,8 +10,8 @@ module "filmdrop" {
   project_name                             = var.project_name
   vpc_id                                   = var.vpc_id
   vpc_cidr                                 = var.vpc_cidr
-  public_subnets_cidr_map                  = var.public_subnets_cidr_map
-  private_subnets_cidr_map                 = var.private_subnets_cidr_map
+  public_subnets_az_to_id_map              = var.public_subnets_az_to_id_map
+  private_subnets_az_to_id_map             = var.private_subnets_az_to_id_map
   security_group_id                        = var.security_group_id
   sns_topics_map                           = var.sns_topics_map
   cloudwatch_warning_alarms_map            = var.cloudwatch_warning_alarms_map

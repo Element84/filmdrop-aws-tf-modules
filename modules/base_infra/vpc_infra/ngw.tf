@@ -1,5 +1,5 @@
 resource "aws_eip" "eips" {
-  for_each = var.public_subnets_cidr_map
+  for_each = var.public_subnets_az_to_id_map
 
   domain = "vpc"
 
