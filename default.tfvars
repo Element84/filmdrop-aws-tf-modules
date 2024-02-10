@@ -8,9 +8,9 @@ s3_logs_archive_bucket = ""
 
 ##### NETWORKING VARIABLES ####
 # If left blank, the infrastructure will try to query the values from the control tower vpc
-vpc_id                   = ""
-vpc_cidr                 = ""
-security_group_id        = ""
+vpc_id                       = ""
+vpc_cidr                     = ""
+security_group_id            = ""
 public_subnets_az_to_id_map  = {}
 private_subnets_az_to_id_map = {}
 

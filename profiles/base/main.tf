@@ -9,16 +9,16 @@ module "filmdrop_log_archive" {
 module "filmdrop_vpc" {
   source = "./vpc"
 
-  deploy_vpc                    = var.deploy_vpc
-  deploy_vpc_search             = var.deploy_vpc_search
-  environment                   = var.environment
-  project_name                  = var.project_name
-  vpc_cidr                      = var.vpc_cidr
-  vpc_id                        = var.vpc_id
-  security_group_id             = var.security_group_id
-  private_subnets_az_to_id_map  = var.private_subnets_az_to_id_map
-  public_subnets_az_to_id_map   = var.public_subnets_az_to_id_map
-  archive_log_bucket_name       = var.deploy_log_archive ? module.filmdrop_log_archive[0].s3_logs_archive_bucket : var.s3_logs_archive_bucket
+  deploy_vpc                   = var.deploy_vpc
+  deploy_vpc_search            = var.deploy_vpc_search
+  environment                  = var.environment
+  project_name                 = var.project_name
+  vpc_cidr                     = var.vpc_cidr
+  vpc_id                       = var.vpc_id
+  security_group_id            = var.security_group_id
+  private_subnets_az_to_id_map = var.private_subnets_az_to_id_map
+  public_subnets_az_to_id_map  = var.public_subnets_az_to_id_map
+  archive_log_bucket_name      = var.deploy_log_archive ? module.filmdrop_log_archive[0].s3_logs_archive_bucket : var.s3_logs_archive_bucket
 }
 
 module "sns_alarm_topics" {
