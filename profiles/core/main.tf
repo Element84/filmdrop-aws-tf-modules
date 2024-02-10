@@ -11,8 +11,8 @@ module "base_infra" {
   vpc_id                         = var.vpc_id
   sns_topics_map                 = var.sns_topics_map
   security_group_id              = var.security_group_id
-  private_subnets_cidr_map       = var.private_subnets_cidr_map
-  public_subnets_cidr_map        = var.public_subnets_cidr_map
+  private_subnets_az_to_id_map   = var.private_subnets_az_to_id_map
+  public_subnets_az_to_id_map    = var.public_subnets_az_to_id_map
   cloudwatch_warning_alarms_map  = var.cloudwatch_warning_alarms_map
   cloudwatch_critical_alarms_map = var.cloudwatch_critical_alarms_map
   sns_warning_subscriptions_map  = var.sns_warning_subscriptions_map

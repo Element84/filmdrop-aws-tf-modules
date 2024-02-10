@@ -9,7 +9,7 @@ resource "aws_vpc" "filmdrop_vpc" {
 }
 
 resource "aws_subnet" "public_subnets" {
-  for_each = var.public_subnets_cidr_map
+  for_each = var.public_subnets_az_to_id_map
 
   vpc_id            = aws_vpc.filmdrop_vpc.id
   cidr_block        = each.value
@@ -21,7 +21,7 @@ resource "aws_subnet" "public_subnets" {
 }
 
 resource "aws_subnet" "private_subnets" {
-  for_each = var.private_subnets_cidr_map
+  for_each = var.private_subnets_az_to_id_map
 
   vpc_id            = aws_vpc.filmdrop_vpc.id
   cidr_block        = each.value

@@ -28,15 +28,15 @@ variable "vpc_cidr" {
   default     = ""
 }
 
-variable "public_subnets_cidr_map" {
+variable "public_subnets_az_to_id_map" {
   type        = map(any)
-  description = "Map with the availability zone to the cidr range for public subnets"
+  description = "Map with the availability zone to the id for public subnets"
   default     = {}
 }
 
-variable "private_subnets_cidr_map" {
+variable "private_subnets_az_to_id_map" {
   type        = map(any)
-  description = "Map with the availability zone to the cidr range for private subnets"
+  description = "Map with the availability zone to the id for private subnets"
   default     = {}
 }
 

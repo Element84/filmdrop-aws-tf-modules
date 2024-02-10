@@ -11,8 +11,8 @@ s3_logs_archive_bucket = ""
 vpc_id                   = ""
 vpc_cidr                 = ""
 security_group_id        = ""
-public_subnets_cidr_map  = {}
-private_subnets_cidr_map = {}
+public_subnets_az_to_id_map  = {}
+private_subnets_az_to_id_map = {}
 
 ##### ALARM VARIABLES ####
 sns_topics_map                 = {}
