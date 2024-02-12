@@ -19,7 +19,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Updating private_subnets_cidr_map name variable name to private_subnets_az_to_id_map
 - Updating analytics load balancer subnets
 - Updating analytics ebs csi driver repo
- 
+
 ### Fixed
 
 ## 2.3.0
