@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### Changed
+
+- Update to require version 1.6.x or 1.7.x of Terraform (instead of ~>1.6.6).
+- Update to default to stac-server v3.5.0 (from v3.2.0)
+
 ## 2.4.0
 
 ### Added
@@ -14,7 +19,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Changed
 
 - Update stac-server to use OpenSearch 2.11
-- Updated terraform supported version to 1.6.6
+- Updated terraform supported version to 1.7.3
 - Updating public_subnets_cidr_map name variable name to public_subnets_az_to_id_map
 - Updating private_subnets_cidr_map name variable name to private_subnets_az_to_id_map
 - Updating analytics load balancer subnets
