@@ -20,6 +20,8 @@ jupyterhub:
       annotations:
         service.beta.kubernetes.io/aws-load-balancer-backend-protocol: "tcp"
         service.beta.kubernetes.io/aws-load-balancer-connection-idle-timeout: "3600"
+        service.beta.kubernetes.io/aws-load-balancer-type: "elb"
+        service.beta.kubernetes.io/aws-load-balancer-subnets: "${filmdrop_public_subnet_ids}"
   hub:
     config:
       Authenticator:
