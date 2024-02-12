@@ -259,6 +259,7 @@ resource "local_file" "rendered_daskhub_helm_filmdrop" {
     jupyterhub_admin_username_list = join(",", var.jupyterhub_admin_username_list)
     jupyterhub_admin_password      = jsondecode(data.aws_secretsmanager_secret_version.filmdrop_analytics_credentials_version.secret_string)["PASSWORD"]
     dask_gateway_token             = jsondecode(data.aws_secretsmanager_secret_version.filmdrop_analytics_dask_secret_token_version.secret_string)["APITOKEN"]
+    filmdrop_public_subnet_ids     = var.vpc_public_subnet_ids[0]
   })
   filename = "${path.module}/daskhub.yaml"
 }
