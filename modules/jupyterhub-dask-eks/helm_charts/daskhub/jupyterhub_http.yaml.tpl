@@ -9,8 +9,6 @@ jupyterhub:
     memory:
       limit: 4G
       guarantee: 2G
-    extraEnv:
-      DASK_GATEWAY__CLUSTER__OPTIONS__IMAGE: '{JUPYTER_IMAGE_SPEC}'
   proxy:
     secretToken: "${dask_proxy_token}"
     https:
