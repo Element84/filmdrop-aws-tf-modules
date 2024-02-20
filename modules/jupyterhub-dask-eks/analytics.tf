@@ -216,8 +216,8 @@ resource "aws_s3_object" "jupyter_dask_source_config_storageclass" {
 resource "aws_s3_object" "analytics_eks_build_spec" {
   bucket = aws_s3_bucket.jupyter_dask_source_config.id
   key    = "buildspec.yml"
-  source = var.zone_id == "" && var.domain_alias == "" ? "${path.module}/buildspec_nodnsalias.yml" : "${path.module}/buildspec.yml"
-  etag   = filemd5(var.zone_id == "" && var.domain_alias == "" ? "${path.module}/buildspec_nodnsalias.yml" : "${path.module}/buildspec.yml")
+  source = var.zone_id != "" && var.domain_alias != "" ? "${path.module}/buildspec.yml" : "${path.module}/buildspec_nodnsalias.yml"
+  etag   = filemd5(var.zone_id != "" && var.domain_alias != "" ? "${path.module}/buildspec.yml" : "${path.module}/buildspec_nodnsalias.yml")
 }
 
 resource "aws_kms_key" "analytics_filmdrop_kms_key" {
