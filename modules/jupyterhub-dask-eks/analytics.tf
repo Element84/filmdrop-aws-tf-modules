@@ -251,7 +251,7 @@ resource "local_file" "rendered_daskhub_helm_filmdrop" {
   depends_on = [
     module.daskhub_docker_ecr
   ]
-  content = templatefile("${path.module}/helm_charts/daskhub/jupyterhub.yaml.tpl", {
+  content = templatefile(var.jupyterhub_elb_acm_cert_arn == "" ? "${path.module}/helm_charts/daskhub/jupyterhub_http.yaml.tpl" : "${path.module}/helm_charts/daskhub/jupyterhub.yaml.tpl", {
     jupyterhub_image_repo          = module.daskhub_docker_ecr.daskhub_repo
     jupyterhub_image_version       = var.jupyterhub_image_version
     dask_proxy_token               = jsondecode(data.aws_secretsmanager_secret_version.filmdrop_analytics_dask_secret_token_version.secret_string)["PROXYTOKEN"]
