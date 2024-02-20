@@ -25,7 +25,7 @@ fi
 while [[ "$STATUS" != "ISSUED" ]];
 do
   COUNT=$((COUNT + 1))
-  if [[ $COUNT -gt 100 ]];
+  if [[ $COUNT -gt 100 ]]; then
     echo "Timed out getting cert status."
     exit 0
   fi
