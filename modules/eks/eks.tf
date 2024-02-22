@@ -20,13 +20,13 @@ resource "aws_eks_cluster" "cluster" {
 
 # EKS Node Group
 resource "aws_eks_node_group" "node_group" {
-  cluster_name    = aws_eks_cluster.cluster.name
-  node_group_name = "workers"
-  node_role_arn   = aws_iam_role.node_group_role.arn
-  subnet_ids      = var.subnet_ids
-  instance_types  = var.node_group_instance_type
-  capacity_type   = var.node_group_capacity_type
-  disk_size       = var.node_group_disk_size
+  cluster_name            = aws_eks_cluster.cluster.name
+  node_group_name_prefix  = var.node_group_name_prefix
+  node_role_arn           = aws_iam_role.node_group_role.arn
+  subnet_ids              = var.subnet_ids
+  instance_types          = var.node_group_instance_type
+  capacity_type           = var.node_group_capacity_type
+  disk_size               = var.node_group_disk_size_gb
 
   scaling_config {
     desired_size = var.autoscaling_group_desired_capacity

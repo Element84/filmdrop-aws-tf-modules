@@ -39,10 +39,10 @@ variable "autoscaling_group_max_size" {
   default     = 1
 }
 
-variable "nodegroup_name" {
+variable "node_group_name_prefix" {
   type        = string
-  description = "EKS Node Group name."
-  default     = "workers"
+  description = "EKS Node Group prefix."
+  default     = "workers-"
 }
 
 variable "attach_accelerator_policy" {
@@ -57,7 +57,7 @@ variable "node_group_capacity_type" {
   default     = "ON_DEMAND"
 }
 
-variable "node_group_disk_size" {
+variable "node_group_disk_size_gb" {
   type        = number
   description = "Disk size in GiB for worker nodes."
   default     = 50
