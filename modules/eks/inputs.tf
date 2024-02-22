@@ -16,9 +16,14 @@ variable "node_group_instance_type" {
   default     = ["t3.large"]
 }
 
-variable "subnet_ids" {
+variable "cluster_subnet_ids" {
   type        = list(string)
   description = "Subnets within the VPC where the EKS cluster should be created."
+}
+
+variable "node_group_subnet_ids" {
+  type        = list(string)
+  description = "Subnets within the VPC where the EKS node groups should be created."
 }
 
 variable "autoscaling_group_desired_capacity" {

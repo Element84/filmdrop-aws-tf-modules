@@ -7,7 +7,7 @@ resource "aws_eks_cluster" "cluster" {
   vpc_config {
     endpoint_private_access = var.endpoint_private_access
     endpoint_public_access  = false
-    subnet_ids              = var.subnet_ids
+    subnet_ids              = var.cluster_subnet_ids
   }
 
   # Ensure that IAM Role permissions are created before and deleted after EKS Cluster handling.
@@ -23,7 +23,7 @@ resource "aws_eks_node_group" "node_group" {
   cluster_name           = aws_eks_cluster.cluster.name
   node_group_name_prefix = var.node_group_name_prefix
   node_role_arn          = aws_iam_role.node_group_role.arn
-  subnet_ids             = var.subnet_ids
+  subnet_ids             = var.node_group_subnet_ids
   instance_types         = var.node_group_instance_type
   capacity_type          = var.node_group_capacity_type
   disk_size              = var.node_group_disk_size_gb
