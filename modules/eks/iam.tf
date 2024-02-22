@@ -1,5 +1,5 @@
 resource "aws_iam_role" "cluster_role" {
-  name        = "eks-cluster-role-${var.cluster_name}"
+  name_prefix = "${var.cluster_name}-"
   description = "Service Role to manage ${var.cluster_name} cluster"
 
   assume_role_policy = <<EOF
@@ -29,8 +29,8 @@ resource "aws_iam_role_policy_attachment" "AmazonEKSVPCResourceController" {
 }
 
 resource "aws_iam_role" "node_group_role" {
-  name        = "eks-node-group-role-${var.nodegroup_name}"
-  description = "Service Role to manage ${var.cluster_name} cluster Node Group ${var.nodegroup_name}"
+  name_prefix = var.node_group_name_prefix
+  description = "Service Role to manage ${var.cluster_name} cluster Node Group ${var.node_group_name_prefix}"
 
   assume_role_policy = <<EOF
 {
