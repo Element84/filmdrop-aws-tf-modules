@@ -10,12 +10,19 @@ variable "cluster_version" {
   default     = "1.29"
 }
 
+variable "vpc_id" {
+  type        = string
+  description = "VPC ID for EKS cluster."
+  default     = ""
+}
+
 variable "eks_managed_node_group" {
   description = "Inputs for EKS cluster managed node group"
   type = object({
     node_group_name                    = string
     ami_type                           = string
     node_group_capacity_type           = string
+    node_group_volume_type             = string
     node_group_disk_size_gb            = number
     instance_types                     = list(string)
     subnet_ids                         = list(string)
@@ -27,6 +34,7 @@ variable "eks_managed_node_group" {
     node_group_name                    = "fd-managed-group-nodes"
     ami_type                           = "AL2_x86_64"
     node_group_capacity_type           = "ON_DEMAND"
+    node_group_volume_type             = "gp3"
     node_group_disk_size_gb            = 50
     instance_types                     = ["t3.large"]
     subnet_ids                         = ["managed-group-subnet-ids"]
