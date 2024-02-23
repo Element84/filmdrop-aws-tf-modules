@@ -14,5 +14,3 @@ data "aws_ami" "eks_default_bottlerocket" {
     values = ["bottlerocket-aws-k8s-${var.cluster_version}-x86_64-*"]
   }
 }
-
-data "aws_caller_identity" "current" {}
