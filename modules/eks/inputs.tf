@@ -67,7 +67,7 @@ variable "eks_self_managed_node_group" {
     subnet_ids                         = ["self-managed-group-subnet-ids"]
     autoscaling_group_desired_capacity = 0
     autoscaling_group_min_size         = 0
-    autoscaling_group_max_size         = 0
+    autoscaling_group_max_size         = 1
   }
 }
 
