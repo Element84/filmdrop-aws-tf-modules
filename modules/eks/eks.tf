@@ -53,8 +53,6 @@ module "eks_cluster" {
           ebs = {
             volume_size           = var.eks_managed_node_group.node_group_disk_size_gb
             volume_type           = var.eks_managed_node_group.node_group_volume_type
-            iops                  = 3000
-            throughput            = 150
             encrypted             = true
             kms_key_id            = module.ebs_kms_key.key_arn
             delete_on_termination = true
@@ -150,8 +148,6 @@ module "eks_cluster" {
           ebs = {
             volume_size           = var.eks_self_managed_node_group.node_group_disk_size_gb
             volume_type           = var.eks_self_managed_node_group.node_group_volume_type
-            iops                  = 3000
-            throughput            = 150
             encrypted             = true
             kms_key_id            = module.ebs_kms_key.key_arn
             delete_on_termination = true
