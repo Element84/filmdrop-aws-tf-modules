@@ -43,28 +43,6 @@ resource "time_sleep" "this" {
 # https://docs.aws.amazon.com/eks/latest/userguide/cni-iam-role.html#cni-iam-role-create-ipv6-policy
 ################################################################################
 
-data "aws_iam_policy_document" "cni_ipv6_policy" {
-  count = var.create && var.create_cni_ipv6_iam_policy ? 1 : 0
-
-  statement {
-    sid = "AssignDescribe"
-    actions = [
-      "ec2:AssignIpv6Addresses",
-      "ec2:DescribeInstances",
-      "ec2:DescribeTags",
-      "ec2:DescribeNetworkInterfaces",
-      "ec2:DescribeInstanceTypes"
-    ]
-    resources = ["*"]
-  }
-
-  statement {
-    sid       = "CreateTags"
-    actions   = ["ec2:CreateTags"]
-    resources = ["arn:${local.partition}:ec2:*:*:network-interface/*"]
-  }
-}
-
 # Note - we are keeping this to a minimum in hopes that its soon replaced with an AWS managed policy like `AmazonEKS_CNI_Policy`
 resource "aws_iam_policy" "cni_ipv6_policy" {
   count = var.create && var.create_cni_ipv6_iam_policy ? 1 : 0

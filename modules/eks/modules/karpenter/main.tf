@@ -155,11 +155,6 @@ resource "aws_eks_access_entry" "node" {
 # Starting with Karpenter 0.32 this is no longer required as Karpenter will
 # create the Instance Profile
 ################################################################################
-
-locals {
-  external_role_name = try(replace(var.node_iam_role_arn, "/^(.*role/)/", ""), null)
-}
-
 resource "aws_iam_instance_profile" "this" {
   count = var.create && var.create_instance_profile ? 1 : 0
 
