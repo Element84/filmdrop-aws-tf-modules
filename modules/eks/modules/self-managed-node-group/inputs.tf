@@ -78,6 +78,12 @@ variable "launch_template_id" {
   default     = ""
 }
 
+variable "launch_template_name" {
+  description = "Name of launch template to be created"
+  type        = string
+  default     = null
+}
+
 variable "launch_template_use_name_prefix" {
   description = "Determines whether to use `launch_template_name` as is or create a unique name beginning with the `launch_template_name` as the prefix"
   type        = bool
@@ -198,6 +204,12 @@ variable "network_interfaces" {
   default     = []
 }
 
+variable "placement" {
+  description = "The placement of the instance"
+  type        = map(string)
+  default     = {}
+}
+
 variable "private_dns_name_options" {
   description = "The options for the instance hostname. The default values are inherited from the subnet"
   type        = map(string)
@@ -236,6 +248,18 @@ variable "instance_type" {
 
 variable "key_name" {
   description = "The key name that should be used for the instance"
+  type        = string
+  default     = null
+}
+
+variable "vpc_security_group_ids" {
+  description = "A list of security group IDs to associate"
+  type        = list(string)
+  default     = []
+}
+
+variable "cluster_primary_security_group_id" {
+  description = "The ID of the EKS cluster primary security group to associate with the instance(s). This is the security group that is automatically created by the EKS service"
   type        = string
   default     = null
 }
