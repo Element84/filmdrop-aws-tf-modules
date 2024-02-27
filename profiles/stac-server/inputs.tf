@@ -71,7 +71,7 @@ variable "stac_server_inputs" {
   })
   default = {
     app_name                                    = "stac_server"
-    version                                     = "v3.2.0"
+    version                                     = "v3.5.0"
     deploy_cloudfront                           = true
     domain_alias                                = ""
     enable_transactions_extension               = false

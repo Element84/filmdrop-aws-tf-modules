@@ -63,6 +63,11 @@ locals {
         Effect   = "Allow"
       },
       {
+        Action   = ["sns:Publish"]
+        Resource = aws_sns_topic.stac_server_post_ingest_sns_topic.arn
+        Effect   = "Allow"
+      },
+      {
         Action   = ["kms:*"]
         Resource = "*"
         Effect   = "Allow"
