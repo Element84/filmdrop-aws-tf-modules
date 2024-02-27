@@ -63,6 +63,11 @@ locals {
         Effect   = "Allow"
       },
       {
+        Action   = ["sns:Publish"]
+        Resource = "arn:aws:lambda:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:function:${local.name_prefix}-stac-server-*"
+        Effect   = "Allow"
+      },
+      {
         Action   = ["kms:*"]
         Resource = "*"
         Effect   = "Allow"
