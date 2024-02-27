@@ -64,7 +64,7 @@ locals {
       },
       {
         Action   = ["sns:Publish"]
-        Resource = "arn:aws:lambda:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:function:${local.name_prefix}-stac-server-*"
+        Resource = aws_sns_topic.stac_server_post_ingest_sns_topic.arn
         Effect   = "Allow"
       },
       {
