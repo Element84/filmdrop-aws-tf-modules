@@ -47,6 +47,7 @@ module "stac-server" {
   s3_logs_archive_bucket                   = module.base_infra.s3_logs_archive_bucket
   domain_zone                              = var.domain_zone
   deploy_stac_server_opensearch_serverless = var.deploy_stac_server_opensearch_serverless
+  deploy_stac_server_outside_vpc           = var.deploy_stac_server_outside_vpc
 
   depends_on = [
     module.setup

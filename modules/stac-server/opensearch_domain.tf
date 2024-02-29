@@ -56,9 +56,13 @@ resource "aws_opensearch_domain" "stac_server_opensearch_domain" {
     }
   }
 
-  vpc_options {
-    subnet_ids         = var.vpc_subnet_ids
-    security_group_ids = [aws_security_group.opensearch_security_group[0].id]
+  dynamic "vpc_options" {
+    for_each = { for i, j in [var.deploy_stac_server_outside_vpc] : i => j if var.deploy_stac_server_outside_vpc != true }
+
+    content {
+      subnet_ids         = var.vpc_subnet_ids
+      security_group_ids = [aws_security_group.opensearch_security_group[0].id]
+    }
   }
 
   advanced_options = {
@@ -268,7 +272,7 @@ resource "aws_lambda_function" "stac_server_opensearch_user_initializer" {
   }
 
   dynamic "vpc_config" {
-    for_each = { for i, j in [var.deploy_stac_server_opensearch_serverless] : i => j if var.deploy_stac_server_opensearch_serverless != true }
+    for_each = { for i, j in [var.deploy_stac_server_outside_vpc] : i => j if var.deploy_stac_server_outside_vpc != true }
 
     content {
       subnet_ids         = var.vpc_subnet_ids

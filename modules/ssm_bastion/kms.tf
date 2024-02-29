@@ -33,7 +33,7 @@ EOF
 }
 
 resource "aws_s3_bucket" "filmdrop_public_keys_bucket" {
-  bucket_prefix = lower(substr(replace("fd-${var.project_name}-${var.environment}-public-keys-", "_", "-"), 0, 60))
+  bucket_prefix = "fd-ssm-bastion-public-keys-"
   force_destroy = true
 }
 

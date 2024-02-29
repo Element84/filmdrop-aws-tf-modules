@@ -294,6 +294,12 @@ variable "deploy_stac_server_opensearch_serverless" {
   description = "Deploy FilmDrop Stac-Server with OpenSearch Serverless. If False, Stac-server will be deployed with a classic OpenSearch domain."
 }
 
+variable "deploy_stac_server_outside_vpc" {
+  type        = bool
+  default     = false
+  description = "Deploy FilmDrop Stac-Server resources, including OpenSearch outside VPC. Defaults to false. If False, Stac-server resources will be deployed within the vpc."
+}
+
 variable "deploy_analytics" {
   type        = bool
   default     = true
