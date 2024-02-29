@@ -83,7 +83,7 @@ console_ui_inputs = {
       response_page_path    = "/"
     }
   ]
-  filmdrop_ui_release     = "v5.0.0"
+  filmdrop_ui_release     = "v4.3.0"
   filmdrop_ui_config_file = "./profiles/console-ui/default-config/config.dev.json"
   filmdrop_ui_logo_file   = "./profiles/console-ui/default-config/logo.png"
   filmdrop_ui_logo        = "bm9uZQo=" # Base64: 'none'
