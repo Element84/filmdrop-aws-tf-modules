@@ -40,7 +40,7 @@ resource "aws_lambda_function" "stac_server_api" {
   }
 
   dynamic "vpc_config" {
-    for_each = { for i, j in [var.deploy_stac_server_opensearch_serverless] : i => j if var.deploy_stac_server_opensearch_serverless != true }
+    for_each = { for i, j in [var.deploy_stac_server_outside_vpc] : i => j if var.deploy_stac_server_outside_vpc != true }
 
     content {
       subnet_ids         = var.vpc_subnet_ids

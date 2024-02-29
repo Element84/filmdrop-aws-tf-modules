@@ -113,6 +113,7 @@ deploy_log_archive                       = true
 deploy_alarms                            = false
 deploy_stac_server_opensearch_serverless = false
 deploy_stac_server                       = true
+deploy_stac_server_outside_vpc           = false
 deploy_analytics                         = true
 deploy_titiler                           = true
 deploy_console_ui                        = true
