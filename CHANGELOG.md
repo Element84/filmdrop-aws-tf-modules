@@ -10,6 +10,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Added
 - Added flag to deploy stac-server resources, including OpenSearch within or outside the vpc, defaults to within vpc.
 
+### Changed
+- Updating default filmdrop-ui release to v5.0.0.
+
 ## 2.8.0
 
 ### Changed
