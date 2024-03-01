@@ -8,7 +8,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ## 2.10
 
 ### Changed
-- Uses v5.0.0 of the console-ui by default
+- Uses v5.0.0 of the [filmdrop-ui](https://github.com/Element84/filmdrop-ui) by default
 
 ## 2.9.0
 
