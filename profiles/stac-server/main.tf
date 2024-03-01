@@ -20,6 +20,7 @@ module "stac-server" {
   project_name                                = var.project_name
   stac_server_s3_bucket_arns                  = var.stac_server_inputs.stac_server_and_titiler_s3_arns
   deploy_stac_server_opensearch_serverless    = var.deploy_stac_server_opensearch_serverless
+  deploy_stac_server_outside_vpc              = var.deploy_stac_server_outside_vpc
 }
 
 module "cloudfront_api_gateway_endpoint" {
