@@ -12,5 +12,5 @@
   "SCENE_TILER_PARAMS": {},
   "MOSAIC_TILER_URL": "https://titiler.dev.example.com",
   "MOSAIC_TILER_PARAMS": {},
-  "ADVANCED_SEARCH_ENABLED": true
+  "SEARCH_BY_GEOM_ENABLED": true
 }
