@@ -113,3 +113,9 @@ variable "filmdrop_archive_bucket_name" {
   type        = string
   default     = "CHANGEME"
 }
+
+variable "origin_http_port" {
+  description = "Origin HTTP Port"
+  type        = number
+  default     = 80
+}

@@ -36,6 +36,7 @@ module "cloudfront_distribution" {
   log_bucket_domain_name          = var.log_bucket_domain_name
   filmdrop_archive_bucket_name    = var.filmdrop_archive_bucket_name
   application_name                = var.application_name
+  origin_http_port                = var.origin_http_port
 }
 
 module "cloudfront_dns" {
