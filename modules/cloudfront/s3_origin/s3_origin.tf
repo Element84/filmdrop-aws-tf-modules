@@ -159,7 +159,7 @@ module "cloudfront_waf" {
 }
 
 module "cloudfront_function" {
-  count  = var.create_cf_function == false ? 0 : 1
+  count  = var.create_cf_function == true && var.create_cf_basicauth_function == false ? 1 : 0
   source = "../cf_function"
 
   name      = var.cf_function_name
