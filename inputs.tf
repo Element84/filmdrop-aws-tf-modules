@@ -107,6 +107,13 @@ variable "stac_server_inputs" {
     opensearch_ebs_volume_size                  = number
     stac_server_and_titiler_s3_arns             = list(string)
     web_acl_id                                  = string
+    cf_function_name                            = string
+    cf_function_runtime                         = string
+    cf_function_code_path                       = string
+    attach_cf_function                          = bool
+    cf_function_event_type                      = string
+    create_cf_function                          = bool
+    create_cf_basicauth_function                = bool
     ingest = object({
       source_catalog_url               = string
       destination_collections_list     = string
@@ -138,6 +145,13 @@ variable "stac_server_inputs" {
     opensearch_ebs_volume_size                  = 35
     stac_server_and_titiler_s3_arns             = []
     web_acl_id                                  = ""
+    cf_function_name                            = ""
+    cf_function_runtime                         = "cloudfront-js-2.0"
+    cf_function_code_path                       = ""
+    attach_cf_function                          = false
+    cf_function_event_type                      = "viewer-request"
+    create_cf_function                          = false
+    create_cf_basicauth_function                = false
     ingest = {
       source_catalog_url               = ""
       destination_collections_list     = ""
@@ -179,18 +193,33 @@ variable "titiler_inputs" {
 variable "analytics_inputs" {
   description = "Inputs for analytics FilmDrop deployment."
   type = object({
-    app_name                    = string
-    domain_alias                = string
-    jupyterhub_elb_acm_cert_arn = string
-    jupyterhub_elb_domain_alias = string
-    create_credentials          = bool
+    app_name                     = string
+    domain_alias                 = string
+    jupyterhub_elb_acm_cert_arn  = string
+    jupyterhub_elb_domain_alias  = string
+    create_credentials           = bool
+    cf_function_name             = string
+    cf_function_runtime          = string
+    cf_function_code_path        = string
+    attach_cf_function           = bool
+    cf_function_event_type       = string
+    create_cf_function           = bool
+    create_cf_basicauth_function = bool
+
   })
   default = {
-    app_name                    = "analytics"
-    domain_alias                = ""
-    jupyterhub_elb_acm_cert_arn = ""
-    jupyterhub_elb_domain_alias = ""
-    create_credentials          = true
+    app_name                     = "analytics"
+    domain_alias                 = ""
+    jupyterhub_elb_acm_cert_arn  = ""
+    jupyterhub_elb_domain_alias  = ""
+    create_credentials           = true
+    cf_function_name             = ""
+    cf_function_runtime          = "cloudfront-js-2.0"
+    cf_function_code_path        = ""
+    attach_cf_function           = false
+    cf_function_event_type       = "viewer-request"
+    create_cf_function           = false
+    create_cf_basicauth_function = false
   }
 }
 
@@ -205,10 +234,17 @@ variable "console_ui_inputs" {
       response_code         = string
       response_page_path    = string
     }))
-    filmdrop_ui_release     = string
-    filmdrop_ui_config_file = string
-    filmdrop_ui_logo_file   = string
-    filmdrop_ui_logo        = string
+    filmdrop_ui_release          = string
+    filmdrop_ui_config_file      = string
+    filmdrop_ui_logo_file        = string
+    filmdrop_ui_logo             = string
+    cf_function_name             = string
+    cf_function_runtime          = string
+    cf_function_code_path        = string
+    attach_cf_function           = bool
+    cf_function_event_type       = string
+    create_cf_function           = bool
+    create_cf_basicauth_function = bool
   })
   default = {
     app_name     = "console"
@@ -221,10 +257,17 @@ variable "console_ui_inputs" {
         response_page_path    = "/"
       }
     ]
-    filmdrop_ui_release     = "v5.0.0"
-    filmdrop_ui_config_file = ""
-    filmdrop_ui_logo_file   = ""
-    filmdrop_ui_logo        = "bm9uZQo=" # Base64: 'none'
+    filmdrop_ui_release          = "v5.0.0"
+    filmdrop_ui_config_file      = ""
+    filmdrop_ui_logo_file        = ""
+    filmdrop_ui_logo             = "bm9uZQo=" # Base64: 'none'
+    cf_function_name             = ""
+    cf_function_runtime          = "cloudfront-js-2.0"
+    cf_function_code_path        = ""
+    attach_cf_function           = false
+    cf_function_event_type       = "viewer-request"
+    create_cf_function           = false
+    create_cf_basicauth_function = false
   }
 }
 
@@ -239,8 +282,15 @@ variable "cirrus_dashboard_inputs" {
       response_code         = string
       response_page_path    = string
     }))
-    cirrus_api_endpoint_base = string
-    cirrus_dashboard_release = string
+    cirrus_api_endpoint_base     = string
+    cirrus_dashboard_release     = string
+    cf_function_name             = string
+    cf_function_runtime          = string
+    cf_function_code_path        = string
+    attach_cf_function           = bool
+    cf_function_event_type       = string
+    create_cf_function           = bool
+    create_cf_basicauth_function = bool
   })
   default = {
     app_name     = "dashboard"
@@ -253,8 +303,15 @@ variable "cirrus_dashboard_inputs" {
         response_page_path    = "/"
       }
     ]
-    cirrus_api_endpoint_base = ""
-    cirrus_dashboard_release = "v0.5.1"
+    cirrus_api_endpoint_base     = ""
+    cirrus_dashboard_release     = "v0.5.1"
+    cf_function_name             = ""
+    cf_function_runtime          = "cloudfront-js-2.0"
+    cf_function_code_path        = ""
+    attach_cf_function           = false
+    cf_function_event_type       = "viewer-request"
+    create_cf_function           = false
+    create_cf_basicauth_function = false
   }
 }
 

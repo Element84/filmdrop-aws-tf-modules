@@ -28,4 +28,11 @@ module "cloudfront_s3_website" {
   log_bucket_name              = var.log_bucket_name
   log_bucket_domain_name       = var.log_bucket_domain_name
   filmdrop_archive_bucket_name = var.s3_logs_archive_bucket
+  cf_function_name             = var.cirrus_dashboard_inputs.cf_function_name
+  cf_function_runtime          = var.cirrus_dashboard_inputs.cf_function_runtime
+  cf_function_code_path        = var.cirrus_dashboard_inputs.cf_function_code_path
+  attach_cf_function           = var.cirrus_dashboard_inputs.attach_cf_function
+  cf_function_event_type       = var.cirrus_dashboard_inputs.cf_function_event_type
+  create_cf_function           = var.cirrus_dashboard_inputs.create_cf_function
+  create_cf_basicauth_function = var.cirrus_dashboard_inputs.create_cf_basicauth_function
 }

@@ -38,6 +38,13 @@ module "cloudfront_distribution" {
   log_bucket_domain_name          = var.log_bucket_domain_name
   filmdrop_archive_bucket_name    = var.filmdrop_archive_bucket_name
   application_name                = var.application_name
+  cf_function_name                = var.cf_function_name
+  cf_function_runtime             = var.cf_function_runtime
+  cf_function_code_path           = var.cf_function_code_path
+  attach_cf_function              = var.attach_cf_function
+  cf_function_event_type          = var.cf_function_event_type
+  create_cf_function              = var.create_cf_function
+  create_cf_basicauth_function    = var.create_cf_basicauth_function
 }
 
 module "cloudfront_dns" {

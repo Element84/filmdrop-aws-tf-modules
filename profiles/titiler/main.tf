@@ -32,4 +32,11 @@ module "cloudfront_api_gateway_endpoint" {
   log_bucket_name              = var.log_bucket_name
   log_bucket_domain_name       = var.log_bucket_domain_name
   filmdrop_archive_bucket_name = var.s3_logs_archive_bucket
+  cf_function_name             = var.titiler_inputs.cf_function_name
+  cf_function_runtime          = var.titiler_inputs.cf_function_runtime
+  cf_function_code_path        = var.titiler_inputs.cf_function_code_path
+  attach_cf_function           = var.titiler_inputs.attach_cf_function
+  cf_function_event_type       = var.titiler_inputs.cf_function_event_type
+  create_cf_function           = var.titiler_inputs.create_cf_function
+  create_cf_basicauth_function = var.titiler_inputs.create_cf_basicauth_function
 }

@@ -160,6 +160,48 @@ variable "whitelist_ips" {
   default     = []
 }
 
+variable "cf_function_name" {
+  description = "Name of the CF function"
+  type        = string
+  default     = ""
+}
+
+variable "cf_function_runtime" {
+  description = "CF function runtime"
+  type        = string
+  default     = "cloudfront-js-2.0"
+}
+
+variable "cf_function_code_path" {
+  description = "CF function code path"
+  type        = string
+  default     = ""
+}
+
+variable "attach_cf_function" {
+  description = "Should attach a function to CF or not"
+  type        = bool
+  default     = false
+}
+
+variable "cf_function_event_type" {
+  description = "Eventtype for the function"
+  type        = string
+  default     = "viewer-request"
+}
+
+variable "create_cf_function" {
+  description = "Should create a CF function or not"
+  type        = bool
+  default     = false
+}
+
+variable "create_cf_basicauth_function" {
+  description = "Should create the BasicAuth CF function or not"
+  type        = bool
+  default     = false
+}
+
 variable "project_name" {
   description = "Project Name"
   type        = string

@@ -55,6 +55,13 @@ variable "stac_server_inputs" {
     opensearch_ebs_volume_size                  = number
     stac_server_and_titiler_s3_arns             = list(string)
     web_acl_id                                  = string
+    cf_function_name                            = string
+    cf_function_runtime                         = string
+    cf_function_code_path                       = string
+    attach_cf_function                          = bool
+    cf_function_event_type                      = string
+    create_cf_function                          = bool
+    create_cf_basicauth_function                = bool
     ingest = object({
       source_catalog_url               = string
       destination_collections_list     = string
@@ -86,6 +93,13 @@ variable "stac_server_inputs" {
     opensearch_ebs_volume_size                  = 35
     stac_server_and_titiler_s3_arns             = []
     web_acl_id                                  = ""
+    cf_function_name                            = ""
+    cf_function_runtime                         = "cloudfront-js-2.0"
+    cf_function_code_path                       = ""
+    attach_cf_function                          = false
+    cf_function_event_type                      = "viewer-request"
+    create_cf_function                          = false
+    create_cf_basicauth_function                = false
     ingest = {
       source_catalog_url               = ""
       destination_collections_list     = ""

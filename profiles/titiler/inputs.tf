@@ -26,6 +26,13 @@ variable "titiler_inputs" {
     mosaic_titiler_waf_allowed_url  = string
     mosaic_titiler_host_header      = string
     web_acl_id                      = string
+    cf_function_name                = string
+    cf_function_runtime             = string
+    cf_function_code_path           = string
+    attach_cf_function              = bool
+    cf_function_event_type          = string
+    create_cf_function              = bool
+    create_cf_basicauth_function    = bool
   })
   default = {
     app_name                        = "titiler"
@@ -35,6 +42,13 @@ variable "titiler_inputs" {
     mosaic_titiler_waf_allowed_url  = ""
     mosaic_titiler_host_header      = ""
     web_acl_id                      = ""
+    cf_function_name                = ""
+    cf_function_runtime             = "cloudfront-js-2.0"
+    cf_function_code_path           = ""
+    attach_cf_function              = false
+    cf_function_event_type          = "viewer-request"
+    create_cf_function              = false
+    create_cf_basicauth_function    = false
   }
 }
 

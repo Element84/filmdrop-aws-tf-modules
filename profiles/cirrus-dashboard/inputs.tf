@@ -42,8 +42,15 @@ variable "cirrus_dashboard_inputs" {
       response_code         = string
       response_page_path    = string
     }))
-    cirrus_api_endpoint_base = string
-    cirrus_dashboard_release = string
+    cirrus_api_endpoint_base     = string
+    cirrus_dashboard_release     = string
+    cf_function_name             = string
+    cf_function_runtime          = string
+    cf_function_code_path        = string
+    attach_cf_function           = bool
+    cf_function_event_type       = string
+    create_cf_function           = bool
+    create_cf_basicauth_function = bool
   })
   default = {
     app_name     = "dashboard"
@@ -56,8 +63,15 @@ variable "cirrus_dashboard_inputs" {
         response_page_path    = "/"
       }
     ]
-    cirrus_api_endpoint_base = ""
-    cirrus_dashboard_release = "v0.5.1"
+    cirrus_api_endpoint_base     = ""
+    cirrus_dashboard_release     = "v0.5.1"
+    cf_function_name             = ""
+    cf_function_runtime          = "cloudfront-js-2.0"
+    cf_function_code_path        = ""
+    attach_cf_function           = false
+    cf_function_event_type       = "viewer-request"
+    create_cf_function           = false
+    create_cf_basicauth_function = false
   }
 }
 

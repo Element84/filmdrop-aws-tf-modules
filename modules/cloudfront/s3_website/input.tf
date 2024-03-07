@@ -50,7 +50,6 @@ variable "custom_error_response" {
   default     = []
 }
 
-
 variable "cf_function_name" {
   description = "Name of the CF function"
   type        = string
@@ -60,7 +59,7 @@ variable "cf_function_name" {
 variable "cf_function_runtime" {
   description = "CF function runtime"
   type        = string
-  default     = "cloudfront-js-1.0"
+  default     = "cloudfront-js-2.0"
 }
 
 variable "cf_function_code_path" {
@@ -87,10 +86,10 @@ variable "create_cf_function" {
   default     = false
 }
 
-variable "cf_function_arn" {
-  description = "CF Function arn in case to get in input"
-  type        = string
-  default     = ""
+variable "create_cf_basicauth_function" {
+  description = "Should create the BasicAuth CF function or not"
+  type        = bool
+  default     = false
 }
 
 variable "project_name" {
