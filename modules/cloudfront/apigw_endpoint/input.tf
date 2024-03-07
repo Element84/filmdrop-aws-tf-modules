@@ -160,3 +160,9 @@ variable "create_cf_basicauth_function" {
   type        = bool
   default     = false
 }
+
+variable "cf_function_arn" {
+  description = "CF Function arn in case to get in input"
+  type        = string
+  default     = ""
+}

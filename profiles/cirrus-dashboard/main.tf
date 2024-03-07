@@ -35,4 +35,5 @@ module "cloudfront_s3_website" {
   cf_function_event_type       = var.cirrus_dashboard_inputs.cf_function_event_type
   create_cf_function           = var.cirrus_dashboard_inputs.create_cf_function
   create_cf_basicauth_function = var.cirrus_dashboard_inputs.create_cf_basicauth_function
+  cf_function_arn              = var.cirrus_dashboard_inputs.cf_function_arn
 }

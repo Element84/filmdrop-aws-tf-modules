@@ -46,6 +46,7 @@ stac_server_inputs = {
   cf_function_event_type                      = "viewer-request"
   create_cf_function                          = false
   create_cf_basicauth_function                = false
+  cf_function_arn                             = ""
   ingest = {
     source_catalog_url               = ""
     destination_collections_list     = ""
@@ -76,6 +77,7 @@ titiler_inputs = {
   cf_function_event_type          = "viewer-request"
   create_cf_function              = false
   create_cf_basicauth_function    = false
+  cf_function_arn                 = ""
 }
 
 analytics_inputs = {
@@ -91,6 +93,7 @@ analytics_inputs = {
   cf_function_event_type       = "viewer-request"
   create_cf_function           = false
   create_cf_basicauth_function = false
+  cf_function_arn              = ""
 }
 
 console_ui_inputs = {
@@ -115,6 +118,7 @@ console_ui_inputs = {
   cf_function_event_type       = "viewer-request"
   create_cf_function           = false
   create_cf_basicauth_function = false
+  cf_function_arn              = ""
 }
 
 cirrus_dashboard_inputs = {
@@ -137,6 +141,7 @@ cirrus_dashboard_inputs = {
   cf_function_event_type       = "viewer-request"
   create_cf_function           = false
   create_cf_basicauth_function = false
+  cf_function_arn              = ""
 }
 
 

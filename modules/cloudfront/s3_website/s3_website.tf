@@ -34,6 +34,7 @@ module "cloudfront_distribution" {
   cf_function_event_type       = var.cf_function_event_type
   create_cf_function           = var.create_cf_function
   create_cf_basicauth_function = var.create_cf_basicauth_function
+  cf_function_arn              = var.cf_function_arn
   project_name                 = var.project_name
   environment                  = var.environment
   create_log_bucket            = var.create_log_bucket

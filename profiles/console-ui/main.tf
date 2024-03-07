@@ -38,4 +38,5 @@ module "cloudfront_s3_website" {
   cf_function_event_type       = var.console_ui_inputs.cf_function_event_type
   create_cf_function           = var.console_ui_inputs.create_cf_function
   create_cf_basicauth_function = var.console_ui_inputs.create_cf_basicauth_function
+  cf_function_arn              = var.console_ui_inputs.cf_function_arn
 }

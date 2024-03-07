@@ -62,6 +62,7 @@ module "cloudfront_load_balancer_endpoint" {
   cf_function_event_type       = var.analytics_inputs.cf_function_event_type
   create_cf_function           = var.analytics_inputs.create_cf_function
   create_cf_basicauth_function = var.analytics_inputs.create_cf_basicauth_function
+  cf_function_arn              = var.analytics_inputs.cf_function_arn
 }
 
 resource "null_resource" "cleanup_analytics_credentials" {

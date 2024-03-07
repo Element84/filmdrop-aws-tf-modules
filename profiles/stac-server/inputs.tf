@@ -62,6 +62,7 @@ variable "stac_server_inputs" {
     cf_function_event_type                      = string
     create_cf_function                          = bool
     create_cf_basicauth_function                = bool
+    cf_function_arn                             = string
     ingest = object({
       source_catalog_url               = string
       destination_collections_list     = string
@@ -100,6 +101,7 @@ variable "stac_server_inputs" {
     cf_function_event_type                      = "viewer-request"
     create_cf_function                          = false
     create_cf_basicauth_function                = false
+    cf_function_arn                             = ""
     ingest = {
       source_catalog_url               = ""
       destination_collections_list     = ""

@@ -92,6 +92,12 @@ variable "create_cf_basicauth_function" {
   default     = false
 }
 
+variable "cf_function_arn" {
+  description = "CF Function arn in case to get in input"
+  type        = string
+  default     = ""
+}
+
 variable "project_name" {
   description = "Project Name"
   type        = string

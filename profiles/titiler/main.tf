@@ -39,4 +39,5 @@ module "cloudfront_api_gateway_endpoint" {
   cf_function_event_type       = var.titiler_inputs.cf_function_event_type
   create_cf_function           = var.titiler_inputs.create_cf_function
   create_cf_basicauth_function = var.titiler_inputs.create_cf_basicauth_function
+  cf_function_arn              = var.titiler_inputs.cf_function_arn
 }
