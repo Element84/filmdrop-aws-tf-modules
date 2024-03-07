@@ -69,6 +69,13 @@ titiler_inputs = {
   mosaic_titiler_waf_allowed_url  = "test.filmdrop.io"
   mosaic_titiler_host_header      = ""
   web_acl_id                      = ""
+  cf_function_name                = ""
+  cf_function_runtime             = "cloudfront-js-2.0"
+  cf_function_code_path           = ""
+  attach_cf_function              = false
+  cf_function_event_type          = "viewer-request"
+  create_cf_function              = false
+  create_cf_basicauth_function    = false
 }
 
 analytics_inputs = {
