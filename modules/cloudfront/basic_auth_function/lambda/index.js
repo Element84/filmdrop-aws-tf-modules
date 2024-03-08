@@ -25,13 +25,13 @@ async function handler(event) {
     try {
         credentialsList = await kvsHandle.get('credentialsList');
     } catch (err) {
-        console.log(`Kvs key lookup failed for credentialsList: ${err}`);
+        console.log("Kvs key lookup failed for credentialsList: ", err);
     }
     let whitelistedIPsList = null;
     try {
         whitelistedIPsList = await kvsHandle.get('whitelistedIPsList');
     } catch (err) {
-        console.log(`Kvs key lookup failed for whitelistedIPsList: ${err}`);
+        console.log("Kvs key lookup failed for whitelistedIPsList: ", err);
     }
     let clientIpWhitelisted = whitelistedIPsList ? isIp4InCidrs(clientIP, whitelistedIPsList.split(",")) : true;
     // Check if credentials are valid for requests where the ip is not whitelisted
