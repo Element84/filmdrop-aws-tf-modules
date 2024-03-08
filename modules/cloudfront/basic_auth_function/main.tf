@@ -28,6 +28,7 @@ echo "Updating BasicAuth CloudFront Function KeyValueStore association."
 export BASICAUTHETAG=`aws cloudfront get-function --name ${var.origin_id_prefix}-basicauth-function cf_basicauth_function_out1.js | jq '.ETag' | tr -d \"`
 aws cloudfront update-function --name ${var.origin_id_prefix}-basicauth-function --function-config Comment="CloudFront function with BasicAuth mechanism",Runtime="cloudfront-js-2.0",KeyValueStoreAssociations="{Quantity=1,Items=[{KeyValueStoreARN='${aws_cloudfront_key_value_store.basicauth_key_value_store.arn}'}]}" --function-code fileb://cf_basicauth_function_out1.js --if-match $BASICAUTHETAG
 
+sleep 60
 export BASICAUTHPUBLISHETAG=`aws cloudfront get-function --name ${var.origin_id_prefix}-basicauth-function cf_basicauth_function_out2.js | jq '.ETag' | tr -d \"`
 aws cloudfront publish-function --name ${var.origin_id_prefix}-basicauth-function --if-match $BASICAUTHPUBLISHETAG
 
