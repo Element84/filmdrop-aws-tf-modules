@@ -33,7 +33,7 @@ async function handler(event) {
     } catch (err) {
         console.log("Kvs key lookup failed for whitelistedIPsList: ", err);
     }
-    let clientIpWhitelisted = whitelistedIPsList ? isIp4InCidrs(clientIP, whitelistedIPsList.split(",")) : true;
+    let clientIpWhitelisted = whitelistedIPsList ? isIp4InCidrs(clientIP, whitelistedIPsList.split(",")) : false;
     // Check if credentials are valid for requests where the ip is not whitelisted
     if (credentialsList && !clientIpWhitelisted) {
         const creds = credentialsList.split(",");
