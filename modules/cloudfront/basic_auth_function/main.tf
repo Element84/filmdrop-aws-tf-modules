@@ -16,6 +16,7 @@ resource "null_resource" "update_cloudfront_headers" {
   triggers = {
     basicauth_cf_function     = aws_cloudfront_function.basicauth_cf_function.arn
     basicauth_key_value_store = aws_cloudfront_key_value_store.basicauth_key_value_store.arn
+    basicauth_code_change     = md5(data.template_file.basic_auth_lambda_template.rendered)
   }
 
   provisioner "local-exec" {
