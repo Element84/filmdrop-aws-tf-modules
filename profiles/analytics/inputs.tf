@@ -64,35 +64,38 @@ variable "domain_zone" {
 variable "analytics_inputs" {
   description = "Inputs for analytics FilmDrop deployment."
   type = object({
-    app_name                     = string
-    domain_alias                 = string
-    jupyterhub_elb_acm_cert_arn  = string
-    jupyterhub_elb_domain_alias  = string
-    create_credentials           = bool
-    cf_function_name             = string
-    cf_function_runtime          = string
-    cf_function_code_path        = string
-    attach_cf_function           = bool
-    cf_function_event_type       = string
-    create_cf_function           = bool
-    create_cf_basicauth_function = bool
-    cf_function_arn              = string
-
+    app_name                    = string
+    domain_alias                = string
+    jupyterhub_elb_acm_cert_arn = string
+    jupyterhub_elb_domain_alias = string
+    create_credentials          = bool
+    auth_function = object({
+      cf_function_name             = string
+      cf_function_runtime          = string
+      cf_function_code_path        = string
+      attach_cf_function           = bool
+      cf_function_event_type       = string
+      create_cf_function           = bool
+      create_cf_basicauth_function = bool
+      cf_function_arn              = string
+    })
   })
   default = {
-    app_name                     = "analytics"
-    domain_alias                 = ""
-    jupyterhub_elb_acm_cert_arn  = ""
-    jupyterhub_elb_domain_alias  = ""
-    create_credentials           = true
-    cf_function_name             = ""
-    cf_function_runtime          = "cloudfront-js-2.0"
-    cf_function_code_path        = ""
-    attach_cf_function           = false
-    cf_function_event_type       = "viewer-request"
-    create_cf_function           = false
-    create_cf_basicauth_function = false
-    cf_function_arn              = ""
+    app_name                    = "analytics"
+    domain_alias                = ""
+    jupyterhub_elb_acm_cert_arn = ""
+    jupyterhub_elb_domain_alias = ""
+    create_credentials          = true
+    auth_function = {
+      cf_function_name             = ""
+      cf_function_runtime          = "cloudfront-js-2.0"
+      cf_function_code_path        = ""
+      attach_cf_function           = false
+      cf_function_event_type       = "viewer-request"
+      create_cf_function           = false
+      create_cf_basicauth_function = false
+      cf_function_arn              = ""
+    }
   }
 }
 

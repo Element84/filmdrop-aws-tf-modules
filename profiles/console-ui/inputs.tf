@@ -42,18 +42,20 @@ variable "console_ui_inputs" {
       response_code         = string
       response_page_path    = string
     }))
-    filmdrop_ui_release          = string
-    filmdrop_ui_config_file      = string
-    filmdrop_ui_logo_file        = string
-    filmdrop_ui_logo             = string
-    cf_function_name             = string
-    cf_function_runtime          = string
-    cf_function_code_path        = string
-    attach_cf_function           = bool
-    cf_function_event_type       = string
-    create_cf_function           = bool
-    create_cf_basicauth_function = bool
-    cf_function_arn              = string
+    filmdrop_ui_release     = string
+    filmdrop_ui_config_file = string
+    filmdrop_ui_logo_file   = string
+    filmdrop_ui_logo        = string
+    auth_function = object({
+      cf_function_name             = string
+      cf_function_runtime          = string
+      cf_function_code_path        = string
+      attach_cf_function           = bool
+      cf_function_event_type       = string
+      create_cf_function           = bool
+      create_cf_basicauth_function = bool
+      cf_function_arn              = string
+    })
   })
   default = {
     app_name     = "console"
@@ -66,18 +68,20 @@ variable "console_ui_inputs" {
         response_page_path    = "/"
       }
     ]
-    filmdrop_ui_release          = "v5.0.0"
-    filmdrop_ui_config_file      = ""
-    filmdrop_ui_logo_file        = ""
-    filmdrop_ui_logo             = "bm9uZQo=" # Base64: 'none'
-    cf_function_name             = ""
-    cf_function_runtime          = "cloudfront-js-2.0"
-    cf_function_code_path        = ""
-    attach_cf_function           = false
-    cf_function_event_type       = "viewer-request"
-    create_cf_function           = false
-    create_cf_basicauth_function = false
-    cf_function_arn              = ""
+    filmdrop_ui_release     = "v5.0.0"
+    filmdrop_ui_config_file = ""
+    filmdrop_ui_logo_file   = ""
+    filmdrop_ui_logo        = "bm9uZQo=" # Base64: 'none'
+    auth_function = {
+      cf_function_name             = ""
+      cf_function_runtime          = "cloudfront-js-2.0"
+      cf_function_code_path        = ""
+      attach_cf_function           = false
+      cf_function_event_type       = "viewer-request"
+      create_cf_function           = false
+      create_cf_basicauth_function = false
+      cf_function_arn              = ""
+    }
   }
 }
 
