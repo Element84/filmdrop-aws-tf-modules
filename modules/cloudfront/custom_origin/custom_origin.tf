@@ -99,6 +99,14 @@ resource "aws_cloudfront_distribution" "filmdrop_managed_cloudfront_distribution
       }
     }
 
+    dynamic "function_association" {
+      for_each = var.attach_cf_function == true ? [1] : []
+      content {
+        event_type   = var.cf_function_event_type
+        function_arn = var.create_cf_function == false ? var.cf_function_arn : var.create_cf_basicauth_function ? module.basic_auth_cloudfront_function[0].cf_function_arn : module.cloudfront_function[0].cf_function_arn
+      }
+    }
+
     viewer_protocol_policy = "redirect-to-https"
     min_ttl                = var.min_ttl
     default_ttl            = var.default_ttl
@@ -167,4 +175,20 @@ resource "aws_ssm_parameter" "cloudfront_custom_origin" {
       value
     ]
   }
+}
+
+module "cloudfront_function" {
+  count  = var.create_cf_function == true && var.create_cf_basicauth_function == false ? 1 : 0
+  source = "../cf_function"
+
+  name      = var.cf_function_name
+  runtime   = var.cf_function_runtime
+  code_path = var.cf_function_code_path
+}
+
+module "basic_auth_cloudfront_function" {
+  count  = var.create_cf_function && var.create_cf_basicauth_function ? 1 : 0
+  source = "../basic_auth_function"
+
+  origin_id_prefix = local.origin_id_prefix
 }

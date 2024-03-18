@@ -81,7 +81,7 @@ resource "aws_cloudfront_distribution" "filmdrop_managed_cloudfront_distribution
       for_each = var.attach_cf_function == true ? [1] : []
       content {
         event_type   = var.cf_function_event_type
-        function_arn = var.create_cf_function == false ? var.cf_function_arn : module.cloudfront_function[0].cf_function_arn
+        function_arn = var.create_cf_function == false ? var.cf_function_arn : var.create_cf_basicauth_function ? module.basic_auth_cloudfront_function[0].cf_function_arn : module.cloudfront_function[0].cf_function_arn
       }
     }
 
@@ -159,10 +159,17 @@ module "cloudfront_waf" {
 }
 
 module "cloudfront_function" {
-  count  = var.create_cf_function == false ? 0 : 1
+  count  = var.create_cf_function == true && var.create_cf_basicauth_function == false ? 1 : 0
   source = "../cf_function"
 
   name      = var.cf_function_name
   runtime   = var.cf_function_runtime
   code_path = var.cf_function_code_path
+}
+
+module "basic_auth_cloudfront_function" {
+  count  = var.create_cf_function && var.create_cf_basicauth_function ? 1 : 0
+  source = "../basic_auth_function"
+
+  origin_id_prefix = local.origin_id_prefix
 }

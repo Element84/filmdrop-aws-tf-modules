@@ -6,10 +6,18 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 
+## 2.12.0
+
+### Added
+- Adding support for creating a BasicAuth CloudFront function.
+
+### Fixed
+- Fixed input parameters for creating CloudFront functions.
+
 ## 2.11.0
 
 ### Added
-- "Adding support for custom origin port for load balancer endpoints.
+- Adding support for custom origin port for load balancer endpoints.
 
 ## 2.10
 

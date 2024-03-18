@@ -39,6 +39,16 @@ stac_server_inputs = {
   opensearch_ebs_volume_size                  = 35
   stac_server_and_titiler_s3_arns             = []
   web_acl_id                                  = ""
+  auth_function = {
+    cf_function_name             = ""
+    cf_function_runtime          = "cloudfront-js-2.0"
+    cf_function_code_path        = ""
+    attach_cf_function           = false
+    cf_function_event_type       = "viewer-request"
+    create_cf_function           = false
+    create_cf_basicauth_function = false
+    cf_function_arn              = ""
+  }
   ingest = {
     source_catalog_url               = ""
     destination_collections_list     = ""
@@ -62,6 +72,16 @@ titiler_inputs = {
   mosaic_titiler_waf_allowed_url  = "test.filmdrop.io"
   mosaic_titiler_host_header      = ""
   web_acl_id                      = ""
+  auth_function = {
+    cf_function_name             = ""
+    cf_function_runtime          = "cloudfront-js-2.0"
+    cf_function_code_path        = ""
+    attach_cf_function           = false
+    cf_function_event_type       = "viewer-request"
+    create_cf_function           = false
+    create_cf_basicauth_function = false
+    cf_function_arn              = ""
+  }
 }
 
 analytics_inputs = {
@@ -70,6 +90,16 @@ analytics_inputs = {
   jupyterhub_elb_acm_cert_arn = ""
   jupyterhub_elb_domain_alias = ""
   create_credentials          = true
+  auth_function = {
+    cf_function_name             = ""
+    cf_function_runtime          = "cloudfront-js-2.0"
+    cf_function_code_path        = ""
+    attach_cf_function           = false
+    cf_function_event_type       = "viewer-request"
+    create_cf_function           = false
+    create_cf_basicauth_function = false
+    cf_function_arn              = ""
+  }
 }
 
 console_ui_inputs = {
@@ -87,6 +117,16 @@ console_ui_inputs = {
   filmdrop_ui_config_file = "./profiles/console-ui/default-config/config.dev.json"
   filmdrop_ui_logo_file   = "./profiles/console-ui/default-config/logo.png"
   filmdrop_ui_logo        = "bm9uZQo=" # Base64: 'none'
+  auth_function = {
+    cf_function_name             = ""
+    cf_function_runtime          = "cloudfront-js-2.0"
+    cf_function_code_path        = ""
+    attach_cf_function           = false
+    cf_function_event_type       = "viewer-request"
+    create_cf_function           = false
+    create_cf_basicauth_function = false
+    cf_function_arn              = ""
+  }
 }
 
 cirrus_dashboard_inputs = {
@@ -102,6 +142,16 @@ cirrus_dashboard_inputs = {
   ]
   cirrus_api_endpoint_base = ""
   cirrus_dashboard_release = "v0.5.1"
+  auth_function = {
+    cf_function_name             = ""
+    cf_function_runtime          = "cloudfront-js-2.0"
+    cf_function_code_path        = ""
+    attach_cf_function           = false
+    cf_function_event_type       = "viewer-request"
+    create_cf_function           = false
+    create_cf_basicauth_function = false
+    cf_function_arn              = ""
+  }
 }
 
 

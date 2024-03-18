@@ -55,6 +55,14 @@ module "cloudfront_load_balancer_endpoint" {
   load_balancer_dns_name       = var.analytics_inputs.jupyterhub_elb_domain_alias
   project_name                 = var.project_name
   environment                  = var.environment
+  cf_function_name             = var.analytics_inputs.auth_function.cf_function_name
+  cf_function_runtime          = var.analytics_inputs.auth_function.cf_function_runtime
+  cf_function_code_path        = var.analytics_inputs.auth_function.cf_function_code_path
+  attach_cf_function           = var.analytics_inputs.auth_function.attach_cf_function
+  cf_function_event_type       = var.analytics_inputs.auth_function.cf_function_event_type
+  create_cf_function           = var.analytics_inputs.auth_function.create_cf_function
+  create_cf_basicauth_function = var.analytics_inputs.auth_function.create_cf_basicauth_function
+  cf_function_arn              = var.analytics_inputs.auth_function.cf_function_arn
 }
 
 resource "null_resource" "cleanup_analytics_credentials" {

@@ -127,7 +127,7 @@ variable "cf_function_name" {
 variable "cf_function_runtime" {
   description = "CF function runtime"
   type        = string
-  default     = "cloudfront-js-1.0"
+  default     = "cloudfront-js-2.0"
 }
 
 variable "cf_function_code_path" {
@@ -150,6 +150,12 @@ variable "cf_function_event_type" {
 
 variable "create_cf_function" {
   description = "Should create a CF function or not"
+  type        = bool
+  default     = false
+}
+
+variable "create_cf_basicauth_function" {
+  description = "Should create the BasicAuth CF function or not"
   type        = bool
   default     = false
 }
