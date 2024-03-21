@@ -322,3 +322,9 @@ variable "deploy_stac_server_outside_vpc" {
   default     = false
   description = "Deploy FilmDrop Stac-Server resources, including OpenSearch outside VPC. Defaults to false. If False, Stac-server resources will be deployed within the vpc."
 }
+
+variable "stac_api_url" {
+  description = "When the STAC_API_URL env var is set, the item/message will have the self link set to the ingested items URL in the API; if not, the self link points to the copy of it in s3."
+  type        = string
+  default     = ""
+}
