@@ -17,6 +17,7 @@ resource "aws_lambda_function" "stac_server_ingest" {
       OPENSEARCH_CREDENTIALS_SECRET_ID = var.deploy_stac_server_opensearch_serverless ? "" : aws_secretsmanager_secret.opensearch_stac_user_password_secret.arn
       COLLECTION_TO_INDEX_MAPPINGS     = var.collection_to_index_mappings
       POST_INGEST_TOPIC_ARN            = aws_sns_topic.stac_server_post_ingest_sns_topic.arn
+      STAC_API_URL                     = var.stac_api_url
     }
   }
 
