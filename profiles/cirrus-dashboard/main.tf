@@ -4,8 +4,8 @@ module "cirrus-dashboard" {
   vpc_id                       = var.vpc_id
   vpc_private_subnet_ids       = var.private_subnet_ids
   vpc_security_group_ids       = [var.security_group_id]
-  cirrus_api_endpoint          = "${var.cirrus_dashboard_inputs.cirrus_api_endpoint_base}/${var.environment}/"
-  metrics_api_endpoint         = "${var.cirrus_dashboard_inputs.cirrus_api_endpoint_base}/${var.environment}/stats/"
+  cirrus_api_endpoint          = var.cirrus_dashboard_inputs.cirrus_api_endpoint
+  metrics_api_endpoint         = var.cirrus_dashboard_inputs.metrics_api_endpoint
   cirrus_dashboard_bucket_name = module.cloudfront_s3_website.content_bucket_name
   cirrus_dashboard_release     = var.cirrus_dashboard_inputs.cirrus_dashboard_release
 }
