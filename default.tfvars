@@ -140,7 +140,8 @@ cirrus_dashboard_inputs = {
       response_page_path    = "/"
     }
   ]
-  cirrus_api_endpoint_base = ""
+  cirrus_api_endpoint      = ""
+  metrics_api_endpoint     = ""
   cirrus_dashboard_release = "v0.5.1"
   auth_function = {
     cf_function_name             = ""

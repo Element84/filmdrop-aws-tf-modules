@@ -319,8 +319,9 @@ variable "cirrus_dashboard_inputs" {
       response_code         = string
       response_page_path    = string
     }))
-    cirrus_api_endpoint_base = string
-    cirrus_dashboard_release = string
+    cirrus_api_endpoint       = string
+    metrics_api_endpoint      = string
+    cirrus_dashboard_release  = string
     auth_function = object({
       cf_function_name             = string
       cf_function_runtime          = string
@@ -343,8 +344,9 @@ variable "cirrus_dashboard_inputs" {
         response_page_path    = "/"
       }
     ]
-    cirrus_api_endpoint_base = ""
-    cirrus_dashboard_release = "v0.5.1"
+    cirrus_api_endpoint       = ""
+    metrics_api_endpoint      = ""
+    cirrus_dashboard_release  = "v0.5.1"
     auth_function = {
       cf_function_name             = ""
       cf_function_runtime          = "cloudfront-js-2.0"
