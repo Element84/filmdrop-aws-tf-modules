@@ -72,6 +72,9 @@ async function handler(event) {
             }
         };
     } else {
+        if (unsupportedAuth) {
+            auth_header.value = "";
+        }
         return event.request;
     }
 }
