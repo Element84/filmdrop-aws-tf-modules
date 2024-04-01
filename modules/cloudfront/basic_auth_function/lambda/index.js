@@ -47,7 +47,7 @@ async function handler(event) {
     let filmdropAuthorized = event.request.headers['filmdrop-authorized'] ? event.request.headers['filmdrop-authorized'].value == "true" : false;
     let clientIpWhitelisted = whitelistedIPsList ? isIp4InCidrs(clientIP, whitelistedIPsList.split(",")) : false;
     let refererAuthorized = whitelistedRefererList && event.request.headers['referer'] ? whitelistedRefererList.split(",").findIndex(element => event.request.headers['referer'].value.includes(element)) : false;
-    let unsupportedAuth = unsupportedBasicAuth ? unsupportedBasicAuth == "true" : false;
+    let unsupportedAuth = unsupportedBasicAuth ? true : false;
     // Check if credentials are valid for requests where the ip is not whitelisted
     if (credentialsList && !clientIpWhitelisted && !filmdropAuthorized && !refererAuthorized) {
         const creds = credentialsList.split(",");
