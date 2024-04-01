@@ -127,7 +127,7 @@ variable "auth_header_name" {
 variable "custom_http_whitelisted_headers" {
   description = "List of whitelisted http headers to have CloudFront forward to origin"
   type        = list(string)
-  default     = ["Authorization", "Origin", "Access-Control-Request-Headers", "Access-Control-Request-Method", "User-Agent", "filmdrop-authorized"]
+  default     = ["Authorization", "Origin", "Access-Control-Request-Headers", "Access-Control-Request-Method", "User-Agent", "Referer", "filmdrop-authorized"]
 }
 
 variable "custom_error_response" {
