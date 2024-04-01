@@ -40,7 +40,6 @@ async function handler(event) {
         for (var i in creds) {
             // Forward the request if auth matches
             if (auth_header && auth_header.value === creds[i]) {
-                auth_header.value = "";
                 event.request.headers['filmdrop-authorized'] = {value: "true"};
                 return event.request;
             }
