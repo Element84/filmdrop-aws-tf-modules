@@ -22,7 +22,7 @@ async function handler(event) {
     let clientIP = event.viewer.ip;
     let credentialsList = null;
     let whitelistedIPsList = null;
-    let whitelistedRefererList = null;
+    let whitelistedReferer = null;
     let unsupportedBasicAuth = null;
     try {
         credentialsList = await kvsHandle.get('credentialsList');
@@ -35,7 +35,7 @@ async function handler(event) {
         console.log("Kvs key lookup failed for whitelistedIPsList: ", err);
     }
     try {
-        whitelistedRefererList = await kvsHandle.get('whitelistedRefererList');
+        whitelistedReferer = await kvsHandle.get('whitelistedReferer');
     } catch (err) {
         console.log("Kvs key lookup failed for whitelistedReferer: ", err);
     }
@@ -46,7 +46,7 @@ async function handler(event) {
     }
     let filmdropAuthorized = event.request.headers['filmdrop-authorized'] ? event.request.headers['filmdrop-authorized'].value == "true" : false;
     let clientIpWhitelisted = whitelistedIPsList ? isIp4InCidrs(clientIP, whitelistedIPsList.split(",")) : false;
-    let refererAuthorized = whitelistedRefererList && event.request.headers['referer'] ? whitelistedRefererList.split(",").findIndex(element => event.request.headers['referer'].value.includes(element)) : false;
+    let refererAuthorized = whitelistedReferer && event.request.headers['referer'] ? whitelistedReferer == event.request.headers['referer'].value : false;
     let unsupportedAuth = unsupportedBasicAuth ? true : false;
     // Check if credentials are valid for requests where the ip is not whitelisted
     if (credentialsList && !clientIpWhitelisted && !filmdropAuthorized && !refererAuthorized) {
