@@ -22,7 +22,8 @@ async function handler(event) {
     let clientIP = event.viewer.ip;
     let credentialsList = null;
     let whitelistedIPsList = null;
-    let whitelistedReferer = null;
+    let whitelistedRefererList = null;
+    let unsupportedBasicAuth = null;
     try {
         credentialsList = await kvsHandle.get('credentialsList');
     } catch (err) {
@@ -34,19 +35,28 @@ async function handler(event) {
         console.log("Kvs key lookup failed for whitelistedIPsList: ", err);
     }
     try {
-        whitelistedReferer = await kvsHandle.get('whitelistedReferer');
+        whitelistedRefererList = await kvsHandle.get('whitelistedRefererList');
     } catch (err) {
         console.log("Kvs key lookup failed for whitelistedReferer: ", err);
     }
+    try {
+        unsupportedBasicAuth = await kvsHandle.get('unsupportedBasicAuth');
+    } catch (err) {
+        console.log("Kvs key lookup failed for unsupportedBasicAuth: ", err);
+    }
     let filmdropAuthorized = event.request.headers['filmdrop-authorized'] ? event.request.headers['filmdrop-authorized'].value == "true" : false;
     let clientIpWhitelisted = whitelistedIPsList ? isIp4InCidrs(clientIP, whitelistedIPsList.split(",")) : false;
-    let refererAuthorized = whitelistedReferer && event.request.headers['referer'] ? event.request.headers['referer'].value == whitelistedReferer : false;
+    let refererAuthorized = whitelistedRefererList && event.request.headers['referer'] ? whitelistedRefererList.split(",").findIndex(element => event.request.headers['referer'].value.includes(element)) : false;
+    let unsupportedAuth = unsupportedBasicAuth ? unsupportedBasicAuth == "true" : false;
     // Check if credentials are valid for requests where the ip is not whitelisted
     if (credentialsList && !clientIpWhitelisted && !filmdropAuthorized && !refererAuthorized) {
         const creds = credentialsList.split(",");
         for (var i in creds) {
             // Forward the request if auth matches
             if (auth_header && auth_header.value === creds[i]) {
+                if (unsupportedAuth) {
+                    auth_header.value = "";
+                }
                 event.request.headers['filmdrop-authorized'] = {value: "true"};
                 return event.request;
             }
