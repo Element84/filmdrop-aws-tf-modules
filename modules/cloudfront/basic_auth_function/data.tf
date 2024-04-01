@@ -1,6 +1,3 @@
-data "aws_region" "current" {
-}
-
 data "template_file" "basic_auth_lambda_template" {
   template = file("${path.module}/lambda/index.js")
 
