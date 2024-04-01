@@ -79,7 +79,7 @@ variable "custom_error_response" {
 variable "custom_s3_whitelisted_headers" {
   description = "List of whitelisted http headers to have CloudFront forward to S3 origin"
   type        = list(string)
-  default     = ["User-Agent"]
+  default     = ["User-Agent", "filmdrop-authorized"]
 }
 
 variable "caching_disabled" {
