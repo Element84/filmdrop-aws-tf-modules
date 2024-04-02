@@ -41,8 +41,18 @@ async function handler(event) {
     let filmdropAuthorized = event.request.headers['filmdrop-authorized'] ? event.request.headers['filmdrop-authorized'].value == "true" : false;
     let clientIpWhitelisted = whitelistedIPsList ? isIp4InCidrs(clientIP, whitelistedIPsList.split(",")) : false;
     let refererAuthorized = whitelistedReferer && event.request.headers['referer'] ? whitelistedReferer == event.request.headers['referer'].value : false;
+    let forwardedForAuthorized = false;
+    if(whitelistedIPsList && event.request.headers['x-forwarded-for']) {
+        const forwardedHosts = event.request.headers['x-forwarded-for'].value.split(",");
+        for (var host in forwardedHosts) {
+            if(isIp4InCidrs(host, whitelistedIPsList.split(","))) {
+                forwardedForAuthorized = true;
+                break;
+            }
+        }
+    }
     // Check if credentials are valid for requests where the ip is not whitelisted
-    if (credentialsList && !clientIpWhitelisted && !filmdropAuthorized && !refererAuthorized) {
+    if (credentialsList && !clientIpWhitelisted && !forwardedForAuthorized && !filmdropAuthorized && !refererAuthorized) {
         const creds = credentialsList.split(",");
         for (var i in creds) {
             // Forward the request if auth matches

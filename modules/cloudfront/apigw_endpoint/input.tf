@@ -41,7 +41,7 @@ variable "origin_ssl_protocols" {
 variable "custom_http_whitelisted_headers" {
   description = "List of whitelisted http headers to have CloudFront forward to origin"
   type        = list(string)
-  default     = ["Authorization", "Origin", "Access-Control-Request-Headers", "Access-Control-Request-Method", "User-Agent", "Accept", "Referer", "filmdrop-authorized"]
+  default     = ["Authorization", "Origin", "Access-Control-Request-Headers", "Access-Control-Request-Method", "User-Agent", "Accept", "Referer", "X-Forwarded-For", "filmdrop-authorized"]
 }
 
 variable "api_gateway_dns_name" {
