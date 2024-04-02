@@ -23,7 +23,6 @@ async function handler(event) {
     let credentialsList = null;
     let whitelistedIPsList = null;
     let whitelistedReferer = null;
-    let unsupportedBasicAuth = null;
     try {
         credentialsList = await kvsHandle.get('credentialsList');
     } catch (err) {
@@ -39,24 +38,15 @@ async function handler(event) {
     } catch (err) {
         console.log("Kvs key lookup failed for whitelistedReferer: ", err);
     }
-    try {
-        unsupportedBasicAuth = await kvsHandle.get('unsupportedBasicAuth');
-    } catch (err) {
-        console.log("Kvs key lookup failed for unsupportedBasicAuth: ", err);
-    }
     let filmdropAuthorized = event.request.headers['filmdrop-authorized'] ? event.request.headers['filmdrop-authorized'].value == "true" : false;
     let clientIpWhitelisted = whitelistedIPsList ? isIp4InCidrs(clientIP, whitelistedIPsList.split(",")) : false;
     let refererAuthorized = whitelistedReferer && event.request.headers['referer'] ? whitelistedReferer == event.request.headers['referer'].value : false;
-    let unsupportedAuth = unsupportedBasicAuth ? true : false;
     // Check if credentials are valid for requests where the ip is not whitelisted
     if (credentialsList && !clientIpWhitelisted && !filmdropAuthorized && !refererAuthorized) {
         const creds = credentialsList.split(",");
         for (var i in creds) {
             // Forward the request if auth matches
             if (auth_header && auth_header.value === creds[i]) {
-                if (unsupportedAuth) {
-                    auth_header.value = "";
-                }
                 event.request.headers['filmdrop-authorized'] = {value: "true"};
                 return event.request;
             }
@@ -72,9 +62,6 @@ async function handler(event) {
             }
         };
     } else {
-        if (auth_header && unsupportedAuth) {
-            auth_header.value = "";
-        }
         return event.request;
     }
 }
