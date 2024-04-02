@@ -77,6 +77,11 @@ resource "aws_lambda_function" "titiler-mosaic-lambda" {
     }
   }
 
+  vpc_config {
+    subnet_ids         = var.vpc_subnet_ids
+    security_group_ids = var.vpc_security_group_ids
+  }
+
   depends_on = [
     aws_dynamodb_table.titiler-mosaic-dynamodb-table,
   ]

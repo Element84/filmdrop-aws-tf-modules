@@ -91,3 +91,13 @@ variable "log_bucket_domain_name" {
   type        = string
   default     = ""
 }
+
+variable "private_subnet_ids" {
+  description = "List of private subnet ids in the FilmDrop vpc"
+  type        = list(string)
+}
+
+variable "security_group_id" {
+  description = "Default security groups in the FilmDrop vpc"
+  type        = string
+}

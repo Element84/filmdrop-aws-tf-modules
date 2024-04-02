@@ -68,6 +68,8 @@ module "titiler" {
   stac_url               = var.deploy_stac_server ? module.stac-server[0].stac_url : ""
   s3_logs_archive_bucket = module.base_infra.s3_logs_archive_bucket
   domain_zone            = var.domain_zone
+  private_subnet_ids     = module.base_infra.private_subnet_ids
+  security_group_id      = module.base_infra.security_group_id
 }
 
 module "analytics" {

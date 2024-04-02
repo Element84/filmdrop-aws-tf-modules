@@ -40,7 +40,10 @@ resource "aws_iam_role" "titiler-mosaic-lambda-role" {
 }
 EOF
 
-  managed_policy_arns = ["arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"]
+  managed_policy_arns = [
+    "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+    "arn:aws:iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole"
+  ]
 
   inline_policy {
     name = "titiler-mosaic-lambda-inline-policy"

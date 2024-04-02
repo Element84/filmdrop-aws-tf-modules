@@ -11,6 +11,8 @@ module "titiler" {
   titiler_s3_bucket_arns       = var.titiler_inputs.stac_server_and_titiler_s3_arns
   waf_allowed_url              = var.titiler_inputs.mosaic_titiler_waf_allowed_url == "" ? var.stac_url : var.titiler_inputs.mosaic_titiler_waf_allowed_url
   request_host_header_override = var.titiler_inputs.mosaic_titiler_host_header
+  vpc_subnet_ids               = var.private_subnet_ids
+  vpc_security_group_ids       = [var.security_group_id]
 }
 
 module "cloudfront_api_gateway_endpoint" {
