@@ -101,7 +101,7 @@ CONFIG
 
 resource "aws_security_group" "opensearch_security_group" {
   count       = var.deploy_stac_server_opensearch_serverless ? 0 : 1
-  name        = "${local.name_prefix}-stac-server"
+  name_prefix = "${local.name_prefix}-stac-server"
   description = "OpenSearch Security Group"
   vpc_id      = var.vpc_id
 

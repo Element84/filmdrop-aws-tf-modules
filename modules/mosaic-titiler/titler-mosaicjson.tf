@@ -1,5 +1,5 @@
 resource "aws_s3_bucket" "lambda-source" {
-  bucket        = lower("titiler-mosaic-source-${var.project_name}-${var.titiler_stage}")
+  bucket_prefix = lower("titiler-mosaic-source-${var.project_name}-${var.titiler_stage}")
   force_destroy = true
 }
 
