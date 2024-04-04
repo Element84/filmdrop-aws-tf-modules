@@ -25,6 +25,7 @@ resource "aws_s3_bucket_versioning" "lambda-source-versioning" {
 
 resource "null_resource" "download-lambda-source-bundle" {
   triggers = {
+    bucket  = aws_s3_bucket.lambda-source.id
     version = var.mosaic_titiler_release_tag
     runtime = var.lambda_runtime
   }
