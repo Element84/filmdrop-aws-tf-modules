@@ -17,21 +17,26 @@ module "create_credentials" {
 module "jupyterhub-dask-eks" {
   source = "../../modules/jupyterhub-dask-eks"
 
-  vpc_id                      = var.vpc_id
-  vpc_private_subnet_ids      = var.private_subnet_ids
-  vpc_security_group_ids      = [var.security_group_id]
-  vpc_cidr_range              = var.vpc_cidr
-  vpc_public_subnet_ids       = var.public_subnet_ids
-  vpc_private_subnet_azs      = var.private_availability_zones
-  vpc_public_subnet_azs       = var.public_availability_zones
-  jupyterhub_elb_acm_cert_arn = var.analytics_inputs.jupyterhub_elb_acm_cert_arn == "" ? module.analytics_certificate[0].certificate_arn : var.analytics_inputs.jupyterhub_elb_acm_cert_arn
-  project_name                = var.project_name
-  environment                 = var.environment
-  zone_id                     = var.domain_zone
-  domain_alias                = var.analytics_inputs.jupyterhub_elb_domain_alias
-  daskhub_stage               = var.environment
-  domain_param_name           = module.cloudfront_load_balancer_endpoint.cloudfront_domain_origin_param
-  cloudfront_distribution_id  = module.cloudfront_load_balancer_endpoint.cloudfront_distribution_id
+  vpc_id                                       = var.vpc_id
+  vpc_private_subnet_ids                       = var.private_subnet_ids
+  vpc_security_group_ids                       = [var.security_group_id]
+  vpc_cidr_range                               = var.vpc_cidr
+  vpc_public_subnet_ids                        = var.public_subnet_ids
+  vpc_private_subnet_azs                       = var.private_availability_zones
+  vpc_public_subnet_azs                        = var.public_availability_zones
+  jupyterhub_elb_acm_cert_arn                  = var.analytics_inputs.jupyterhub_elb_acm_cert_arn == "" ? module.analytics_certificate[0].certificate_arn : var.analytics_inputs.jupyterhub_elb_acm_cert_arn
+  project_name                                 = var.project_name
+  environment                                  = var.environment
+  zone_id                                      = var.domain_zone
+  domain_alias                                 = var.analytics_inputs.jupyterhub_elb_domain_alias
+  daskhub_stage                                = var.environment
+  domain_param_name                            = module.cloudfront_load_balancer_endpoint.cloudfront_domain_origin_param
+  cloudfront_distribution_id                   = module.cloudfront_load_balancer_endpoint.cloudfront_distribution_id
+  analytics_cleanup_enabled                    = var.analytics_inputs.cleanup.enabled
+  analytics_asg_min_capacity                   = var.analytics_inputs.cleanup.asg_min_capacity
+  analytics_node_limit                         = var.analytics_inputs.cleanup.analytics_node_limit
+  analytics_notifications_schedule_expressions = var.analytics_inputs.cleanup.notifications_schedule_expressions
+  analytics_cleanup_schedule_expressions       = var.analytics_inputs.cleanup.cleanup_schedule_expressions
 
   depends_on = [
     module.create_credentials

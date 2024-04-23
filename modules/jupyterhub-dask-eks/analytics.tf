@@ -389,3 +389,32 @@ EOF
     aws_s3_bucket.jupyter_dask_source_config
   ]
 }
+
+module "analytics_cleanup" {
+  count  = var.analytics_cleanup_enabled ? 1 : 0
+  source = "./cleanup"
+
+  analytics_cluster_name                       = local.kubernetes_cluster_name
+  analytics_cleanup_stage                      = var.daskhub_stage
+  analytics_asg_min_capacity                   = var.analytics_asg_min_capacity
+  analytics_node_limit                         = var.analytics_node_limit
+  analytics_notifications_schedule_expressions = var.analytics_notifications_schedule_expressions
+  analytics_cleanup_schedule_expressions       = var.analytics_cleanup_schedule_expressions
+
+  depends_on = [
+    aws_kms_key.analytics_filmdrop_kms_key,
+    local_file.rendered_eksctl_filmdrop,
+    local_file.rendered_daskhub_helm_filmdrop,
+    local_file.rendered_kubectl_filmdrop_storageclass,
+    local_file.rendered_kubectl_spec_filmdrop,
+    module.daskhub_docker_ecr,
+    aws_s3_bucket.jupyter_dask_source_config,
+    aws_s3_object.jupyter_dask_source_config_ekscluster,
+    aws_s3_object.jupyter_dask_source_config_spec,
+    aws_s3_object.jupyter_dask_source_config_daskhub,
+    aws_s3_object.jupyter_dask_source_config_storageclass,
+    aws_s3_object.analytics_eks_build_spec,
+    aws_codebuild_project.analytics_eks_codebuild,
+    null_resource.trigger_jupyterhub_upgrade
+  ]
+}
