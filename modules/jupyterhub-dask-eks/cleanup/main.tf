@@ -77,7 +77,7 @@ resource "aws_cloudwatch_event_target" "analytics_notifications_event_target" {
 
 resource "aws_cloudwatch_event_rule" "analytics_cleanup_event_rule" {
   count               = length(var.analytics_cleanup_schedule_expressions)
-  name_prefix         = "${var.analytics_cluster_name}-notifications-"
+  name                = "${var.analytics_cluster_name}-notifications-${count.index}"
   schedule_expression = var.analytics_cleanup_schedule_expressions[count.index]
 }
 
