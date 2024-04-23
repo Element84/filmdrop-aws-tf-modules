@@ -77,7 +77,6 @@ resource "aws_cloudwatch_event_target" "analytics_notifications_event_target" {
 
 resource "aws_lambda_permission" "analytics_notifications_event_rule_permission" {
   count         = length(var.analytics_notifications_schedule_expressions)
-  statement_id  = "AllowExecutionFromCloudWatch"
   action        = "lambda:InvokeFunction"
   function_name = aws_lambda_function.analytics_notifications_lambda.function_name
   principal     = "events.amazonaws.com"
@@ -99,7 +98,6 @@ resource "aws_cloudwatch_event_target" "analytics_cleanup_event_target" {
 
 resource "aws_lambda_permission" "analytics_cleanup_event_rule_permission" {
   count         = length(var.analytics_cleanup_schedule_expressions)
-  statement_id  = "AllowExecutionFromCloudWatch"
   action        = "lambda:InvokeFunction"
   function_name = aws_lambda_function.analytics_cleanup_lambda.function_name
   principal     = "events.amazonaws.com"
