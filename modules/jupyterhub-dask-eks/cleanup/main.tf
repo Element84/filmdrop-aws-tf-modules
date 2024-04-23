@@ -64,7 +64,7 @@ resource "aws_lambda_permission" "analytics_trigger_sns_permission" {
 
 resource "aws_cloudwatch_event_rule" "analytics_notifications_event_rule" {
   count               = length(var.analytics_notifications_schedule_expressions)
-  name_prefix         = "${var.analytics_cluster_name}-notifications-"
+  name                = "${var.analytics_cluster_name}-notifications-${count.index}"
   schedule_expression = var.analytics_notifications_schedule_expressions[count.index]
 }
 
@@ -77,7 +77,7 @@ resource "aws_cloudwatch_event_target" "analytics_notifications_event_target" {
 
 resource "aws_cloudwatch_event_rule" "analytics_cleanup_event_rule" {
   count               = length(var.analytics_cleanup_schedule_expressions)
-  name                = "${var.analytics_cluster_name}-notifications-${count.index}"
+  name                = "${var.analytics_cluster_name}-cleanup-${count.index}"
   schedule_expression = var.analytics_cleanup_schedule_expressions[count.index]
 }
 
