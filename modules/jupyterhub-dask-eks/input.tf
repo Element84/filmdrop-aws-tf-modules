@@ -155,6 +155,36 @@ variable "domain_param_name" {
   default     = ""
 }
 
+variable "analytics_cleanup_enabled" {
+  description = "Deploy FilmDrop Analytics cleanup functionality."
+  type        = bool
+  default     = false
+}
+
+variable "analytics_asg_min_capacity" {
+  description = "FilmDrop Analytics ASG min capacity"
+  type        = number
+  default     = 1
+}
+
+variable "analytics_node_limit" {
+  description = "FilmDrop Analytics node limit for normal usage"
+  type        = number
+  default     = 4
+}
+
+variable "analytics_notifications_schedule_expressions" {
+  description = "FilmDrop Analytics notification scheduled expressions"
+  type        = list(string)
+  default     = ["cron(0 14 * * ? *)", "cron(0 22 * * ? *)"]
+}
+
+variable "analytics_cleanup_schedule_expressions" {
+  description = "FilmDrop Analytics cleanup scheduled expressions"
+  type        = list(string)
+  default     = ["cron(0 5 * * ? *)"]
+}
+
 locals {
   kubernetes_cluster_name = "fd-analytics-${var.project_name}-${var.environment}"
 }

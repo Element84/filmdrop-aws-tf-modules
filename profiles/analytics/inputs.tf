@@ -79,6 +79,13 @@ variable "analytics_inputs" {
       create_cf_basicauth_function = bool
       cf_function_arn              = string
     })
+    cleanup = object({
+      enabled                            = bool
+      asg_min_capacity                   = number
+      analytics_node_limit               = number
+      notifications_schedule_expressions = list(string)
+      cleanup_schedule_expressions       = list(string)
+    })
   })
   default = {
     app_name                    = "analytics"
@@ -95,6 +102,13 @@ variable "analytics_inputs" {
       create_cf_function           = false
       create_cf_basicauth_function = false
       cf_function_arn              = ""
+    }
+    cleanup = {
+      enabled                            = false
+      asg_min_capacity                   = 1
+      analytics_node_limit               = 4
+      notifications_schedule_expressions = []
+      cleanup_schedule_expressions       = []
     }
   }
 }
