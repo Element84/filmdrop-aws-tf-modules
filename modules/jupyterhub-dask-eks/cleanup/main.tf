@@ -11,10 +11,10 @@ resource "aws_lambda_function" "analytics_cleanup_lambda" {
 
   environment {
     variables = {
-      ANALYTICS_ASG_MIN         = var.analytics_asg_min_capacity
-      ANALYTICS_CLUSTER_NAME    = var.analytics_cluster_name
-      ANALYTICS_DASK_NODE_NAME  = "${var.analytics_cluster_name}-dask-workers-Node"
-      ANALYTICS_MAIN_NODE_NAME  = "${var.analytics_cluster_name}-main-Node"
+      ANALYTICS_ASG_MIN        = var.analytics_asg_min_capacity
+      ANALYTICS_CLUSTER_NAME   = var.analytics_cluster_name
+      ANALYTICS_DASK_NODE_NAME = "${var.analytics_cluster_name}-dask-workers-Node"
+      ANALYTICS_MAIN_NODE_NAME = "${var.analytics_cluster_name}-main-Node"
     }
   }
 }
@@ -32,11 +32,11 @@ resource "aws_lambda_function" "analytics_notifications_lambda" {
 
   environment {
     variables = {
-      ANALYTICS_NODE_LIMIT      = var.analytics_node_limit
-      ANALYTICS_DASK_NODE_NAME  = "${var.analytics_cluster_name}-dask-workers-Node"
-      ANALYTICS_MAIN_NODE_NAME  = "${var.analytics_cluster_name}-main-Node"
-      SNS_TOPIC_ARN             = aws_sns_topic.analytics_notifications_sns_topic.arn
-      STAGE                     = var.analytics_cleanup_stage
+      ANALYTICS_NODE_LIMIT     = var.analytics_node_limit
+      ANALYTICS_DASK_NODE_NAME = "${var.analytics_cluster_name}-dask-workers-Node"
+      ANALYTICS_MAIN_NODE_NAME = "${var.analytics_cluster_name}-main-Node"
+      SNS_TOPIC_ARN            = aws_sns_topic.analytics_notifications_sns_topic.arn
+      STAGE                    = var.analytics_cleanup_stage
     }
   }
 }
@@ -63,36 +63,36 @@ resource "aws_lambda_permission" "analytics_trigger_sns_permission" {
 }
 
 resource "aws_cloudwatch_event_rule" "analytics_notifications_event_rule" {
-  count                 = length(var.analytics_notifications_schedule_expressions)
-  name_prefix           = "${var.analytics_cluster_name}-notifications-"
-  schedule_expression   = var.analytics_notifications_schedule_expressions[count.index]
+  count               = length(var.analytics_notifications_schedule_expressions)
+  name_prefix         = "${var.analytics_cluster_name}-notifications-"
+  schedule_expression = var.analytics_notifications_schedule_expressions[count.index]
 }
 
 resource "aws_cloudwatch_event_target" "analytics_notifications_event_target" {
   count     = length(var.analytics_notifications_schedule_expressions)
   rule      = aws_cloudwatch_event_rule.analytics_notifications_event_rule[count.index].name
-  target_id = "analyticsNotifications${[count.index]}"
+  target_id = "analyticsNotifications"
   arn       = aws_lambda_function.analytics_notifications_lambda.arn
 }
 
 resource "aws_cloudwatch_event_rule" "analytics_cleanup_event_rule" {
-  count                 = length(var.analytics_cleanup_schedule_expressions)
-  name_prefix           = "${var.analytics_cluster_name}-notifications-"
-  schedule_expression   = var.analytics_cleanup_schedule_expressions[count.index]
+  count               = length(var.analytics_cleanup_schedule_expressions)
+  name_prefix         = "${var.analytics_cluster_name}-notifications-"
+  schedule_expression = var.analytics_cleanup_schedule_expressions[count.index]
 }
 
 resource "aws_cloudwatch_event_target" "analytics_cleanup_event_target" {
   count     = length(var.analytics_cleanup_schedule_expressions)
   rule      = aws_cloudwatch_event_rule.analytics_cleanup_event_rule[count.index].name
-  target_id = "analyticsCleanup${[count.index]}"
+  target_id = "analyticsCleanup"
   arn       = aws_lambda_function.analytics_cleanup_lambda.arn
 }
 
 resource "null_resource" "analytics_cleanup_lambda" {
   triggers = {
-    analytics_cleanup_lambda    = aws_lambda_function.analytics_cleanup_lambda.arn
-    analytics_asg_min_capacity  = var.analytics_asg_min_capacity
-    analytics_cluster_name      = var.analytics_cluster_name
+    analytics_cleanup_lambda   = aws_lambda_function.analytics_cleanup_lambda.arn
+    analytics_asg_min_capacity = var.analytics_asg_min_capacity
+    analytics_cluster_name     = var.analytics_cluster_name
   }
 
   provisioner "local-exec" {
