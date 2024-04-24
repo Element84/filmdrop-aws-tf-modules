@@ -241,6 +241,10 @@ variable "analytics_inputs" {
       notifications_schedule_expressions = list(string)
       cleanup_schedule_expressions       = list(string)
     })
+    eks = object({
+      cluster_version    = string
+      autoscaler_version = string
+    })
   })
   default = {
     app_name                    = "analytics"
@@ -264,6 +268,10 @@ variable "analytics_inputs" {
       analytics_node_limit               = 4
       notifications_schedule_expressions = []
       cleanup_schedule_expressions       = []
+    }
+    eks = {
+      cluster_version    = "1.29"
+      autoscaler_version = "v1.29.0"
     }
   }
 }

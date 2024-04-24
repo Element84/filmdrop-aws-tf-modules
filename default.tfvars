@@ -108,6 +108,11 @@ analytics_inputs = {
     notifications_schedule_expressions = []
     cleanup_schedule_expressions       = []
   }
+
+  eks = {
+    cluster_version    = "1.29"
+    autoscaler_version = "v1.29.0"
+  }
 }
 
 console_ui_inputs = {
