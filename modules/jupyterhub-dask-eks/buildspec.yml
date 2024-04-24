@@ -5,15 +5,15 @@ phases:
     commands:
       - echo "Installing dependencies ..."
       - export FILMDROP_BUILD_DIR=`pwd`
-      - export EKSCTL_VERSION=v0.157.0
+      - export EKSCTL_VERSION=v0.175.0
       # KUBECTL_VERSION 2023-10-17: 1.23.17, 1.24.17, 1.25.14, 1.26.8, 1.27.5
-      - export KUBECTL_VERSION=1.25.14
-      - export HELM_VERSION=v3.10.3
+      - export KUBECTL_VERSION=1.29.3
+      - export HELM_VERSION=v3.14.4
       - cd /usr/local/bin
-      - curl -Lfo eksctl.tar.gz "https://github.com/weaveworks/eksctl/releases/download/${EKSCTL_VERSION}/eksctl_Linux_amd64.tar.gz"
+      - curl -Lfo eksctl.tar.gz "https://github.com/eksctl-io/eksctl/releases/download/${EKSCTL_VERSION}/eksctl_Linux_amd64.tar.gz"
       - tar zxvf eksctl.tar.gz
       - chmod a+x eksctl
-      - curl -Lfo kubectl https://s3.us-west-2.amazonaws.com/amazon-eks/${KUBECTL_VERSION}/2023-10-17/bin/linux/amd64/kubectl
+      - curl -Lfo kubectl https://s3.us-west-2.amazonaws.com/amazon-eks/${KUBECTL_VERSION}/2024-04-19/bin/linux/amd64/kubectl
       - chmod a+x kubectl
       - curl -Lfo /tmp/helm.tar.gz https://get.helm.sh/helm-${HELM_VERSION}-linux-amd64.tar.gz
       - cd /tmp

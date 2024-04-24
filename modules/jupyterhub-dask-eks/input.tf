@@ -53,13 +53,13 @@ variable "vpc_id" {
 variable "kubernetes_version" {
   description = "Kubernetes Cluster version"
   type        = string
-  default     = "1.27"
+  default     = "1.29"
 }
 
 variable "kubernetes_autoscaler_version" {
   description = "Kubernetes Cluster Autoscaler version"
   type        = string
-  default     = "v1.27.0"
+  default     = "v1.29.0"
 }
 
 variable "jupyterhub_image_version" {
