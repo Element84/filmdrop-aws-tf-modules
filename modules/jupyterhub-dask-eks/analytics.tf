@@ -190,6 +190,7 @@ resource "aws_s3_object" "jupyter_dask_source_config_autoscaler" {
   key    = "autoscaler.yaml"
   source = "${path.module}/autoscaler.yaml"
   etag = md5(templatefile("${path.module}/kubectl/kubectl_filmdrop_cluster_autoscaler.yaml.tpl", {
+    filmdrop_analytics_cluster_name               = local.kubernetes_cluster_name
     filmdrop_analytics_cluster_autoscaler_version = var.kubernetes_autoscaler_version
   }))
   depends_on = [
@@ -293,6 +294,7 @@ resource "local_file" "rendered_kubectl_spec_filmdrop" {
 
 resource "local_file" "rendered_kubectl_autoscaler_filmdrop" {
   content = templatefile("${path.module}/kubectl/kubectl_filmdrop_cluster_autoscaler.yaml.tpl", {
+    filmdrop_analytics_cluster_name               = local.kubernetes_cluster_name
     filmdrop_analytics_cluster_autoscaler_version = var.kubernetes_autoscaler_version
   })
   filename = "${path.module}/autoscaler.yaml"
