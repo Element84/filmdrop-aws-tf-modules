@@ -87,10 +87,12 @@ resource "aws_codebuild_project" "analytics_eks_codebuild" {
     local_file.rendered_daskhub_helm_filmdrop,
     local_file.rendered_kubectl_filmdrop_storageclass,
     local_file.rendered_kubectl_spec_filmdrop,
+    local_file.rendered_kubectl_autoscaler_filmdrop,
     module.daskhub_docker_ecr,
     aws_s3_bucket.jupyter_dask_source_config,
     aws_s3_object.jupyter_dask_source_config_ekscluster,
     aws_s3_object.jupyter_dask_source_config_spec,
+    aws_s3_object.jupyter_dask_source_config_autoscaler,
     aws_s3_object.jupyter_dask_source_config_daskhub,
     aws_s3_object.jupyter_dask_source_config_storageclass,
     aws_s3_object.analytics_eks_build_spec
@@ -180,6 +182,19 @@ resource "aws_s3_object" "jupyter_dask_source_config_spec" {
   }))
   depends_on = [
     local_file.rendered_kubectl_spec_filmdrop
+  ]
+}
+
+resource "aws_s3_object" "jupyter_dask_source_config_autoscaler" {
+  bucket = aws_s3_bucket.jupyter_dask_source_config.id
+  key    = "autoscaler.yaml"
+  source = "${path.module}/autoscaler.yaml"
+  etag = md5(templatefile("${path.module}/kubectl/kubectl_filmdrop_cluster_autoscaler.yaml.tpl", {
+    filmdrop_analytics_cluster_name               = local.kubernetes_cluster_name
+    filmdrop_analytics_cluster_autoscaler_version = var.kubernetes_autoscaler_version
+  }))
+  depends_on = [
+    local_file.rendered_kubectl_autoscaler_filmdrop
   ]
 }
 
@@ -277,6 +292,14 @@ resource "local_file" "rendered_kubectl_spec_filmdrop" {
   filename = "${path.module}/spec.yaml"
 }
 
+resource "local_file" "rendered_kubectl_autoscaler_filmdrop" {
+  content = templatefile("${path.module}/kubectl/kubectl_filmdrop_cluster_autoscaler.yaml.tpl", {
+    filmdrop_analytics_cluster_name               = local.kubernetes_cluster_name
+    filmdrop_analytics_cluster_autoscaler_version = var.kubernetes_autoscaler_version
+  })
+  filename = "${path.module}/autoscaler.yaml"
+}
+
 resource "aws_lambda_function" "cloudfront_origin_lambda" {
   filename         = data.archive_file.cloudfront_origin_lambda_zip.output_path
   source_code_hash = data.archive_file.cloudfront_origin_lambda_zip.output_base64sha256
@@ -341,10 +364,12 @@ EOF
     local_file.rendered_daskhub_helm_filmdrop,
     local_file.rendered_kubectl_filmdrop_storageclass,
     local_file.rendered_kubectl_spec_filmdrop,
+    local_file.rendered_kubectl_autoscaler_filmdrop,
     module.daskhub_docker_ecr,
     aws_s3_bucket.jupyter_dask_source_config,
     aws_s3_object.jupyter_dask_source_config_ekscluster,
     aws_s3_object.jupyter_dask_source_config_spec,
+    aws_s3_object.jupyter_dask_source_config_autoscaler,
     aws_s3_object.jupyter_dask_source_config_daskhub,
     aws_s3_object.jupyter_dask_source_config_storageclass,
     aws_s3_object.analytics_eks_build_spec,
@@ -407,10 +432,12 @@ module "analytics_cleanup" {
     local_file.rendered_daskhub_helm_filmdrop,
     local_file.rendered_kubectl_filmdrop_storageclass,
     local_file.rendered_kubectl_spec_filmdrop,
+    local_file.rendered_kubectl_autoscaler_filmdrop,
     module.daskhub_docker_ecr,
     aws_s3_bucket.jupyter_dask_source_config,
     aws_s3_object.jupyter_dask_source_config_ekscluster,
     aws_s3_object.jupyter_dask_source_config_spec,
+    aws_s3_object.jupyter_dask_source_config_autoscaler,
     aws_s3_object.jupyter_dask_source_config_daskhub,
     aws_s3_object.jupyter_dask_source_config_storageclass,
     aws_s3_object.analytics_eks_build_spec,

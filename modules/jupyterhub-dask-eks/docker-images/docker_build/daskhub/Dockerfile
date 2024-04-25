@@ -9,7 +9,7 @@ RUN apt-get -y install gcc
 RUN pip3 install psycopg2-binary
 
 # Install extra dependencies
-RUN pip3 install --no-cache odc-stac planetary_computer jupyterthemes odc-ui odc-algo
+RUN pip3 install --no-cache pystac==1.10.0 odc-stac planetary_computer jupyterthemes odc-ui odc-algo
 
 # Install dark theme
 RUN jt -t monokai
