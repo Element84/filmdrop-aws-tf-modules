@@ -40,7 +40,7 @@ phases:
       - aws cloudformation wait stack-delete-complete --stack-name eksctl-${ANALYTICS_CLUSTER_NAME}-cluster
       - echo "Creating eks cluster ..."
       - eksctl create cluster -f ./cluster.yaml
-      - kubectl apply -f https://raw.githubusercontent.com/kubernetes/autoscaler/master/cluster-autoscaler/cloudprovider/aws/examples/cluster-autoscaler-autodiscover.yaml
+      - kubectl apply -f ./autoscaler.yaml
       - kubectl annotate serviceaccount cluster-autoscaler -n kube-system eks.amazonaws.com/role-arn=arn:aws:iam::${AWS_ACCOUNT_ID}:role/${ANALYTICS_CLUSTER_NAME}-eksctl-cluster-autoscaler-role
       - kubectl patch deployment cluster-autoscaler -n kube-system -p '{"spec":{"template":{"metadata":{"annotations":{"cluster-autoscaler.kubernetes.io/safe-to-evict":"false"}}}}}'
       - kubectl patch deployment cluster-autoscaler -n kube-system --patch-file ./spec.yaml
