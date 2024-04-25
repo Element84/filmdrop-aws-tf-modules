@@ -37,6 +37,8 @@ module "jupyterhub-dask-eks" {
   analytics_node_limit                         = var.analytics_inputs.cleanup.analytics_node_limit
   analytics_notifications_schedule_expressions = var.analytics_inputs.cleanup.notifications_schedule_expressions
   analytics_cleanup_schedule_expressions       = var.analytics_inputs.cleanup.cleanup_schedule_expressions
+  kubernetes_version                           = var.analytics_inputs.eks.cluster_version
+  kubernetes_autoscaler_version                = var.analytics_inputs.eks.autoscaler_version
 
   depends_on = [
     module.create_credentials
