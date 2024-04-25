@@ -187,7 +187,7 @@ resource "aws_s3_object" "jupyter_dask_source_config_spec" {
 
 resource "aws_s3_object" "jupyter_dask_source_config_autoscaler" {
   bucket = aws_s3_bucket.jupyter_dask_source_config.id
-  key    = "spec.yaml"
+  key    = "autoscaler.yaml"
   source = "${path.module}/autoscaler.yaml"
   etag = md5(templatefile("${path.module}/kubectl/kubectl_filmdrop_cluster_autoscaler.yaml.tpl", {
     filmdrop_analytics_cluster_autoscaler_version = var.kubernetes_autoscaler_version
