@@ -1,4 +1,4 @@
-name: Tests on Main Branch and Releases
+name: Main Branch and Release Testing
 
 on:
   push:
@@ -25,13 +25,18 @@ jobs:
         with:
           terraform_version: "1.7.3"
 
+      - name: Setting Pre-Requisites
+        id: prereqs
+        run: |
+          #echo "REPOSITORY_NAME=`echo \"${{  github.ref_name }}\" | tr -d '.'`" >> $GITHUB_ENV
+          echo "REPOSITORY_NAME=`echo \"main\" | tr -d '.'`" >> $GITHUB_ENV
+
       - name: Prepararing Environment
         id: prep_env
         run: |
           sed -n '5,$p' default.tfvars > test.tfvars
           echo "environment            = \"git\"" >> test.tfvars
-          #echo "project_name           = \"${{  github.ref_name }}\"" >> test.tfvars
-          echo "project_name           = \"main\"" >> test.tfvars
+          echo "project_name           = \"${REPOSITORY_NAME}\"" >> test.tfvars
           cat test.tfvars
           echo "Creating terraform backend file ..."
           echo 'terraform {' >> test.s3.backend.tf
@@ -39,8 +44,7 @@ jobs:
           echo '    encrypt = true' >> test.s3.backend.tf
           echo "    bucket = \"${{ secrets.TF_STATE_BUCKET }}\"" >> test.s3.backend.tf
           echo "    dynamodb_table = \"${{ secrets.TF_STATE_LOCK_TABLE }}\"" >> test.s3.backend.tf
-          #echo "    key = \"${{  github.ref_name }}-github-test.tfstate\"" >> test.s3.backend.tf
-          echo "    key = \"main-github-test.tfstate\"" >> test.s3.backend.tf
+          echo "    key = \"${REPOSITORY_NAME}-github-test.tfstate\"" >> test.s3.backend.tf
           echo "    region = \"${{ secrets.AWS_REGION }}\"" >> test.s3.backend.tf
           echo '  }' >> test.s3.backend.tf
           echo '}' >> test.s3.backend.tf
@@ -92,6 +96,7 @@ jobs:
 
       - name: Configure Terraform OpenSearch Cleanup Credentials
         id: opensearch_cleanup_creds
+        if: always()
         uses: aws-actions/configure-aws-credentials@v4
         with:
             aws-region: ${{ secrets.AWS_REGION }}
@@ -102,16 +107,17 @@ jobs:
         id: delete_opensearch_domain
         if: always()
         run: |
-          export stac_opensearch_domain_name=`terraform output stac_opensearch_domain_name`
+          export stac_opensearch_domain_name=fd-${REPOSITORY_NAME}-git-stac-server
           if [[ "$stac_opensearch_domain_name" != "" && !("$stac_opensearch_domain_name" =~ ".aoss.amazonaws.com") && "$stac_opensearch_domain_name" != *"Warning"* ]]; then
               echo "We detected a Stac Server OpenSearch Domain $stac_opensearch_domain_name running in FilmDrop environment, will attempt to delete it..."
               terraform state rm "module.filmdrop.module.stac-server[0].module.stac-server.aws_opensearch_domain.stac_server_opensearch_domain"
-              aws opensearch delete-domain --domain-name $stac_opensearch_domain_name --output text > .opensearch.info
+              aws opensearch delete-domain --domain-name fd-${REPOSITORY_NAME}-git-stac-server --output text > .opensearch.info
               echo "Stac Server OpenSearch Domain $stac_opensearch_domain_name has been deleted..."
           fi
 
       - name: Configure Terraform Cleanup Check Credentials
         id: cleanup_check_creds
+        if: always()
         uses: aws-actions/configure-aws-credentials@v4
         with:
             aws-region: ${{ secrets.AWS_REGION }}
@@ -125,6 +131,7 @@ jobs:
 
       - name: Configure Terraform Cleanup Credentials
         id: cleanup_creds
+        if: always()
         uses: aws-actions/configure-aws-credentials@v4
         with:
             aws-region: ${{ secrets.AWS_REGION }}
