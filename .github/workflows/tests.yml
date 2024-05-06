@@ -29,7 +29,8 @@ jobs:
         run: |
           sed -n '5,$p' default.tfvars > test.tfvars
           echo "environment            = \"git\"" >> test.tfvars
-          echo "project_name           = \"${{  github.ref_name }}\"" >> test.tfvars
+          #echo "project_name           = \"${{  github.ref_name }}\"" >> test.tfvars
+          echo "project_name           = \"main\"" >> test.tfvars
           cat test.tfvars
           echo "Creating terraform backend file ..."
           echo 'terraform {' >> test.s3.backend.tf
@@ -46,6 +47,14 @@ jobs:
       - name: Update stac-server lambdas
         id: update_stac_lambdas
         run: ./scripts/update-lambdas.sh
+
+      - name: Configure Terraform Plan Credentials
+        id: init_creds
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+            aws-region: ${{ secrets.AWS_REGION }}
+            role-to-assume: ${{ secrets.AWS_ROLE }}
+            role-session-name: GitHubReleaseInit
 
       - name: Terraform Init
         id: tf_init
