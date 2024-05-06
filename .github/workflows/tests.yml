@@ -56,7 +56,7 @@ jobs:
         run: terraform validate -no-color
 
       - name: Configure Terraform Plan Credentials
-        id: creds
+        id: plan_creds
         uses: aws-actions/configure-aws-credentials@v4
         with:
             aws-region: ${{ secrets.AWS_REGION }}
@@ -68,7 +68,7 @@ jobs:
         run: terraform plan -var-file="test.tfvars" -out test.tfplan -lock=false -no-color
 
       - name: Configure Terraform Apply Credentials
-        id: creds
+        id: apply_creds
         uses: aws-actions/configure-aws-credentials@v4
         with:
             aws-region: ${{ secrets.AWS_REGION }}
@@ -80,7 +80,7 @@ jobs:
         run: terraform apply -input=false test.tfplan -lock=false -no-color
 
       - name: Configure Terraform OpenSearch Cleanup Credentials
-        id: creds
+        id: opensearch_cleanup_creds
         uses: aws-actions/configure-aws-credentials@v4
         with:
             aws-region: ${{ secrets.AWS_REGION }}
@@ -100,7 +100,7 @@ jobs:
           fi
 
       - name: Configure Terraform Cleanup Check Credentials
-        id: creds
+        id: cleanup_check_creds
         uses: aws-actions/configure-aws-credentials@v4
         with:
             aws-region: ${{ secrets.AWS_REGION }}
@@ -113,7 +113,7 @@ jobs:
         run: terraform plan -destroy -var-file="test.tfvars" -out test-cleanup.tfplan -lock=false -no-color
 
       - name: Configure Terraform Cleanup Credentials
-        id: creds
+        id: cleanup_creds
         uses: aws-actions/configure-aws-credentials@v4
         with:
             aws-region: ${{ secrets.AWS_REGION }}
