@@ -26,8 +26,7 @@ jobs:
       - name: Setting Pre-Requisites
         id: prereqs
         run: |
-          #echo "REPOSITORY_NAME=`echo \"${{  github.ref_name }}\" | tr -d '.'`" >> $GITHUB_ENV
-          echo "REPOSITORY_NAME=`echo \"main\" | tr -d '.'`" >> $GITHUB_ENV
+          echo "REPOSITORY_NAME=`echo \"${{  github.ref_name }}\" | tr -d '.'`" >> $GITHUB_ENV
 
       - name: Prepararing Environment
         id: prep_env
