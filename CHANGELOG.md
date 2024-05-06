@@ -10,6 +10,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Added
 - Added GitHub Actions workflow to test new commits to main branch and new releases.
 
+### Changed
+- Changed Terraform AWS Provider minimum version to 5.47.
+
 ## 2.19.0
 
 ### Changed
