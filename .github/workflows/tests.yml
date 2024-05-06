@@ -1,0 +1,129 @@
+name: Tests on Main and Release Branches
+
+on:
+  push:
+    branches: ["main"]
+    tags: ["v*.*.*"]
+  pull_request:
+    branches: ["main"]
+
+jobs:
+  tests:
+    permissions:
+      contents: read
+    runs-on: ubuntu-latest
+    env:
+      CI: true
+      STAC_SERVER_TAG: v3.5.0
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+      - uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: "1.7.3"
+
+      - name: Prepararing Environment
+        id: prep_env
+        run: |
+          cp ./default.tfvars ./test.tfvars
+          sed -i '' 's/environment            = "test"/environment            = "git"/' test.tfvars
+          sed -i '' 's/project_name           = "TestProj"/project_name           = "${{  github.ref_name }}"/' test.tfvars
+          cat test.tfvars
+          echo "Creating terraform backend file ..."
+          echo 'terraform {' >> test.s3.backend.tf
+          echo '  backend "s3" {' >> test.s3.backend.tf
+          echo '    encrypt = true' >> test.s3.backend.tf
+          echo "    bucket = \"${{ secrets.TF_STATE_BUCKET }}\"" >> test.s3.backend.tf
+          echo "    dynamodb_table = \"${{ secrets.TF_STATE_LOCK_TABLE }}\"" >> test.s3.backend.tf
+          echo "    key = \"${{  github.ref_name }}-github-test.tfstate\"" >> test.s3.backend.tf
+          echo "    region = \"${{ secrets.AWS_REGION }}\"" >> test.s3.backend.tf
+          echo '  }' >> test.s3.backend.tf
+          echo '}' >> test.s3.backend.tf
+          cat test.s3.backend.tf
+
+      - name: Update stac-server lambdas
+        id: update_stac_lambdas
+        run: ./scripts/update-lambdas.sh
+
+      - name: Terraform Init
+        id: tf_init
+        run: terraform init
+
+      - name: Terraform Validate
+        id: tf_validate
+        run: terraform validate -no-color
+
+      - name: Terraform Plan
+        id: tf_plan
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-region: ${{ secrets.AWS_REGION }}
+          role-to-assume: ${{ secrets.AWS_ROLE }}
+          role-session-name: GitHubReleaseTest
+        run: terraform plan -var-file="test.tfvars" -out test.tfplan -lock=false -no-color
+
+      - name: Terraform Apply
+        id: tf_apply
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-region: ${{ secrets.AWS_REGION }}
+          role-to-assume: ${{ secrets.AWS_ROLE }}
+          role-session-name: GitHubReleaseTest
+        run: terraform apply -input=false test.tfplan -lock=false -no-color
+
+      - name: Deleting OpenSearch Domain
+        id: delete_opensearch_domain
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-region: ${{ secrets.AWS_REGION }}
+          role-to-assume: ${{ secrets.AWS_ROLE }}
+          role-session-name: GitHubReleaseTest
+        if: always()
+        run: |
+          export stac_opensearch_domain_name=`terraform output stac_opensearch_domain_name`
+          if [[ "$stac_opensearch_domain_name" != "" && !("$stac_opensearch_domain_name" =~ ".aoss.amazonaws.com") && "$stac_opensearch_domain_name" != *"Warning"* ]]; then
+              echo "We detected a Stac Server OpenSearch Domain $stac_opensearch_domain_name running in FilmDrop environment, will attempt to delete it..."
+              terraform state rm "module.filmdrop.module.stac-server[0].module.stac-server.aws_opensearch_domain.stac_server_opensearch_domain"
+              aws opensearch delete-domain --domain-name $stac_opensearch_domain_name --output text > .opensearch.info
+              echo "Stac Server OpenSearch Domain $stac_opensearch_domain_name has been deleted..."
+          fi
+
+      - name: Terraform Destroy Pre-Check
+        id: tf_destroy_plan
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-region: ${{ secrets.AWS_REGION }}
+          role-to-assume: ${{ secrets.AWS_ROLE }}
+          role-session-name: GitHubReleaseTest
+        if: always()
+        run: terraform plan -destroy -var-file="test.tfvars" -out test-cleanup.tfplan -lock=false -no-color
+
+      - name: Terraform Destroy
+        id: tf_destroy_apply
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-region: ${{ secrets.AWS_REGION }}
+          role-to-assume: ${{ secrets.AWS_ROLE }}
+          role-session-name: GitHubReleaseTest
+        if: always()
+        run: terraform apply -destroy -input=false test-cleanup.tfplan -lock=false -no-color
+
+  pre-commit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: "1.7.3"
+      - uses: terraform-linters/setup-tflint@v3
+        with:
+          tflint_version: "v0.49.0"
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11" 
+      - name: Install pre-commit
+        run: pip install pre-commit
+      - name: Run pre-commit
+        run: pre-commit run --all-files
