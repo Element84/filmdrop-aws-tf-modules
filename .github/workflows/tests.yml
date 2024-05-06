@@ -55,31 +55,40 @@ jobs:
         id: tf_validate
         run: terraform validate -no-color
 
-      - name: Terraform Plan
-        id: tf_plan
+      - name: Configure Terraform Plan Credentials
+        id: creds
         uses: aws-actions/configure-aws-credentials@v4
         with:
-          aws-region: ${{ secrets.AWS_REGION }}
-          role-to-assume: ${{ secrets.AWS_ROLE }}
-          role-session-name: GitHubReleaseTest
+            aws-region: ${{ secrets.AWS_REGION }}
+            role-to-assume: ${{ secrets.AWS_ROLE }}
+            role-session-name: GitHubReleasePlan
+
+      - name: Terraform Plan
+        id: tf_plan
         run: terraform plan -var-file="test.tfvars" -out test.tfplan -lock=false -no-color
+
+      - name: Configure Terraform Apply Credentials
+        id: creds
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+            aws-region: ${{ secrets.AWS_REGION }}
+            role-to-assume: ${{ secrets.AWS_ROLE }}
+            role-session-name: GitHubReleaseApply
 
       - name: Terraform Apply
         id: tf_apply
+        run: terraform apply -input=false test.tfplan -lock=false -no-color
+
+      - name: Configure Terraform OpenSearch Cleanup Credentials
+        id: creds
         uses: aws-actions/configure-aws-credentials@v4
         with:
-          aws-region: ${{ secrets.AWS_REGION }}
-          role-to-assume: ${{ secrets.AWS_ROLE }}
-          role-session-name: GitHubReleaseTest
-        run: terraform apply -input=false test.tfplan -lock=false -no-color
+            aws-region: ${{ secrets.AWS_REGION }}
+            role-to-assume: ${{ secrets.AWS_ROLE }}
+            role-session-name: GitHubReleaseOpenSearchCleanup
 
       - name: Deleting OpenSearch Domain
         id: delete_opensearch_domain
-        uses: aws-actions/configure-aws-credentials@v4
-        with:
-          aws-region: ${{ secrets.AWS_REGION }}
-          role-to-assume: ${{ secrets.AWS_ROLE }}
-          role-session-name: GitHubReleaseTest
         if: always()
         run: |
           export stac_opensearch_domain_name=`terraform output stac_opensearch_domain_name`
@@ -90,23 +99,29 @@ jobs:
               echo "Stac Server OpenSearch Domain $stac_opensearch_domain_name has been deleted..."
           fi
 
-      - name: Terraform Destroy Pre-Check
-        id: tf_destroy_plan
+      - name: Configure Terraform Cleanup Check Credentials
+        id: creds
         uses: aws-actions/configure-aws-credentials@v4
         with:
-          aws-region: ${{ secrets.AWS_REGION }}
-          role-to-assume: ${{ secrets.AWS_ROLE }}
-          role-session-name: GitHubReleaseTest
+            aws-region: ${{ secrets.AWS_REGION }}
+            role-to-assume: ${{ secrets.AWS_ROLE }}
+            role-session-name: GitHubReleaseCleanupCheck
+
+      - name: Terraform Destroy Pre-Check
+        id: tf_destroy_plan
         if: always()
         run: terraform plan -destroy -var-file="test.tfvars" -out test-cleanup.tfplan -lock=false -no-color
 
-      - name: Terraform Destroy
-        id: tf_destroy_apply
+      - name: Configure Terraform Cleanup Credentials
+        id: creds
         uses: aws-actions/configure-aws-credentials@v4
         with:
-          aws-region: ${{ secrets.AWS_REGION }}
-          role-to-assume: ${{ secrets.AWS_ROLE }}
-          role-session-name: GitHubReleaseTest
+            aws-region: ${{ secrets.AWS_REGION }}
+            role-to-assume: ${{ secrets.AWS_ROLE }}
+            role-session-name: GitHubReleaseCleanup
+
+      - name: Terraform Destroy
+        id: tf_destroy_apply
         if: always()
         run: terraform apply -destroy -input=false test-cleanup.tfplan -lock=false -no-color
 
