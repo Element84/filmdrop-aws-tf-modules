@@ -28,8 +28,8 @@ jobs:
         id: prep_env
         run: |
           cp ./default.tfvars ./test.tfvars
-          sed -i '' 's/environment            = "test"/environment            = "git"/' test.tfvars
-          sed -i '' 's/project_name           = "TestProj"/project_name           = "${{  github.ref_name }}"/' test.tfvars
+          sed -i '' 's/environment            = "test"/environment            = "git"/' ./test.tfvars
+          sed -i '' 's/project_name           = "TestProj"/project_name           = "${{  github.ref_name }}"/' ./test.tfvars
           cat test.tfvars
           echo "Creating terraform backend file ..."
           echo 'terraform {' >> test.s3.backend.tf
