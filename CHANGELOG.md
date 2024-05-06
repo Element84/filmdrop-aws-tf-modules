@@ -2,102 +2,114 @@
 
 All notable changes to this project will be documented in this file.
 
-The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
-## 2.20.0
+## [Unreleased]
 
 ### Added
+
 - Added GitHub Actions workflow to test new commits to main branch and new releases.
 
 ### Changed
-- Changed Terraform AWS Provider minimum version to 5.47.
 
-## 2.19.0
+- Updated changelog to adhere to spec.
+- Updated Terraform AWS Provider minimum version to 5.47.
+
+## [2.19.0] - 2024-04-25
 
 ### Changed
+
 - Updated FilmDrop Analytics eks kubernetes version to 1.29 and autoscaler version to 1.29.0.
 
-## 2.18.0
+## [2.18.0] - 2024-04-23
 
 ### Added
+
 - Added FilmDrop Analytics cleanup capability.
 
-## 2.17.0
+## [2.17.0] - 2024-04-05
 
 ### Changed
+
 - Changed mosaic titiler lambda bucket to generate unique bucket name.
 - Changed stac-server security group to generate unique sg name.
 
-## 2.16.0
+## [2.16.0] - 2024-04-02
 
 ### Added
+
 - Added VPC support for titiler-mosaicjson.
 
-## 2.15.0
+## [2.15.0] - 2024-04-02
 
 ### Changed
+
 - Fixing basic auth CloudFront function.
 
-## 2.14.0
+## [2.14.0] - 2024-03-28
 
 ### Changed
+
 - Changed Cirrus Dashboard variables for explicitly requiring inputs for cirrus_api_endpoint and metrics_api_endpoint.
 
-## 2.13.0
+## [2.13.0] - 2024-03-21
 
 ### Added
+
 - Adding support for STAC_API_URL env variable for stac-server lambdas.
 
-## 2.12.0
+## [2.12.0] - 2024-03-18
 
 ### Added
+
 - Adding support for creating a BasicAuth CloudFront function.
 
 ### Fixed
+
 - Fixed input parameters for creating CloudFront functions.
 
-## 2.11.0
+## [2.11.0] - 2024-03-06
 
 ### Added
+
 - Adding support for custom origin port for load balancer endpoints.
 
-## 2.10
+## [2.10.0] - 2024-03-04
 
 ### Changed
 - Uses v5.0.0 of the [filmdrop-ui](https://github.com/Element84/filmdrop-ui) by default
 
-## 2.9.0
+## [2.9.0] - 2024-02-29
 
 ### Added
 - Added flag to deploy stac-server resources, including OpenSearch within or outside the vpc, defaults to within vpc.
 
-## 2.8.0
+## [2.8.0] - 2024-02-27
 
 ### Changed
 - Enabling stac-server post ingest sns publishing
 
-## 2.7.0
+## [2.7.0] - 2024-02-24
 
 ### Added
 - Added self-managed, managed and fargate node group capability to eks module
-## 2.6.0
+
+## [2.6.0] - 2024-02-20
 
 ### Fixed
 
 - Fixed custom domain alias and certificate creation for filmdrop endpoints
 - Fixed analytics dask helm installation
 
-## 2.5.0
+## [2.5.0] - 2024-02-12
 
 ### Changed
 
 - Update to require version 1.6.x or 1.7.x of Terraform (instead of ~>1.6.6).
 - Update to default to stac-server v3.5.0 (from v3.2.0)
 
-## 2.4.0
-
-### Added
+## [2.4.0] - 2024-02-11
 
 ### Changed
 
@@ -108,24 +120,25 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Updating analytics load balancer subnets
 - Updating analytics ebs csi driver repo
 
-### Fixed
-
-## 2.3.0
+## [2.3.0] - 2023-12-14
 
 ### Added
+
 - Added historic and ongoing ingest capability as stac-server submodules
 
-## 2.2.0
+## [2.2.0] - 2023-12-11
 
 ### Added
+
 - Added capability for optional CloudFront deployment for stac-server, with a parameter in the stac_server_inputs
 
-## 2.1.0
+## [2.1.0] - 2023-11-29
 
 ### Added
+
 - Added OpenSearch Serverless capability to stac-server module
 
-## 2.0.0
+## [2.0.0] - 2023-11-14
 
 ### Added
 
@@ -141,14 +154,14 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 - Fixes kubectl version on codebuild for jupyterhub analytics module
 
-## 1.7.0
+## [1.7.0] - 2023-11-13
 
 ### Changed
 
 - Default cirrus_dashboard_release to v0.5.1
 - Update stac-server to use OpenSearch 2.9
 
-## 1.6.0
+## [1.6.0] - 2023-11-12
 
 ### Changed
 
@@ -176,14 +189,14 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Various issues fixed related to stac-server resource name changes
 - Removed invalid default values for stac-server variables `vpc_security_group_ids` and `vpc_subnet_ids`
 
-## 1.5.0
+## [1.5.0] - 2023-11-11
 
 ### Changed
 
 - fix args being passed to the cloudfront/custom module which were removed in a lint/cleanup commit
 - console-ui.filmdrop_ui_release must be gte 4.x, e.g., `v4.0.1`
 
-## 1.4.3
+## [1.4.3] - 2023-11-10
 
 ### Changed
 
@@ -202,13 +215,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - OpenSearch Service linked role is no longer managed by these modules, but instead should
   be created using the bootstrap project.
 
-## 1.4.2 2023-09-01
+## [1.4.2] - 2023-09-01
 
 ### Changed
 
 - Adding configurable disk_size and capacity_type to eks node groups
 
-## 1.4.1 2023-08-29
+## [1.4.1] - 2023-08-29
 
 ### Changed
 
@@ -221,7 +234,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Updated wget TLS to v1.3 (Github began denying the default)
 - updated TF resource schemas to work with AWS provider v5
 
-## 1.3.0 2023-08-14
+## [1.3.0] - 2023-08-14
 
 ### Changed
 
@@ -242,21 +255,21 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 - Fixes jupyterhub race condition for bucket ACLs
 
-## 1.2.1 2023-07-29
+## [1.2.1] - 2023-07-29
 
 ### Fixed
 
 - Console UI bucket ACL creation now depends on the ownership permission being applied first
 - Mosaic TiTitler module now creates directory and checks for wget
 
-## 1.2.0 2023-07-27
+## [1.2.0] - 2023-07-27
 
 ### Changed
 
 - FilmDrop UI >= 3.0.0 is now required. The configuration file is now
   `./public/config/config.json` instead of `./src/assets/config.js`
 
-## 1.1.4 2023-07-25
+## [1.1.4] - 2023-07-25
 
 ### Added
 
@@ -267,7 +280,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 - Cloudfront default alias
 
-## 1.1.3 2023-07-22
+## [1.1.3] - 2023-07-22
 
 ### Added
 
@@ -282,7 +295,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Adding missing dns_validation input variable on the s3_website module
 - Cloudfront default alias
 
-## 1.1.2 2023-07-19
+## [1.1.2] - 2023-07-19
 
 ### Added
 
@@ -304,7 +317,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Pin TiTiler FastAPI version to 0.95 to fix routing issue
 - EKS permissions
 
-## 1.1.1 - 2023-05-31
+## [1.1.1] - 2023-05-31
 
 ### Added
 
@@ -314,29 +327,31 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 - Bucket permissions
 
-## 1.1.0 - 2023-05-15
+## [1.1.0] - 2023-05-15
 
 ### Changed
 
 - Changed Filmdrop UI config from .env to config.js
 
-## 1.0.3 - 2023-04-13
+## [1.0.3] - 2023-04-13
 
 ### Added
 
 - EKS module
 
-## 1.0.2 - 2023-03-08
+## [1.0.2] - 2023-03-08
+
+### Changed
 
 Many changes, see commit history
 
-## 1.0.1 - 2023-02-10
+## [1.0.1] - 2023-02-10
 
 ### Fixed
 
 - Fixed issue with stac-server opensearch user-init lambda not building except on initial deploy.
 
-## 1.0.0 - 2023-02-09
+## [1.0.0] - 2023-02-09
 
 ### Added
 
@@ -348,12 +363,6 @@ Many changes, see commit history
   only permission allowed is `write`, which allows read of everything and write if the
   Transaction Extension is enabled.
 
-### Fixed
-
-### Changed
-
-### Removed
-
-## v0.0.36 - 2023-Jan-31
+## [0.0.36] - 2023-01-31
 
 - Start of changelog
