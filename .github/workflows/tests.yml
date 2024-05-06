@@ -1,4 +1,4 @@
-name: Tests on Main and Release Branches
+name: Tests on Main Branch and Releases
 
 on:
   push:
@@ -10,6 +10,7 @@ on:
 jobs:
   tests:
     permissions:
+      id-token: write
       contents: read
     runs-on: ubuntu-latest
     env:
@@ -38,7 +39,8 @@ jobs:
           echo '    encrypt = true' >> test.s3.backend.tf
           echo "    bucket = \"${{ secrets.TF_STATE_BUCKET }}\"" >> test.s3.backend.tf
           echo "    dynamodb_table = \"${{ secrets.TF_STATE_LOCK_TABLE }}\"" >> test.s3.backend.tf
-          echo "    key = \"${{  github.ref_name }}-github-test.tfstate\"" >> test.s3.backend.tf
+          #echo "    key = \"${{  github.ref_name }}-github-test.tfstate\"" >> test.s3.backend.tf
+          echo "    key = \"main-github-test.tfstate\"" >> test.s3.backend.tf
           echo "    region = \"${{ secrets.AWS_REGION }}\"" >> test.s3.backend.tf
           echo '  }' >> test.s3.backend.tf
           echo '}' >> test.s3.backend.tf
