@@ -21,6 +21,7 @@ variable "titiler_inputs" {
   type = object({
     app_name                        = string
     domain_alias                    = string
+    deploy_cloudfront               = bool
     mosaic_titiler_release_tag      = string
     stac_server_and_titiler_s3_arns = list(string)
     mosaic_titiler_waf_allowed_url  = string
@@ -40,6 +41,7 @@ variable "titiler_inputs" {
   default = {
     app_name                        = "titiler"
     domain_alias                    = ""
+    deploy_cloudfront               = true
     mosaic_titiler_release_tag      = "v0.14.0-1.0.4"
     stac_server_and_titiler_s3_arns = []
     mosaic_titiler_waf_allowed_url  = ""

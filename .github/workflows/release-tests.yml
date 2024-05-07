@@ -8,7 +8,7 @@ on:
     branches: ["main"]
 
 jobs:
-  tests:
+  release-tests:
     permissions:
       id-token: write
       contents: read
@@ -34,12 +34,9 @@ jobs:
       - name: Prepararing Environment
         id: prep_env
         run: |
-          sed -n '5,$p' default.tfvars > test.tfvars
-          echo "environment            = \"git\"" >> test.tfvars
-          echo "project_name           = \"${REPOSITORY_NAME}\"" >> test.tfvars
-          sed -i -e 's/deploy_stac_server_opensearch_serverless = false/deploy_stac_server_opensearch_serverless = true/g' test.tfvars
-          sed -i -e 's/deploy_analytics                         = true/deploy_analytics                         = false/g' test.tfvars
-          cat test.tfvars
+          echo "environment = \"git\"" >> ci.tfvars
+          echo "project_name = \"${REPOSITORY_NAME}\"" >> ci.tfvars
+          cat ci.tfvars
           echo "Creating terraform backend file ..."
           echo 'terraform {' >> test.s3.backend.tf
           echo '  backend "s3" {' >> test.s3.backend.tf
@@ -82,7 +79,7 @@ jobs:
 
       - name: Terraform Plan
         id: tf_plan
-        run: terraform plan -var-file="test.tfvars" -out test.tfplan -lock=false
+        run: terraform plan -var-file="ci.tfvars" -out test.tfplan -lock=false
 
       - name: Configure Terraform Apply Credentials
         id: apply_creds
@@ -96,27 +93,6 @@ jobs:
         id: tf_apply
         run: terraform apply -lock=false -input=false test.tfplan
 
-      - name: Configure Terraform OpenSearch Cleanup Credentials
-        id: opensearch_cleanup_creds
-        if: always()
-        uses: aws-actions/configure-aws-credentials@v4
-        with:
-            aws-region: ${{ secrets.AWS_REGION }}
-            role-to-assume: ${{ secrets.AWS_ROLE }}
-            role-session-name: GitHubReleaseOpenSearchCleanup
-
-      - name: Deleting OpenSearch Domain
-        id: delete_opensearch_domain
-        if: always()
-        run: |
-          export stac_opensearch_domain_name=fd-${REPOSITORY_NAME}-git-stac-server
-          if [[ "$stac_opensearch_domain_name" != "" && !("$stac_opensearch_domain_name" =~ ".aoss.amazonaws.com") && "$stac_opensearch_domain_name" != *"Warning"* ]]; then
-              echo "We detected a Stac Server OpenSearch Domain $stac_opensearch_domain_name running in FilmDrop environment, will attempt to delete it..."
-              terraform state rm "module.filmdrop.module.stac-server[0].module.stac-server.aws_opensearch_domain.stac_server_opensearch_domain"
-              aws opensearch delete-domain --domain-name fd-${REPOSITORY_NAME}-git-stac-server --output text > .opensearch.info
-              echo "Stac Server OpenSearch Domain $stac_opensearch_domain_name has been deleted..."
-          fi
-
       - name: Configure Terraform Cleanup Check Credentials
         id: cleanup_check_creds
         if: always()
@@ -129,7 +105,7 @@ jobs:
       - name: Terraform Destroy Pre-Check
         id: tf_destroy_plan
         if: always()
-        run: terraform plan -destroy -var-file="test.tfvars" -out test-cleanup.tfplan -lock=false
+        run: terraform plan -destroy -var-file="ci.tfvars" -out test-cleanup.tfplan -lock=false
 
       - name: Configure Terraform Cleanup Credentials
         id: cleanup_creds

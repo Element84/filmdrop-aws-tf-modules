@@ -34,8 +34,9 @@ variable "security_group_id" {
 variable "console_ui_inputs" {
   description = "Inputs for console-ui FilmDrop deployment."
   type = object({
-    app_name     = string
-    domain_alias = string
+    app_name          = string
+    domain_alias      = string
+    deploy_cloudfront = bool
     custom_error_response = list(object({
       error_caching_min_ttl = string
       error_code            = string
@@ -58,8 +59,9 @@ variable "console_ui_inputs" {
     })
   })
   default = {
-    app_name     = "console"
-    domain_alias = ""
+    app_name          = "console"
+    domain_alias      = ""
+    deploy_cloudfront = true
     custom_error_response = [
       {
         error_caching_min_ttl = "10"

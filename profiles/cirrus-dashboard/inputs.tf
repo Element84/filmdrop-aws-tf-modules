@@ -34,8 +34,9 @@ variable "security_group_id" {
 variable "cirrus_dashboard_inputs" {
   description = "Inputs for cirrus dashboard FilmDrop deployment."
   type = object({
-    app_name     = string
-    domain_alias = string
+    app_name          = string
+    domain_alias      = string
+    deploy_cloudfront = bool
     custom_error_response = list(object({
       error_caching_min_ttl = string
       error_code            = string
@@ -57,8 +58,9 @@ variable "cirrus_dashboard_inputs" {
     })
   })
   default = {
-    app_name     = "dashboard"
-    domain_alias = ""
+    app_name          = "dashboard"
+    domain_alias      = ""
+    deploy_cloudfront = true
     custom_error_response = [
       {
         error_caching_min_ttl = "10"

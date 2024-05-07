@@ -6,12 +6,13 @@ module "cirrus-dashboard" {
   vpc_security_group_ids       = [var.security_group_id]
   cirrus_api_endpoint          = var.cirrus_dashboard_inputs.cirrus_api_endpoint
   metrics_api_endpoint         = var.cirrus_dashboard_inputs.metrics_api_endpoint
-  cirrus_dashboard_bucket_name = module.cloudfront_s3_website.content_bucket_name
+  cirrus_dashboard_bucket_name = var.cirrus_dashboard_inputs.deploy_cloudfront ? module.cloudfront_s3_website[0].content_bucket_name : module.content_website[0].content_bucket
   cirrus_dashboard_release     = var.cirrus_dashboard_inputs.cirrus_dashboard_release
 }
 
 module "cloudfront_s3_website" {
   source = "../../modules/cloudfront/s3_website"
+  count  = var.cirrus_dashboard_inputs.deploy_cloudfront ? 1 : 0
 
   providers = {
     aws.east = aws.east
@@ -36,4 +37,15 @@ module "cloudfront_s3_website" {
   create_cf_function           = var.cirrus_dashboard_inputs.auth_function.create_cf_function
   create_cf_basicauth_function = var.cirrus_dashboard_inputs.auth_function.create_cf_basicauth_function
   cf_function_arn              = var.cirrus_dashboard_inputs.auth_function.cf_function_arn
+}
+
+module "content_website" {
+  count  = var.cirrus_dashboard_inputs.deploy_cloudfront == false ? 1 : 0
+  source = "../../modules/cloudfront/content"
+
+  origin_id = local.origin_id_prefix
+}
+
+locals {
+  origin_id_prefix = lower(substr(replace("fd-${var.environment}-${var.project_name}-${var.cirrus_dashboard_inputs.app_name}", "_", "-"), 0, 63))
 }

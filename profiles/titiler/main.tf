@@ -17,6 +17,7 @@ module "titiler" {
 
 module "cloudfront_api_gateway_endpoint" {
   source = "../../modules/cloudfront/apigw_endpoint"
+  count  = var.titiler_inputs.deploy_cloudfront ? 1 : 0
 
   providers = {
     aws.east = aws.east
