@@ -1,0 +1,135 @@
+name: Deploy Manual Testing
+
+on:
+  workflow_dispatch:
+
+jobs:
+  release-tests:
+    permissions:
+      id-token: write
+      contents: read
+    runs-on: ubuntu-latest
+    env:
+      CI: true
+      STAC_SERVER_TAG: v3.5.0
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+      - uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: "1.7.3"
+
+      - name: Setting Pre-Requisites
+        id: prereqs
+        run: |
+          echo "REPOSITORY_NAME=`echo \"${{  github.sha }}\" | tr -d '.' | cut -c1-8`" >> $GITHUB_ENV
+
+      - name: Prepararing Environment
+        id: prep_env
+        run: |
+          echo "environment = \"git\"" >> ci.tfvars
+          echo "project_name = \"${REPOSITORY_NAME}\"" >> ci.tfvars
+          cat ci.tfvars
+          echo "Creating terraform backend file ..."
+          echo 'terraform {' >> test.s3.backend.tf
+          echo '  backend "s3" {' >> test.s3.backend.tf
+          echo '    encrypt = true' >> test.s3.backend.tf
+          echo "    bucket = \"${{ secrets.TF_STATE_BUCKET }}\"" >> test.s3.backend.tf
+          echo "    dynamodb_table = \"${{ secrets.TF_STATE_LOCK_TABLE }}\"" >> test.s3.backend.tf
+          echo "    key = \"${REPOSITORY_NAME}-github-test.tfstate\"" >> test.s3.backend.tf
+          echo "    region = \"${{ secrets.AWS_REGION }}\"" >> test.s3.backend.tf
+          echo '  }' >> test.s3.backend.tf
+          echo '}' >> test.s3.backend.tf
+          cat test.s3.backend.tf
+
+      - name: Update stac-server lambdas
+        id: update_stac_lambdas
+        run: ./scripts/update-lambdas.sh
+
+      - name: Configure Terraform Init Credentials
+        id: init_creds
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+            aws-region: ${{ secrets.AWS_REGION }}
+            role-to-assume: ${{ secrets.AWS_ROLE }}
+            role-session-name: GitHubReleaseInit
+
+      - name: Terraform Init
+        id: tf_init
+        run: terraform init
+
+      - name: Terraform Validate
+        id: tf_validate
+        run: terraform validate
+
+      - name: Configure Terraform Plan Credentials
+        id: plan_creds
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+            aws-region: ${{ secrets.AWS_REGION }}
+            role-to-assume: ${{ secrets.AWS_ROLE }}
+            role-session-name: GitHubReleasePlan
+
+      - name: Terraform Plan
+        id: tf_plan
+        run: terraform plan -var-file="ci.tfvars" -out test.tfplan -lock=false
+
+      - name: Configure Terraform Apply Credentials
+        id: apply_creds
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+            aws-region: ${{ secrets.AWS_REGION }}
+            role-to-assume: ${{ secrets.AWS_ROLE }}
+            role-session-name: GitHubReleaseApply
+
+      - name: Terraform Apply
+        id: tf_apply
+        run: terraform apply -lock=false -input=false test.tfplan
+
+      - name: Configure Terraform Cleanup Check Credentials
+        id: cleanup_check_creds
+        if: always()
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+            aws-region: ${{ secrets.AWS_REGION }}
+            role-to-assume: ${{ secrets.AWS_ROLE }}
+            role-session-name: GitHubReleaseCleanupCheck
+
+      - name: Terraform Destroy Pre-Check
+        id: tf_destroy_plan
+        if: always()
+        run: terraform plan -destroy -var-file="ci.tfvars" -out test-cleanup.tfplan -lock=false
+
+      - name: Configure Terraform Cleanup Credentials
+        id: cleanup_creds
+        if: always()
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+            aws-region: ${{ secrets.AWS_REGION }}
+            role-to-assume: ${{ secrets.AWS_ROLE }}
+            role-session-name: GitHubReleaseCleanup
+
+      - name: Terraform Destroy
+        id: tf_destroy_apply
+        if: always()
+        run: terraform apply -destroy -lock=false -input=false test-cleanup.tfplan
+
+  pre-commit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: "1.7.3"
+      - uses: terraform-linters/setup-tflint@v3
+        with:
+          tflint_version: "v0.49.0"
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11" 
+      - name: Install pre-commit
+        run: pip install pre-commit
+      - name: Run pre-commit
+        run: pre-commit run --all-files

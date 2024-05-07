@@ -1,7 +1,5 @@
 ##### PROJECT VARIABLES ####
 # The following variables are global to the FilmDrop infrastructure stack
-environment            = "test"
-project_name           = "TestProj"
 domain_zone            = ""
 s3_access_log_bucket   = ""
 s3_logs_archive_bucket = ""
@@ -25,7 +23,7 @@ sns_critical_subscriptions_map = {}
 stac_server_inputs = {
   app_name                                    = "stac_server"
   version                                     = "v3.5.0"
-  deploy_cloudfront                           = true
+  deploy_cloudfront                           = false
   domain_alias                                = ""
   enable_transactions_extension               = false
   collection_to_index_mappings                = ""
@@ -67,7 +65,7 @@ stac_server_inputs = {
 titiler_inputs = {
   app_name                        = "titiler"
   domain_alias                    = ""
-  deploy_cloudfront               = true
+  deploy_cloudfront               = false
   mosaic_titiler_release_tag      = "v0.14.0-1.0.4"
   stac_server_and_titiler_s3_arns = []
   mosaic_titiler_waf_allowed_url  = "test.filmdrop.io"
@@ -119,7 +117,7 @@ analytics_inputs = {
 console_ui_inputs = {
   app_name          = "console"
   domain_alias      = ""
-  deploy_cloudfront = true
+  deploy_cloudfront = false
   custom_error_response = [
     {
       error_caching_min_ttl = "10"
@@ -147,7 +145,7 @@ console_ui_inputs = {
 cirrus_dashboard_inputs = {
   app_name          = "dashboard"
   domain_alias      = ""
-  deploy_cloudfront = true
+  deploy_cloudfront = false
   custom_error_response = [
     {
       error_caching_min_ttl = "10"
@@ -178,10 +176,10 @@ deploy_vpc                               = false
 deploy_vpc_search                        = true
 deploy_log_archive                       = true
 deploy_alarms                            = false
-deploy_stac_server_opensearch_serverless = false
+deploy_stac_server_opensearch_serverless = true
 deploy_stac_server                       = true
 deploy_stac_server_outside_vpc           = false
-deploy_analytics                         = true
+deploy_analytics                         = false
 deploy_titiler                           = true
 deploy_console_ui                        = true
 deploy_cirrus_dashboard                  = true

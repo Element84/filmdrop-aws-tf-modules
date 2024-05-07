@@ -7,9 +7,20 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [2.20.0] - 2024-05-07
+
+### Added
+
+- Added GitHub Actions workflow to test new commits to main branch and new releases.
+- Added GitHub Actions workflow manual trigger to test new commits and PRs.
+- Added ci.tfvars with minimal configuration for GitHub Action testing, no CloudFront, no Analytics and stac-server with OpenSearch Serverless.
+
 ### Changed
 
-- Updated changelog to adhere to spec
+- Updated changelog to adhere to spec.
+- Updated Terraform AWS Provider minimum version to 5.47.
+- Updated CloudFront deployment as optional for FilmDrop UI.
+- Updated CloudFront deployment as optional for Cirrus Dashboard.
 
 ## [2.19.0] - 2024-04-25
 
