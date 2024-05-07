@@ -1,11 +1,11 @@
 name: Main Branch and Release Testing
 
 on:
-  workflow_dispatch:
-
   push:
     branches: ["main"]
     tags: ["v*.*.*"]
+  pull_request:
+    branches: ["main"]
 
 jobs:
   tests:
@@ -28,7 +28,8 @@ jobs:
       - name: Setting Pre-Requisites
         id: prereqs
         run: |
-          echo "REPOSITORY_NAME=`echo \"${{  github.ref_name }}\" | tr -d '.' | cut -c1-8`" >> $GITHUB_ENV
+          #echo "REPOSITORY_NAME=`echo \"${{  github.ref_name }}\" | tr -d '.' | cut -c1-8`" >> $GITHUB_ENV
+          echo "REPOSITORY_NAME=main" >> $GITHUB_ENV
 
       - name: Prepararing Environment
         id: prep_env
@@ -36,6 +37,8 @@ jobs:
           sed -n '5,$p' default.tfvars > test.tfvars
           echo "environment            = \"git\"" >> test.tfvars
           echo "project_name           = \"${REPOSITORY_NAME}\"" >> test.tfvars
+          sed -i '' 's/deploy_stac_server_opensearch_serverless = false/deploy_stac_server_opensearch_serverless = true/' test.tfvars
+          sed -i '' 's/deploy_analytics                         = true/deploy_analytics                         = false/' test.tfvars
           cat test.tfvars
           echo "Creating terraform backend file ..."
           echo 'terraform {' >> test.s3.backend.tf
