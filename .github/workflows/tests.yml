@@ -1,6 +1,8 @@
 name: Main Branch and Release Testing
 
 on:
+  workflow_dispatch:
+
   push:
     branches: ["main"]
     tags: ["v*.*.*"]
@@ -26,7 +28,7 @@ jobs:
       - name: Setting Pre-Requisites
         id: prereqs
         run: |
-          echo "REPOSITORY_NAME=`echo \"${{  github.ref_name }}\" | tr -d '.'`" >> $GITHUB_ENV
+          echo "REPOSITORY_NAME=`echo \"${{  github.ref_name }}\" | tr -d '.' | cut -c1-8`" >> $GITHUB_ENV
 
       - name: Prepararing Environment
         id: prep_env
@@ -89,7 +91,7 @@ jobs:
 
       - name: Terraform Apply
         id: tf_apply
-        run: terraform apply -input=false test.tfplan
+        run: terraform apply -lock=false -input=false test.tfplan
 
       - name: Configure Terraform OpenSearch Cleanup Credentials
         id: opensearch_cleanup_creds
@@ -138,7 +140,7 @@ jobs:
       - name: Terraform Destroy
         id: tf_destroy_apply
         if: always()
-        run: terraform apply -destroy -input=false test-cleanup.tfplan
+        run: terraform apply -destroy -lock=false -input=false test-cleanup.tfplan
 
   pre-commit:
     runs-on: ubuntu-latest
