@@ -1,9 +1,7 @@
-name: Main Branch and Release Testing
+name: Deploy Manual Testing
 
 on:
-  push:
-    branches: ["main"]
-    tags: ["v*.*.*"]
+  workflow_dispatch:
 
 jobs:
   release-tests:
@@ -26,7 +24,7 @@ jobs:
       - name: Setting Pre-Requisites
         id: prereqs
         run: |
-          echo "REPOSITORY_NAME=`echo \"${{  github.ref_name }}\" | tr -d '.' | cut -c1-8`" >> $GITHUB_ENV
+          echo "REPOSITORY_NAME=`echo \"${{  github.sha }}\" | tr -d '.' | cut -c1-8`" >> $GITHUB_ENV
 
       - name: Prepararing Environment
         id: prep_env
