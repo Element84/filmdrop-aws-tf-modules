@@ -37,8 +37,8 @@ jobs:
           sed -n '5,$p' default.tfvars > test.tfvars
           echo "environment            = \"git\"" >> test.tfvars
           echo "project_name           = \"${REPOSITORY_NAME}\"" >> test.tfvars
-          sed -i '' 's/deploy_stac_server_opensearch_serverless = false/deploy_stac_server_opensearch_serverless = true/' test.tfvars
-          sed -i '' 's/deploy_analytics                         = true/deploy_analytics                         = false/' test.tfvars
+          sed -i -e 's/deploy_stac_server_opensearch_serverless = false/deploy_stac_server_opensearch_serverless = true/g' test.tfvars
+          sed -i -e 's/deploy_analytics                         = true/deploy_analytics                         = false/g' test.tfvars
           cat test.tfvars
           echo "Creating terraform backend file ..."
           echo 'terraform {' >> test.s3.backend.tf
