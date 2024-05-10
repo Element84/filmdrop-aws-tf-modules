@@ -8,5 +8,5 @@ data "aws_region" "current" {
 }
 
 locals {
-  origin_id_prefix = lower(substr(replace("fd-${var.environment}-${var.project_name}-${var.application_name}", "_", "-"), 0, 63))
+  origin_id_prefix = lower(substr(replace("fd-${var.project_name}-${var.environment}-${var.application_name}", "_", "-"), 0, 63))
 }
