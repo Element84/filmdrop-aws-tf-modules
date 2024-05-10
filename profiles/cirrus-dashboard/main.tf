@@ -47,5 +47,5 @@ module "content_website" {
 }
 
 locals {
-  origin_id_prefix = lower(substr(replace("fd-${var.project_name}-${var.environment}-${var.application_name}", "_", "-"), 0, 63))
+  origin_id_prefix = lower(substr(replace("fd-${var.project_name}-${var.environment}-${var.cirrus_dashboard_inputs.app_name}", "_", "-"), 0, 63))
 }
