@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [2.21.0] - 2024-05-10
+
+### Changed
+
+- Added consistent naming for CloudFront Basic Auth and other resources.
+
 ## [2.20.0] - 2024-05-07
 
 ### Added
