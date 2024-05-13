@@ -328,3 +328,27 @@ variable "stac_api_url" {
   type        = string
   default     = ""
 }
+
+variable "cors_origin" {
+  description = ""
+  type        = string
+  default     = "*"
+}
+
+variable "cors_credentials" {
+  description = ""
+  type        = bool
+  default     = false
+}
+
+variable "cors_methods" {
+  description = ""
+  type        = string
+  default     = ""
+}
+
+variable "cors_headers" {
+  description = ""
+  type        = string
+  default     = ""
+}
