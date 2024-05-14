@@ -2,7 +2,7 @@ name: Continuous integration
 
 on:
   push:
-    branches: ["main" ]
+    branches: ["main"]
   pull_request:
     branches: ["main"]
 
@@ -11,12 +11,12 @@ jobs:
     runs-on: ubuntu-latest
     env:
       CI: true
-      STAC_SERVER_TAG: v3.5.0
+      STAC_SERVER_TAG: v3.7.0
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: '18'
+          node-version: "18"
       - uses: hashicorp/setup-terraform@v3
         with:
           terraform_version: "1.7.3"
@@ -44,7 +44,7 @@ jobs:
           tflint_version: "v0.49.0"
       - uses: actions/setup-python@v5
         with:
-          python-version: "3.11" 
+          python-version: "3.11"
       - name: Install pre-commit
         run: pip install pre-commit
       - name: Run pre-commit

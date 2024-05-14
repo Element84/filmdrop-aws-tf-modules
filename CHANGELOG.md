@@ -127,7 +127,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Changed
 
 - Update to require version 1.6.x or 1.7.x of Terraform (instead of ~>1.6.6).
-- Update to default to stac-server v3.5.0 (from v3.2.0)
+- Update to default to stac-server v3.7.0 (from v3.2.0)
 
 ## [2.4.0] - 2024-02-11
 

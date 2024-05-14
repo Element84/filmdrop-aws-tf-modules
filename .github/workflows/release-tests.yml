@@ -13,12 +13,12 @@ jobs:
     runs-on: ubuntu-latest
     env:
       CI: true
-      STAC_SERVER_TAG: v3.5.0
+      STAC_SERVER_TAG: v3.7.0
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: '18'
+          node-version: "18"
       - uses: hashicorp/setup-terraform@v3
         with:
           terraform_version: "1.7.3"
@@ -54,9 +54,9 @@ jobs:
         id: init_creds
         uses: aws-actions/configure-aws-credentials@v4
         with:
-            aws-region: ${{ secrets.AWS_REGION }}
-            role-to-assume: ${{ secrets.AWS_ROLE }}
-            role-session-name: GitHubReleaseInit
+          aws-region: ${{ secrets.AWS_REGION }}
+          role-to-assume: ${{ secrets.AWS_ROLE }}
+          role-session-name: GitHubReleaseInit
 
       - name: Terraform Init
         id: tf_init
@@ -70,9 +70,9 @@ jobs:
         id: plan_creds
         uses: aws-actions/configure-aws-credentials@v4
         with:
-            aws-region: ${{ secrets.AWS_REGION }}
-            role-to-assume: ${{ secrets.AWS_ROLE }}
-            role-session-name: GitHubReleasePlan
+          aws-region: ${{ secrets.AWS_REGION }}
+          role-to-assume: ${{ secrets.AWS_ROLE }}
+          role-session-name: GitHubReleasePlan
 
       - name: Terraform Plan
         id: tf_plan
@@ -82,9 +82,9 @@ jobs:
         id: apply_creds
         uses: aws-actions/configure-aws-credentials@v4
         with:
-            aws-region: ${{ secrets.AWS_REGION }}
-            role-to-assume: ${{ secrets.AWS_ROLE }}
-            role-session-name: GitHubReleaseApply
+          aws-region: ${{ secrets.AWS_REGION }}
+          role-to-assume: ${{ secrets.AWS_ROLE }}
+          role-session-name: GitHubReleaseApply
 
       - name: Terraform Apply
         id: tf_apply
@@ -118,9 +118,9 @@ jobs:
         if: always()
         uses: aws-actions/configure-aws-credentials@v4
         with:
-            aws-region: ${{ secrets.AWS_REGION }}
-            role-to-assume: ${{ secrets.AWS_ROLE }}
-            role-session-name: GitHubReleaseCleanupCheck
+          aws-region: ${{ secrets.AWS_REGION }}
+          role-to-assume: ${{ secrets.AWS_ROLE }}
+          role-session-name: GitHubReleaseCleanupCheck
 
       - name: Terraform Destroy Pre-Check
         id: tf_destroy_plan
@@ -132,9 +132,9 @@ jobs:
         if: always()
         uses: aws-actions/configure-aws-credentials@v4
         with:
-            aws-region: ${{ secrets.AWS_REGION }}
-            role-to-assume: ${{ secrets.AWS_ROLE }}
-            role-session-name: GitHubReleaseCleanup
+          aws-region: ${{ secrets.AWS_REGION }}
+          role-to-assume: ${{ secrets.AWS_ROLE }}
+          role-session-name: GitHubReleaseCleanup
 
       - name: Terraform Destroy
         id: tf_destroy_apply
@@ -176,7 +176,7 @@ jobs:
           tflint_version: "v0.49.0"
       - uses: actions/setup-python@v5
         with:
-          python-version: "3.11" 
+          python-version: "3.11"
       - name: Install pre-commit
         run: pip install pre-commit
       - name: Run pre-commit

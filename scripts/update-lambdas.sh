@@ -1,14 +1,14 @@
 #!/usr/bin/env bash
-#
+
 # Update the stac-server lambdas.
 #
 # Usage:
 #
-#     ./scripts/update-lambdas.sh v3.5.0
+#     ./scripts/update-lambdas.sh vX.Y.Z
 #
 # or
 #
-#     export STAC_SERVER_TAG=v3.5.0
+#     export STAC_SERVER_TAG=vX.Y.Z
 #     ./scripts/update-lambdas.sh
 
 set -e

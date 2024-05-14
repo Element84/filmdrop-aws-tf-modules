@@ -22,7 +22,7 @@ sns_critical_subscriptions_map = {}
 ##### APPLICATION VARIABLES ####
 stac_server_inputs = {
   app_name                                    = "stac_server"
-  version                                     = "v3.5.0"
+  version                                     = "v3.7.0"
   deploy_cloudfront                           = false
   domain_alias                                = ""
   enable_transactions_extension               = false
