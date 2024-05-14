@@ -137,7 +137,7 @@ variable "stac_server_inputs" {
   })
   default = {
     app_name                                    = "stac_server"
-    version                                     = "v3.5.0"
+    version                                     = "v3.7.0"
     deploy_cloudfront                           = true
     domain_alias                                = ""
     enable_transactions_extension               = false
@@ -325,7 +325,7 @@ variable "console_ui_inputs" {
         response_page_path    = "/"
       }
     ]
-    filmdrop_ui_release     = "v5.0.0"
+    filmdrop_ui_release     = "v5.3.0"
     filmdrop_ui_config_file = ""
     filmdrop_ui_logo_file   = ""
     filmdrop_ui_logo        = "bm9uZQo=" # Base64: 'none'
