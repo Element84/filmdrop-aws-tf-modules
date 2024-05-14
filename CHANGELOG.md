@@ -27,7 +27,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 - Added GitHub Actions workflow to test new commits to main branch and new releases.
 - Added GitHub Actions workflow manual trigger to test new commits and PRs.
-- Added ci.tfvars with minimal configuration for GitHub Action testing, no CloudFront, no Analytics and stac-server with OpenSearch Serverless.
+- Added ci.tfvars with minimal configuration for GitHub Action testing, no CloudFront,
+  no Analytics and stac-server with OpenSearch Serverless.
 
 ### Changed
 
@@ -98,21 +99,26 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ## [2.10.0] - 2024-03-04
 
 ### Changed
+
 - Uses v5.0.0 of the [filmdrop-ui](https://github.com/Element84/filmdrop-ui) by default
 
 ## [2.9.0] - 2024-02-29
 
 ### Added
-- Added flag to deploy stac-server resources, including OpenSearch within or outside the vpc, defaults to within vpc.
+
+- Added flag to deploy stac-server resources, including OpenSearch within or outside
+  the vpc, defaults to within vpc.
 
 ## [2.8.0] - 2024-02-27
 
 ### Changed
+
 - Enabling stac-server post ingest sns publishing
 
 ## [2.7.0] - 2024-02-24
 
 ### Added
+
 - Added self-managed, managed and fargate node group capability to eks module
 
 ## [2.6.0] - 2024-02-20
@@ -168,7 +174,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Changed
 
-- Adding FilmDrop profiles for deploying components via flags and enabling a 1-step deployment via tf-modules repo
+- Adding FilmDrop profiles for deploying components via flags and enabling a 1-step
+  deployment via tf-modules repo
 
 ### Fixed
 
