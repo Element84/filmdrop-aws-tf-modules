@@ -106,6 +106,10 @@ variable "stac_server_inputs" {
     additional_ingest_sqs_senders_arns          = list(string)
     opensearch_ebs_volume_size                  = number
     stac_server_and_titiler_s3_arns             = list(string)
+    cors_origin                                 = string
+    cors_credentials                            = bool
+    cors_methods                                = string
+    cors_headers                                = string
     web_acl_id                                  = string
     auth_function = object({
       cf_function_name             = string
@@ -147,6 +151,10 @@ variable "stac_server_inputs" {
     additional_ingest_sqs_senders_arns          = []
     opensearch_ebs_volume_size                  = 35
     stac_server_and_titiler_s3_arns             = []
+    cors_origin                                 = "*"
+    cors_credentials                            = false
+    cors_methods                                = ""
+    cors_headers                                = ""
     web_acl_id                                  = ""
     auth_function = {
       cf_function_name             = ""

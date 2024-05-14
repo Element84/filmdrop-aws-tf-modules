@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### Added
+
+- Adding support for stac-server API Lambda environment configuration:
+  - Access-Control-Allow-Origin: `CORS_ORIGIN`
+  - Access-Control-Allow-Credentials: `CORS_CREDENTIALS`
+  - Access-Control-Allow-Methods: `CORS_METHODS`
+  - Access-Control-Allow-Headers: `CORS_HEADERS`
+
 ## [2.21.0] - 2024-05-10
 
 ### Changed

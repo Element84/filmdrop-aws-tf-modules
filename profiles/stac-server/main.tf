@@ -22,6 +22,10 @@ module "stac-server" {
   deploy_stac_server_opensearch_serverless    = var.deploy_stac_server_opensearch_serverless
   deploy_stac_server_outside_vpc              = var.deploy_stac_server_outside_vpc
   stac_api_url                                = var.stac_server_inputs.deploy_cloudfront && var.stac_server_inputs.domain_alias != "" ? "https://${var.stac_server_inputs.domain_alias}" : ""
+  cors_origin                                 = var.stac_server_inputs.cors_origin
+  cors_credentials                            = var.stac_server_inputs.cors_credentials
+  cors_methods                                = var.stac_server_inputs.cors_methods
+  cors_headers                                = var.stac_server_inputs.cors_headers
 }
 
 module "cloudfront_api_gateway_endpoint" {
