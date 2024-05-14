@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Changed
 
 - Default to filmdrop-ui version v5.3.0
+- Default to stac-server v3.7.0
 
 ### Added
 
