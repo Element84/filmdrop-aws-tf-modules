@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [2.22.0] - 2024-05-14
 
+### Changed
+
+- Default to filmdrop-ui version v5.3.0
+
 ### Added
 
 - Adding support for stac-server API Lambda environment configuration:
