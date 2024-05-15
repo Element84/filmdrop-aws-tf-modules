@@ -37,12 +37,12 @@ variable "traffic_type" {
 }
 
 variable "public_subnets_az_to_id_map" {
-  description = "Map with the availability zone to the id for public subnets"
+  description = "Map with the availability zone to the subnet-id for public subnets. If deploy_vpc = true, then specify the map with az => subnet-cidr-range instead."
   type        = map(any)
 }
 
 variable "private_subnets_az_to_id_map" {
-  description = "Map with the availability zone to the id for private subnets"
+  description = "Map with the availability zone to the subnet-id for private subnets. If deploy_vpc = true, then specify the map with az => subnet-cidr-range instead."
   type        = map(any)
 }
 

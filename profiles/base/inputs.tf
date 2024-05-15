@@ -30,13 +30,13 @@ variable "vpc_cidr" {
 
 variable "public_subnets_az_to_id_map" {
   type        = map(any)
-  description = "Map with the availability zone to the id for public subnets"
+  description = "Map with the availability zone to the subnet-id for public subnets. If deploy_vpc = true, then specify the map with az => subnet-cidr-range instead."
   default     = {}
 }
 
 variable "private_subnets_az_to_id_map" {
   type        = map(any)
-  description = "Map with the availability zone to the id for private subnets"
+  description = "Map with the availability zone to the subnet-id for private subnets. If deploy_vpc = true, then specify the map with az => subnet-cidr-range instead."
   default     = {}
 }
 
