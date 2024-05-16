@@ -2,8 +2,8 @@ variable "environment" {
   description = "Project environment."
   type        = string
   validation {
-    condition     = length(var.environment) <= 5
-    error_message = "The environment value must be 5 or fewer characters."
+    condition     = length(var.environment) <= 7
+    error_message = "The environment value must be 7 or fewer characters."
   }
 }
 
