@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [2.23.0] - 2024-05-16
 
+### Changed
+
+- Allow 7 instead of 5 characters for `environment`
+
 ### Fixed
 
 - Fixed filmdrop built-in vpc output references and mappings
