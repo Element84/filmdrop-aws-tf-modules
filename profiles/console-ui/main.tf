@@ -8,9 +8,9 @@ module "console-ui" {
   filmdrop_ui_release    = var.console_ui_inputs.filmdrop_ui_release
   console_ui_bucket_name = var.console_ui_inputs.deploy_cloudfront ? module.cloudfront_s3_website[0].content_bucket_name : module.content_website[0].content_bucket
 
-  filmdrop_ui_config    = filebase64(var.console_ui_inputs.filmdrop_ui_config_file)
+  filmdrop_ui_config    = var.console_ui_inputs.filmdrop_ui_config_file != "" ? filebase64(var.console_ui_inputs.filmdrop_ui_config_file) : "bm9uZQo=" # None
   filmdrop_ui_logo_file = var.console_ui_inputs.filmdrop_ui_logo_file
-  filmdrop_ui_logo      = filebase64(var.console_ui_inputs.filmdrop_ui_logo_file)
+  filmdrop_ui_logo      = var.console_ui_inputs.filmdrop_ui_logo != "" ? var.console_ui_inputs.filmdrop_ui_logo : filebase64(var.console_ui_inputs.filmdrop_ui_logo_file)
 }
 
 module "cloudfront_s3_website" {
