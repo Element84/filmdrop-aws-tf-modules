@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
+## [2.24.0] - 2024-05-20
+
+### Fixed
+
+- Add default values to console-ui inputs to allow tflint validation.
+
 ## [2.23.0] - 2024-05-16
 
 ### Changed
