@@ -34,18 +34,18 @@ variable "security_group_id" {
 variable "cirrus_dashboard_inputs" {
   description = "Inputs for cirrus dashboard FilmDrop deployment."
   type = object({
-    app_name          = string
-    domain_alias      = string
-    deploy_cloudfront = bool
+    app_name             = string
+    domain_alias         = string
+    deploy_cloudfront    = bool
+    version              = string
+    cirrus_api_endpoint  = string
+    metrics_api_endpoint = string
     custom_error_response = list(object({
       error_caching_min_ttl = string
       error_code            = string
       response_code         = string
       response_page_path    = string
     }))
-    cirrus_api_endpoint      = string
-    metrics_api_endpoint     = string
-    cirrus_dashboard_release = string
     auth_function = object({
       cf_function_name             = string
       cf_function_runtime          = string
@@ -58,9 +58,12 @@ variable "cirrus_dashboard_inputs" {
     })
   })
   default = {
-    app_name          = "dashboard"
-    domain_alias      = ""
-    deploy_cloudfront = true
+    app_name             = "dashboard"
+    domain_alias         = ""
+    deploy_cloudfront    = true
+    version              = "v0.5.1"
+    cirrus_api_endpoint  = ""
+    metrics_api_endpoint = ""
     custom_error_response = [
       {
         error_caching_min_ttl = "10"
@@ -69,9 +72,6 @@ variable "cirrus_dashboard_inputs" {
         response_page_path    = "/"
       }
     ]
-    cirrus_api_endpoint      = ""
-    metrics_api_endpoint     = ""
-    cirrus_dashboard_release = "v0.5.1"
     auth_function = {
       cf_function_name             = ""
       cf_function_runtime          = "cloudfront-js-2.0"

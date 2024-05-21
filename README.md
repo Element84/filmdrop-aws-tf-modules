@@ -307,7 +307,7 @@ a newer version. For example, if a new required variable is added, this should b
 
 ### 1.7.0
 
-* Remove cirrus_dashboard_release uses in deployment to use new default version of v0.5.1
+* Remove cirrus_dashboard_release_tag uses in deployment to use new default version of v0.5.1
 * Please upgrade to AWS provider `~=5.20`
 
 ### 1.6.0

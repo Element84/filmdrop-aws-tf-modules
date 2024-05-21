@@ -70,7 +70,7 @@ titiler_inputs = {
   app_name                        = "titiler"
   domain_alias                    = ""
   deploy_cloudfront               = false
-  mosaic_titiler_release_tag      = "v0.14.0-1.0.4"
+  version                         = "v0.14.0-1.0.4"
   stac_server_and_titiler_s3_arns = []
   mosaic_titiler_waf_allowed_url  = "test.filmdrop.io"
   mosaic_titiler_host_header      = ""
@@ -119,9 +119,13 @@ analytics_inputs = {
 }
 
 console_ui_inputs = {
-  app_name          = "console"
-  domain_alias      = ""
-  deploy_cloudfront = false
+  app_name                = "console"
+  domain_alias            = ""
+  deploy_cloudfront       = false
+  version                 = "v5.3.0"
+  filmdrop_ui_config_file = "./profiles/console-ui/default-config/config.dev.json"
+  filmdrop_ui_logo_file   = "./profiles/console-ui/default-config/logo.png"
+  filmdrop_ui_logo        = "bm9uZQo=" # Base64: 'none'
   custom_error_response = [
     {
       error_caching_min_ttl = "10"
@@ -130,10 +134,6 @@ console_ui_inputs = {
       response_page_path    = "/"
     }
   ]
-  filmdrop_ui_release     = "v5.3.0"
-  filmdrop_ui_config_file = "./profiles/console-ui/default-config/config.dev.json"
-  filmdrop_ui_logo_file   = "./profiles/console-ui/default-config/logo.png"
-  filmdrop_ui_logo        = "bm9uZQo=" # Base64: 'none'
   auth_function = {
     cf_function_name             = ""
     cf_function_runtime          = "cloudfront-js-2.0"
@@ -150,6 +150,7 @@ cirrus_dashboard_inputs = {
   app_name          = "dashboard"
   domain_alias      = ""
   deploy_cloudfront = false
+  version           = "v0.5.1"
   custom_error_response = [
     {
       error_caching_min_ttl = "10"
@@ -158,9 +159,8 @@ cirrus_dashboard_inputs = {
       response_page_path    = "/"
     }
   ]
-  cirrus_api_endpoint      = ""
-  metrics_api_endpoint     = ""
-  cirrus_dashboard_release = "v0.5.1"
+  cirrus_api_endpoint  = ""
+  metrics_api_endpoint = ""
   auth_function = {
     cf_function_name             = ""
     cf_function_runtime          = "cloudfront-js-2.0"

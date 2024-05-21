@@ -5,6 +5,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
+## unreleased
+
+## Changed
+
+- `titiler_inputs.mosaic_titiler_release_tag` is now `titiler_inputs.version`
+- `cirrus_dashboard_inputs.cirrus_dashboard_release` is now `cirrus_dashboard_inputs.version`
+- `console_ui_inputs.filmdrop_ui_release` is now `console_ui_inputs.version`
+
 ## [2.24.0] - 2024-05-20
 
 ### Fixed
@@ -206,7 +214,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Changed
 
-- Default cirrus_dashboard_release to v0.5.1
+- Default cirrus_dashboard_release_tag to v0.5.1
 - Update stac-server to use OpenSearch 2.9
 
 ## [1.6.0] - 2023-11-12
