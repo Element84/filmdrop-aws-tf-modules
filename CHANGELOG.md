@@ -13,6 +13,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 - Added Cirrus terraform base resource set and new cirrus terraform module
 
+## Changed
+
+- `titiler_inputs.mosaic_titiler_release_tag` is now `titiler_inputs.version`
+- `cirrus_dashboard_inputs.cirrus_dashboard_release` is now `cirrus_dashboard_inputs.version`
+- `console_ui_inputs.filmdrop_ui_release` is now `console_ui_inputs.version`
+
 ### Removed
 
 - sample data bucket module has been removed, as it was unused in any projects
@@ -218,7 +224,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Changed
 
-- Default cirrus_dashboard_release to v0.5.1
+- Default cirrus_dashboard_release_tag to v0.5.1
 - Update stac-server to use OpenSearch 2.9
 
 ## [1.6.0] - 2023-11-12

@@ -97,7 +97,7 @@ variable "project_name" {
   type        = string
 }
 
-variable "mosaic_titiler_release_tag" {
+variable "titiler_mosaicjson_release_tag" {
   description = "Git release tag for: https://github.com/Element84/titiler-mosaicjson/releases"
   type        = string
 }

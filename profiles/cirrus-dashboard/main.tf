@@ -7,7 +7,7 @@ module "cirrus-dashboard" {
   cirrus_api_endpoint          = var.cirrus_dashboard_inputs.cirrus_api_endpoint
   metrics_api_endpoint         = var.cirrus_dashboard_inputs.metrics_api_endpoint
   cirrus_dashboard_bucket_name = var.cirrus_dashboard_inputs.deploy_cloudfront ? module.cloudfront_s3_website[0].content_bucket_name : module.content_website[0].content_bucket
-  cirrus_dashboard_release     = var.cirrus_dashboard_inputs.cirrus_dashboard_release
+  cirrus_dashboard_release_tag = var.cirrus_dashboard_inputs.version
 }
 
 module "cloudfront_s3_website" {
