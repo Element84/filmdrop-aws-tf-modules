@@ -1,5 +1,5 @@
 variable "cirrus_prefix" {
-  description = "Prefix for Cirrus Managed resources"
+  description = "Prefix for Cirrus-managed resources"
   type        = string
 }
 
