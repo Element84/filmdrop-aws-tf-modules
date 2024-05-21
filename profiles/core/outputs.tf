@@ -86,12 +86,24 @@ output "cirrus_process_sqs_queue_arn" {
   value = var.deploy_cirrus ? module.cirrus[0].cirrus_process_sqs_queue_arn : ""
 }
 
+output "cirrus_process_sqs_queue_url" {
+  value = var.deploy_cirrus ? module.cirrus[0].cirrus_process_sqs_queue_url : ""
+}
+
 output "cirrus_process_dead_letter_sqs_queue_arn" {
   value = var.deploy_cirrus ? module.cirrus[0].cirrus_process_dead_letter_sqs_queue_arn : ""
 }
 
+output "cirrus_process_dead_letter_sqs_queue_url" {
+  value = var.deploy_cirrus ? module.cirrus[0].cirrus_process_dead_letter_sqs_queue_url : ""
+}
+
 output "cirrus_update_state_dead_letter_sqs_queue_arn" {
   value = var.deploy_cirrus ? module.cirrus[0].cirrus_update_state_dead_letter_sqs_queue_arn : ""
+}
+
+output "cirrus_update_state_dead_letter_sqs_queue_url" {
+  value = var.deploy_cirrus ? module.cirrus[0].cirrus_update_state_dead_letter_sqs_queue_url : ""
 }
 
 output "cirrus_state_dynamodb_table_name" {

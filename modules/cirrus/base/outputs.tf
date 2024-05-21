@@ -14,12 +14,24 @@ output "cirrus_process_sqs_queue_arn" {
   value = aws_sqs_queue.cirrus_process_sqs_queue.arn
 }
 
+output "cirrus_process_sqs_queue_url" {
+  value = aws_sqs_queue.cirrus_process_sqs_queue.url
+}
+
 output "cirrus_process_dead_letter_sqs_queue_arn" {
   value = aws_sqs_queue.cirrus_process_dead_letter_sqs_queue.arn
 }
 
+output "cirrus_process_dead_letter_sqs_queue_url" {
+  value = aws_sqs_queue.cirrus_process_dead_letter_sqs_queue.url
+}
+
 output "cirrus_update_state_dead_letter_sqs_queue_arn" {
   value = aws_sqs_queue.cirrus_update_state_dead_letter_sqs_queue.arn
+}
+
+output "cirrus_update_state_dead_letter_sqs_queue_url" {
+  value = aws_sqs_queue.cirrus_update_state_dead_letter_sqs_queue.url
 }
 
 output "cirrus_state_dynamodb_table_name" {

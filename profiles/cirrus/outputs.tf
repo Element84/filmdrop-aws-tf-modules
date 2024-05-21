@@ -14,12 +14,24 @@ output "cirrus_process_sqs_queue_arn" {
   value = module.cirrus.cirrus_process_sqs_queue_arn
 }
 
+output "cirrus_process_sqs_queue_url" {
+  value = module.cirrus.cirrus_process_sqs_queue_url
+}
+
 output "cirrus_process_dead_letter_sqs_queue_arn" {
   value = module.cirrus.cirrus_process_dead_letter_sqs_queue_arn
 }
 
+output "cirrus_process_dead_letter_sqs_queue_url" {
+  value = module.cirrus.cirrus_process_dead_letter_sqs_queue_url
+}
+
 output "cirrus_update_state_dead_letter_sqs_queue_arn" {
   value = module.cirrus.cirrus_update_state_dead_letter_sqs_queue_arn
+}
+
+output "cirrus_update_state_dead_letter_sqs_queue_url" {
+  value = module.cirrus.cirrus_update_state_dead_letter_sqs_queue_url
 }
 
 output "cirrus_state_dynamodb_table_name" {
