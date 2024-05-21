@@ -131,5 +131,3 @@ module "cirrus-dashboard" {
   domain_zone             = var.domain_zone
   cirrus_dashboard_inputs = var.cirrus_dashboard_inputs
 }
-
-s3_access_log_bucket = module.base_infra.s3_access_log_bucket
