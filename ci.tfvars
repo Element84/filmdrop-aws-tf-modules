@@ -146,6 +146,19 @@ console_ui_inputs = {
   }
 }
 
+cirrus_inputs = {
+  data_bucket    = "cirrus-data-bucket-name"
+  payload_bucket = "cirrus-payload-bucket-name"
+  process = {
+    sqs_timeout           = 180
+    sqs_max_receive_count = 5
+  }
+  state = {
+    timestream_magnetic_store_retention_period_in_days = 93
+    timestream_memory_store_retention_period_in_hours  = 24
+  }
+}
+
 cirrus_dashboard_inputs = {
   app_name          = "dashboard"
   domain_alias      = ""
@@ -186,10 +199,10 @@ deploy_stac_server_outside_vpc           = false
 deploy_analytics                         = false
 deploy_titiler                           = true
 deploy_console_ui                        = true
+deploy_cirrus                            = true
 deploy_cirrus_dashboard                  = true
 deploy_local_stac_server_artifacts       = false
 deploy_sample_data_bucket                = false
-
 
 ##### STAC SAMPLE DATA ####
 project_sample_data_bucket_name = ""

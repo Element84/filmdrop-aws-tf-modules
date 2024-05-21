@@ -2,7 +2,7 @@ resource "aws_dynamodb_table" "cirrus_state_dynamodb_table" {
   name         = "${var.cirrus_prefix}-state"
   billing_mode = "PAY_PER_REQUEST"
   hash_key     = "collections_workflow"
-  range_key    = "state_updated"
+  range_key    = "itemids"
 
   attribute {
     name = "collections_workflow"
