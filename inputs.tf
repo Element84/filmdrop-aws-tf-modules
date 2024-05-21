@@ -343,7 +343,7 @@ variable "console_ui_inputs" {
 }
 
 variable "cirrus_inputs" {
-  description = "Inputs for Cirrus FilmDrop deployment."
+  description = "Inputs for FilmDrop Cirrus deployment."
   type = object({
     data_bucket    = string
     payload_bucket = string
