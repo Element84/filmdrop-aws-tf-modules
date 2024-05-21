@@ -13,6 +13,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - `cirrus_dashboard_inputs.cirrus_dashboard_release` is now `cirrus_dashboard_inputs.version`
 - `console_ui_inputs.filmdrop_ui_release` is now `console_ui_inputs.version`
 
+### Removed
+
+- sample data bucket module has been removed, as it was unused in any projects
+
 ## [2.24.0] - 2024-05-20
 
 ### Fixed
