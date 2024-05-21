@@ -5,7 +5,7 @@ module "console-ui" {
   vpc_private_subnet_ids = var.private_subnet_ids
   vpc_security_group_ids = [var.security_group_id]
 
-  filmdrop_ui_release    = var.console_ui_inputs.filmdrop_ui_release
+  version                = var.console_ui_inputs.version
   console_ui_bucket_name = var.console_ui_inputs.deploy_cloudfront ? module.cloudfront_s3_website[0].content_bucket_name : module.content_website[0].content_bucket
 
   filmdrop_ui_config    = filebase64(var.console_ui_inputs.filmdrop_ui_config_file)

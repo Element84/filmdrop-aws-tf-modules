@@ -7,7 +7,7 @@ module "titiler" {
 
   project_name                 = var.project_name
   titiler_stage                = var.environment
-  mosaic_titiler_release_tag   = var.titiler_inputs.mosaic_titiler_release_tag
+  version                      = var.titiler_inputs.version
   titiler_s3_bucket_arns       = var.titiler_inputs.stac_server_and_titiler_s3_arns
   waf_allowed_url              = var.titiler_inputs.mosaic_titiler_waf_allowed_url == "" ? var.stac_url : var.titiler_inputs.mosaic_titiler_waf_allowed_url
   request_host_header_override = var.titiler_inputs.mosaic_titiler_host_header

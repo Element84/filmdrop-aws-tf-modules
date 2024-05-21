@@ -28,7 +28,7 @@ resource "aws_codebuild_project" "cirrus_dashboard_codebuild" {
 
     environment_variable {
       name  = "CIRRUS_DASHBOARD_TAG"
-      value = var.cirrus_dashboard_release
+      value = var.version
     }
 
     environment_variable {
@@ -76,7 +76,7 @@ resource "null_resource" "trigger_cirrus_dashboard_upgrade" {
     new_codebuild                = aws_codebuild_project.cirrus_dashboard_codebuild.id
     region                       = data.aws_region.current.name
     account                      = data.aws_caller_identity.current.account_id
-    cirrus_dashboard_release     = var.cirrus_dashboard_release
+    version                      = var.version
     cirrus_api_endpoint          = var.cirrus_api_endpoint
     metrics_api_endpoint         = var.metrics_api_endpoint
     cirrus_dashboard_bucket_name = var.cirrus_dashboard_bucket_name

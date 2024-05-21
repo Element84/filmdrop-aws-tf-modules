@@ -15,12 +15,12 @@ variable "vpc_id" {
   type        = string
 }
 
-variable "filmdrop_ui_release" {
+variable "version" {
   description = "FilmDrop UI Release"
   type        = string
   validation {
-    condition     = substr(var.filmdrop_ui_release, 0, 1) == "v" && substr(var.filmdrop_ui_release, 1, 2) >= 4
-    error_message = "The filmdrop_ui_release value must be a filmdrop-ui release >= v4.0.0"
+    condition     = substr(var.version, 0, 1) == "v" && substr(var.version, 1, 2) >= 4
+    error_message = "The version value must be a filmdrop-ui release >= v4.0.0"
   }
 }
 

@@ -15,7 +15,7 @@ variable "vpc_id" {
   type        = string
 }
 
-variable "cirrus_dashboard_release" {
+variable "version" {
   description = "FilmDrop Cirrus Dashboard Release"
   type        = string
   default     = "v0.5.1"

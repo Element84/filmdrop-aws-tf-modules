@@ -28,7 +28,7 @@ resource "aws_codebuild_project" "console_ui_codebuild" {
 
     environment_variable {
       name  = "FILMDROP_UI_TAG"
-      value = var.filmdrop_ui_release
+      value = var.version
     }
 
     environment_variable {
@@ -81,7 +81,7 @@ resource "null_resource" "trigger_console_ui_upgrade" {
     new_codebuild          = aws_codebuild_project.console_ui_codebuild.id
     region                 = data.aws_region.current.name
     account                = data.aws_caller_identity.current.account_id
-    filmdrop_ui_release    = var.filmdrop_ui_release
+    version                = var.version
     filmdrop_ui_config     = var.filmdrop_ui_config
     console_ui_bucket_name = var.console_ui_bucket_name
     new_source             = aws_s3_bucket.console_ui_source_config.id

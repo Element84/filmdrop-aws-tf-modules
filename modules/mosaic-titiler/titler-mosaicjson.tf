@@ -26,7 +26,7 @@ resource "aws_s3_bucket_versioning" "lambda-source-versioning" {
 resource "null_resource" "download-lambda-source-bundle" {
   triggers = {
     bucket  = aws_s3_bucket.lambda-source.id
-    version = var.mosaic_titiler_release_tag
+    version = var.version
     runtime = var.lambda_runtime
   }
 
@@ -36,11 +36,11 @@ resource "null_resource" "download-lambda-source-bundle" {
 mkdir -p ${path.module}/lambda
 which wget || echo "wget is required, but not found - this is going to fail..."
 wget --secure-protocol=TLSv1_2 --quiet \
-  https://github.com/Element84/titiler-mosaicjson/releases/download/${var.mosaic_titiler_release_tag}/lambda-${var.lambda_runtime}.zip \
-  -O ${path.module}/lambda/${var.mosaic_titiler_release_tag}-lambda-${var.lambda_runtime}.zip
+  https://github.com/Element84/titiler-mosaicjson/releases/download/${var.version}/lambda-${var.lambda_runtime}.zip \
+  -O ${path.module}/lambda/${var.version}-lambda-${var.lambda_runtime}.zip
 aws s3 cp --quiet \
-  ${path.module}/lambda/${var.mosaic_titiler_release_tag}-lambda-${var.lambda_runtime}.zip \
-  s3://${aws_s3_bucket.lambda-source.id}/${var.mosaic_titiler_release_tag}-lambda-${var.lambda_runtime}-${self.id}.zip
+  ${path.module}/lambda/${var.version}-lambda-${var.lambda_runtime}.zip \
+  s3://${aws_s3_bucket.lambda-source.id}/${var.version}-lambda-${var.lambda_runtime}-${self.id}.zip
 EOF
   }
 }
@@ -53,7 +53,7 @@ resource "aws_lambda_function" "titiler-mosaic-lambda" {
   memory_size   = var.titiler_memory
 
   s3_bucket = aws_s3_bucket.lambda-source.id
-  s3_key    = "${var.mosaic_titiler_release_tag}-lambda-${var.lambda_runtime}-${null_resource.download-lambda-source-bundle.id}.zip"
+  s3_key    = "${var.version}-lambda-${var.lambda_runtime}-${null_resource.download-lambda-source-bundle.id}.zip"
   handler   = "handler.handler"
   runtime   = var.lambda_runtime
 
