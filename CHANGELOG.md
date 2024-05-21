@@ -11,6 +11,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 - sample data bucket module has been removed, as it was unused in any projects
 
+## [2.24.0] - 2024-05-20
+
+### Fixed
+
+- Add default values to console-ui inputs to allow tflint validation.
+
 ## [2.23.0] - 2024-05-16
 
 ### Changed
