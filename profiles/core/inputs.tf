@@ -342,6 +342,34 @@ variable "console_ui_inputs" {
   }
 }
 
+variable "cirrus_inputs" {
+  description = "Inputs for FilmDrop Cirrus deployment."
+  type = object({
+    data_bucket    = string
+    payload_bucket = string
+    process = object({
+      sqs_timeout           = number
+      sqs_max_receive_count = number
+    })
+    state = object({
+      timestream_magnetic_store_retention_period_in_days = number
+      timestream_memory_store_retention_period_in_hours  = number
+    })
+  })
+  default = {
+    data_bucket    = "cirrus-data-bucket-name"
+    payload_bucket = "cirrus-payload-bucket-name"
+    process = {
+      sqs_timeout           = 180
+      sqs_max_receive_count = 5
+    }
+    state = {
+      timestream_magnetic_store_retention_period_in_days = 93
+      timestream_memory_store_retention_period_in_hours  = 24
+    }
+  }
+}
+
 variable "cirrus_dashboard_inputs" {
   description = "Inputs for cirrus dashboard FilmDrop deployment."
   type = object({
@@ -442,6 +470,12 @@ variable "deploy_console_ui" {
   type        = bool
   default     = true
   description = "Deploy FilmDrop Console UI stack"
+}
+
+variable "deploy_cirrus" {
+  type        = bool
+  default     = true
+  description = "Deploy FilmDrop Cirrus stack"
 }
 
 variable "deploy_cirrus_dashboard" {

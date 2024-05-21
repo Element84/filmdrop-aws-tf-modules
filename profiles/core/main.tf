@@ -113,6 +113,15 @@ module "console-ui" {
   s3_logs_archive_bucket = module.base_infra.s3_logs_archive_bucket
 }
 
+module "cirrus" {
+  count  = var.deploy_cirrus ? 1 : 0
+  source = "../cirrus"
+
+  project_name  = var.project_name
+  environment   = var.environment
+  cirrus_inputs = var.cirrus_inputs
+}
+
 module "cirrus-dashboard" {
   count  = var.deploy_cirrus_dashboard ? 1 : 0
   source = "../cirrus-dashboard"
