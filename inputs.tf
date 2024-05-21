@@ -501,15 +501,3 @@ variable "deploy_local_stac_server_artifacts" {
   type        = bool
   default     = true
 }
-
-variable "deploy_sample_data_bucket" {
-  type        = bool
-  default     = false
-  description = "Deploy FilmDrop STAC sample data bucket"
-}
-
-variable "project_sample_data_bucket_name" {
-  description = "STAC sample data bucket name"
-  type        = string
-  default     = ""
-}

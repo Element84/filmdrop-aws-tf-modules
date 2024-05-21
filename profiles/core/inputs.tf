@@ -490,12 +490,6 @@ variable "deploy_local_stac_server_artifacts" {
   default     = true
 }
 
-variable "deploy_sample_data_bucket" {
-  type        = bool
-  default     = false
-  description = "Deploy FilmDrop STAC sample data bucket"
-}
-
 variable "deploy_stac_server_opensearch_serverless" {
   type        = bool
   default     = false
@@ -506,10 +500,4 @@ variable "deploy_stac_server_outside_vpc" {
   type        = bool
   default     = false
   description = "Deploy FilmDrop Stac-Server resources, including OpenSearch outside VPC. Defaults to false. If False, Stac-server resources will be deployed within the vpc."
-}
-
-variable "project_sample_data_bucket_name" {
-  description = "STAC sample data bucket name"
-  type        = string
-  default     = ""
 }

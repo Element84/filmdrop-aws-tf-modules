@@ -140,16 +140,3 @@ module "cirrus-dashboard" {
   domain_zone             = var.domain_zone
   cirrus_dashboard_inputs = var.cirrus_dashboard_inputs
 }
-
-###############
-# Sample data S3 Bucket and s3 access logs for it.
-# This is usually not needed, but if it is needed for any client to put the
-# STAC Items temporarily
-###############
-module "sample_data_bucket" {
-  count  = var.deploy_sample_data_bucket ? 1 : 0
-  source = "../sample_data_bucket"
-
-  project_sample_data_bucket_name = var.project_sample_data_bucket_name
-  s3_access_log_bucket            = module.base_infra.s3_access_log_bucket
-}

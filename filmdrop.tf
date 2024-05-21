@@ -40,6 +40,4 @@ module "filmdrop" {
   deploy_cirrus                            = var.deploy_cirrus
   deploy_cirrus_dashboard                  = var.deploy_cirrus_dashboard
   deploy_local_stac_server_artifacts       = var.deploy_local_stac_server_artifacts
-  deploy_sample_data_bucket                = var.deploy_sample_data_bucket
-  project_sample_data_bucket_name          = var.project_sample_data_bucket_name
 }

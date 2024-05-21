@@ -202,7 +202,3 @@ deploy_console_ui                        = true
 deploy_cirrus                            = true
 deploy_cirrus_dashboard                  = true
 deploy_local_stac_server_artifacts       = false
-deploy_sample_data_bucket                = false
-
-##### STAC SAMPLE DATA ####
-project_sample_data_bucket_name = ""
