@@ -91,7 +91,7 @@ resource "aws_iam_role" "cirrus_instance_role" {
       "Principal": {
         "Service": "ec2.amazonaws.com"
       },
-      "Effect": "Allow",
+      "Effect": "Allow"
     }
   ]
 }
@@ -106,7 +106,7 @@ resource "aws_iam_role_policy_attachment" "cirrus_instance_role_policy_attachmen
 
 resource "aws_iam_instance_profile" "cirrus_instance_profile" {
   name_prefix = "${var.cirrus_prefix}-instance-profile-"
-  role = aws_iam_role.cirrus_instance_role.name
+  role        = aws_iam_role.cirrus_instance_role.name
 }
 
 resource "aws_iam_role" "cirrus_ec2_spot_role" {
@@ -121,7 +121,7 @@ resource "aws_iam_role" "cirrus_ec2_spot_role" {
       "Principal": {
         "Service": "spotfleet.amazonaws.com"
       },
-      "Effect": "Allow",
+      "Effect": "Allow"
     }
   ]
 }

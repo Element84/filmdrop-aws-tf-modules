@@ -1,8 +1,6 @@
 module "base-builtins" {
   source = "./base"
 
-  project_name                                              = var.project_name
-  environment                                               = var.environment
   cirrus_prefix                                             = local.cirrus_prefix
   cirrus_process_sqs_timeout                                = var.cirrus_process_sqs_timeout
   cirrus_process_sqs_max_receive_count                      = var.cirrus_process_sqs_max_receive_count

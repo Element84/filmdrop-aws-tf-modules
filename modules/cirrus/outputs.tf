@@ -53,3 +53,11 @@ output "cirrus_instance_profile_arn" {
 output "cirrus_ec2_spot_role_arn" {
   value = module.base-builtins.cirrus_ec2_spot_role_arn
 }
+
+output "cirrus_data_bucket" {
+  value = module.base-builtins.cirrus_data_bucket
+}
+
+output "cirrus_payload_bucket" {
+  value = module.base-builtins.cirrus_payload_bucket
+}

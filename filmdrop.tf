@@ -25,6 +25,7 @@ module "filmdrop" {
   titiler_inputs                           = var.titiler_inputs
   analytics_inputs                         = var.analytics_inputs
   console_ui_inputs                        = var.console_ui_inputs
+  cirrus_inputs                            = var.cirrus_inputs
   cirrus_dashboard_inputs                  = var.cirrus_dashboard_inputs
   deploy_vpc                               = var.deploy_vpc
   deploy_vpc_search                        = var.deploy_vpc_search
@@ -36,6 +37,7 @@ module "filmdrop" {
   deploy_analytics                         = var.deploy_analytics
   deploy_titiler                           = var.deploy_titiler
   deploy_console_ui                        = var.deploy_console_ui
+  deploy_cirrus                            = var.deploy_cirrus
   deploy_cirrus_dashboard                  = var.deploy_cirrus_dashboard
   deploy_local_stac_server_artifacts       = var.deploy_local_stac_server_artifacts
   deploy_sample_data_bucket                = var.deploy_sample_data_bucket

@@ -1,8 +1,8 @@
 resource "aws_dynamodb_table" "cirrus_state_dynamodb_table" {
-  name           = "${var.cirrus_prefix}-state"
-  billing_mode   = "PAY_PER_REQUEST"
-  hash_key       = "collections_workflow"
-  range_key      = "state_updated"
+  name         = "${var.cirrus_prefix}-state"
+  billing_mode = "PAY_PER_REQUEST"
+  hash_key     = "collections_workflow"
+  range_key    = "state_updated"
 
   attribute {
     name = "collections_workflow"
@@ -25,17 +25,17 @@ resource "aws_dynamodb_table" "cirrus_state_dynamodb_table" {
   }
 
   global_secondary_index {
-    name               = "state_updated"
-    hash_key           = "collections_workflow"
-    range_key          = "state_updated"
-    projection_type    = "ALL"
+    name            = "state_updated"
+    hash_key        = "collections_workflow"
+    range_key       = "state_updated"
+    projection_type = "ALL"
   }
 
   global_secondary_index {
-    name               = "updated"
-    hash_key           = "collections_workflow"
-    range_key          = "updated"
-    projection_type    = "ALL"
+    name            = "updated"
+    hash_key        = "collections_workflow"
+    range_key       = "updated"
+    projection_type = "ALL"
   }
 }
 

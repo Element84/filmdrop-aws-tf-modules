@@ -53,3 +53,11 @@ output "cirrus_instance_profile_arn" {
 output "cirrus_ec2_spot_role_arn" {
   value = aws_iam_role.cirrus_ec2_spot_role.arn
 }
+
+output "cirrus_data_bucket" {
+  value = var.cirrus_data_bucket
+}
+
+output "cirrus_payload_bucket" {
+  value = var.cirrus_payload_bucket
+}

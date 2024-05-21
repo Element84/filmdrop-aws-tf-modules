@@ -1,5 +1,5 @@
 resource "aws_sqs_queue" "cirrus_process_sqs_queue" {
-  name = "${var.cirrus_prefix}-process"
+  name                       = "${var.cirrus_prefix}-process"
   visibility_timeout_seconds = var.cirrus_process_sqs_timeout
 
   redrive_policy = jsonencode({
