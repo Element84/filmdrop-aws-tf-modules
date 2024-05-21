@@ -1,18 +1,18 @@
-variable "project_name" {
-  description = "Project Name"
-  type        = string
-  validation {
-    condition     = length(var.project_name) <= 10
-    error_message = "The project_name value must be a 10 or fewer characters."
-  }
-}
-
 variable "environment" {
   description = "Project environment."
   type        = string
   validation {
-    condition     = length(var.environment) <= 10
-    error_message = "The environment value must be 10 or fewer characters."
+    condition     = length(var.environment) <= 7
+    error_message = "The environment value must be 7 or fewer characters."
+  }
+}
+
+variable "project_name" {
+  description = "Project Name"
+  type        = string
+  validation {
+    condition     = length(var.project_name) <= 8
+    error_message = "The project_name value must be a 8 or fewer characters."
   }
 }
 
