@@ -1,0 +1,52 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: >-
+  Resources required for managing FilmDrop deployment Terraform
+  state files.
+
+Parameters:
+  TerraformStateBucketName:
+    Type: String
+
+  TerraformStateLocksTableName:
+    Type: String
+    Default: filmdrop-terraform-state-locks
+
+Resources:
+  TerraformStateBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Ref TerraformStateBucketName
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+          - ServerSideEncryptionByDefault:
+              SSEAlgorithm: AES256
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true
+      VersioningConfiguration:
+        Status: Enabled
+
+  TerraformStateLocksTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      AttributeDefinitions:
+        - AttributeName: "LockID"
+          AttributeType: S
+      BillingMode: PAY_PER_REQUEST
+      KeySchema:
+        - AttributeName: "LockID"
+          KeyType: HASH
+      TableName: !Ref TerraformStateLocksTableName
+
+Outputs:
+  TerraformStateBucketName:
+    Description: Name of the S3 bucket to use as your Terraform backend bucket.
+    Value: !Ref TerraformStateBucket
+
+  TerraformStateLocksTableName:
+    Description: >-
+      Name of the DynamoDB table to use as your Terraform backend
+      DynamoDB table.
+    Value: !Ref TerraformStateLocksTable

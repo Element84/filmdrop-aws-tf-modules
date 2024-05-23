@@ -1,0 +1,46 @@
+# Snyk (https://snyk.io) policy file, patches or ignores known vulnerabilities.
+version: v1.25.0
+# ignores vulnerabilities until expiry date; change duration by modifying expiry date
+ignore:
+  SNYK-CC-TF-99:
+    - 'modules/stac-server/api.tf > resource > aws_api_gateway_method[stac_server_api_gateway_proxy_resource_method] > authorization':
+        reason: Open API - no auth required
+        created: 2024-02-20T14:35:23.783Z
+    - 'modules/stac-server/api.tf > resource > aws_api_gateway_method[stac_server_api_gateway_root_method] > authorization':
+        reason: Open API - no auth required
+        created: 2024-02-20T14:35:23.783Z
+  SNYK-CC-00250:
+    - './profiles/core/../stac-server/../../modules/stac-server/api.tf > *':
+        reason: Open API - no auth required
+        created: 2024-02-20T14:35:23.783Z
+    - './profiles/core/../stac-server/../../modules/stac-server/api.tf > *':
+        reason: Open API - no auth required
+        created: 2024-02-20T14:35:23.783Z
+    - 'modules/stac-server/api.tf > *':
+        reason: Open API - no auth required
+        created: 2024-02-20T14:35:23.783Z
+  SNYK-CC-00185:
+    - './profiles/core/../titiler/../../modules/mosaic-titiler/titler-mosaicjson.tf > *':
+        reason: Open API - no auth required
+        created: 2024-02-20T14:35:23.783Z
+    - 'modules/mosaic-titiler/titler-mosaicjson.tf > *':
+        reason: Open API - no auth required
+        created: 2024-02-20T14:35:23.783Z
+  SNYK-CC-00225:
+    - '.terraform/modules/local_zone_eks.eks_cluster/main.tf > *':
+        reason: Open API - no auth required
+        created: 2024-02-22T14:35:23.783Z
+    - 'modules/eks/eks.tf > *':
+        reason: Open API - no auth required
+        created: 2024-02-22T14:35:23.783Z
+  SNYK-CC-00752:
+    - '.terraform/modules/local_zone_eks.eks_cluster/main.tf > *':
+        reason: Open API - no auth required
+        created: 2024-03-06T14:35:23.783Z
+    - 'modules/eks/eks.tf > *':
+        reason: Open API - no auth required
+        created: 2024-03-06T14:35:23.783Z
+  SNYK-CC-00218:
+    - 'modules/jupyterhub-dask-eks/cleanup/main.tf > *':
+        reason: Open API - no auth required
+        created: 2024-04-23T14:35:23.783Z

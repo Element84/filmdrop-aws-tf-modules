@@ -1,12 +1,28 @@
-##### PROJECT VARIABLES ####
+##### Project Variables #####
 # The following variables are global to the FilmDrop infrastructure stack
-environment            = "test"
-project_name           = "TestProj"
+environment            = "dev"       # e.g., dev, staging, prod
+project_name           = "REPLACEME" # e.g., stingray
 domain_zone            = ""
 s3_access_log_bucket   = ""
 s3_logs_archive_bucket = ""
 
-##### NETWORKING VARIABLES ####
+##### Infrastructure Flags #####
+# To disable each flag: set to 'false'; to enable: set to 'true'
+deploy_vpc                               = false
+deploy_vpc_search                        = true
+deploy_log_archive                       = true
+deploy_alarms                            = false
+deploy_cirrus                            = true
+deploy_cirrus_dashboard                  = true
+deploy_stac_server                       = true
+deploy_stac_server_opensearch_serverless = false
+deploy_stac_server_outside_vpc           = false
+deploy_console_ui                        = true
+deploy_titiler                           = true
+deploy_analytics                         = false
+deploy_local_stac_server_artifacts       = false
+
+##### Networking Variables #####
 # If left blank, the infrastructure will try to query the values from the control tower vpc
 vpc_id                       = ""
 vpc_cidr                     = ""
@@ -14,14 +30,60 @@ security_group_id            = ""
 public_subnets_az_to_id_map  = {}
 private_subnets_az_to_id_map = {}
 
-##### ALARM VARIABLES ####
+##### Alarm Variables #####
 sns_topics_map                 = {}
 cloudwatch_warning_alarms_map  = {}
 cloudwatch_critical_alarms_map = {}
 sns_warning_subscriptions_map  = {}
 sns_critical_subscriptions_map = {}
 
-##### APPLICATION VARIABLES ####
+##### SSM Bastion #####
+# for accessing private endpoints within the VPC, e.g., stac-server's OpenSearch
+
+# TODO
+
+##### Application Variables #####
+
+cirrus_inputs = {
+  data_bucket    = "cirrus-data-bucket-name"
+  payload_bucket = "cirrus-payload-bucket-name"
+  process = {
+    sqs_timeout           = 180
+    sqs_max_receive_count = 5
+  }
+  state = {
+    timestream_magnetic_store_retention_period_in_days = 93
+    timestream_memory_store_retention_period_in_hours  = 24
+  }
+}
+
+cirrus_dashboard_inputs = {
+  app_name             = "dashboard"
+  version              = "v0.5.1"
+  deploy_cloudfront    = true
+  domain_alias         = ""
+  cirrus_api_endpoint  = "REPLACEME"
+  metrics_api_endpoint = "REPLACEME"
+  custom_error_response = [
+    {
+      error_caching_min_ttl = "10"
+      error_code            = "404"
+      response_code         = "200"
+      response_page_path    = "/"
+    }
+  ]
+  auth_function = {
+    cf_function_name             = ""
+    cf_function_runtime          = "cloudfront-js-2.0"
+    cf_function_code_path        = ""
+    attach_cf_function           = false
+    cf_function_event_type       = "viewer-request"
+    create_cf_function           = false
+    create_cf_basicauth_function = false
+    cf_function_arn              = ""
+  }
+}
+
 stac_server_inputs = {
   app_name                                    = "stac_server"
   version                                     = "v3.7.0"
@@ -70,13 +132,43 @@ stac_server_inputs = {
 
 titiler_inputs = {
   app_name                        = "titiler"
-  domain_alias                    = ""
-  deploy_cloudfront               = true
   version                         = "v0.14.0-1.0.4"
+  deploy_cloudfront               = true
+  domain_alias                    = ""
   stac_server_and_titiler_s3_arns = []
-  mosaic_titiler_waf_allowed_url  = "test.filmdrop.io"
-  mosaic_titiler_host_header      = ""
+  mosaic_titiler_waf_allowed_url  = "REPLACEME" # your project's stac-server url
+  mosaic_titiler_host_header      = "REPLACEME" # Update with titiler domain, e.g., "titiler.dev.filmdrop.example.com"
   web_acl_id                      = ""
+  auth_function = {
+    cf_function_name             = ""
+    cf_function_runtime          = "cloudfront-js-2.0"
+    cf_function_code_path        = ""
+    attach_cf_function           = false
+    cf_function_event_type       = "viewer-request"
+    create_cf_function           = false
+    create_cf_basicauth_function = false
+    cf_function_arn              = ""
+  }
+}
+
+console_ui_inputs = {
+  app_name                = "console"
+  version                 = "v5.4.0"
+  deploy_cloudfront       = true
+  domain_alias            = ""
+  filmdrop_ui_config_file = "./console-ui/config.dev.json"
+  filmdrop_ui_logo_file   = "./console-ui/logo.png"
+  filmdrop_ui_logo        = "bm9uZQo=" # Base64: 'none'
+
+  custom_error_response = [
+    {
+      error_caching_min_ttl = "10"
+      error_code            = "404"
+      response_code         = "200"
+      response_page_path    = "/"
+    }
+  ]
+
   auth_function = {
     cf_function_name             = ""
     cf_function_runtime          = "cloudfront-js-2.0"
@@ -108,10 +200,10 @@ analytics_inputs = {
 
   cleanup = {
     enabled                            = false
-    asg_min_capacity                   = 1
+    asg_min_capacity                   = 0 # or 1???
     analytics_node_limit               = 4
-    notifications_schedule_expressions = []
-    cleanup_schedule_expressions       = []
+    notifications_schedule_expressions = ["cron(0 14 * * ? *)", "cron(0 22 * * ? *)"]
+    cleanup_schedule_expressions       = ["cron(0 5 * * ? *)"]
   }
 
   eks = {
@@ -119,90 +211,3 @@ analytics_inputs = {
     autoscaler_version = "v1.29.0"
   }
 }
-
-console_ui_inputs = {
-  app_name                = "console"
-  domain_alias            = ""
-  deploy_cloudfront       = true
-  version                 = "v5.3.0"
-  filmdrop_ui_config_file = "./profiles/console-ui/default-config/config.dev.json"
-  filmdrop_ui_logo_file   = "./profiles/console-ui/default-config/logo.png"
-  filmdrop_ui_logo        = "bm9uZQo=" # Base64: 'none'
-
-  custom_error_response = [
-    {
-      error_caching_min_ttl = "10"
-      error_code            = "404"
-      response_code         = "200"
-      response_page_path    = "/"
-    }
-  ]
-
-  auth_function = {
-    cf_function_name             = ""
-    cf_function_runtime          = "cloudfront-js-2.0"
-    cf_function_code_path        = ""
-    attach_cf_function           = false
-    cf_function_event_type       = "viewer-request"
-    create_cf_function           = false
-    create_cf_basicauth_function = false
-    cf_function_arn              = ""
-  }
-}
-
-cirrus_inputs = {
-  data_bucket    = "cirrus-data-bucket-name"
-  payload_bucket = "cirrus-payload-bucket-name"
-  process = {
-    sqs_timeout           = 180
-    sqs_max_receive_count = 5
-  }
-  state = {
-    timestream_magnetic_store_retention_period_in_days = 93
-    timestream_memory_store_retention_period_in_hours  = 24
-  }
-}
-
-cirrus_dashboard_inputs = {
-  app_name             = "dashboard"
-  domain_alias         = ""
-  deploy_cloudfront    = true
-  version              = "v0.5.1"
-  cirrus_api_endpoint  = ""
-  metrics_api_endpoint = ""
-  custom_error_response = [
-    {
-      error_caching_min_ttl = "10"
-      error_code            = "404"
-      response_code         = "200"
-      response_page_path    = "/"
-    }
-  ]
-  auth_function = {
-    cf_function_name             = ""
-    cf_function_runtime          = "cloudfront-js-2.0"
-    cf_function_code_path        = ""
-    attach_cf_function           = false
-    cf_function_event_type       = "viewer-request"
-    create_cf_function           = false
-    create_cf_basicauth_function = false
-    cf_function_arn              = ""
-  }
-}
-
-
-##### INFRASTRUCTURE FLAGS ####
-# To disable each flag: set to 'false'; to enable: set to 'true'
-deploy_vpc                               = false
-deploy_vpc_search                        = true
-deploy_log_archive                       = true
-deploy_alarms                            = false
-deploy_stac_server_opensearch_serverless = false
-deploy_stac_server                       = true
-deploy_stac_server_outside_vpc           = false
-deploy_analytics                         = true
-deploy_titiler                           = true
-deploy_console_ui                        = true
-deploy_cirrus                            = true
-deploy_cirrus_dashboard                  = true
-deploy_local_stac_server_artifacts       = false

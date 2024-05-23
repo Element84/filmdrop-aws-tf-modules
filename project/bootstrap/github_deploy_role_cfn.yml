@@ -1,0 +1,138 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: "Role for Deploy runner"
+
+Parameters:
+  DeployRoleName:
+    Type: String
+    Default: appFilmDropDeployRole
+  DeployRolePolicyName:
+    Type: String
+    Default: appFilmDropDeployPolicy
+
+Resources:
+  DeployRole:
+    Type: "AWS::IAM::Role"
+    Properties:
+      RoleName: !Ref DeployRoleName
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Federated:
+                - !Sub "arn:aws:iam::${AWS::AccountId}:oidc-provider/token.actions.githubusercontent.com"
+            Action:
+              - "sts:AssumeRoleWithWebIdentity"
+            Condition:
+              StringLike:
+                "token.actions.githubusercontent.com:sub": "repo:RepoOrg/RepoName:*"
+              "ForAllValues:StringEquals":
+                "token.actions.githubusercontent.com:iss": "https://token.actions.githubusercontent.com"
+                "token.actions.githubusercontent.com:aud": "sts.amazonaws.com"
+  DeployRolePolicy:
+    Type: "AWS::IAM::Policy"
+    Properties:
+      PolicyName: !Ref DeployRolePolicyName
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Action:
+              - "acm:*"
+              - "autoscaling:*"
+              - "waf:*"
+              - "codebuild:*"
+              - "kms:*"
+              - "iam:CreatePolicyVersion"
+              - "iam:CreateOpenIDConnectProvider"
+              - "iam:DeleteOpenIDConnectProvider"
+              - "iam:GetOpenIDConnectProvider"
+              - "lambda:InvokeFunction"
+              - "iam:Tag*"
+              - "sns:ListTagsForResource"
+              - "sns:GetSubscriptionAttributes"
+              - "sns:GetTopicAttributes"
+              - "sns:CreateTopic"
+              - "sns:Subscribe"
+              - "sns:DeleteTopic"
+              - "sns:SetTopicAttributes"
+              - "sns:Unsubscribe"
+              - "sns:SetSubscriptionAttributes"
+              - "ssm:PutParameter"
+              - "ssm:DeleteParameter"
+              - "iam:ListRolePolicies"
+              - "iam:GetPolicyVersion"
+              - "firehose:CreateDeliveryStream"
+              - "firehose:DeleteDeliveryStream"
+              - "firehose:DescribeDeliveryStream"
+              - "firehose:ListTagsForDeliveryStream"
+              - "firehose:TagDeliveryStream"
+              - "firehose:UpdateDestination"
+              - "iam:ListAttachedRolePolicies"
+              - "iam:ListInstanceProfilesForRole"
+              - "iam:ListPolicyVersions"
+              - "iam:DeletePolicy"
+              - "iam:DeletePolicyVersion"
+              - "iam:CreateServiceLinkedRole"
+              - "ssm:AddTagsToResource"
+              - "ssm:Get*"
+              - "ssm:Describe*"
+              - "ssm:List*"
+              - "s3:*"
+              - "logs:*"
+              - "ec2:*"
+              - "sqs:*"
+              - "lambda:*"
+              - "apigateway:*"
+              - "cognito-idp:*"
+              - "dynamodb:*"
+              - "wafv2:*"
+              - "cloudfront:*"
+              - "cloudformation:*"
+              - "route53:*"
+              - "events:*"
+              - "ecs:*"
+              - "iam:CreateUser"
+              - "iam:CreatePolicy"
+              - "iam:CreateGroup"
+              - "iam:ListAccessKeys"
+              - "iam:GetGroup"
+              - "iam:GetPolicy"
+              - "iam:CreateRole"
+              - "iam:DeleteRole"
+              - "iam:AttachRolePolicy"
+              - "iam:DetachRolePolicy"
+              - "iam:DeleteRolePolicy"
+              - "iam:GetRole"
+              - "iam:PassRole"
+              - "iam:PutRolePolicy"
+              - "iam:GetRolePolicy"
+              - "iam:UpdateAssumeRolePolicy"
+              - "iam:CreateInstanceProfile"
+              - "iam:AddRoleToInstanceProfile"
+              - "iam:RemoveRoleFromInstanceProfile"
+              - "iam:DeleteInstanceProfile"
+              - "iam:CreateServiceLinkedRole"
+              - "iam:DeleteServiceLinkedRole"
+              - "iam:GetServiceLinkedRoleDeletionStatus"
+              - "iam:GetInstanceProfile"
+              - "lambda:CreateFunction"
+              - "lambda:DeleteFunction"
+              - "lambda:ListVersionsByFunction"
+              - "lambda:PublishVersion"
+              - "lambda:GetFunction"
+              - "lambda:CreateAlias"
+              - "lambda:EnableReplication*"
+              - "lambda:DeleteAlias"
+              - "secretsmanager:*"
+              - "cloudwatch:*"
+              - "sts:Decode*"
+              - "states:*"
+            Resource: "*"
+      Roles:
+        - !Ref DeployRole
+
+Outputs:
+  DeployRoleArn:
+    Description: Deploy role ARN
+    Value: !GetAtt DeployRole.Arn

@@ -1,0 +1,28 @@
+name: Pre-commit CI
+
+on: push
+
+env:
+  fd-aws-tf-modules-version: v2.24.0
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: "1.7.5"
+      - uses: terraform-linters/setup-tflint@v4
+        with:
+          tflint_version: "v0.51.1"
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Preparing Environment
+        id: prep_env
+        run: ./scripts/retrieve_tf_modules.sh ${{ env.fd-aws-tf-modules-version }}
+      - name: Install pre-commit
+        run: pip install pre-commit
+      - name: Run pre-commit hooks
+        run: pre-commit run --all-files
