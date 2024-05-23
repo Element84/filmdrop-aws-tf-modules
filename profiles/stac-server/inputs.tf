@@ -54,7 +54,21 @@ variable "stac_server_inputs" {
     additional_ingest_sqs_senders_arns          = list(string)
     opensearch_ebs_volume_size                  = number
     stac_server_and_titiler_s3_arns             = list(string)
+    cors_origin                                 = string
+    cors_credentials                            = bool
+    cors_methods                                = string
+    cors_headers                                = string
     web_acl_id                                  = string
+    auth_function = object({
+      cf_function_name             = string
+      cf_function_runtime          = string
+      cf_function_code_path        = string
+      attach_cf_function           = bool
+      cf_function_event_type       = string
+      create_cf_function           = bool
+      create_cf_basicauth_function = bool
+      cf_function_arn              = string
+    })
     ingest = object({
       source_catalog_url               = string
       destination_collections_list     = string
@@ -71,7 +85,7 @@ variable "stac_server_inputs" {
   })
   default = {
     app_name                                    = "stac_server"
-    version                                     = "v3.2.0"
+    version                                     = "v3.7.0"
     deploy_cloudfront                           = true
     domain_alias                                = ""
     enable_transactions_extension               = false
@@ -85,7 +99,21 @@ variable "stac_server_inputs" {
     additional_ingest_sqs_senders_arns          = []
     opensearch_ebs_volume_size                  = 35
     stac_server_and_titiler_s3_arns             = []
+    cors_origin                                 = "*"
+    cors_credentials                            = false
+    cors_methods                                = ""
+    cors_headers                                = ""
     web_acl_id                                  = ""
+    auth_function = {
+      cf_function_name             = ""
+      cf_function_runtime          = "cloudfront-js-2.0"
+      cf_function_code_path        = ""
+      attach_cf_function           = false
+      cf_function_event_type       = "viewer-request"
+      create_cf_function           = false
+      create_cf_basicauth_function = false
+      cf_function_arn              = ""
+    }
     ingest = {
       source_catalog_url               = ""
       destination_collections_list     = ""
@@ -134,4 +162,10 @@ variable "deploy_stac_server_opensearch_serverless" {
   type        = bool
   default     = false
   description = "Deploy FilmDrop Stac-Server with OpenSearch Serverless. If False, Stac-server will be deployed with a classic OpenSearch domain."
+}
+
+variable "deploy_stac_server_outside_vpc" {
+  type        = bool
+  default     = false
+  description = "Deploy FilmDrop Stac-Server resources, including OpenSearch outside VPC. Defaults to false. If False, Stac-server resources will be deployed within the vpc."
 }

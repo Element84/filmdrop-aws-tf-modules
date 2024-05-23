@@ -53,14 +53,13 @@ variable "vpc_id" {
 variable "kubernetes_version" {
   description = "Kubernetes Cluster version"
   type        = string
-  default     = "1.25"
+  default     = "1.29"
 }
 
 variable "kubernetes_autoscaler_version" {
   description = "Kubernetes Cluster Autoscaler version"
   type        = string
-  default     = "v1.25.0"
-  # note: v1.25.3 seems not to work correctly, see FD-1594
+  default     = "v1.29.0"
 }
 
 variable "jupyterhub_image_version" {
@@ -153,6 +152,36 @@ variable "domain_param_name" {
   description = "Domain Parameter Name"
   type        = string
   default     = ""
+}
+
+variable "analytics_cleanup_enabled" {
+  description = "Deploy FilmDrop Analytics cleanup functionality."
+  type        = bool
+  default     = false
+}
+
+variable "analytics_asg_min_capacity" {
+  description = "FilmDrop Analytics ASG min capacity"
+  type        = number
+  default     = 1
+}
+
+variable "analytics_node_limit" {
+  description = "FilmDrop Analytics node limit for normal usage"
+  type        = number
+  default     = 4
+}
+
+variable "analytics_notifications_schedule_expressions" {
+  description = "FilmDrop Analytics notification scheduled expressions"
+  type        = list(string)
+  default     = ["cron(0 14 * * ? *)", "cron(0 22 * * ? *)"]
+}
+
+variable "analytics_cleanup_schedule_expressions" {
+  description = "FilmDrop Analytics cleanup scheduled expressions"
+  type        = list(string)
+  default     = ["cron(0 5 * * ? *)"]
 }
 
 locals {

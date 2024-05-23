@@ -87,10 +87,12 @@ resource "aws_codebuild_project" "analytics_eks_codebuild" {
     local_file.rendered_daskhub_helm_filmdrop,
     local_file.rendered_kubectl_filmdrop_storageclass,
     local_file.rendered_kubectl_spec_filmdrop,
+    local_file.rendered_kubectl_autoscaler_filmdrop,
     module.daskhub_docker_ecr,
     aws_s3_bucket.jupyter_dask_source_config,
     aws_s3_object.jupyter_dask_source_config_ekscluster,
     aws_s3_object.jupyter_dask_source_config_spec,
+    aws_s3_object.jupyter_dask_source_config_autoscaler,
     aws_s3_object.jupyter_dask_source_config_daskhub,
     aws_s3_object.jupyter_dask_source_config_storageclass,
     aws_s3_object.analytics_eks_build_spec
@@ -183,6 +185,19 @@ resource "aws_s3_object" "jupyter_dask_source_config_spec" {
   ]
 }
 
+resource "aws_s3_object" "jupyter_dask_source_config_autoscaler" {
+  bucket = aws_s3_bucket.jupyter_dask_source_config.id
+  key    = "autoscaler.yaml"
+  source = "${path.module}/autoscaler.yaml"
+  etag = md5(templatefile("${path.module}/kubectl/kubectl_filmdrop_cluster_autoscaler.yaml.tpl", {
+    filmdrop_analytics_cluster_name               = local.kubernetes_cluster_name
+    filmdrop_analytics_cluster_autoscaler_version = var.kubernetes_autoscaler_version
+  }))
+  depends_on = [
+    local_file.rendered_kubectl_autoscaler_filmdrop
+  ]
+}
+
 resource "aws_s3_object" "jupyter_dask_source_config_daskhub" {
   bucket = aws_s3_bucket.jupyter_dask_source_config.id
   key    = "daskhub.yaml"
@@ -195,6 +210,7 @@ resource "aws_s3_object" "jupyter_dask_source_config_daskhub" {
     jupyterhub_admin_username_list = join(",", var.jupyterhub_admin_username_list)
     jupyterhub_admin_password      = jsondecode(data.aws_secretsmanager_secret_version.filmdrop_analytics_credentials_version.secret_string)["PASSWORD"]
     dask_gateway_token             = jsondecode(data.aws_secretsmanager_secret_version.filmdrop_analytics_dask_secret_token_version.secret_string)["APITOKEN"]
+    filmdrop_public_subnet_ids     = var.vpc_public_subnet_ids[0]
   }))
   depends_on = [
     module.daskhub_docker_ecr,
@@ -215,8 +231,8 @@ resource "aws_s3_object" "jupyter_dask_source_config_storageclass" {
 resource "aws_s3_object" "analytics_eks_build_spec" {
   bucket = aws_s3_bucket.jupyter_dask_source_config.id
   key    = "buildspec.yml"
-  source = var.zone_id == "" && var.domain_alias == "" ? "${path.module}/buildspec_nodnsalias.yml" : "${path.module}/buildspec.yml"
-  etag   = filemd5(var.zone_id == "" && var.domain_alias == "" ? "${path.module}/buildspec_nodnsalias.yml" : "${path.module}/buildspec.yml")
+  source = var.zone_id != "" && var.domain_alias != "" ? "${path.module}/buildspec.yml" : "${path.module}/buildspec_nodnsalias.yml"
+  etag   = filemd5(var.zone_id != "" && var.domain_alias != "" ? "${path.module}/buildspec.yml" : "${path.module}/buildspec_nodnsalias.yml")
 }
 
 resource "aws_kms_key" "analytics_filmdrop_kms_key" {
@@ -250,7 +266,7 @@ resource "local_file" "rendered_daskhub_helm_filmdrop" {
   depends_on = [
     module.daskhub_docker_ecr
   ]
-  content = templatefile("${path.module}/helm_charts/daskhub/jupyterhub.yaml.tpl", {
+  content = templatefile(var.jupyterhub_elb_acm_cert_arn == "" ? "${path.module}/helm_charts/daskhub/jupyterhub_http.yaml.tpl" : "${path.module}/helm_charts/daskhub/jupyterhub.yaml.tpl", {
     jupyterhub_image_repo          = module.daskhub_docker_ecr.daskhub_repo
     jupyterhub_image_version       = var.jupyterhub_image_version
     dask_proxy_token               = jsondecode(data.aws_secretsmanager_secret_version.filmdrop_analytics_dask_secret_token_version.secret_string)["PROXYTOKEN"]
@@ -258,6 +274,7 @@ resource "local_file" "rendered_daskhub_helm_filmdrop" {
     jupyterhub_admin_username_list = join(",", var.jupyterhub_admin_username_list)
     jupyterhub_admin_password      = jsondecode(data.aws_secretsmanager_secret_version.filmdrop_analytics_credentials_version.secret_string)["PASSWORD"]
     dask_gateway_token             = jsondecode(data.aws_secretsmanager_secret_version.filmdrop_analytics_dask_secret_token_version.secret_string)["APITOKEN"]
+    filmdrop_public_subnet_ids     = var.vpc_public_subnet_ids[0]
   })
   filename = "${path.module}/daskhub.yaml"
 }
@@ -273,6 +290,14 @@ resource "local_file" "rendered_kubectl_spec_filmdrop" {
     filmdrop_analytics_cluster_autoscaler_version = var.kubernetes_autoscaler_version
   })
   filename = "${path.module}/spec.yaml"
+}
+
+resource "local_file" "rendered_kubectl_autoscaler_filmdrop" {
+  content = templatefile("${path.module}/kubectl/kubectl_filmdrop_cluster_autoscaler.yaml.tpl", {
+    filmdrop_analytics_cluster_name               = local.kubernetes_cluster_name
+    filmdrop_analytics_cluster_autoscaler_version = var.kubernetes_autoscaler_version
+  })
+  filename = "${path.module}/autoscaler.yaml"
 }
 
 resource "aws_lambda_function" "cloudfront_origin_lambda" {
@@ -339,10 +364,12 @@ EOF
     local_file.rendered_daskhub_helm_filmdrop,
     local_file.rendered_kubectl_filmdrop_storageclass,
     local_file.rendered_kubectl_spec_filmdrop,
+    local_file.rendered_kubectl_autoscaler_filmdrop,
     module.daskhub_docker_ecr,
     aws_s3_bucket.jupyter_dask_source_config,
     aws_s3_object.jupyter_dask_source_config_ekscluster,
     aws_s3_object.jupyter_dask_source_config_spec,
+    aws_s3_object.jupyter_dask_source_config_autoscaler,
     aws_s3_object.jupyter_dask_source_config_daskhub,
     aws_s3_object.jupyter_dask_source_config_storageclass,
     aws_s3_object.analytics_eks_build_spec,
@@ -385,5 +412,36 @@ EOF
 
   depends_on = [
     aws_s3_bucket.jupyter_dask_source_config
+  ]
+}
+
+module "analytics_cleanup" {
+  count  = var.analytics_cleanup_enabled ? 1 : 0
+  source = "./cleanup"
+
+  analytics_cluster_name                       = local.kubernetes_cluster_name
+  analytics_cleanup_stage                      = var.daskhub_stage
+  analytics_asg_min_capacity                   = var.analytics_asg_min_capacity
+  analytics_node_limit                         = var.analytics_node_limit
+  analytics_notifications_schedule_expressions = var.analytics_notifications_schedule_expressions
+  analytics_cleanup_schedule_expressions       = var.analytics_cleanup_schedule_expressions
+
+  depends_on = [
+    aws_kms_key.analytics_filmdrop_kms_key,
+    local_file.rendered_eksctl_filmdrop,
+    local_file.rendered_daskhub_helm_filmdrop,
+    local_file.rendered_kubectl_filmdrop_storageclass,
+    local_file.rendered_kubectl_spec_filmdrop,
+    local_file.rendered_kubectl_autoscaler_filmdrop,
+    module.daskhub_docker_ecr,
+    aws_s3_bucket.jupyter_dask_source_config,
+    aws_s3_object.jupyter_dask_source_config_ekscluster,
+    aws_s3_object.jupyter_dask_source_config_spec,
+    aws_s3_object.jupyter_dask_source_config_autoscaler,
+    aws_s3_object.jupyter_dask_source_config_daskhub,
+    aws_s3_object.jupyter_dask_source_config_storageclass,
+    aws_s3_object.analytics_eks_build_spec,
+    aws_codebuild_project.analytics_eks_codebuild,
+    null_resource.trigger_jupyterhub_upgrade
   ]
 }

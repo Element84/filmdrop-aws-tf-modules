@@ -36,13 +36,13 @@ variable "traffic_type" {
   default     = "ALL"
 }
 
-variable "public_subnets_cidr_map" {
-  description = "Map with the availability zone to the cidr range for public subnets"
+variable "public_subnets_az_to_id_map" {
+  description = "Map with the availability zone to the subnet-id for public subnets. If deploy_vpc = true, then specify the map with az => subnet-cidr-range instead."
   type        = map(any)
 }
 
-variable "private_subnets_cidr_map" {
-  description = "Map with the availability zone to the cidr range for private subnets"
+variable "private_subnets_az_to_id_map" {
+  description = "Map with the availability zone to the subnet-id for private subnets. If deploy_vpc = true, then specify the map with az => subnet-cidr-range instead."
   type        = map(any)
 }
 

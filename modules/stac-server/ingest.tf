@@ -16,11 +16,17 @@ resource "aws_lambda_function" "stac_server_ingest" {
       OPENSEARCH_HOST                  = var.opensearch_host != "" ? var.opensearch_host : local.opensearch_endpoint
       OPENSEARCH_CREDENTIALS_SECRET_ID = var.deploy_stac_server_opensearch_serverless ? "" : aws_secretsmanager_secret.opensearch_stac_user_password_secret.arn
       COLLECTION_TO_INDEX_MAPPINGS     = var.collection_to_index_mappings
+      POST_INGEST_TOPIC_ARN            = aws_sns_topic.stac_server_post_ingest_sns_topic.arn
+      STAC_API_URL                     = var.stac_api_url
+      CORS_ORIGIN                      = var.cors_origin
+      CORS_CREDENTIALS                 = var.cors_credentials
+      CORS_METHODS                     = var.cors_methods
+      CORS_HEADERS                     = var.cors_headers
     }
   }
 
   dynamic "vpc_config" {
-    for_each = { for i, j in [var.deploy_stac_server_opensearch_serverless] : i => j if var.deploy_stac_server_opensearch_serverless != true }
+    for_each = { for i, j in [var.deploy_stac_server_outside_vpc] : i => j if var.deploy_stac_server_outside_vpc != true }
 
     content {
       subnet_ids         = var.vpc_subnet_ids
@@ -31,6 +37,10 @@ resource "aws_lambda_function" "stac_server_ingest" {
 
 resource "aws_sns_topic" "stac_server_ingest_sns_topic" {
   name = "${local.name_prefix}-stac-server-ingest"
+}
+
+resource "aws_sns_topic" "stac_server_post_ingest_sns_topic" {
+  name = "${local.name_prefix}-stac-server-post-ingest"
 }
 
 resource "aws_sns_topic_subscription" "stac_server_ingest_sqs_subscription" {

@@ -1,5 +1,5 @@
 resource "aws_s3_bucket" "lambda-source" {
-  bucket        = lower("titiler-mosaic-source-${var.project_name}-${var.titiler_stage}")
+  bucket_prefix = lower("titiler-mosaic-source-${var.project_name}-${var.titiler_stage}")
   force_destroy = true
 }
 
@@ -25,7 +25,8 @@ resource "aws_s3_bucket_versioning" "lambda-source-versioning" {
 
 resource "null_resource" "download-lambda-source-bundle" {
   triggers = {
-    version = var.mosaic_titiler_release_tag
+    bucket  = aws_s3_bucket.lambda-source.id
+    version = var.titiler_mosaicjson_release_tag
     runtime = var.lambda_runtime
   }
 
@@ -35,11 +36,11 @@ resource "null_resource" "download-lambda-source-bundle" {
 mkdir -p ${path.module}/lambda
 which wget || echo "wget is required, but not found - this is going to fail..."
 wget --secure-protocol=TLSv1_2 --quiet \
-  https://github.com/Element84/titiler-mosaicjson/releases/download/${var.mosaic_titiler_release_tag}/lambda-${var.lambda_runtime}.zip \
-  -O ${path.module}/lambda/${var.mosaic_titiler_release_tag}-lambda-${var.lambda_runtime}.zip
+  https://github.com/Element84/titiler-mosaicjson/releases/download/${var.titiler_mosaicjson_release_tag}/lambda-${var.lambda_runtime}.zip \
+  -O ${path.module}/lambda/${var.titiler_mosaicjson_release_tag}-lambda-${var.lambda_runtime}.zip
 aws s3 cp --quiet \
-  ${path.module}/lambda/${var.mosaic_titiler_release_tag}-lambda-${var.lambda_runtime}.zip \
-  s3://${aws_s3_bucket.lambda-source.id}/${var.mosaic_titiler_release_tag}-lambda-${var.lambda_runtime}-${self.id}.zip
+  ${path.module}/lambda/${var.titiler_mosaicjson_release_tag}-lambda-${var.lambda_runtime}.zip \
+  s3://${aws_s3_bucket.lambda-source.id}/${var.titiler_mosaicjson_release_tag}-lambda-${var.lambda_runtime}-${self.id}.zip
 EOF
   }
 }
@@ -52,7 +53,7 @@ resource "aws_lambda_function" "titiler-mosaic-lambda" {
   memory_size   = var.titiler_memory
 
   s3_bucket = aws_s3_bucket.lambda-source.id
-  s3_key    = "${var.mosaic_titiler_release_tag}-lambda-${var.lambda_runtime}-${null_resource.download-lambda-source-bundle.id}.zip"
+  s3_key    = "${var.titiler_mosaicjson_release_tag}-lambda-${var.lambda_runtime}-${null_resource.download-lambda-source-bundle.id}.zip"
   handler   = "handler.handler"
   runtime   = var.lambda_runtime
 
@@ -75,6 +76,11 @@ resource "aws_lambda_function" "titiler-mosaic-lambda" {
       MOSAIC_HOST                        = "${data.aws_region.current.name}/${aws_dynamodb_table.titiler-mosaic-dynamodb-table.name}"
       REQUEST_HOST_HEADER_OVERRIDE       = var.request_host_header_override
     }
+  }
+
+  vpc_config {
+    subnet_ids         = var.vpc_subnet_ids
+    security_group_ids = var.vpc_security_group_ids
   }
 
   depends_on = [

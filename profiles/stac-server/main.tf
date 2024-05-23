@@ -20,6 +20,12 @@ module "stac-server" {
   project_name                                = var.project_name
   stac_server_s3_bucket_arns                  = var.stac_server_inputs.stac_server_and_titiler_s3_arns
   deploy_stac_server_opensearch_serverless    = var.deploy_stac_server_opensearch_serverless
+  deploy_stac_server_outside_vpc              = var.deploy_stac_server_outside_vpc
+  stac_api_url                                = var.stac_server_inputs.deploy_cloudfront && var.stac_server_inputs.domain_alias != "" ? "https://${var.stac_server_inputs.domain_alias}" : ""
+  cors_origin                                 = var.stac_server_inputs.cors_origin
+  cors_credentials                            = var.stac_server_inputs.cors_credentials
+  cors_methods                                = var.stac_server_inputs.cors_methods
+  cors_headers                                = var.stac_server_inputs.cors_headers
 }
 
 module "cloudfront_api_gateway_endpoint" {
@@ -42,6 +48,14 @@ module "cloudfront_api_gateway_endpoint" {
   log_bucket_name              = var.log_bucket_name
   log_bucket_domain_name       = var.log_bucket_domain_name
   filmdrop_archive_bucket_name = var.s3_logs_archive_bucket
+  cf_function_name             = var.stac_server_inputs.auth_function.cf_function_name
+  cf_function_runtime          = var.stac_server_inputs.auth_function.cf_function_runtime
+  cf_function_code_path        = var.stac_server_inputs.auth_function.cf_function_code_path
+  attach_cf_function           = var.stac_server_inputs.auth_function.attach_cf_function
+  cf_function_event_type       = var.stac_server_inputs.auth_function.cf_function_event_type
+  create_cf_function           = var.stac_server_inputs.auth_function.create_cf_function
+  create_cf_basicauth_function = var.stac_server_inputs.auth_function.create_cf_basicauth_function
+  cf_function_arn              = var.stac_server_inputs.auth_function.cf_function_arn
 }
 
 module "historical_ingest" {

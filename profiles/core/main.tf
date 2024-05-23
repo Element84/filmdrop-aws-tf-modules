@@ -11,8 +11,8 @@ module "base_infra" {
   vpc_id                         = var.vpc_id
   sns_topics_map                 = var.sns_topics_map
   security_group_id              = var.security_group_id
-  private_subnets_cidr_map       = var.private_subnets_cidr_map
-  public_subnets_cidr_map        = var.public_subnets_cidr_map
+  private_subnets_az_to_id_map   = var.private_subnets_az_to_id_map
+  public_subnets_az_to_id_map    = var.public_subnets_az_to_id_map
   cloudwatch_warning_alarms_map  = var.cloudwatch_warning_alarms_map
   cloudwatch_critical_alarms_map = var.cloudwatch_critical_alarms_map
   sns_warning_subscriptions_map  = var.sns_warning_subscriptions_map
@@ -47,6 +47,7 @@ module "stac-server" {
   s3_logs_archive_bucket                   = module.base_infra.s3_logs_archive_bucket
   domain_zone                              = var.domain_zone
   deploy_stac_server_opensearch_serverless = var.deploy_stac_server_opensearch_serverless
+  deploy_stac_server_outside_vpc           = var.deploy_stac_server_outside_vpc
 
   depends_on = [
     module.setup
@@ -67,6 +68,8 @@ module "titiler" {
   stac_url               = var.deploy_stac_server ? module.stac-server[0].stac_url : ""
   s3_logs_archive_bucket = module.base_infra.s3_logs_archive_bucket
   domain_zone            = var.domain_zone
+  private_subnet_ids     = module.base_infra.private_subnet_ids
+  security_group_id      = module.base_infra.security_group_id
 }
 
 module "analytics" {
@@ -110,6 +113,15 @@ module "console-ui" {
   s3_logs_archive_bucket = module.base_infra.s3_logs_archive_bucket
 }
 
+module "cirrus" {
+  count  = var.deploy_cirrus ? 1 : 0
+  source = "../cirrus"
+
+  project_name  = var.project_name
+  environment   = var.environment
+  cirrus_inputs = var.cirrus_inputs
+}
+
 module "cirrus-dashboard" {
   count  = var.deploy_cirrus_dashboard ? 1 : 0
   source = "../cirrus-dashboard"
@@ -127,17 +139,4 @@ module "cirrus-dashboard" {
   s3_logs_archive_bucket  = module.base_infra.s3_logs_archive_bucket
   domain_zone             = var.domain_zone
   cirrus_dashboard_inputs = var.cirrus_dashboard_inputs
-}
-
-###############
-# Sample data S3 Bucket and s3 access logs for it.
-# This is usually not needed, but if it is needed for any client to put the
-# STAC Items temporarily
-###############
-module "sample_data_bucket" {
-  count  = var.deploy_sample_data_bucket ? 1 : 0
-  source = "../sample_data_bucket"
-
-  project_sample_data_bucket_name = var.project_sample_data_bucket_name
-  s3_access_log_bucket            = module.base_infra.s3_access_log_bucket
 }

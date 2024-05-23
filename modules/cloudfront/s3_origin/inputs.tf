@@ -79,7 +79,7 @@ variable "custom_error_response" {
 variable "custom_s3_whitelisted_headers" {
   description = "List of whitelisted http headers to have CloudFront forward to S3 origin"
   type        = list(string)
-  default     = ["User-Agent"]
+  default     = ["User-Agent", "Referer", "X-Forwarded-For", "filmdrop-authorized"]
 }
 
 variable "caching_disabled" {
@@ -127,7 +127,7 @@ variable "cf_function_name" {
 variable "cf_function_runtime" {
   description = "CF function runtime"
   type        = string
-  default     = "cloudfront-js-1.0"
+  default     = "cloudfront-js-2.0"
 }
 
 variable "cf_function_code_path" {
@@ -150,6 +150,12 @@ variable "cf_function_event_type" {
 
 variable "create_cf_function" {
   description = "Should create a CF function or not"
+  type        = bool
+  default     = false
+}
+
+variable "create_cf_basicauth_function" {
+  description = "Should create the BasicAuth CF function or not"
   type        = bool
   default     = false
 }

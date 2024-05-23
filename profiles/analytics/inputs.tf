@@ -69,6 +69,27 @@ variable "analytics_inputs" {
     jupyterhub_elb_acm_cert_arn = string
     jupyterhub_elb_domain_alias = string
     create_credentials          = bool
+    auth_function = object({
+      cf_function_name             = string
+      cf_function_runtime          = string
+      cf_function_code_path        = string
+      attach_cf_function           = bool
+      cf_function_event_type       = string
+      create_cf_function           = bool
+      create_cf_basicauth_function = bool
+      cf_function_arn              = string
+    })
+    cleanup = object({
+      enabled                            = bool
+      asg_min_capacity                   = number
+      analytics_node_limit               = number
+      notifications_schedule_expressions = list(string)
+      cleanup_schedule_expressions       = list(string)
+    })
+    eks = object({
+      cluster_version    = string
+      autoscaler_version = string
+    })
   })
   default = {
     app_name                    = "analytics"
@@ -76,6 +97,27 @@ variable "analytics_inputs" {
     jupyterhub_elb_acm_cert_arn = ""
     jupyterhub_elb_domain_alias = ""
     create_credentials          = true
+    auth_function = {
+      cf_function_name             = ""
+      cf_function_runtime          = "cloudfront-js-2.0"
+      cf_function_code_path        = ""
+      attach_cf_function           = false
+      cf_function_event_type       = "viewer-request"
+      create_cf_function           = false
+      create_cf_basicauth_function = false
+      cf_function_arn              = ""
+    }
+    cleanup = {
+      enabled                            = false
+      asg_min_capacity                   = 1
+      analytics_node_limit               = 4
+      notifications_schedule_expressions = []
+      cleanup_schedule_expressions       = []
+    }
+    eks = {
+      cluster_version    = "1.29"
+      autoscaler_version = "v1.29.0"
+    }
   }
 }
 

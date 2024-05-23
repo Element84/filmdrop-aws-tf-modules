@@ -8,11 +8,11 @@ s3_logs_archive_bucket = ""
 
 ##### NETWORKING VARIABLES ####
 # If left blank, the infrastructure will try to query the values from the control tower vpc
-vpc_id                   = ""
-vpc_cidr                 = ""
-security_group_id        = ""
-public_subnets_cidr_map  = {}
-private_subnets_cidr_map = {}
+vpc_id                       = ""
+vpc_cidr                     = ""
+security_group_id            = ""
+public_subnets_az_to_id_map  = {}
+private_subnets_az_to_id_map = {}
 
 ##### ALARM VARIABLES ####
 sns_topics_map                 = {}
@@ -24,7 +24,7 @@ sns_critical_subscriptions_map = {}
 ##### APPLICATION VARIABLES ####
 stac_server_inputs = {
   app_name                                    = "stac_server"
-  version                                     = "v3.2.0"
+  version                                     = "v3.7.0"
   deploy_cloudfront                           = true
   domain_alias                                = ""
   enable_transactions_extension               = false
@@ -37,8 +37,22 @@ stac_server_inputs = {
   ingest_sns_topic_arns                       = []
   additional_ingest_sqs_senders_arns          = []
   opensearch_ebs_volume_size                  = 35
+  cors_origin                                 = "*"
+  cors_credentials                            = false
+  cors_methods                                = ""
+  cors_headers                                = ""
   stac_server_and_titiler_s3_arns             = []
   web_acl_id                                  = ""
+  auth_function = {
+    cf_function_name             = ""
+    cf_function_runtime          = "cloudfront-js-2.0"
+    cf_function_code_path        = ""
+    attach_cf_function           = false
+    cf_function_event_type       = "viewer-request"
+    create_cf_function           = false
+    create_cf_basicauth_function = false
+    cf_function_arn              = ""
+  }
   ingest = {
     source_catalog_url               = ""
     destination_collections_list     = ""
@@ -57,11 +71,22 @@ stac_server_inputs = {
 titiler_inputs = {
   app_name                        = "titiler"
   domain_alias                    = ""
-  mosaic_titiler_release_tag      = "v0.14.0-1.0.4"
+  deploy_cloudfront               = true
+  version                         = "v0.14.0-1.0.4"
   stac_server_and_titiler_s3_arns = []
   mosaic_titiler_waf_allowed_url  = "test.filmdrop.io"
   mosaic_titiler_host_header      = ""
   web_acl_id                      = ""
+  auth_function = {
+    cf_function_name             = ""
+    cf_function_runtime          = "cloudfront-js-2.0"
+    cf_function_code_path        = ""
+    attach_cf_function           = false
+    cf_function_event_type       = "viewer-request"
+    create_cf_function           = false
+    create_cf_basicauth_function = false
+    cf_function_arn              = ""
+  }
 }
 
 analytics_inputs = {
@@ -70,28 +95,40 @@ analytics_inputs = {
   jupyterhub_elb_acm_cert_arn = ""
   jupyterhub_elb_domain_alias = ""
   create_credentials          = true
+  auth_function = {
+    cf_function_name             = ""
+    cf_function_runtime          = "cloudfront-js-2.0"
+    cf_function_code_path        = ""
+    attach_cf_function           = false
+    cf_function_event_type       = "viewer-request"
+    create_cf_function           = false
+    create_cf_basicauth_function = false
+    cf_function_arn              = ""
+  }
+
+  cleanup = {
+    enabled                            = false
+    asg_min_capacity                   = 1
+    analytics_node_limit               = 4
+    notifications_schedule_expressions = []
+    cleanup_schedule_expressions       = []
+  }
+
+  eks = {
+    cluster_version    = "1.29"
+    autoscaler_version = "v1.29.0"
+  }
 }
 
 console_ui_inputs = {
-  app_name     = "console"
-  domain_alias = ""
-  custom_error_response = [
-    {
-      error_caching_min_ttl = "10"
-      error_code            = "404"
-      response_code         = "200"
-      response_page_path    = "/"
-    }
-  ]
-  filmdrop_ui_release     = "v4.3.0"
+  app_name                = "console"
+  domain_alias            = ""
+  deploy_cloudfront       = true
+  version                 = "v5.3.0"
   filmdrop_ui_config_file = "./profiles/console-ui/default-config/config.dev.json"
   filmdrop_ui_logo_file   = "./profiles/console-ui/default-config/logo.png"
   filmdrop_ui_logo        = "bm9uZQo=" # Base64: 'none'
-}
 
-cirrus_dashboard_inputs = {
-  app_name     = "dashboard"
-  domain_alias = ""
   custom_error_response = [
     {
       error_caching_min_ttl = "10"
@@ -100,8 +137,57 @@ cirrus_dashboard_inputs = {
       response_page_path    = "/"
     }
   ]
-  cirrus_api_endpoint_base = ""
-  cirrus_dashboard_release = "v0.5.1"
+
+  auth_function = {
+    cf_function_name             = ""
+    cf_function_runtime          = "cloudfront-js-2.0"
+    cf_function_code_path        = ""
+    attach_cf_function           = false
+    cf_function_event_type       = "viewer-request"
+    create_cf_function           = false
+    create_cf_basicauth_function = false
+    cf_function_arn              = ""
+  }
+}
+
+cirrus_inputs = {
+  data_bucket    = "cirrus-data-bucket-name"
+  payload_bucket = "cirrus-payload-bucket-name"
+  process = {
+    sqs_timeout           = 180
+    sqs_max_receive_count = 5
+  }
+  state = {
+    timestream_magnetic_store_retention_period_in_days = 93
+    timestream_memory_store_retention_period_in_hours  = 24
+  }
+}
+
+cirrus_dashboard_inputs = {
+  app_name             = "dashboard"
+  domain_alias         = ""
+  deploy_cloudfront    = true
+  version              = "v0.5.1"
+  cirrus_api_endpoint  = ""
+  metrics_api_endpoint = ""
+  custom_error_response = [
+    {
+      error_caching_min_ttl = "10"
+      error_code            = "404"
+      response_code         = "200"
+      response_page_path    = "/"
+    }
+  ]
+  auth_function = {
+    cf_function_name             = ""
+    cf_function_runtime          = "cloudfront-js-2.0"
+    cf_function_code_path        = ""
+    attach_cf_function           = false
+    cf_function_event_type       = "viewer-request"
+    create_cf_function           = false
+    create_cf_basicauth_function = false
+    cf_function_arn              = ""
+  }
 }
 
 
@@ -113,13 +199,10 @@ deploy_log_archive                       = true
 deploy_alarms                            = false
 deploy_stac_server_opensearch_serverless = false
 deploy_stac_server                       = true
+deploy_stac_server_outside_vpc           = false
 deploy_analytics                         = true
 deploy_titiler                           = true
 deploy_console_ui                        = true
+deploy_cirrus                            = true
 deploy_cirrus_dashboard                  = true
 deploy_local_stac_server_artifacts       = false
-deploy_sample_data_bucket                = false
-
-
-##### STAC SAMPLE DATA ####
-project_sample_data_bucket_name = ""

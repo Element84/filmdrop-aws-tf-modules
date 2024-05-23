@@ -17,21 +17,28 @@ module "create_credentials" {
 module "jupyterhub-dask-eks" {
   source = "../../modules/jupyterhub-dask-eks"
 
-  vpc_id                      = var.vpc_id
-  vpc_private_subnet_ids      = var.private_subnet_ids
-  vpc_security_group_ids      = [var.security_group_id]
-  vpc_cidr_range              = var.vpc_cidr
-  vpc_public_subnet_ids       = var.public_subnet_ids
-  vpc_private_subnet_azs      = var.private_availability_zones
-  vpc_public_subnet_azs       = var.public_availability_zones
-  jupyterhub_elb_acm_cert_arn = var.analytics_inputs.jupyterhub_elb_acm_cert_arn == "" ? module.analytics_certificate[0].certificate_arn : var.analytics_inputs.jupyterhub_elb_acm_cert_arn
-  project_name                = var.project_name
-  environment                 = var.environment
-  zone_id                     = var.domain_zone
-  domain_alias                = var.analytics_inputs.jupyterhub_elb_domain_alias
-  daskhub_stage               = var.environment
-  domain_param_name           = module.cloudfront_load_balancer_endpoint.cloudfront_domain_origin_param
-  cloudfront_distribution_id  = module.cloudfront_load_balancer_endpoint.cloudfront_distribution_id
+  vpc_id                                       = var.vpc_id
+  vpc_private_subnet_ids                       = var.private_subnet_ids
+  vpc_security_group_ids                       = [var.security_group_id]
+  vpc_cidr_range                               = var.vpc_cidr
+  vpc_public_subnet_ids                        = var.public_subnet_ids
+  vpc_private_subnet_azs                       = var.private_availability_zones
+  vpc_public_subnet_azs                        = var.public_availability_zones
+  jupyterhub_elb_acm_cert_arn                  = var.analytics_inputs.jupyterhub_elb_acm_cert_arn == "" ? module.analytics_certificate[0].certificate_arn : var.analytics_inputs.jupyterhub_elb_acm_cert_arn
+  project_name                                 = var.project_name
+  environment                                  = var.environment
+  zone_id                                      = var.domain_zone
+  domain_alias                                 = var.analytics_inputs.jupyterhub_elb_domain_alias
+  daskhub_stage                                = var.environment
+  domain_param_name                            = module.cloudfront_load_balancer_endpoint.cloudfront_domain_origin_param
+  cloudfront_distribution_id                   = module.cloudfront_load_balancer_endpoint.cloudfront_distribution_id
+  analytics_cleanup_enabled                    = var.analytics_inputs.cleanup.enabled
+  analytics_asg_min_capacity                   = var.analytics_inputs.cleanup.asg_min_capacity
+  analytics_node_limit                         = var.analytics_inputs.cleanup.analytics_node_limit
+  analytics_notifications_schedule_expressions = var.analytics_inputs.cleanup.notifications_schedule_expressions
+  analytics_cleanup_schedule_expressions       = var.analytics_inputs.cleanup.cleanup_schedule_expressions
+  kubernetes_version                           = var.analytics_inputs.eks.cluster_version
+  kubernetes_autoscaler_version                = var.analytics_inputs.eks.autoscaler_version
 
   depends_on = [
     module.create_credentials
@@ -55,6 +62,14 @@ module "cloudfront_load_balancer_endpoint" {
   load_balancer_dns_name       = var.analytics_inputs.jupyterhub_elb_domain_alias
   project_name                 = var.project_name
   environment                  = var.environment
+  cf_function_name             = var.analytics_inputs.auth_function.cf_function_name
+  cf_function_runtime          = var.analytics_inputs.auth_function.cf_function_runtime
+  cf_function_code_path        = var.analytics_inputs.auth_function.cf_function_code_path
+  attach_cf_function           = var.analytics_inputs.auth_function.attach_cf_function
+  cf_function_event_type       = var.analytics_inputs.auth_function.cf_function_event_type
+  create_cf_function           = var.analytics_inputs.auth_function.create_cf_function
+  create_cf_basicauth_function = var.analytics_inputs.auth_function.create_cf_basicauth_function
+  cf_function_arn              = var.analytics_inputs.auth_function.cf_function_arn
 }
 
 resource "null_resource" "cleanup_analytics_credentials" {

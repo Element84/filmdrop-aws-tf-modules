@@ -21,7 +21,6 @@
   </a>
 </p>
 
-
 ---
 
 This repository contains the packaging of FilmDrop terraform modules.
@@ -245,7 +244,6 @@ deploy_titiler                      = false
 deploy_console_ui                   = false
 deploy_cirrus_dashboard             = false
 deploy_local_stac_server_artifacts  = false
-deploy_sample_data_bucket           = false
 ```
 
 ```shell
@@ -307,7 +305,7 @@ a newer version. For example, if a new required variable is added, this should b
 
 ### 1.7.0
 
-* Remove cirrus_dashboard_release uses in deployment to use new default version of v0.5.1
+* Remove cirrus_dashboard_release_tag uses in deployment to use new default version of v0.5.1
 * Please upgrade to AWS provider `~=5.20`
 
 ### 1.6.0

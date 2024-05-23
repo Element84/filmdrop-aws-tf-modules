@@ -16,6 +16,16 @@ variable "titiler_stage" {
   type        = string
 }
 
+variable "vpc_subnet_ids" {
+  description = "List of subnet ids in the FilmDrop vpc"
+  type        = list(string)
+}
+
+variable "vpc_security_group_ids" {
+  description = "List of security groups in the FilmDrop vpc"
+  type        = list(string)
+}
+
 variable "cpl_vsil_curl_allowed_extensions" {
   description = "CPL_VSIL_CURL_ALLOWED_EXTENSIONS lambda env var"
   default     = ".tif,.TIF,.tiff"
@@ -87,7 +97,7 @@ variable "project_name" {
   type        = string
 }
 
-variable "mosaic_titiler_release_tag" {
+variable "titiler_mosaicjson_release_tag" {
   description = "Git release tag for: https://github.com/Element84/titiler-mosaicjson/releases"
   type        = string
 }

@@ -26,12 +26,12 @@ output "public_subnet_ids" {
 
 output "private_avaliability_zones" {
   description = "List of FilmDrop Private Subnet Availability Zones"
-  value       = keys(var.private_subnets_cidr_map)
+  value       = keys(var.private_subnets_az_to_id_map)
 }
 
 output "public_avaliability_zones" {
   description = "List of FilmDrop Public Subnet Availability Zones"
-  value       = keys(var.public_subnets_cidr_map)
+  value       = keys(var.public_subnets_az_to_id_map)
 }
 
 output "security_group_id" {

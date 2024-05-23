@@ -5,16 +5,19 @@ module "titiler" {
     aws.east = aws.east
   }
 
-  project_name                 = var.project_name
-  titiler_stage                = var.environment
-  mosaic_titiler_release_tag   = var.titiler_inputs.mosaic_titiler_release_tag
-  titiler_s3_bucket_arns       = var.titiler_inputs.stac_server_and_titiler_s3_arns
-  waf_allowed_url              = var.titiler_inputs.mosaic_titiler_waf_allowed_url == "" ? var.stac_url : var.titiler_inputs.mosaic_titiler_waf_allowed_url
-  request_host_header_override = var.titiler_inputs.mosaic_titiler_host_header
+  project_name                   = var.project_name
+  titiler_stage                  = var.environment
+  titiler_mosaicjson_release_tag = var.titiler_inputs.version
+  titiler_s3_bucket_arns         = var.titiler_inputs.stac_server_and_titiler_s3_arns
+  waf_allowed_url                = var.titiler_inputs.mosaic_titiler_waf_allowed_url == "" ? var.stac_url : var.titiler_inputs.mosaic_titiler_waf_allowed_url
+  request_host_header_override   = var.titiler_inputs.mosaic_titiler_host_header
+  vpc_subnet_ids                 = var.private_subnet_ids
+  vpc_security_group_ids         = [var.security_group_id]
 }
 
 module "cloudfront_api_gateway_endpoint" {
   source = "../../modules/cloudfront/apigw_endpoint"
+  count  = var.titiler_inputs.deploy_cloudfront ? 1 : 0
 
   providers = {
     aws.east = aws.east
@@ -32,4 +35,12 @@ module "cloudfront_api_gateway_endpoint" {
   log_bucket_name              = var.log_bucket_name
   log_bucket_domain_name       = var.log_bucket_domain_name
   filmdrop_archive_bucket_name = var.s3_logs_archive_bucket
+  cf_function_name             = var.titiler_inputs.auth_function.cf_function_name
+  cf_function_runtime          = var.titiler_inputs.auth_function.cf_function_runtime
+  cf_function_code_path        = var.titiler_inputs.auth_function.cf_function_code_path
+  attach_cf_function           = var.titiler_inputs.auth_function.attach_cf_function
+  cf_function_event_type       = var.titiler_inputs.auth_function.cf_function_event_type
+  create_cf_function           = var.titiler_inputs.auth_function.create_cf_function
+  create_cf_basicauth_function = var.titiler_inputs.auth_function.create_cf_basicauth_function
+  cf_function_arn              = var.titiler_inputs.auth_function.cf_function_arn
 }

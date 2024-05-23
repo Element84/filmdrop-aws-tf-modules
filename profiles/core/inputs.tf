@@ -28,15 +28,15 @@ variable "vpc_cidr" {
   default     = ""
 }
 
-variable "public_subnets_cidr_map" {
+variable "public_subnets_az_to_id_map" {
   type        = map(any)
-  description = "Map with the availability zone to the cidr range for public subnets"
+  description = "Map with the availability zone to the subnet-id for public subnets. If deploy_vpc = true, then specify the map with az => subnet-cidr-range instead."
   default     = {}
 }
 
-variable "private_subnets_cidr_map" {
+variable "private_subnets_az_to_id_map" {
   type        = map(any)
-  description = "Map with the availability zone to the cidr range for private subnets"
+  description = "Map with the availability zone to the subnet-id for private subnets. If deploy_vpc = true, then specify the map with az => subnet-cidr-range instead."
   default     = {}
 }
 
@@ -106,7 +106,21 @@ variable "stac_server_inputs" {
     additional_ingest_sqs_senders_arns          = list(string)
     opensearch_ebs_volume_size                  = number
     stac_server_and_titiler_s3_arns             = list(string)
+    cors_origin                                 = string
+    cors_credentials                            = bool
+    cors_methods                                = string
+    cors_headers                                = string
     web_acl_id                                  = string
+    auth_function = object({
+      cf_function_name             = string
+      cf_function_runtime          = string
+      cf_function_code_path        = string
+      attach_cf_function           = bool
+      cf_function_event_type       = string
+      create_cf_function           = bool
+      create_cf_basicauth_function = bool
+      cf_function_arn              = string
+    })
     ingest = object({
       source_catalog_url               = string
       destination_collections_list     = string
@@ -123,7 +137,7 @@ variable "stac_server_inputs" {
   })
   default = {
     app_name                                    = "stac_server"
-    version                                     = "v3.2.0"
+    version                                     = "v3.7.0"
     deploy_cloudfront                           = true
     domain_alias                                = ""
     enable_transactions_extension               = false
@@ -137,7 +151,21 @@ variable "stac_server_inputs" {
     additional_ingest_sqs_senders_arns          = []
     opensearch_ebs_volume_size                  = 35
     stac_server_and_titiler_s3_arns             = []
+    cors_origin                                 = "*"
+    cors_credentials                            = false
+    cors_methods                                = ""
+    cors_headers                                = ""
     web_acl_id                                  = ""
+    auth_function = {
+      cf_function_name             = ""
+      cf_function_runtime          = "cloudfront-js-2.0"
+      cf_function_code_path        = ""
+      attach_cf_function           = false
+      cf_function_event_type       = "viewer-request"
+      create_cf_function           = false
+      create_cf_basicauth_function = false
+      cf_function_arn              = ""
+    }
     ingest = {
       source_catalog_url               = ""
       destination_collections_list     = ""
@@ -159,20 +187,42 @@ variable "titiler_inputs" {
   type = object({
     app_name                        = string
     domain_alias                    = string
-    mosaic_titiler_release_tag      = string
+    deploy_cloudfront               = bool
+    version                         = string
     stac_server_and_titiler_s3_arns = list(string)
     mosaic_titiler_waf_allowed_url  = string
     mosaic_titiler_host_header      = string
     web_acl_id                      = string
+    auth_function = object({
+      cf_function_name             = string
+      cf_function_runtime          = string
+      cf_function_code_path        = string
+      attach_cf_function           = bool
+      cf_function_event_type       = string
+      create_cf_function           = bool
+      create_cf_basicauth_function = bool
+      cf_function_arn              = string
+    })
   })
   default = {
     app_name                        = "titiler"
     domain_alias                    = ""
-    mosaic_titiler_release_tag      = "v0.14.0-1.0.4"
+    deploy_cloudfront               = true
+    version                         = "v0.14.0-1.0.4"
     stac_server_and_titiler_s3_arns = []
     mosaic_titiler_waf_allowed_url  = ""
     mosaic_titiler_host_header      = ""
     web_acl_id                      = ""
+    auth_function = {
+      cf_function_name             = ""
+      cf_function_runtime          = "cloudfront-js-2.0"
+      cf_function_code_path        = ""
+      attach_cf_function           = false
+      cf_function_event_type       = "viewer-request"
+      create_cf_function           = false
+      create_cf_basicauth_function = false
+      cf_function_arn              = ""
+    }
   }
 }
 
@@ -184,6 +234,27 @@ variable "analytics_inputs" {
     jupyterhub_elb_acm_cert_arn = string
     jupyterhub_elb_domain_alias = string
     create_credentials          = bool
+    auth_function = object({
+      cf_function_name             = string
+      cf_function_runtime          = string
+      cf_function_code_path        = string
+      attach_cf_function           = bool
+      cf_function_event_type       = string
+      create_cf_function           = bool
+      create_cf_basicauth_function = bool
+      cf_function_arn              = string
+    })
+    cleanup = object({
+      enabled                            = bool
+      asg_min_capacity                   = number
+      analytics_node_limit               = number
+      notifications_schedule_expressions = list(string)
+      cleanup_schedule_expressions       = list(string)
+    })
+    eks = object({
+      cluster_version    = string
+      autoscaler_version = string
+    })
   })
   default = {
     app_name                    = "analytics"
@@ -191,28 +262,61 @@ variable "analytics_inputs" {
     jupyterhub_elb_acm_cert_arn = ""
     jupyterhub_elb_domain_alias = ""
     create_credentials          = true
+    auth_function = {
+      cf_function_name             = ""
+      cf_function_runtime          = "cloudfront-js-2.0"
+      cf_function_code_path        = ""
+      attach_cf_function           = false
+      cf_function_event_type       = "viewer-request"
+      create_cf_function           = false
+      create_cf_basicauth_function = false
+      cf_function_arn              = ""
+    }
+    cleanup = {
+      enabled                            = false
+      asg_min_capacity                   = 1
+      analytics_node_limit               = 4
+      notifications_schedule_expressions = []
+      cleanup_schedule_expressions       = []
+    }
+    eks = {
+      cluster_version    = "1.29"
+      autoscaler_version = "v1.29.0"
+    }
   }
 }
 
 variable "console_ui_inputs" {
   description = "Inputs for console-ui FilmDrop deployment."
   type = object({
-    app_name     = string
-    domain_alias = string
+    app_name          = string
+    domain_alias      = string
+    deploy_cloudfront = bool
     custom_error_response = list(object({
       error_caching_min_ttl = string
       error_code            = string
       response_code         = string
       response_page_path    = string
     }))
-    filmdrop_ui_release     = string
+    version                 = string
     filmdrop_ui_config_file = string
     filmdrop_ui_logo_file   = string
     filmdrop_ui_logo        = string
+    auth_function = object({
+      cf_function_name             = string
+      cf_function_runtime          = string
+      cf_function_code_path        = string
+      attach_cf_function           = bool
+      cf_function_event_type       = string
+      create_cf_function           = bool
+      create_cf_basicauth_function = bool
+      cf_function_arn              = string
+    })
   })
   default = {
-    app_name     = "console"
-    domain_alias = ""
+    app_name          = "console"
+    domain_alias      = ""
+    deploy_cloudfront = true
     custom_error_response = [
       {
         error_caching_min_ttl = "10"
@@ -221,30 +325,84 @@ variable "console_ui_inputs" {
         response_page_path    = "/"
       }
     ]
-    filmdrop_ui_release     = "v4.3.0"
-    filmdrop_ui_config_file = ""
-    filmdrop_ui_logo_file   = ""
+    version                 = "v5.3.0"
+    filmdrop_ui_config_file = "../console-ui/default-config/config.dev.json"
+    filmdrop_ui_logo_file   = "../console-ui/default-config/logo.png"
     filmdrop_ui_logo        = "bm9uZQo=" # Base64: 'none'
+    auth_function = {
+      cf_function_name             = ""
+      cf_function_runtime          = "cloudfront-js-2.0"
+      cf_function_code_path        = ""
+      attach_cf_function           = false
+      cf_function_event_type       = "viewer-request"
+      create_cf_function           = false
+      create_cf_basicauth_function = false
+      cf_function_arn              = ""
+    }
+  }
+}
+
+variable "cirrus_inputs" {
+  description = "Inputs for FilmDrop Cirrus deployment."
+  type = object({
+    data_bucket    = string
+    payload_bucket = string
+    process = object({
+      sqs_timeout           = number
+      sqs_max_receive_count = number
+    })
+    state = object({
+      timestream_magnetic_store_retention_period_in_days = number
+      timestream_memory_store_retention_period_in_hours  = number
+    })
+  })
+  default = {
+    data_bucket    = "cirrus-data-bucket-name"
+    payload_bucket = "cirrus-payload-bucket-name"
+    process = {
+      sqs_timeout           = 180
+      sqs_max_receive_count = 5
+    }
+    state = {
+      timestream_magnetic_store_retention_period_in_days = 93
+      timestream_memory_store_retention_period_in_hours  = 24
+    }
   }
 }
 
 variable "cirrus_dashboard_inputs" {
   description = "Inputs for cirrus dashboard FilmDrop deployment."
   type = object({
-    app_name     = string
-    domain_alias = string
+    app_name             = string
+    domain_alias         = string
+    deploy_cloudfront    = bool
+    version              = string
+    cirrus_api_endpoint  = string
+    metrics_api_endpoint = string
     custom_error_response = list(object({
       error_caching_min_ttl = string
       error_code            = string
       response_code         = string
       response_page_path    = string
     }))
-    cirrus_api_endpoint_base = string
-    cirrus_dashboard_release = string
+    auth_function = object({
+      cf_function_name             = string
+      cf_function_runtime          = string
+      cf_function_code_path        = string
+      attach_cf_function           = bool
+      cf_function_event_type       = string
+      create_cf_function           = bool
+      create_cf_basicauth_function = bool
+      cf_function_arn              = string
+    })
   })
   default = {
-    app_name     = "dashboard"
-    domain_alias = ""
+    app_name             = "dashboard"
+    domain_alias         = ""
+    deploy_cloudfront    = true
+    version              = "v0.5.1"
+    cirrus_api_endpoint  = ""
+    metrics_api_endpoint = ""
     custom_error_response = [
       {
         error_caching_min_ttl = "10"
@@ -253,8 +411,16 @@ variable "cirrus_dashboard_inputs" {
         response_page_path    = "/"
       }
     ]
-    cirrus_api_endpoint_base = ""
-    cirrus_dashboard_release = "v0.5.1"
+    auth_function = {
+      cf_function_name             = ""
+      cf_function_runtime          = "cloudfront-js-2.0"
+      cf_function_code_path        = ""
+      attach_cf_function           = false
+      cf_function_event_type       = "viewer-request"
+      create_cf_function           = false
+      create_cf_basicauth_function = false
+      cf_function_arn              = ""
+    }
   }
 }
 
@@ -306,6 +472,12 @@ variable "deploy_console_ui" {
   description = "Deploy FilmDrop Console UI stack"
 }
 
+variable "deploy_cirrus" {
+  type        = bool
+  default     = true
+  description = "Deploy FilmDrop Cirrus stack"
+}
+
 variable "deploy_cirrus_dashboard" {
   type        = bool
   default     = true
@@ -318,20 +490,14 @@ variable "deploy_local_stac_server_artifacts" {
   default     = true
 }
 
-variable "deploy_sample_data_bucket" {
-  type        = bool
-  default     = false
-  description = "Deploy FilmDrop STAC sample data bucket"
-}
-
 variable "deploy_stac_server_opensearch_serverless" {
   type        = bool
   default     = false
   description = "Deploy FilmDrop Stac-Server with OpenSearch Serverless. If False, Stac-server will be deployed with a classic OpenSearch domain."
 }
 
-variable "project_sample_data_bucket_name" {
-  description = "STAC sample data bucket name"
-  type        = string
-  default     = ""
+variable "deploy_stac_server_outside_vpc" {
+  type        = bool
+  default     = false
+  description = "Deploy FilmDrop Stac-Server resources, including OpenSearch outside VPC. Defaults to false. If False, Stac-server resources will be deployed within the vpc."
 }

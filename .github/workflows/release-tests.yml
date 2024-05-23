@@ -1,0 +1,183 @@
+name: Main Branch and Release Testing
+
+on:
+  push:
+    branches: ["main"]
+    tags: ["v*.*.*"]
+
+jobs:
+  release-tests:
+    permissions:
+      id-token: write
+      contents: read
+    runs-on: ubuntu-latest
+    env:
+      CI: true
+      STAC_SERVER_TAG: v3.7.0
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "18"
+      - uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: "1.7.5"
+
+      - name: Setting Pre-Requisites
+        id: prereqs
+        run: |
+          echo "REPOSITORY_NAME=`echo \"${{  github.ref_name }}\" | tr -d '.' | cut -c1-8`" >> $GITHUB_ENV
+
+      - name: Prepararing Environment
+        id: prep_env
+        run: |
+          echo "environment = \"git\"" >> ci.tfvars
+          echo "project_name = \"${REPOSITORY_NAME}\"" >> ci.tfvars
+          cat ci.tfvars
+          echo "Creating terraform backend file ..."
+          echo 'terraform {' >> test.s3.backend.tf
+          echo '  backend "s3" {' >> test.s3.backend.tf
+          echo '    encrypt = true' >> test.s3.backend.tf
+          echo "    bucket = \"${{ secrets.TF_STATE_BUCKET }}\"" >> test.s3.backend.tf
+          echo "    dynamodb_table = \"${{ secrets.TF_STATE_LOCK_TABLE }}\"" >> test.s3.backend.tf
+          echo "    key = \"${REPOSITORY_NAME}-github-test.tfstate\"" >> test.s3.backend.tf
+          echo "    region = \"${{ secrets.AWS_REGION }}\"" >> test.s3.backend.tf
+          echo '  }' >> test.s3.backend.tf
+          echo '}' >> test.s3.backend.tf
+          cat test.s3.backend.tf
+
+      - name: Update stac-server lambdas
+        id: update_stac_lambdas
+        run: ./scripts/update-lambdas.sh
+
+      - name: Configure Terraform Init Credentials
+        id: init_creds
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-region: ${{ secrets.AWS_REGION }}
+          role-to-assume: ${{ secrets.AWS_ROLE }}
+          role-session-name: GitHubReleaseInit
+
+      - name: Terraform Init
+        id: tf_init
+        run: terraform init
+
+      - name: Terraform Validate
+        id: tf_validate
+        run: terraform validate
+
+      - name: Configure Terraform Plan Credentials
+        id: plan_creds
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-region: ${{ secrets.AWS_REGION }}
+          role-to-assume: ${{ secrets.AWS_ROLE }}
+          role-session-name: GitHubReleasePlan
+
+      - name: Terraform Plan
+        id: tf_plan
+        run: terraform plan -var-file="ci.tfvars" -out test.tfplan -lock=false
+
+      - name: Configure Terraform Apply Credentials
+        id: apply_creds
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-region: ${{ secrets.AWS_REGION }}
+          role-to-assume: ${{ secrets.AWS_ROLE }}
+          role-session-name: GitHubReleaseApply
+
+      - name: Terraform Apply
+        id: tf_apply
+        continue-on-error: true
+        run: terraform apply -lock=false -input=false test.tfplan
+
+      - name: Post status to Slack channel
+        id: tf_apply_successs
+        if: steps.tf_apply.outcome == 'success'
+        continue-on-error: true
+        uses: slackapi/slack-github-action@v1.26.0
+        with:
+          channel-id: ${{ secrets.SLACK_CHANNEL_ID }}
+          slack-message: ":badger_dance: ${{  github.ref_name }} terraform apply job has succeeded!\n${{ github.event.pull_request.html_url || github.event.head_commit.url }}"
+        env:
+          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+
+      - name: Post status to Slack channel
+        id: tf_apply_failure
+        if: steps.tf_apply.outcome != 'success'
+        continue-on-error: true
+        uses: slackapi/slack-github-action@v1.26.0
+        with:
+          channel-id: ${{ secrets.SLACK_CHANNEL_ID }}
+          slack-message: ":sadpanda: ${{  github.ref_name }} terraform apply has failed!\n:alert: make sure cleanup job deletes all AWS resources!\n${{ github.event.pull_request.html_url || github.event.head_commit.url }}"
+        env:
+          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+
+      - name: Configure Terraform Cleanup Check Credentials
+        id: cleanup_check_creds
+        if: always()
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-region: ${{ secrets.AWS_REGION }}
+          role-to-assume: ${{ secrets.AWS_ROLE }}
+          role-session-name: GitHubReleaseCleanupCheck
+
+      - name: Terraform Destroy Pre-Check
+        id: tf_destroy_plan
+        if: always()
+        run: terraform plan -destroy -var-file="ci.tfvars" -out test-cleanup.tfplan -lock=false
+
+      - name: Configure Terraform Cleanup Credentials
+        id: cleanup_creds
+        if: always()
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-region: ${{ secrets.AWS_REGION }}
+          role-to-assume: ${{ secrets.AWS_ROLE }}
+          role-session-name: GitHubReleaseCleanup
+
+      - name: Terraform Destroy
+        id: tf_destroy_apply
+        if: always()
+        continue-on-error: true
+        run: terraform apply -destroy -lock=false -input=false test-cleanup.tfplan
+
+      - name: Post status to Slack channel
+        id: tf_destroy_apply_successs
+        if: steps.tf_destroy_apply.outcome == 'success'
+        continue-on-error: true
+        uses: slackapi/slack-github-action@v1.26.0
+        with:
+          channel-id: ${{ secrets.SLACK_CHANNEL_ID }}
+          slack-message: ":badger_dance: ${{  github.ref_name }} cleanup job has succeeded!\n${{ github.event.pull_request.html_url || github.event.head_commit.url }}"
+        env:
+          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+
+      - name: Post status to Slack channel
+        id: tf_destroy_apply_failure
+        if: steps.tf_destroy_apply.outcome != 'success'
+        continue-on-error: true
+        uses: slackapi/slack-github-action@v1.26.0
+        with:
+          channel-id: ${{ secrets.SLACK_CHANNEL_ID }}
+          slack-message: ":sadpanda: ${{  github.ref_name }} cleanup job has failed!\n:alert: make sure AWS resources are deleted!\n${{ github.event.pull_request.html_url || github.event.head_commit.url }}"
+        env:
+          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+
+  pre-commit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: "1.7.5"
+      - uses: terraform-linters/setup-tflint@v4
+        with:
+          tflint_version: "v0.49.0"
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install pre-commit
+        run: pip install pre-commit
+      - name: Run pre-commit
+        run: pre-commit run --all-files

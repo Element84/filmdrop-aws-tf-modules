@@ -16,7 +16,55 @@ ignore:
     - './profiles/core/../stac-server/../../modules/stac-server/api.tf > *':
         reason: Open API - no auth required
         created: 2023-12-14T14:35:23.783Z
+    - 'modules/stac-server/api.tf > *':
+        reason: Open API - no auth required
+        created: 2024-03-21T14:35:23.783Z
   SNYK-CC-00185:
     - './profiles/core/../titiler/../../modules/mosaic-titiler/titler-mosaicjson.tf > *':
         reason: Open API - no auth required
         created: 2023-12-14T14:35:23.783Z
+    - 'profiles/titiler/../../modules/mosaic-titiler/titler-mosaicjson.tf > *':
+        reason: Open API - no auth required
+        created: 2024-03-21T14:35:23.783Z
+    - 'modules/mosaic-titiler/titler-mosaicjson.tf > *':
+        reason: Open API - no auth required
+        created: 2024-03-21T14:35:23.783Z
+    - 'modules/cloudfront/waf_qp_bytematch/waf_qp_bytematch.tf > *':
+        reason: Open API - no auth required
+        created: 2024-03-21T14:35:23.783Z
+  SNYK-CC-00146:
+    - 'modules/cloudfront/custom_origin/custom_origin.tf > *':
+        reason: Open API - no auth required
+        created: 2024-03-21T14:35:23.783Z
+    - 'modules/cloudfront/lb_endpoint/../custom_origin/custom_origin.tf > *':
+        reason: Open API - no auth required
+        created: 2024-03-21T14:35:23.783Z
+    - 'profiles/analytics/../../modules/cloudfront/lb_endpoint/../custom_origin/custom_origin.tf > *':
+        reason: Open API - no auth required
+        created: 2024-03-21T14:35:23.783Z
+  SNYK-CC-00752:
+    - 'modules/eks/eks.tf > *':
+        reason: Open API - no auth required
+        created: 2024-03-21T14:35:23.783Z
+    - './profiles/core/../analytics/../../modules/cloudfront/lb_endpoint/../custom_origin/iam.tf > *':
+        reason: Open API - no auth required
+        created: 2024-04-23T14:35:23.783Z
+    - './profiles/core/../analytics/../../modules/jupyterhub-dask-eks/iam.tf > *':
+        reason: Open API - no auth required
+        created: 2024-04-23T14:35:23.783Z
+    - './profiles/core/../cirrus-dashboard/../../modules/cirrus-dashboard/iam.tf > *':
+        reason: Open API - no auth required
+        created: 2024-04-23T14:35:23.783Z
+    - './profiles/core/../console-ui/../../modules/console-ui/iam.tf > *':
+        reason: Open API - no auth required
+        created: 2024-04-23T14:35:23.783Z
+    - './profiles/core/../stac-server/../../modules/cloudfront/apigw_endpoint/../custom_origin/iam.tf > *':
+        reason: Open API - no auth required
+        created: 2024-04-23T14:35:23.783Z
+    - './profiles/core/../titiler/../../modules/cloudfront/apigw_endpoint/../custom_origin/iam.tf > *':
+        reason: Open API - no auth required
+        created: 2024-04-23T14:35:23.783Z
+  SNYK-CC-00218:
+    - './profiles/core/../analytics/../../modules/jupyterhub-dask-eks/cleanup/main.tf > *':
+        reason: Open API - no auth required
+        created: 2024-04-23T14:35:23.783Z

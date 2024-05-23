@@ -5,8 +5,8 @@ module "console-ui" {
   vpc_private_subnet_ids = var.private_subnet_ids
   vpc_security_group_ids = [var.security_group_id]
 
-  filmdrop_ui_release    = var.console_ui_inputs.filmdrop_ui_release
-  console_ui_bucket_name = module.cloudfront_s3_website.content_bucket_name
+  filmdrop_ui_release_tag = var.console_ui_inputs.version
+  console_ui_bucket_name  = var.console_ui_inputs.deploy_cloudfront ? module.cloudfront_s3_website[0].content_bucket_name : module.content_website[0].content_bucket
 
   filmdrop_ui_config    = filebase64(var.console_ui_inputs.filmdrop_ui_config_file)
   filmdrop_ui_logo_file = var.console_ui_inputs.filmdrop_ui_logo_file
@@ -15,7 +15,7 @@ module "console-ui" {
 
 module "cloudfront_s3_website" {
   source = "../../modules/cloudfront/s3_website"
-
+  count  = var.console_ui_inputs.deploy_cloudfront ? 1 : 0
   providers = {
     aws.east = aws.east
     aws.main = aws.main
@@ -31,4 +31,23 @@ module "cloudfront_s3_website" {
   log_bucket_name              = var.log_bucket_name
   log_bucket_domain_name       = var.log_bucket_domain_name
   filmdrop_archive_bucket_name = var.s3_logs_archive_bucket
+  cf_function_name             = var.console_ui_inputs.auth_function.cf_function_name
+  cf_function_runtime          = var.console_ui_inputs.auth_function.cf_function_runtime
+  cf_function_code_path        = var.console_ui_inputs.auth_function.cf_function_code_path
+  attach_cf_function           = var.console_ui_inputs.auth_function.attach_cf_function
+  cf_function_event_type       = var.console_ui_inputs.auth_function.cf_function_event_type
+  create_cf_function           = var.console_ui_inputs.auth_function.create_cf_function
+  create_cf_basicauth_function = var.console_ui_inputs.auth_function.create_cf_basicauth_function
+  cf_function_arn              = var.console_ui_inputs.auth_function.cf_function_arn
+}
+
+module "content_website" {
+  count  = var.console_ui_inputs.deploy_cloudfront == false ? 1 : 0
+  source = "../../modules/cloudfront/content"
+
+  origin_id = local.origin_id_prefix
+}
+
+locals {
+  origin_id_prefix = lower(substr(replace("fd-${var.project_name}-${var.environment}-${var.console_ui_inputs.app_name}", "_", "-"), 0, 63))
 }

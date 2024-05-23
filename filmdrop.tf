@@ -10,8 +10,8 @@ module "filmdrop" {
   project_name                             = var.project_name
   vpc_id                                   = var.vpc_id
   vpc_cidr                                 = var.vpc_cidr
-  public_subnets_cidr_map                  = var.public_subnets_cidr_map
-  private_subnets_cidr_map                 = var.private_subnets_cidr_map
+  public_subnets_az_to_id_map              = var.public_subnets_az_to_id_map
+  private_subnets_az_to_id_map             = var.private_subnets_az_to_id_map
   security_group_id                        = var.security_group_id
   sns_topics_map                           = var.sns_topics_map
   cloudwatch_warning_alarms_map            = var.cloudwatch_warning_alarms_map
@@ -25,6 +25,7 @@ module "filmdrop" {
   titiler_inputs                           = var.titiler_inputs
   analytics_inputs                         = var.analytics_inputs
   console_ui_inputs                        = var.console_ui_inputs
+  cirrus_inputs                            = var.cirrus_inputs
   cirrus_dashboard_inputs                  = var.cirrus_dashboard_inputs
   deploy_vpc                               = var.deploy_vpc
   deploy_vpc_search                        = var.deploy_vpc_search
@@ -32,11 +33,11 @@ module "filmdrop" {
   deploy_alarms                            = var.deploy_alarms
   deploy_stac_server                       = var.deploy_stac_server
   deploy_stac_server_opensearch_serverless = var.deploy_stac_server_opensearch_serverless
+  deploy_stac_server_outside_vpc           = var.deploy_stac_server_outside_vpc
   deploy_analytics                         = var.deploy_analytics
   deploy_titiler                           = var.deploy_titiler
   deploy_console_ui                        = var.deploy_console_ui
+  deploy_cirrus                            = var.deploy_cirrus
   deploy_cirrus_dashboard                  = var.deploy_cirrus_dashboard
   deploy_local_stac_server_artifacts       = var.deploy_local_stac_server_artifacts
-  deploy_sample_data_bucket                = var.deploy_sample_data_bucket
-  project_sample_data_bucket_name          = var.project_sample_data_bucket_name
 }
