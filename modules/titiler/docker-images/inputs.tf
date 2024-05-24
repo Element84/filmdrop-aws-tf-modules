@@ -13,7 +13,7 @@ variable "security_group_ids" {
   type        = list(any)
 }
 
-variable "titiler_stage" {
+variable "environment" {
   description = "Titiler stage"
   type        = string
 }

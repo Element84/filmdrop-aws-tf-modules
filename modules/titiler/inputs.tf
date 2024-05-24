@@ -25,7 +25,7 @@ variable "titiler_memory" {
   default     = 512
 }
 
-variable "titiler_stage" {
+variable "environment" {
   description = "Titiler stage"
   type        = string
 }

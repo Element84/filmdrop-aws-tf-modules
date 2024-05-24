@@ -299,7 +299,7 @@ variable "project_name" {
   type        = string
 }
 
-variable "stac_server_s3_bucket_arns" {
+variable "authorized_s3_arns" {
   description = "List of S3 bucket ARNs to give GetObject permissions to"
   type        = list(string)
   default     = []

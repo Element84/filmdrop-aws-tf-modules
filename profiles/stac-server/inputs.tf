@@ -53,7 +53,7 @@ variable "stac_server_inputs" {
     ingest_sns_topic_arns                       = list(string)
     additional_ingest_sqs_senders_arns          = list(string)
     opensearch_ebs_volume_size                  = number
-    stac_server_and_titiler_s3_arns             = list(string)
+    authorized_s3_arns                          = list(string)
     cors_origin                                 = string
     cors_credentials                            = bool
     cors_methods                                = string
@@ -98,7 +98,7 @@ variable "stac_server_inputs" {
     ingest_sns_topic_arns                       = []
     additional_ingest_sqs_senders_arns          = []
     opensearch_ebs_volume_size                  = 35
-    stac_server_and_titiler_s3_arns             = []
+    authorized_s3_arns                          = []
     cors_origin                                 = "*"
     cors_credentials                            = false
     cors_methods                                = ""

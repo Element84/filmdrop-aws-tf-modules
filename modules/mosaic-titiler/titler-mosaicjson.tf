@@ -1,5 +1,5 @@
 resource "aws_s3_bucket" "lambda-source" {
-  bucket_prefix = lower("titiler-mosaic-source-${var.project_name}-${var.titiler_stage}")
+  bucket_prefix = lower("titiler-mosaic-source-${var.project_name}-${var.environment}")
   force_destroy = true
 }
 
@@ -46,7 +46,7 @@ EOF
 }
 
 resource "aws_lambda_function" "titiler-mosaic-lambda" {
-  function_name = "titiler-mosaic-${var.project_name}-${var.titiler_stage}-api"
+  function_name = "titiler-mosaic-${var.project_name}-${var.environment}-api"
   description   = "Titiler mosaic API Lambda"
   role          = aws_iam_role.titiler-mosaic-lambda-role.arn
   timeout       = var.titiler_timeout
@@ -89,7 +89,7 @@ resource "aws_lambda_function" "titiler-mosaic-lambda" {
 }
 
 resource "aws_apigatewayv2_api" "titiler-mosaic-api-gateway" {
-  name          = "${var.project_name}-${var.titiler_stage}-titiler-mosaic"
+  name          = "${var.project_name}-${var.environment}-titiler-mosaic"
   protocol_type = "HTTP"
   target        = aws_lambda_function.titiler-mosaic-lambda.arn
 }
@@ -109,7 +109,7 @@ resource "aws_apigatewayv2_integration" "titiler-mosaic-api-gateway_integration"
 }
 
 resource "aws_dynamodb_table" "titiler-mosaic-dynamodb-table" {
-  name         = "titiler-mosaic-${var.project_name}-${var.titiler_stage}"
+  name         = "titiler-mosaic-${var.project_name}-${var.environment}"
   billing_mode = "PAY_PER_REQUEST"
   hash_key     = "mosaicId"
   range_key    = "quadkey"
@@ -131,8 +131,8 @@ resource "aws_dynamodb_table" "titiler-mosaic-dynamodb-table" {
 }
 
 resource "aws_wafv2_web_acl" "titiler-mosaic-wafv2-web-acl" {
-  name        = "${var.project_name}-${var.titiler_stage}-mosaic"
-  description = "WAF rules for ${var.project_name}-${var.titiler_stage} mosaic titiler"
+  name        = "${var.project_name}-${var.environment}-mosaic"
+  description = "WAF rules for ${var.project_name}-${var.environment} mosaic titiler"
   scope       = "CLOUDFRONT"
   provider    = aws.east
 
@@ -226,7 +226,7 @@ resource "aws_wafv2_web_acl" "titiler-mosaic-wafv2-web-acl" {
 
     visibility_config {
       cloudwatch_metrics_enabled = false
-      metric_name                = "${var.project_name}-${var.titiler_stage}-mosaic-allow-post"
+      metric_name                = "${var.project_name}-${var.environment}-mosaic-allow-post"
       sampled_requests_enabled   = false
     }
   }
@@ -285,7 +285,7 @@ resource "aws_wafv2_web_acl" "titiler-mosaic-wafv2-web-acl" {
 
     visibility_config {
       cloudwatch_metrics_enabled = false
-      metric_name                = "${var.project_name}-${var.titiler_stage}-mosaic-allow-options"
+      metric_name                = "${var.project_name}-${var.environment}-mosaic-allow-options"
       sampled_requests_enabled   = false
     }
   }
@@ -364,14 +364,14 @@ resource "aws_wafv2_web_acl" "titiler-mosaic-wafv2-web-acl" {
 
     visibility_config {
       cloudwatch_metrics_enabled = false
-      metric_name                = "${var.project_name}-${var.titiler_stage}-mosaic-allow-get"
+      metric_name                = "${var.project_name}-${var.environment}-mosaic-allow-get"
       sampled_requests_enabled   = false
     }
   }
 
   visibility_config {
     cloudwatch_metrics_enabled = false
-    metric_name                = "${var.project_name}-${var.titiler_stage}-mosaic-waf-rules"
+    metric_name                = "${var.project_name}-${var.environment}-mosaic-waf-rules"
     sampled_requests_enabled   = false
   }
 }
