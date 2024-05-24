@@ -13,7 +13,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
   `stac_server_and_titiler_s3_arns` to `authorized_s3_arns`.
 - private_subnets_az_to_id_map now correctly using ID as the map value instead of previous cidr_block
 - public_subnets_az_to_id_map now correctly using ID as the map value instead of previous cidr_block
-- Enable auto-assignment of public IP addresses in public subnets
 
 ### Removed
 

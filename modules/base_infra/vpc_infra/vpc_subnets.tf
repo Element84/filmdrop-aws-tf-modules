@@ -3,9 +3,8 @@ data "aws_vpc" "filmdrop_vpc" {
 }
 
 data "aws_subnet" "public_subnets" {
-  for_each                = var.public_subnets_az_to_id_map
-  id                      = each.value
-  map_public_ip_on_launch = true
+  for_each = var.public_subnets_az_to_id_map
+  id       = each.value
 }
 
 data "aws_subnet" "private_subnets" {
