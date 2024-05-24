@@ -4,6 +4,7 @@
   "LOGO_URL": "./logo.png",
   "LOGO_ALT": "FilmDrop Console Logo",
   "DEFAULT_COLLECTION": "default_collection",
+  "FETCH_CREDENTIALS": true,
   "SEARCH_BY_GEOM_ENABLED": true,
   "STAC_API_URL": "https://stac-api.dev.stingray.example.com",
   "API_MAX_ITEMS": 200,

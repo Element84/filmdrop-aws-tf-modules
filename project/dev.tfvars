@@ -22,6 +22,14 @@ deploy_titiler                           = true
 deploy_analytics                         = false
 deploy_local_stac_server_artifacts       = false
 
+##### SSM Bastion #####
+ssm_bastion_input_map = {
+  deploy_ssm_bastion = true
+  ami_name_filter    = "amzn2-ami-hvm-2.0.20240109.0-x86_64-ebs"
+  swap_volume_size   = "2"
+  instance_type      = "t3.micro"
+}
+
 ##### Networking Variables #####
 # If left blank, the infrastructure will try to query the values from the control tower vpc
 vpc_id                       = ""
@@ -99,8 +107,8 @@ stac_server_inputs = {
   ingest_sns_topic_arns                       = []
   additional_ingest_sqs_senders_arns          = []
   opensearch_ebs_volume_size                  = 35
-  cors_origin                                 = "*"
-  cors_credentials                            = false
+  cors_origin                                 = "REPLACEME" # protocol and domain name Console UI
+  cors_credentials                            = true
   cors_methods                                = ""
   cors_headers                                = ""
   authorized_s3_arns                          = []
@@ -109,10 +117,10 @@ stac_server_inputs = {
     cf_function_name             = ""
     cf_function_runtime          = "cloudfront-js-2.0"
     cf_function_code_path        = ""
-    attach_cf_function           = false
+    attach_cf_function           = true
     cf_function_event_type       = "viewer-request"
-    create_cf_function           = false
-    create_cf_basicauth_function = false
+    create_cf_function           = true
+    create_cf_basicauth_function = true
     cf_function_arn              = ""
   }
   ingest = {
@@ -173,10 +181,10 @@ console_ui_inputs = {
     cf_function_name             = ""
     cf_function_runtime          = "cloudfront-js-2.0"
     cf_function_code_path        = ""
-    attach_cf_function           = false
+    attach_cf_function           = true
     cf_function_event_type       = "viewer-request"
-    create_cf_function           = false
-    create_cf_basicauth_function = false
+    create_cf_function           = true
+    create_cf_basicauth_function = true
     cf_function_arn              = ""
   }
 }

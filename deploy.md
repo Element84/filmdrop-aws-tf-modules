@@ -186,23 +186,23 @@ This may require creating, building, and pushing and image yourself.
 
 Under the .common_variables/variables section, configure the variables:
 
-- PROJECT_NAME: change to the value chosen during Git Repository Setup
-- AWS_DEFAULT_REGION and AWS_REGION: Terraform uses these settings to configure
+- `PROJECT_NAME`: change to the value chosen during Git Repository Setup
+- `AWS_DEFAULT_REGION` and `AWS_REGION`: Terraform uses these settings to configure
   which region to deploy to. Change if deploying to a region other than us-west-2
-- FILMDROP_DEPLOY_ROLE_NAME: change if it is different than the default value of `appFilmDropDeployRole`
-- STAC_SERVER_TAG: Update if there is a different version of stac-server that you wish to use
+- `FILMDROP_DEPLOY_ROLE_NAME`: change if it is different than the default value of `appFilmDropDeployRole`
+- `STAC_SERVER_TAG`: Update if there is a different version of stac-server that you wish to use
 
 Under the .dev_variables/variables, configure the variables:
 
-- FILMDROP_TERRAFORM_RELEASE: the [filmdrop-aws-tf-modules](https://github.com/Element84/filmdrop-aws-tf-modules/releases)
+- `FILMDROP_TERRAFORM_RELEASE`: the [filmdrop-aws-tf-modules](https://github.com/Element84/filmdrop-aws-tf-modules/releases)
   version to use
-- ENVIRONMENT: The enviroment this is deploying to, e.g., Development, Staging, Production
-- STAGE: Same as the environment, but a shorter, lowercase version, e.g., dev, staging, prod
-- AWS_ACCOUNT_ID: The AWS Account Id to deploy into
-- AWS_ROLE_ARN: The IAM Role to deploy with, constructed dynamically from the
-  AWS_ACCOUNT_ID and FILMDROP_DEPLOY_ROLE_NAME variables
-- TERRAFORM_STATEFILE: Name of statefile for this deploy, typically does not need to be changed
-- CONSOLE_URL: The URL that the Console will be deployed as, to populate the GitLab CI
+- `ENVIRONMENT`: The enviroment this is deploying to, e.g., Development, Staging, Production
+- `STAGE`: Same as the environment, but a shorter, lowercase version, e.g., dev, staging, prod
+- `AWS_ACCOUNT_ID`: The AWS Account Id to deploy into
+- `AWS_ROLE_ARN`: The IAM Role to deploy with, constructed dynamically from the
+  `AWS_ACCOUNT_ID` and `FILMDROP_DEPLOY_ROLE_NAME` variables
+- `TERRAFORM_STATEFILE`: Name of statefile for this deploy, typically does not need to be changed
+- `CONSOLE_URL`: The URL that the Console will be deployed as, to populate the GitLab CI
   deployment card.
 
 Comment out the jobs ending with `_prod` until you want to create and deploy a prod
@@ -326,20 +326,20 @@ Next, configure whether or not to deploy the other FilmDrop Infrastructure modul
 
 Infrastructure Flags:
 
-- deploy_log_archive: TBD
-- deploy_alarms: TBD
-
-Alarm Variables:
-
-- sns_topics_map: TBD
-- cloudwatch_warning_alarms_map: TBD
-- cloudwatch_critical_alarms_map: TBD
-- sns_warning_subscriptions_map: TBD
-- sns_critical_subscriptions_map: TBD
+- `deploy_log_archive`: TBD
+- `deploy_alarms`: TBD
 
 SSM Bastion:
 
-- ssm_bastion_input_map: TBD
+- `ssm_bastion_input_map`: TBD
+
+Alarm Variables:
+
+- `sns_topics_map`: TBD
+- `cloudwatch_warning_alarms_map`: TBD
+- `cloudwatch_critical_alarms_map`: TBD
+- `sns_warning_subscriptions_map`: TBD
+- `sns_critical_subscriptions_map`: TBD
 
 ### Cirrus Configuration
 
@@ -371,11 +371,11 @@ Application Variables:
 
 Under `cirrus_dashboard_inputs`:
 
-- version: the release of [cirrus-dashboard](https://github.com/cirrus-geo/cirrus-dashboard)
+- `version`: the release of [cirrus-dashboard](https://github.com/cirrus-geo/cirrus-dashboard)
   to deploy. This should be updated regularly to deploy the latest version.
-- deploy_cloudfront: deploy a CloudFront distribution for this service. This is necessary
+- `deploy_cloudfront`: deploy a CloudFront distribution for this service. This is necessary
   for setting a domain alias.
-- domain_alias: a custom domain to use as the URL for the service, e.g., `dashboard.stingray.dev.example.com`
+- `domain_alias`: a custom domain to use as the URL for the service, e.g., `dashboard.stingray.dev.example.com`
 
 ### stac-server Configuration
 
@@ -384,45 +384,47 @@ Under `cirrus_dashboard_inputs`:
 
 Infrastructure Flags:
 
-- deploy_stac_server: deploy stac-server using a "classic" OpenSearch cluster.
-- deploy_stac_server_opensearch_serverless: use OpenSearch Serverless for stac-server's
+- `deploy_stac_server`: deploy stac-server using a "classic" OpenSearch cluster.
+- `deploy_stac_server_opensearch_serverless`: use OpenSearch Serverless for stac-server's
   backend instead of a "classic" OpenSearch cluster.
-- deploy_stac_server_outside_vpc: deploy stac-server Lambdas outside the VPC.
-- deploy_local_stac_server_artifacts: deploy local artifacts, for example, custom pre-hook
+- `deploy_stac_server_outside_vpc`: deploy stac-server Lambdas outside the VPC.
+- `deploy_local_stac_server_artifacts`: deploy local artifacts, for example, custom pre-hook
 
 Application Flags:
 
 In `stac_server_inputs`:
 
-- version: the release of [stac-server](https://github.com/stac-utils/stac-server)
+- `version`: the release of [stac-server](https://github.com/stac-utils/stac-server)
   to deploy. This should be updated regularly to deploy the latest version. Note that when
   upgrading, the GitLab CI build variable `STAC_SERVER_TAG` should also be updated.
-- deploy_cloudfront: deploy a CloudFront distribution for this service. This is necessary
+- `deploy_cloudfront`: deploy a CloudFront distribution for this service. This is necessary
   for setting a domain alias.
-- domain_alias: the domain name to use for the STAC API server, e.g., `stac.stingray.dev.example.com`
-- authorized_s3_arns: S3 ARNs for buckets that the tiler should be granted access.
+- `domain_alias`: the domain name to use for the STAC API server, e.g., `stac.stingray.dev.example.com`
+- `authorized_s3_arns`: S3 ARNs for buckets that the tiler should be granted access.
   This is commonly used to give access to public requester pays buckets.
+- `cors_origin`: set to the protocol and domain name of the
+  Console UI, e.g., `https://console.dev.stingray.example.com`
 
 ### Tiler Configuration
 
 Infrastructure Flags:
 
-- deploy_titiler: deploy [titiler-mosaicjson](https://github.com/Element84/titiler-mosaicjson)
+- `deploy_titiler`: deploy [titiler-mosaicjson](https://github.com/Element84/titiler-mosaicjson)
   for the Console UI to use for dynamic imagery tiling.
 
 Application Flags:
 
 In `titiler_inputs`:
 
-- version: the release of [titiler-mosaicjson](https://github.com/Element84/titiler-mosaicjson)
+- `version`: the release of [titiler-mosaicjson](https://github.com/Element84/titiler-mosaicjson)
   to deploy. This should be updated regularly to deploy the latest version.
-- deploy_cloudfront: deploy a CloudFront distribution for this service. This is necessary
+- `deploy_cloudfront`: deploy a CloudFront distribution for this service. This is necessary
   for setting a domain alias.
-- domain_alias: the domain name to use for the TiTiler server, e.g., `titiler.dev.stingray.example.com`
-- authorized_s3_arns: S3 ARNs for buckets that the tiler should be granted access.
+- `domain_alias`: the domain name to use for the TiTiler server, e.g., `titiler.dev.stingray.example.com`
+- `authorized_s3_arns`: S3 ARNs for buckets that the tiler should be granted access.
   This is commonly used to give access to public requester pays buckets.
-- mosaic_titiler_waf_allowed_url: the project's stac-server URL
-- mosaic_titiler_host_header: the titiler domain, e.g., `titiler.dev.stingray.example.com`
+- `mosaic_titiler_waf_allowed_url`: the project's stac-server URL
+- `mosaic_titiler_host_header`: the titiler domain, e.g., `titiler.dev.stingray.example.com`
   This will be the same value as `domain_alias` if it is set, otherwise it will be an API
   Gateway URL that can only be configured after the first deployment
 
@@ -430,29 +432,30 @@ In `titiler_inputs`:
 
 Infrastructure Flags:
 
-- deploy_console_ui: deploy the FilmDrop Console UI
+- `deploy_console_ui`: deploy the FilmDrop Console UI
   ([filmdrop-ui](https://github.com/Element84/filmdrop-ui))
   for STAC catalog search and visualization.
 
 Application Flags:
 
-- version: the release of [filmdrop-ui](https://github.com/Element84/filmdrop-ui)
+- `version`: the release of [filmdrop-ui](https://github.com/Element84/filmdrop-ui)
   to deploy. This should be updated regularly to deploy the latest version.
-- deploy_cloudfront: deploy a CloudFront distribution for this service. This is necessary
+- `deploy_cloudfront`: deploy a CloudFront distribution for this service. This is necessary
   for setting a domain alias.
-- domain_alias: the domain name to use for the Console UI, e.g., `console.stingray.dev.example.com`
-- filmdrop_ui_config_file: the location of the config json, e.g., `./console-ui/config.dev.json` or `./console-ui/config.prod.json`
-- filmdrop_ui_logo_file: the location of the logo file, e.g., `./console-ui/logo.png`
+- `domain_alias`: the domain name to use for the Console UI, e.g., `console.stingray.dev.example.com`
+- `filmdrop_ui_config_file`: the location of the config json,
+  e.g., `./console-ui/config.dev.json` or `./console-ui/config.prod.json`
+- `filmdrop_ui_logo_file`: the location of the logo file, e.g., `./console-ui/logo.png`
 
 Update the configuration in the config.dev.json file:
 
-  -`APP_NAME`: the HTML title to show for the console, e.g., "Stringray FilmDrop Console"
-  -`PUBLIC_URL`: set to the API Gateway, CloudFront, or domain alias URL of Console UI
-  -`STAC_API_URL`: set to the API Gateway, CloudFront, or domain alias URL of the stac-server
-  -`SCENE_TILER_URL`: URL for TiTiler, e.g., `https://titiler.dev.stingray.example.com`
-  -`MOSAIC_TILER_URL`: URL for TiTiler, e.g., `https://titiler.dev.stingray.example.com`
-  -`DASHBOARD_BTN_URL`: URL for Cirrus Dashboard, e.g., `https://dashboard.dev.stingray.example.com`
-  -`ANALYZE_BTN_URL`: URL for Analytics, e.g., `https://analytics.dev.stingray.example.com`
+-`APP_NAME`: the HTML title to show for the console, e.g., "Stringray FilmDrop Console"
+-`PUBLIC_URL`: set to the API Gateway, CloudFront, or domain alias URL of Console UI
+-`STAC_API_URL`: set to the API Gateway, CloudFront, or domain alias URL of the stac-server
+-`SCENE_TILER_URL`: URL for TiTiler, e.g., `https://titiler.dev.stingray.example.com`
+-`MOSAIC_TILER_URL`: URL for TiTiler, e.g., `https://titiler.dev.stingray.example.com`
+-`DASHBOARD_BTN_URL`: URL for Cirrus Dashboard, e.g., `https://dashboard.dev.stingray.example.com`
+-`ANALYZE_BTN_URL`: URL for Analytics, e.g., `https://analytics.dev.stingray.example.com`
 
 ## Analytics Deployment (JupyterHub on EKS)
 
@@ -461,7 +464,7 @@ doesn't work in a production-friendly way.
 
 Infrastructure Flags:
 
-- deploy_analytics: Deploy JupyterHub
+- `deploy_analytics`: Deploy JupyterHub
 
 Application Flags:
 
@@ -547,8 +550,8 @@ and make the following changes:
 
 - Change `environment` to `prod`
 - Change the stac-server OpenSearch cluster configuration to enable a larger cluster, e.g.:
-  - opensearch_cluster_instance_type = "m5.large.search"
-  - opensearch_cluster_dedicated_master_type = "m5.large.search"
+  - `opensearch_cluster_instance_type` = "m5.large.search"
+  - `opensearch_cluster_dedicated_master_type` = "m5.large.search"
   - Additionally, the `opensearch_cluster_instance_count` parameter can be increased
     from 3 to another multiple of 3. It is generally recommended that to scale, the
     instance type be made larger first (up to 64GB instances), and then the number of nodes increased.
@@ -561,7 +564,10 @@ and make the following changes:
 ## Configuring Authentication
 
 Basic Authentication can be configured for STAC Server, Console UI, TiTiler, Cirrus Dashboard,
-and Analytics.
+and Analytics. Basic Authentication is configured by default for STAC Server and
+Console UI. Because Console UI, stac-server, and TiTiler talk to each other, it
+is necessary to configure them in concert, however, currently it is not possible
+to have dynamic imagery display on the map when basic auth is configured.
 
 After deploying, a CloudFront Function will be created that performs the basic auth validation
 with a suffix of `basicauth-function`. Each Function will have an associated KeyValueStore.
@@ -569,10 +575,6 @@ Within each, create a key value pair with the key `credentialsList` and a value 
 comma-separated list of valid `Authorization` headers. These the template for these headers
 is `Basic {base-64 encoded username:password}`, e.g., for the username and password
 combination `Aladdin:open sesame`, a single entry would be `Basic QWxhZGRpbjpvcGVuIHNlc2FtZQ==`.
-
-Because Console UI, stac-server, and TiTiler talk to each other, it is necessary to configure
-them in concert. At present, it is not possible to have dynamic imagery display on the map when
-basic auth is configured. However, Console UI and stac-server can be secured with basic auth.
 
 For STAC Server, modify the `stac_server_inputs` variable `auth_function` like:
 
