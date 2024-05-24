@@ -82,11 +82,11 @@ locals {
         Resource = "*"
         Effect   = "Allow"
       },
-      length(var.stac_server_s3_bucket_arns) == 0 ? null :
+      length(var.authorized_s3_arns) == 0 ? null :
       {
         Action   = ["s3:GetObject"]
         Effect   = "Allow"
-        Resource = var.stac_server_s3_bucket_arns
+        Resource = var.authorized_s3_arns
       }
   ] : x if x != null]
 }

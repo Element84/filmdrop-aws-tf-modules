@@ -18,7 +18,7 @@ module "stac-server" {
   additional_ingest_sqs_senders_arns          = var.stac_server_inputs.additional_ingest_sqs_senders_arns
   opensearch_ebs_volume_size                  = var.stac_server_inputs.opensearch_ebs_volume_size
   project_name                                = var.project_name
-  stac_server_s3_bucket_arns                  = var.stac_server_inputs.stac_server_and_titiler_s3_arns
+  authorized_s3_arns                          = var.stac_server_inputs.authorized_s3_arns
   deploy_stac_server_opensearch_serverless    = var.deploy_stac_server_opensearch_serverless
   deploy_stac_server_outside_vpc              = var.deploy_stac_server_outside_vpc
   stac_api_url                                = var.stac_server_inputs.deploy_cloudfront && var.stac_server_inputs.domain_alias != "" ? "https://${var.stac_server_inputs.domain_alias}" : ""

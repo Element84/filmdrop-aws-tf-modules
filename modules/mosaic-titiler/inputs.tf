@@ -11,7 +11,7 @@ variable "titiler_memory" {
   default     = 1536
 }
 
-variable "titiler_stage" {
+variable "environment" {
   description = "Mosaic Titiler stage name (dev/prod)"
   type        = string
 }
@@ -108,7 +108,7 @@ variable "lambda_runtime" {
   default     = "python3.10"
 }
 
-variable "titiler_s3_bucket_arns" {
+variable "authorized_s3_arns" {
   description = "List of S3 bucket ARNs to give GetObject permissions to"
   type        = list(string)
 }
