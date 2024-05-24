@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Changed
 
+- For both `stac_server_inputs` and `titiler_inputs`, renamed
+  `stac_server_and_titiler_s3_arns` to `authorized_s3_arns`.
 - Enable auto-assignment of public IP addresses in public subnets
 
 ## [2.25.0] - 2024-05-21

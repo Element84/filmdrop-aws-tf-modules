@@ -105,7 +105,7 @@ variable "stac_server_inputs" {
     ingest_sns_topic_arns                       = list(string)
     additional_ingest_sqs_senders_arns          = list(string)
     opensearch_ebs_volume_size                  = number
-    stac_server_and_titiler_s3_arns             = list(string)
+    authorized_s3_arns                          = list(string)
     cors_origin                                 = string
     cors_credentials                            = bool
     cors_methods                                = string
@@ -150,7 +150,7 @@ variable "stac_server_inputs" {
     ingest_sns_topic_arns                       = []
     additional_ingest_sqs_senders_arns          = []
     opensearch_ebs_volume_size                  = 35
-    stac_server_and_titiler_s3_arns             = []
+    authorized_s3_arns                          = []
     cors_origin                                 = "*"
     cors_credentials                            = false
     cors_methods                                = ""
@@ -185,14 +185,14 @@ variable "stac_server_inputs" {
 variable "titiler_inputs" {
   description = "Inputs for titiler FilmDrop deployment."
   type = object({
-    app_name                        = string
-    domain_alias                    = string
-    deploy_cloudfront               = bool
-    version                         = string
-    stac_server_and_titiler_s3_arns = list(string)
-    mosaic_titiler_waf_allowed_url  = string
-    mosaic_titiler_host_header      = string
-    web_acl_id                      = string
+    app_name                       = string
+    domain_alias                   = string
+    deploy_cloudfront              = bool
+    version                        = string
+    authorized_s3_arns             = list(string)
+    mosaic_titiler_waf_allowed_url = string
+    mosaic_titiler_host_header     = string
+    web_acl_id                     = string
     auth_function = object({
       cf_function_name             = string
       cf_function_runtime          = string
@@ -205,14 +205,14 @@ variable "titiler_inputs" {
     })
   })
   default = {
-    app_name                        = "titiler"
-    domain_alias                    = ""
-    deploy_cloudfront               = true
-    version                         = "v0.14.0-1.0.4"
-    stac_server_and_titiler_s3_arns = []
-    mosaic_titiler_waf_allowed_url  = ""
-    mosaic_titiler_host_header      = ""
-    web_acl_id                      = ""
+    app_name                       = "titiler"
+    domain_alias                   = ""
+    deploy_cloudfront              = true
+    version                        = "v0.14.0-1.0.4"
+    authorized_s3_arns             = []
+    mosaic_titiler_waf_allowed_url = ""
+    mosaic_titiler_host_header     = ""
+    web_acl_id                     = ""
     auth_function = {
       cf_function_name             = ""
       cf_function_runtime          = "cloudfront-js-2.0"

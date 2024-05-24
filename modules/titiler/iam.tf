@@ -1,5 +1,5 @@
 resource "aws_iam_role" "titiler_lambda_role" {
-  name_prefix = "titiler-${var.titiler_stage}-${data.aws_region.current.name}-lambdaRole"
+  name_prefix = "titiler-${var.environment}-${data.aws_region.current.name}-lambdaRole"
 
   assume_role_policy = <<EOF
 {
@@ -19,7 +19,7 @@ EOF
 }
 
 resource "aws_iam_policy" "titiler_lambda_policy" {
-  name_prefix = "titiler-${var.titiler_stage}-${data.aws_region.current.name}-lambdaPolicy"
+  name_prefix = "titiler-${var.environment}-${data.aws_region.current.name}-lambdaPolicy"
 
   policy = <<EOF
 {
@@ -69,7 +69,7 @@ resource "aws_iam_role_policy_attachment" "titiler_lambda_base_policy" {
 }
 
 resource "aws_iam_role" "titiler_gw_role" {
-  name_prefix = "titiler-${var.titiler_stage}-${data.aws_region.current.name}-apigwRole"
+  name_prefix = "titiler-${var.environment}-${data.aws_region.current.name}-apigwRole"
 
   assume_role_policy = <<EOF
 {
@@ -88,7 +88,7 @@ EOF
 }
 
 resource "aws_iam_policy" "titiler_gw_policy" {
-  name_prefix = "titiler-${var.titiler_stage}-${data.aws_region.current.name}-apigwPolicy"
+  name_prefix = "titiler-${var.environment}-${data.aws_region.current.name}-apigwPolicy"
 
   policy = <<EOF
 {
