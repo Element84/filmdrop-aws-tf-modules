@@ -1,9 +1,9 @@
 locals {
   titiler_policy_stmts = [for x in [
-    length(var.titiler_s3_bucket_arns) == 0 ? null : {
+    length(var.authorized_s3_arns) == 0 ? null : {
       Action   = ["s3:GetObject"]
       Effect   = "Allow"
-      Resource = var.titiler_s3_bucket_arns
+      Resource = var.authorized_s3_arns
     },
     {
       Action = [

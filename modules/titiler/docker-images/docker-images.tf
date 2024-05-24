@@ -99,7 +99,7 @@ resource "aws_codebuild_project" "titiler_docker_image" {
 
     environment_variable {
       name  = "TITILER_STAGE"
-      value = var.titiler_stage
+      value = var.environment
     }
 
   }

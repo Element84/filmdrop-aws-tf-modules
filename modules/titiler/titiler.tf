@@ -5,11 +5,11 @@ module "titiler_docker_ecr" {
   private_subnet_ids = var.private_subnet_ids
   security_group_ids = var.security_group_ids
   prefix             = var.prefix
-  titiler_stage      = var.titiler_stage
+  environment        = var.environment
 }
 
 resource "aws_lambda_function" "titiler_lambda" {
-  function_name = "titiler-${var.project_name}-${var.titiler_stage}-api"
+  function_name = "titiler-${var.project_name}-${var.environment}-api"
   description   = "Titiler API Lambda"
   role          = aws_iam_role.titiler_lambda_role.arn
   package_type  = "Image"
@@ -45,7 +45,7 @@ resource "aws_lambda_function" "titiler_lambda" {
 
 
 resource "aws_apigatewayv2_api" "titiler_api_gateway" {
-  name          = "${var.titiler_stage}-titiler"
+  name          = "${var.environment}-titiler"
   protocol_type = "HTTP"
   target        = aws_lambda_function.titiler_lambda.arn
 }
