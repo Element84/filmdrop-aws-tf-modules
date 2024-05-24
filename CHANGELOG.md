@@ -63,6 +63,15 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
   - Access-Control-Allow-Methods: `CORS_METHODS`
   - Access-Control-Allow-Headers: `CORS_HEADERS`
 
+### Changed
+
+- private_subnets_az_to_id_map now correctly using ID as the map value instead of previous cidr_block
+- public_subnets_az_to_id_map now correctly using ID as the map value instead of previous cidr_block
+
+### Removed
+
+- VPC and subnets are no longer created by the FD VPC module, since IDs must now be provided for preexisting resources.  If `deploy_vpc` was set to `true` on a previous terrform apply, then this update will to attempt to delete the VPC and subnets, which will fail due to resource dependencies.  The TF state will need to be manually updated to remove these references without deleting the underlying AWS resources.
+
 ## [2.21.0] - 2024-05-10
 
 ### Changed
