@@ -400,6 +400,8 @@ In `stac_server_inputs`:
 - deploy_cloudfront: deploy a CloudFront distribution for this service. This is necessary
   for setting a domain alias.
 - domain_alias: the domain name to use for the STAC API server, e.g., `stac.stingray.dev.example.com`
+- authorized_s3_arns: S3 ARNs for buckets that the tiler should be granted access.
+  This is commonly used to give access to public requester pays buckets.
 
 ### Tiler Configuration
 
@@ -417,7 +419,7 @@ In `titiler_inputs`:
 - deploy_cloudfront: deploy a CloudFront distribution for this service. This is necessary
   for setting a domain alias.
 - domain_alias: the domain name to use for the TiTiler server, e.g., `titiler.dev.stingray.example.com`
-- stac_server_and_titiler_s3_arns: S3 ARNs for buckets that the tiler should be granted access.
+- authorized_s3_arns: S3 ARNs for buckets that the tiler should be granted access.
   This is commonly used to give access to public requester pays buckets.
 - mosaic_titiler_waf_allowed_url: the project's stac-server URL
 - mosaic_titiler_host_header: the titiler domain, e.g., `titiler.dev.stingray.example.com`
