@@ -329,7 +329,7 @@ Infrastructure Flags:
 - `deploy_log_archive`: TBD
 - `deploy_alarms`: TBD
 
-SSM Bastion:
+SSM Bastion: **TBD**
 
 - `ssm_bastion_input_map`: TBD
 
