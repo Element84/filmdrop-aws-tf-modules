@@ -115,7 +115,7 @@ variable "api_rest_type" {
 variable "opensearch_version" {
   description = "OpenSearch version for OpenSearch Domain"
   type        = string
-  default     = "OpenSearch_2.11"
+  default     = "OpenSearch_2.13"
 }
 
 variable "opensearch_cluster_instance_type" {
