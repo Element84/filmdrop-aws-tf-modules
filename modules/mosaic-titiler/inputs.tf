@@ -142,3 +142,9 @@ variable "request_host_header_override" {
   type        = string
   default     = ""
 }
+
+variable "mosaic_tile_timeout" {
+  description = "Overrides the default mosaic tile rendering timeout."
+  type        = number
+  default     = 30
+}

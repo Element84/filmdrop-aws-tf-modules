@@ -14,6 +14,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - `private_subnets_az_to_id_map` now correctly using ID as the map value instead of previous cidr_block
 - `public_subnets_az_to_id_map` now correctly using ID as the map value instead of previous cidr_block
 
+### Added
+
+- titiler-mosaicjson configuration parameter `mosaic_tile_timeout`
+
 ### Removed
 
 - VPC and subnets are no longer created by the FD VPC module, since IDs must now be provided
