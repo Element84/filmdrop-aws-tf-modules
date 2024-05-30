@@ -271,8 +271,7 @@ public_subnets_az_to_id_map = {
 private_subnets_az_to_id_map = {
   "us-west-2a" = "subnet-343ca36967bdc27df"
   "us-west-2b" = "subnet-30146c332a612b5cf"
-  "us-west-2c" = "subnet-b04cc58283630146c
-"
+  "us-west-2c" = "subnet-b04cc58283630146c"
 }
 ```
 
