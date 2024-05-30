@@ -5,16 +5,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
-## Unreleased
-
-## Changed
-
-- Default to stac-server 3.8.0 and OpenSearch 2.13
-
 ## 2.26.0 - 2024-05-29
 
 ## Changed
 
+- Default to stac-server 3.8.0 and OpenSearch 2.13
 - For both `stac_server_inputs` and `titiler_inputs`, renamed
   `stac_server_and_titiler_s3_arns` to `authorized_s3_arns`.
 - `private_subnets_az_to_id_map` now correctly using ID as the map value instead of previous cidr_block

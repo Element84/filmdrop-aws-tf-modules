@@ -76,6 +76,7 @@ titiler_inputs = {
   authorized_s3_arns             = []
   mosaic_titiler_waf_allowed_url = "test.filmdrop.io"
   mosaic_titiler_host_header     = ""
+  mosaic_tile_timeout            = 30
   web_acl_id                     = ""
   auth_function = {
     cf_function_name             = ""
