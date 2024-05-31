@@ -1,15 +1,36 @@
-data "aws_vpc" "filmdrop_vpc" {
-  cidr_block = var.vpc_cidr
+resource "aws_vpc" "filmdrop_vpc" {
+  cidr_block           = var.vpc_cidr
+  enable_dns_hostnames = true
+  enable_dns_support   = true
+
+  tags = {
+    Name = "${local.name_prefix}-vpc"
+  }
 }
 
-data "aws_subnet" "public_subnets" {
+resource "aws_subnet" "public_subnets" {
   for_each = var.public_subnets_az_to_id_map
-  id       = each.value
+
+  vpc_id            = aws_vpc.filmdrop_vpc.id
+  cidr_block        = each.value
+  availability_zone = each.key
+
+  tags = {
+    Name = "${local.name_prefix}-public-subnet-${each.key}"
+  }
 }
 
-data "aws_subnet" "private_subnets" {
+resource "aws_subnet" "private_subnets" {
   for_each = var.private_subnets_az_to_id_map
-  id       = each.value
+
+  vpc_id            = aws_vpc.filmdrop_vpc.id
+  cidr_block        = each.value
+  availability_zone = each.key
+
+  tags = {
+    Name = "${local.name_prefix}-private-subnet-${each.key}"
+  }
+
 }
 
 # Set up default DHCP options for DNS resolution in FilmDrop VPC - defaults to AmazonProvidedDNS
@@ -19,7 +40,7 @@ resource "aws_vpc_dhcp_options" "vpc_dhcp_options" {
 }
 
 resource "aws_vpc_dhcp_options_association" "vpc_dhcp_options_association" {
-  vpc_id          = data.aws_vpc.filmdrop_vpc.id
+  vpc_id          = aws_vpc.filmdrop_vpc.id
   dhcp_options_id = aws_vpc_dhcp_options.vpc_dhcp_options.id
 }
 
@@ -31,10 +52,10 @@ resource "aws_flow_log" "filmdrop_vpc_flow_logs_to_s3" {
   log_format               = var.log_format
   max_aggregation_interval = var.max_aggregation_interval
   traffic_type             = var.traffic_type
-  vpc_id                   = data.aws_vpc.filmdrop_vpc.id
+  vpc_id                   = aws_vpc.filmdrop_vpc.id
 
   tags = {
-    Name = "${local.name_prefix}-flow-logs-${data.aws_vpc.filmdrop_vpc.id}"
+    Name = "${local.name_prefix}-flow-logs-${aws_vpc.filmdrop_vpc.id}"
   }
 }
 

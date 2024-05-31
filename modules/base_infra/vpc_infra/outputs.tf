@@ -11,17 +11,17 @@ output "eip_ids" {
 
 output "vpc_id" {
   description = "FilmDrop VPC ID"
-  value       = data.aws_vpc.filmdrop_vpc.id
+  value       = aws_vpc.filmdrop_vpc.id
 }
 
 output "private_subnet_ids" {
   description = "List of FilmDrop Private Subnet IDs"
-  value       = values(data.aws_subnet.private_subnets)[*].id
+  value       = values(aws_subnet.private_subnets)[*].id
 }
 
 output "public_subnet_ids" {
   description = "List of FilmDrop Public Subnet IDs"
-  value       = values(data.aws_subnet.public_subnets)[*].id
+  value       = values(aws_subnet.public_subnets)[*].id
 }
 
 output "private_avaliability_zones" {
