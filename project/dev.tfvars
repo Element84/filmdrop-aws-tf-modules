@@ -94,7 +94,7 @@ cirrus_dashboard_inputs = {
 
 stac_server_inputs = {
   app_name                                    = "stac_server"
-  version                                     = "v3.7.0"
+  version                                     = "v3.8.0"
   deploy_cloudfront                           = true
   domain_alias                                = ""
   enable_transactions_extension               = false
@@ -140,12 +140,14 @@ stac_server_inputs = {
 
 titiler_inputs = {
   app_name                       = "titiler"
-  version                        = "v0.14.0-1.0.4"
+  domain_alias                   = ""
+  version                        = "v0.14.0-1.0.5"
   deploy_cloudfront              = true
   domain_alias                   = ""
   authorized_s3_arns             = []
   mosaic_titiler_waf_allowed_url = "REPLACEME" # your project's stac-server url
   mosaic_titiler_host_header     = "REPLACEME" # Update with titiler domain, e.g., "titiler.dev.filmdrop.example.com"
+  mosaic_tile_timeout            = 30
   web_acl_id                     = ""
   auth_function = {
     cf_function_name             = ""

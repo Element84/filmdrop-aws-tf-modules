@@ -75,6 +75,7 @@ resource "aws_lambda_function" "titiler-mosaic-lambda" {
       MOSAIC_BACKEND                     = "dynamodb://"
       MOSAIC_HOST                        = "${data.aws_region.current.name}/${aws_dynamodb_table.titiler-mosaic-dynamodb-table.name}"
       REQUEST_HOST_HEADER_OVERRIDE       = var.request_host_header_override
+      MOSAIC_TILE_TIMEOUT                = var.mosaic_tile_timeout
     }
   }
 
