@@ -2,7 +2,7 @@
 resource "aws_security_group" "filmdrop_vpc_default_sg" {
   name        = "${local.name_prefix}-sg"
   description = "Default Security Group for the FilmDrop ${var.project_name} ${var.environment} VPC"
-  vpc_id      = data.aws_vpc.filmdrop_vpc.id
+  vpc_id      = aws_vpc.filmdrop_vpc.id
 }
 
 # Allows any inbound traffic coming from within the FilmDrop VPC
