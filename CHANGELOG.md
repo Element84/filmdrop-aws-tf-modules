@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
+## 2.27.0 - 2024-05-31
+
+## Changed
+
+- Rolled back vpc infrastructure changes to support creation of VPC if `deploy_vpc` is set to `true`.
+
 ## 2.26.0 - 2024-05-29
 
 ## Changed
