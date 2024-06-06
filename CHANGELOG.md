@@ -13,6 +13,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## 2.26.0 - 2024-05-29
 
+### Added
+
+- Project template
+
 ## Changed
 
 - Default to stac-server 3.8.0 and OpenSearch 2.13

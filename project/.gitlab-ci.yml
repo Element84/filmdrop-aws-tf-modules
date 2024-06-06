@@ -1,0 +1,271 @@
+stages:
+  - security_scan
+  - validate_and_plan
+  - apply
+  - cleanup
+
+default:
+  image: REPLACEME
+  interruptible: true
+  timeout: 2h
+
+.common_variables:
+  variables:
+    PROJECT_NAME: REPLACEME
+    AWS_DEFAULT_REGION: us-west-2
+    AWS_REGION: ${AWS_DEFAULT_REGION}
+    FILMDROP_DEPLOY_ROLE_NAME: appFilmDropDeployRole
+    STAC_SERVER_TAG: v3.5.0
+
+.dev_variables:
+  extends: [.common_variables]
+  variables:
+    FILMDROP_TERRAFORM_RELEASE: v2.23.0 # keep this up to date - https://github.com/Element84/filmdrop-aws-tf-modules/releases
+    ENVIRONMENT: Development
+    STAGE: dev
+    AWS_ACCOUNT_ID: "123456789012" # REPLACEME
+    AWS_ROLE_ARN: arn:aws:iam::${AWS_ACCOUNT_ID}:role/${FILMDROP_DEPLOY_ROLE_NAME}
+    TERRAFORM_STATEFILE: filmdrop-${PROJECT_NAME}-${STAGE}
+    CONSOLE_URL: https://console.dev.${PROJECT_NAME}.stingray.example.com
+
+.prod_variables:
+  extends: [.common_variables]
+  variables:
+    FILMDROP_TERRAFORM_RELEASE: v2.23.0 # keep this up to date - https://github.com/Element84/filmdrop-aws-tf-modules/releases
+    ENVIRONMENT: Production
+    STAGE: prod
+    AWS_ACCOUNT_ID: "789012345678" # REPLACEME
+    AWS_ROLE_ARN: arn:aws:iam::${AWS_ACCOUNT_ID}:role/${FILMDROP_DEPLOY_ROLE_NAME}
+    TERRAFORM_STATEFILE: filmdrop-${PROJECT_NAME}-${STAGE}
+    CONSOLE_URL: https://console.${PROJECT_NAME}.stingray.example.com
+
+.setup:
+  script:
+    - echo "Setting AWS credentials on ${STAGE} Account"
+    - /usr/local/bin/aws sts get-caller-identity
+    - /usr/local/bin/aws sts assume-role --role-arn "$AWS_ROLE_ARN" --role-session-name sts > /tmp/$$.sts
+    - export AWS_ACCESS_KEY_ID=`cat /tmp/$$.sts | jq -c '.Credentials.AccessKeyId' | tr -d '"' | tr -d ' '`
+    - export AWS_SECRET_ACCESS_KEY=`cat /tmp/$$.sts | jq -c '.Credentials.SecretAccessKey' | tr -d '"' | tr -d ' '`
+    - export AWS_SESSION_TOKEN=`cat /tmp/$$.sts | jq -c '.Credentials.SessionToken' | tr -d '"' | tr -d ' '`
+    - echo "Creating terraform backend file ..."
+    - echo 'terraform {' >> ${STAGE}.s3.backend.tf
+    - echo '  backend "s3" {' >> ${STAGE}.s3.backend.tf
+    - echo '    encrypt = true' >> ${STAGE}.s3.backend.tf
+    - echo "    bucket = \"filmdrop-${PROJECT_NAME}-${STAGE}-${AWS_REGION}-terraform-state\"" >> ${STAGE}.s3.backend.tf
+    - echo "    dynamodb_table = \"filmdrop-${PROJECT_NAME}-${STAGE}-${AWS_REGION}-state-locks\"" >> ${STAGE}.s3.backend.tf
+    - echo "    key = \"${PROJECT_NAME}-${STAGE}.tfstate\"" >> ${STAGE}.s3.backend.tf
+    - echo "    region = \"${AWS_REGION}\"" >> ${STAGE}.s3.backend.tf
+    - echo '  }' >> ${STAGE}.s3.backend.tf
+    - echo '}' >> ${STAGE}.s3.backend.tf
+
+    - echo "Using FilmDrop Terraform ${FILMDROP_TERRAFORM_RELEASE} release..."
+    - wget -q -O filmdrop-aws-tf-modules-${FILMDROP_TERRAFORM_RELEASE:1}.tgz https://github.com/Element84/filmdrop-aws-tf-modules/archive/refs/tags/${FILMDROP_TERRAFORM_RELEASE}.tar.gz
+    - tar -xzf filmdrop-aws-tf-modules-${FILMDROP_TERRAFORM_RELEASE:1}.tgz
+    - rm filmdrop-aws-tf-modules-${FILMDROP_TERRAFORM_RELEASE:1}.tgz
+    - mv filmdrop-aws-tf-modules-${FILMDROP_TERRAFORM_RELEASE:1}/* .
+    - echo "Building stac-server..."
+    - export FILMDROP_BUILD_DIR=`pwd`
+    - export STAC_SERVER_DIR="stac-server-${STAC_SERVER_TAG:1}"
+    - source $HOME/.nvm/nvm.sh
+    - nvm use v18
+    - curl -L -f --no-progress-meter -o - "https://github.com/stac-utils/stac-server/archive/refs/tags/${STAC_SERVER_TAG}.tar.gz" | tar -xz
+    - cd "$STAC_SERVER_DIR"
+    - npm install
+    - BUILD_PRE_HOOK=true npm run build
+    - mkdir -p $FILMDROP_BUILD_DIR/modules/stac-server/lambda/api
+    - cp dist/api/api.zip $FILMDROP_BUILD_DIR/modules/stac-server/lambda/api/
+    - mkdir -p $FILMDROP_BUILD_DIR/modules/stac-server/lambda/ingest
+    - cp dist/ingest/ingest.zip $FILMDROP_BUILD_DIR/modules/stac-server/lambda/ingest/
+    - mkdir -p $FILMDROP_BUILD_DIR/modules/stac-server/lambda/pre-hook
+    - cp dist/pre-hook/pre-hook.zip $FILMDROP_BUILD_DIR/modules/stac-server/lambda/pre-hook/
+    - cd $FILMDROP_BUILD_DIR
+    - echo "Running terraform init and validate..."
+    - terraform init
+    - terraform validate
+
+.security_scan:
+  stage: security_scan
+  script:
+    - !reference [.setup, script]
+    - snyk iac test --sarif-file-output=snyk.sarif --policy-path=.snyk --severity-threshold=high
+  artifacts:
+    paths:
+      - snyk.sarif
+
+.validate_and_plan:
+  stage: validate_and_plan
+  script:
+    - !reference [.setup, script]
+    - terraform plan -var-file="${STAGE}.tfvars" -out ${STAGE}.tfplan -lock=false
+  artifacts:
+    paths:
+      - ${STAGE}.tfplan
+
+.apply:
+  stage: apply
+  script:
+    - !reference [.setup, script]
+    - terraform plan -var-file="${STAGE}.tfvars" -out ${STAGE}.tfplan
+    - terraform apply -input=false ${STAGE}.tfplan
+  artifacts:
+    paths:
+      - ${STAGE}.tfplan
+
+.cleanup_check:
+  stage: cleanup
+  script:
+    - !reference [.setup, script]
+    - terraform plan -destroy -var-file="${STAGE}.tfvars" -out ${STAGE}-cleanup.tfplan -lock=false
+  artifacts:
+    paths:
+      - ${STAGE}-cleanup.tfplan
+
+.perform_cleanup:
+  stage: cleanup
+  script:
+    - !reference [.setup, script]
+    - terraform plan -destroy -var-file="${STAGE}.tfvars" -out ${STAGE}-cleanup.tfplan
+    - |
+        export stac_opensearch_domain_name=`terraform output stac_opensearch_domain_name`
+        if [[ "$stac_opensearch_domain_name" != "" && !("$stac_opensearch_domain_name" =~ ".aoss.amazonaws.com") && "$stac_opensearch_domain_name" != *"Warning"* ]]; then
+          echo "We detected a Stac-Server OpenSearch Domain $stac_opensearch_domain_name running in FilmDrop environment, will attempt to delete it..."
+          terraform state rm "module.filmdrop.module.stac-server[0].module.stac-server.aws_opensearch_domain.stac_server_opensearch_domain"
+          aws opensearch delete-domain --domain-name $stac_opensearch_domain_name --output text > .opensearch.info
+          echo "Stac-Server OpenSearch Domain $stac_opensearch_domain_name has been deleted..."
+        fi
+    - terraform apply -destroy -input=false ${STAGE}-cleanup.tfplan
+  artifacts:
+    paths:
+      - ${STAGE}-cleanup.tfplan
+
+security_scan:
+  extends: [.security_scan, .dev_variables]
+  rules:
+    - if: $CI_COMMIT_TAG =~ /^v\d{4}\.\d{2}\.\d{2}(\.\d+)?(-[.\d\w]+)?$/
+      when: on_success
+    - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
+      when: on_success
+    - if: $CI_COMMIT_REF_NAME == "main"
+      when: on_success
+  environment:
+    name: dev
+    action: prepare
+    deployment_tier: development
+    url: ${CONSOLE_URL}
+
+validate_and_plan_dev:
+  extends: [.validate_and_plan, .dev_variables]
+  needs: [security_scan]
+  rules:
+    - if: $CI_COMMIT_TAG =~ /^v\d{4}\.\d{2}\.\d{2}(\.\d+)?(-[.\d\w]+)?$/
+      when: on_success
+    - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
+      when: on_success
+    - if: $CI_COMMIT_REF_NAME == "main"
+      when: on_success
+  environment:
+    name: dev
+    action: prepare
+    deployment_tier: development
+    url: ${CONSOLE_URL}
+
+validate_and_plan_prod:
+  extends: [.validate_and_plan, .prod_variables]
+  needs: [security_scan]
+  rules:
+    - if: $CI_COMMIT_TAG =~ /^v\d{4}\.\d{2}\.\d{2}(\.\d+)?(-[.\d\w]+)?$/
+      when: on_success
+    - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
+      when: on_success
+    - if: $CI_COMMIT_REF_NAME == "main"
+      when: on_success
+  environment:
+    name: prod
+    action: prepare
+    deployment_tier: production
+    url: ${CONSOLE_URL}
+
+apply_dev:
+  extends: [.apply, .dev_variables]
+  needs: [validate_and_plan_dev]
+  rules:
+    - if: $CI_COMMIT_TAG =~ /^v\d{4}\.\d{2}\.\d{2}(\.\d+)?(-[.\d\w]+)?$/
+      when: manual
+    - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
+      when: manual
+    - if: $CI_COMMIT_REF_NAME == "main"
+      when: on_success
+  environment:
+    name: dev
+    action: start
+    deployment_tier: development
+    url: ${CONSOLE_URL}
+
+apply_prod:
+  extends: [.apply, .prod_variables]
+  needs: [validate_and_plan_prod]
+  rules:
+    - if: $CI_COMMIT_TAG =~ /^v\d{4}\.\d{2}\.\d{2}(\.\d+)?(-[.\d\w]+)?$/
+      when: manual
+  environment:
+    name: prod
+    action: start
+    deployment_tier: production
+    url: ${CONSOLE_URL}
+
+check_dev_cleanup:
+  extends: [.cleanup_check, .dev_variables]
+  needs: [security_scan]
+  rules:
+    - if: $CI_COMMIT_TAG =~ /^v\d{4}\.\d{2}\.\d{2}(\.\d+)?(-[.\d\w]+)?$/
+      when: manual
+    - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
+      when: manual
+    - if: $CI_COMMIT_REF_NAME == "main"
+      when: manual
+  environment:
+    name: dev
+    action: prepare
+    deployment_tier: development
+    url: ${CONSOLE_URL}
+
+cleanup_dev: # WARNING: THIS WILL DESTROY YOUR DEV ENVIRONMENT!
+  extends: [.perform_cleanup, .dev_variables]
+  needs: [check_dev_cleanup]
+  rules:
+    - if: $CI_COMMIT_TAG =~ /^v\d{4}\.\d{2}\.\d{2}(\.\d+)?(-[.\d\w]+)?$/
+      when: manual
+    - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
+      when: manual
+    - if: $CI_COMMIT_REF_NAME == "main"
+      when: manual
+  environment:
+    name: dev
+    action: start
+    deployment_tier: development
+    url: ${CONSOLE_URL}
+
+# These are commented out by default, but enable them if you are trying to delete the prod deployment for this project
+#check_prod_cleanup:
+#  extends: [.cleanup_check, .prod_variables]
+#  needs: [security_scan]
+#  rules:
+#    - if: $CI_COMMIT_TAG =~ /^v\d{4}\.\d{2}\.\d{2}(\.\d+)?(-[.\d\w]+)?$/
+#      when: manual
+#  environment:
+#    name: prod
+#    action: prepare
+#    deployment_tier: production
+#    url: ${CONSOLE_URL}
+
+#cleanup_prod: # WARNING: THIS WILL DESTROY YOUR PROD ENVIRONMENT!
+#  extends: [.perform_cleanup, .prod_variables]
+#  needs: [check_prod_cleanup]
+#  rules:
+#    - if: $CI_COMMIT_TAG =~ /^v\d{4}\.\d{2}\.\d{2}(\.\d+)?(-[.\d\w]+)?$/
+#      when: manual
+#  environment:
+#    name: prod
+#    action: start
+#    deployment_tier: production
+#    url: ${CONSOLE_URL}

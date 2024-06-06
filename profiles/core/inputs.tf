@@ -476,7 +476,7 @@ variable "deploy_console_ui" {
 
 variable "deploy_cirrus" {
   type        = bool
-  default     = true
+  default     = false
   description = "Deploy FilmDrop Cirrus stack"
 }
 

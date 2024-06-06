@@ -1,0 +1,139 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: "Role for GitLab runner"
+
+Parameters:
+  GitLabRoleName:
+    Type: String
+    Default: appFilmDropDeployRole
+  GitLabRolePolicyName:
+    Type: String
+    Default: appFilmDropDeployPolicy
+
+Resources:
+  apiGitLabDeployRole:
+    Type: "AWS::IAM::Role"
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              AWS:
+                - "arn:aws:iam::433175837143:root"
+            Action:
+              - "sts:AssumeRole"
+      Path: "/"
+      RoleName: !Ref GitLabRoleName
+  GitLabRolePolicy:
+    Type: "AWS::IAM::Policy"
+    Properties:
+      PolicyName: !Ref GitLabRolePolicyName
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Action:
+              - "acm:*"
+              - "autoscaling:*"
+              - "aoss:*"
+              - "waf:*"
+              - "codebuild:*"
+              - "eks:*"
+              - "kms:*"
+              - "ecr:*"
+              - "iam:CreatePolicyVersion"
+              - "iam:CreateOpenIDConnectProvider"
+              - "iam:DeleteOpenIDConnectProvider"
+              - "iam:GetOpenIDConnectProvider"
+              - "lambda:InvokeFunction"
+              - "iam:Tag*"
+              - "sns:ListTagsForResource"
+              - "sns:GetSubscriptionAttributes"
+              - "sns:GetTopicAttributes"
+              - "sns:CreateTopic"
+              - "sns:Subscribe"
+              - "sns:DeleteTopic"
+              - "sns:SetTopicAttributes"
+              - "sns:Unsubscribe"
+              - "sns:SetSubscriptionAttributes"
+              - "ssm:PutParameter"
+              - "ssm:DeleteParameter"
+              - "iam:ListRolePolicies"
+              - "iam:GetPolicyVersion"
+              - "firehose:CreateDeliveryStream"
+              - "firehose:DeleteDeliveryStream"
+              - "firehose:DescribeDeliveryStream"
+              - "firehose:ListTagsForDeliveryStream"
+              - "firehose:TagDeliveryStream"
+              - "firehose:UpdateDestination"
+              - "iam:ListAttachedRolePolicies"
+              - "iam:ListInstanceProfilesForRole"
+              - "iam:ListPolicyVersions"
+              - "iam:DeletePolicy"
+              - "iam:DeletePolicyVersion"
+              - "iam:CreateServiceLinkedRole"
+              - "ssm:AddTagsToResource"
+              - "ssm:Get*"
+              - "ssm:Describe*"
+              - "ssm:List*"
+              - "s3:*"
+              - "logs:*"
+              - "ec2:*"
+              - "es:*"
+              - "sqs:*"
+              - "lambda:*"
+              - "apigateway:*"
+              - "cognito-idp:*"
+              - "dynamodb:*"
+              - "wafv2:*"
+              - "cloudfront:*"
+              - "cloudformation:*"
+              - "route53:*"
+              - "events:*"
+              - "ecs:*"
+              - "iam:CreateUser"
+              - "iam:CreatePolicy"
+              - "iam:CreateGroup"
+              - "iam:ListAccessKeys"
+              - "iam:GetGroup"
+              - "iam:GetPolicy"
+              - "iam:CreateRole"
+              - "iam:DeleteRole"
+              - "iam:AttachRolePolicy"
+              - "iam:DetachRolePolicy"
+              - "iam:DeleteRolePolicy"
+              - "iam:GetRole"
+              - "iam:PassRole"
+              - "iam:PutRolePolicy"
+              - "iam:GetRolePolicy"
+              - "iam:UpdateAssumeRolePolicy"
+              - "iam:CreateInstanceProfile"
+              - "iam:AddRoleToInstanceProfile"
+              - "iam:RemoveRoleFromInstanceProfile"
+              - "iam:DeleteInstanceProfile"
+              - "iam:CreateServiceLinkedRole"
+              - "iam:DeleteServiceLinkedRole"
+              - "iam:GetServiceLinkedRoleDeletionStatus"
+              - "iam:GetInstanceProfile"
+              - "lambda:CreateFunction"
+              - "lambda:DeleteFunction"
+              - "lambda:ListVersionsByFunction"
+              - "lambda:PublishVersion"
+              - "lambda:GetFunction"
+              - "lambda:CreateAlias"
+              - "lambda:EnableReplication*"
+              - "lambda:DeleteAlias"
+              - "secretsmanager:*"
+              - "cloudwatch:*"
+              - "sts:Decode*"
+              - "timestream:*"
+              - "batch:*"
+              - "states:*"
+            Resource: "*"
+      Roles:
+        - !Ref apiGitLabDeployRole
+
+Outputs:
+  gitLabRoleArn:
+    Description: GitLab role ARN
+    Value: !GetAtt apiGitLabDeployRole.Arn

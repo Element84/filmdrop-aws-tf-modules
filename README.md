@@ -23,9 +23,18 @@
 
 ---
 
-This repository contains the packaging of FilmDrop terraform modules.
+This repository contains the packaging of FilmDrop Terraform modules and starter
+project to deploy them.
 
-Check out the [changelog](CHANGELOG.md).
+Check out the [changelog](CHANGELOG.md) for all changes.
+
+## Project Template
+
+A FilmDrop deployment project uses these Terraform modules to deploy FilmDrop. The
+contents for the [project](project/) directory contain the necessary CI build files
+(for GitHub or GitLab) and Terraform variables (tfvars) files to deploy an instance
+of FilmDrop. The [Deploying FilmDrop via the FilmDrop AWS Terraform Modules](deploy.md)
+document describes how to do this in great detail.
 
 ## `flop` CLI
 
