@@ -342,6 +342,9 @@ Alarm Variables:
 
 ### Cirrus Configuration
 
+⚠️ **Warning:** Support for deploying Cirrus is a work in progress.
+Until it is completed, Cirrus should be deployed using serverless.
+
 Cirrus will be deployed if `deploy_cirrus` is enabled:
 
 ```text
