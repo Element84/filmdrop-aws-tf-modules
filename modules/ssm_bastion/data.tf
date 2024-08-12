@@ -18,12 +18,3 @@ data "aws_ami" "latest_amazon_linux" {
     values = [var.ami_name_filter]
   }
 }
-
-data "template_file" "user_data" {
-  template = file("${path.module}/user_data.tpl")
-
-  vars = {
-    PublicKeysBucket = aws_s3_bucket.filmdrop_public_keys_bucket.id
-    AWSRegion        = data.aws_region.current.name
-  }
-}

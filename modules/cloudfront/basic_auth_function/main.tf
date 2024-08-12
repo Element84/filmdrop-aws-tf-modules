@@ -4,7 +4,12 @@ resource "aws_cloudfront_function" "basicauth_cf_function" {
   runtime                      = "cloudfront-js-2.0"
   comment                      = "CloudFront function with BasicAuth mechanism"
   publish                      = true
-  code                         = data.template_file.basic_auth_lambda_template.rendered
+  code                         = templatefile(
+    "${path.module}/lambda/index.js",
+    {
+      KEY_VALUE_STORE_ID = split("/", aws_cloudfront_key_value_store.basicauth_key_value_store.arn)[1]
+    },
+  )
   key_value_store_associations = [aws_cloudfront_key_value_store.basicauth_key_value_store.arn]
 }
 
