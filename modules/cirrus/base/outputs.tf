@@ -6,10 +6,6 @@ output "cirrus_workflow_event_sns_topic_arn" {
   value = aws_sns_topic.cirrus_workflow_event_sns_topic.arn
 }
 
-output "cirrus_failed_sns_topic_arn" {
-  value = aws_sns_topic.cirrus_failed_sns_topic.arn
-}
-
 output "cirrus_process_sqs_queue_arn" {
   value = aws_sqs_queue.cirrus_process_sqs_queue.arn
 }

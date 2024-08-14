@@ -6,10 +6,6 @@ output "cirrus_workflow_event_sns_topic_arn" {
   value = module.base-builtins.cirrus_workflow_event_sns_topic_arn
 }
 
-output "cirrus_failed_sns_topic_arn" {
-  value = module.base-builtins.cirrus_failed_sns_topic_arn
-}
-
 output "cirrus_process_sqs_queue_arn" {
   value = module.base-builtins.cirrus_process_sqs_queue_arn
 }
@@ -25,7 +21,6 @@ output "cirrus_process_dead_letter_sqs_queue_arn" {
 output "cirrus_process_dead_letter_sqs_queue_url" {
   value = module.base-builtins.cirrus_process_dead_letter_sqs_queue_url
 }
-
 
 output "cirrus_update_state_dead_letter_sqs_queue_arn" {
   value = module.base-builtins.cirrus_update_state_dead_letter_sqs_queue_arn

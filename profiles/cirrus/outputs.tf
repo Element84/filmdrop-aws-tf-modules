@@ -6,10 +6,6 @@ output "cirrus_workflow_event_sns_topic_arn" {
   value = module.cirrus.cirrus_workflow_event_sns_topic_arn
 }
 
-output "cirrus_failed_sns_topic_arn" {
-  value = module.cirrus.cirrus_failed_sns_topic_arn
-}
-
 output "cirrus_process_sqs_queue_arn" {
   value = module.cirrus.cirrus_process_sqs_queue_arn
 }

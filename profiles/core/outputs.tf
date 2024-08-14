@@ -78,10 +78,6 @@ output "cirrus_workflow_event_sns_topic_arn" {
   value = var.deploy_cirrus ? module.cirrus[0].cirrus_workflow_event_sns_topic_arn : ""
 }
 
-output "cirrus_failed_sns_topic_arn" {
-  value = var.deploy_cirrus ? module.cirrus[0].cirrus_failed_sns_topic_arn : ""
-}
-
 output "cirrus_process_sqs_queue_arn" {
   value = var.deploy_cirrus ? module.cirrus[0].cirrus_process_sqs_queue_arn : ""
 }
