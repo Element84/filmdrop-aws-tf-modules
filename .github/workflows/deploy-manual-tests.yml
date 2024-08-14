@@ -46,7 +46,11 @@ jobs:
 
       - name: Update stac-server lambdas
         id: update_stac_lambdas
-        run: ./scripts/update-lambdas.sh
+        run: ./scripts/update-stac-server-lambdas.bash
+
+      - name: Update cirrus lambda dist
+        id: update_cirrus_lambda_dist
+        run: ./scripts/update-cirrus-lambda-dist.bash
 
       - name: Configure Terraform Init Credentials
         id: init_creds
