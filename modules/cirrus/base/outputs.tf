@@ -46,10 +46,6 @@ output "cirrus_state_event_timestreamwrite_table_name" {
   value = aws_timestreamwrite_table.cirrus_state_event_timestreamwrite_table.table_name
 }
 
-output "cirrus_batch_role_arn" {
-  value = aws_iam_role.cirrus_batch_role.arn
-}
-
 output "cirrus_instance_role_arn" {
   value = aws_iam_role.cirrus_instance_role.arn
 }
@@ -60,10 +56,6 @@ output "cirrus_instance_profile_name" {
 
 output "cirrus_instance_profile_arn" {
   value = aws_iam_instance_profile.cirrus_instance_profile.arn
-}
-
-output "cirrus_ec2_spot_role_arn" {
-  value = aws_iam_role.cirrus_ec2_spot_role.arn
 }
 
 output "cirrus_data_bucket" {

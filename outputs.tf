@@ -118,10 +118,6 @@ output "cirrus_state_event_timestreamwrite_table_name" {
   value = module.filmdrop.cirrus_state_event_timestreamwrite_table_name
 }
 
-output "cirrus_batch_role_arn" {
-  value = module.filmdrop.cirrus_batch_role_arn
-}
-
 output "cirrus_instance_role_arn" {
   value = module.filmdrop.cirrus_instance_role_arn
 }
@@ -132,10 +128,6 @@ output "cirrus_instance_profile_name" {
 
 output "cirrus_instance_profile_arn" {
   value = module.filmdrop.cirrus_instance_profile_arn
-}
-
-output "cirrus_ec2_spot_role_arn" {
-  value = module.filmdrop.cirrus_ec2_spot_role_arn
 }
 
 output "cirrus_data_bucket" {
