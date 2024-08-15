@@ -34,12 +34,20 @@ output "cirrus_state_dynamodb_table_name" {
   value = aws_dynamodb_table.cirrus_state_dynamodb_table.name
 }
 
+output "cirrus_state_dynamodb_table_arn" {
+  value = aws_dynamodb_table.cirrus_state_dynamodb_table.arn
+}
+
 output "cirrus_state_event_timestreamwrite_database_name" {
   value = aws_timestreamwrite_database.cirrus_state_event_timestreamwrite_database.database_name
 }
 
 output "cirrus_state_event_timestreamwrite_table_name" {
   value = aws_timestreamwrite_table.cirrus_state_event_timestreamwrite_table.table_name
+}
+
+output "cirrus_state_event_timestreamwrite_table_arn" {
+  value = aws_timestreamwrite_table.cirrus_state_event_timestreamwrite_table.arn
 }
 
 output "cirrus_instance_role_arn" {

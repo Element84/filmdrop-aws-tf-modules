@@ -349,6 +349,7 @@ variable "cirrus_inputs" {
   type = object({
     data_bucket    = string
     payload_bucket = string
+    log_level      = string
     process = object({
       sqs_timeout           = number
       sqs_max_receive_count = number
@@ -357,10 +358,15 @@ variable "cirrus_inputs" {
       timestream_magnetic_store_retention_period_in_days = number
       timestream_memory_store_retention_period_in_hours  = number
     })
+    api_lambda = object({
+      timeout = number
+      memory  = number
+    })
   })
   default = {
     data_bucket    = "cirrus-data-bucket-name"
     payload_bucket = "cirrus-payload-bucket-name"
+    log_level      = "INFO"
     process = {
       sqs_timeout           = 180
       sqs_max_receive_count = 5
@@ -368,6 +374,10 @@ variable "cirrus_inputs" {
     state = {
       timestream_magnetic_store_retention_period_in_days = 93
       timestream_memory_store_retention_period_in_hours  = 24
+    }
+    api_lambda = {
+      timeout = 10
+      memory  = 128
     }
   }
 }

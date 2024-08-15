@@ -154,6 +154,7 @@ console_ui_inputs = {
 cirrus_inputs = {
   data_bucket    = "cirrus-data-bucket-name"
   payload_bucket = "cirrus-payload-bucket-name"
+  log_level      = "DEBUG"
   process = {
     sqs_timeout           = 180
     sqs_max_receive_count = 5
@@ -161,6 +162,10 @@ cirrus_inputs = {
   state = {
     timestream_magnetic_store_retention_period_in_days = 93
     timestream_memory_store_retention_period_in_hours  = 24
+  }
+  api_lambda = {
+      timeout = 10
+      memory  = 128
   }
 }
 

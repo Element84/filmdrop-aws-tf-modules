@@ -117,9 +117,11 @@ module "cirrus" {
   count  = var.deploy_cirrus ? 1 : 0
   source = "../cirrus"
 
-  project_name  = var.project_name
-  environment   = var.environment
-  cirrus_inputs = var.cirrus_inputs
+  project_name       = var.project_name
+  environment        = var.environment
+  private_subnet_ids = module.base_infra.private_subnet_ids
+  security_group_id  = module.base_infra.security_group_id
+  cirrus_inputs      = var.cirrus_inputs
 }
 
 module "cirrus-dashboard" {

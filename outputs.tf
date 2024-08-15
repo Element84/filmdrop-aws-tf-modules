@@ -106,12 +106,20 @@ output "cirrus_state_dynamodb_table_name" {
   value = module.filmdrop.cirrus_state_dynamodb_table_name
 }
 
+output "cirrus_state_dynamodb_table_arn" {
+  value = module.filmdrop.cirrus_state_dynamodb_table_arn
+}
+
 output "cirrus_state_event_timestreamwrite_database_name" {
   value = module.filmdrop.cirrus_state_event_timestreamwrite_database_name
 }
 
 output "cirrus_state_event_timestreamwrite_table_name" {
   value = module.filmdrop.cirrus_state_event_timestreamwrite_table_name
+}
+
+output "cirrus_state_event_timestreamwrite_table_arn" {
+  value = module.filmdrop.cirrus_state_event_timestreamwrite_table_arn
 }
 
 output "cirrus_instance_role_arn" {

@@ -49,3 +49,31 @@ variable "cirrus_payload_bucket" {
   description = "Cirrus payload bucket"
   type        = string
 }
+
+variable "cirrus_log_level" {
+  description = "Cirrus log level (DEBUG, INFO, WARNING, ERROR)"
+  type        = string
+  default     = "INFO"
+}
+
+variable "cirrus_api_lambda_timeout" {
+  description = "Cirrus API lambda timeout (sec)"
+  type        = number
+  default     = 10
+}
+
+variable "cirrus_api_lambda_memory" {
+  description = "Cirrus API lambda memory (MB)"
+  type        = number
+  default     = 128
+}
+
+variable "vpc_subnet_ids" {
+  description = "List of subnet ids in the FilmDrop vpc"
+  type        = list(string)
+}
+
+variable "vpc_security_group_ids" {
+  description = "List of security groups in the FilmDrop vpc"
+  type        = list(string)
+}
