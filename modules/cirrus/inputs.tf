@@ -68,6 +68,24 @@ variable "cirrus_api_lambda_memory" {
   default     = 128
 }
 
+variable "cirrus_process_lambda_timeout" {
+  description = "Cirrus process lambda timeout (sec)"
+  type        = number
+  default     = 10
+}
+
+variable "cirrus_process_lambda_memory" {
+  description = "Cirrus process lambda memory (MB)"
+  type        = number
+  default     = 128
+}
+
+variable "cirrus_process_lambda_reserved_concurrency" {
+  description = "Cirrus process reserved concurrency"
+  type        = number
+  default     = 16
+}
+
 variable "vpc_subnet_ids" {
   description = "List of subnet ids in the FilmDrop vpc"
   type        = list(string)

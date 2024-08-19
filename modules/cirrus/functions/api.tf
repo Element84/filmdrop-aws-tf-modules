@@ -25,54 +25,54 @@ resource "aws_iam_policy" "cirrus_api_lambda_policy" {
   # We should probably reconsider if this is the right solution.
   policy = <<EOF
 {
-	"Version": "2012-10-17",
-	"Statement": [
-		{
-			"Action": [
-				"s3:ListBucket",
-				"s3:GetObject",
-				"s3:GetBucketLocation"
-			],
-			"Resource": "arn:aws:s3:::${var.cirrus_data_bucket}*",
-			"Effect": "Allow"
-		},
-		{
-			"Action": "secretsmanager:GetSecretValue",
-			"Resource": [
-				"arn:aws:secretsmanager:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:secret:${var.cirrus_prefix}*"
-			],
-			"Effect": "Allow"
-		},
-        {
-          "Effect": "Allow",
-          "Action": [
-            "dynamodb:Query",
-            "dynamodb:Scan",
-            "dynamodb:GetItem",
-            "dynamodb:PutItem",
-            "dynamodb:UpdateItem",
-            "dynamodb:DescribeTable"
-          ],
-          "Resource": [
-            "${var.cirrus_state_dynamodb_table_arn}",
-            "${var.cirrus_state_dynamodb_table_arn}/index.*"
-          ]
-        },
-        {
-          "Effect": "Allow",
-          "Action": [
-            "timestream:DescribeEndpoints"
-          ],
-          "Resource": "*"
-        },
-        {
-          "Effect": "Allow",
-          "Action": [
-            "timestream:Select"
-          ],
-          "Resource": "${var.cirrus_state_event_timestreamwrite_table_arn}"
-        }
-	]
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Action": [
+        "s3:ListBucket",
+        "s3:GetObject",
+        "s3:GetBucketLocation"
+      ],
+      "Resource": "arn:aws:s3:::${var.cirrus_data_bucket}*",
+      "Effect": "Allow"
+    },
+    {
+      "Action": "secretsmanager:GetSecretValue",
+      "Resource": [
+        "arn:aws:secretsmanager:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:secret:${var.cirrus_prefix}*"
+      ],
+      "Effect": "Allow"
+    },
+    {
+      "Effect": "Allow",
+      "Action": [
+        "dynamodb:Query",
+        "dynamodb:Scan",
+        "dynamodb:GetItem",
+        "dynamodb:PutItem",
+        "dynamodb:UpdateItem",
+        "dynamodb:DescribeTable"
+      ],
+      "Resource": [
+        "${var.cirrus_state_dynamodb_table_arn}",
+        "${var.cirrus_state_dynamodb_table_arn}/index.*"
+      ]
+    },
+    {
+      "Effect": "Allow",
+      "Action": [
+        "timestream:DescribeEndpoints"
+      ],
+      "Resource": "*"
+    },
+    {
+      "Effect": "Allow",
+      "Action": [
+        "timestream:Select"
+      ],
+      "Resource": "${var.cirrus_state_event_timestreamwrite_table_arn}"
+    }
+  ]
 }
 EOF
 
