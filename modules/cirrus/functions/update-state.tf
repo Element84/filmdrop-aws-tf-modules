@@ -130,3 +130,53 @@ resource "aws_lambda_function" "cirrus_update_state" {
     subnet_ids                   = var.vpc_subnet_ids
   }
 }
+
+resource "aws_cloudwatch_event_rule" "cirrus_update_state_rule" {
+  name = "${var.cirrus_prefix}-update-state-sfn-events"
+
+  event_pattern = <<EOF
+{
+  "detail-type": [
+    "Step Functions Execution Status Change"
+  ],
+  "source": [
+    "aws.states"
+  ],
+  "detail": {
+    "stateMachineArn": [
+      {
+        "prefix": "arn:aws:states:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:stateMachine:${var.cirrus_prefix}-*"
+      }
+    ],
+    "status": [
+      "SUCCEEDED",
+      "FAILED",
+      "ABORTED",
+      "TIMED_OUT"
+    ]
+  }
+}
+EOF
+
+}
+
+resource "aws_cloudwatch_event_target" "cirrus_update_state_target" {
+  target_id = "${var.cirrus_prefix}-update-state-event-target"
+  arn       = aws_lambda_function.cirrus_update_state.arn
+  rule      = aws_cloudwatch_event_rule.cirrus_update_state_rule.name
+
+  dead_letter_config {
+    arn = var.cirrus_update_state_dead_letter_sqs_queue_arn
+  }
+
+  retry_policy {
+    maximum_event_age_in_seconds = 1800
+  }
+}
+
+resource "aws_lambda_permission" "cirrus_update_state_event_bridge_lambda_permission" {
+  action        = "lambda:InvokeFunction"
+  function_name = aws_lambda_function.cirrus_update_state.function_name
+  principal     = "events.amazonaws.com"
+  source_arn    = aws_cloudwatch_event_rule.cirrus_update_state_rule.arn
+}

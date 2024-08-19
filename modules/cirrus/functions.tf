@@ -26,4 +26,5 @@ module "functions" {
   cirrus_workflow_event_sns_topic_arn              = module.base-builtins.cirrus_workflow_event_sns_topic_arn
   cirrus_process_sqs_queue_arn                     = module.base-builtins.cirrus_process_sqs_queue_arn
   cirrus_process_sqs_queue_url                     = module.base-builtins.cirrus_process_sqs_queue_url
+  cirrus_update_state_dead_letter_sqs_queue_arn    = module.base-builtins.cirrus_update_state_dead_letter_sqs_queue_arn
 }

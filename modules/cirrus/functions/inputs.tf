@@ -120,6 +120,11 @@ variable "cirrus_process_sqs_queue_url" {
   type        = string
 }
 
+variable "cirrus_update_state_dead_letter_sqs_queue_arn" {
+  description = "Cirrus update-state dead letter sqs queue arn"
+  type        = string
+}
+
 variable "cirrus_workflow_event_sns_topic_arn" {
   description = "Cirrus workflow event sns topic arn"
   type        = string
