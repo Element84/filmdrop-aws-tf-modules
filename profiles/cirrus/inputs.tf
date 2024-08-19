@@ -57,6 +57,10 @@ variable "cirrus_inputs" {
       timeout = number
       memory  = number
     })
+    post_batch_lambda = object({
+      timeout = number
+      memory  = number
+    })
   })
   default = {
     data_bucket    = "cirrus-data-bucket-name"
@@ -84,6 +88,10 @@ variable "cirrus_inputs" {
       memory  = 128
     }
     pre_batch_lambda = {
+      timeout = 15
+      memory  = 128
+    }
+    post_batch_lambda = {
       timeout = 15
       memory  = 128
     }
