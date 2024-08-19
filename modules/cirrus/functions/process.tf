@@ -77,6 +77,7 @@ resource "aws_iam_policy" "cirrus_process_lambda_policy" {
       "Effect": "Allow",
       "Action": [
         "sqs:GetQueueUrl",
+        "sqs:GetQueueAttributes",
         "sqs:ReceiveMessage",
         "sqs:DeleteMessage"
       ],
@@ -149,4 +150,16 @@ resource "aws_lambda_function" "cirrus_process" {
     security_group_ids           = var.vpc_security_group_ids
     subnet_ids                   = var.vpc_subnet_ids
   }
+}
+
+resource "aws_lambda_event_source_mapping" "cirrus_process_sqs_lambda_event_source_mapping" {
+  event_source_arn = var.cirrus_process_sqs_queue_arn
+  function_name    = aws_lambda_function.cirrus_process.function_name
+}
+
+resource "aws_lambda_permission" "cirrus_process_sqs_lambda_permission" {
+  action        = "lambda:InvokeFunction"
+  function_name = aws_lambda_function.cirrus_process.function_name
+  principal     = "sqs.amazonaws.com"
+  source_arn    = var.cirrus_process_sqs_queue_arn
 }
