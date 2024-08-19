@@ -19,4 +19,6 @@ module "cirrus" {
   cirrus_process_lambda_reserved_concurrency                = var.cirrus_inputs.process_lambda.reserved_concurrency
   cirrus_update_state_lambda_timeout                        = var.cirrus_inputs.update_state_lambda.timeout
   cirrus_update_state_lambda_memory                         = var.cirrus_inputs.update_state_lambda.memory
+  cirrus_pre_batch_lambda_timeout                           = var.cirrus_inputs.pre_batch_lambda.timeout
+  cirrus_pre_batch_lambda_memory                            = var.cirrus_inputs.pre_batch_lambda.memory
 }

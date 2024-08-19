@@ -176,6 +176,10 @@ cirrus_inputs = {
       timeout = 15
       memory  = 128
   }
+  pre_batch_lambda = {
+      timeout = 15
+      memory  = 128
+  }
 }
 
 cirrus_dashboard_inputs = {
