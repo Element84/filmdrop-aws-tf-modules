@@ -172,6 +172,10 @@ cirrus_inputs = {
       memory               = 128
       reserved_concurrency = 16
   }
+  update_state_lambda = {
+      timeout = 15
+      memory  = 128
+  }
 }
 
 cirrus_dashboard_inputs = {

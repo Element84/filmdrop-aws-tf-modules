@@ -49,6 +49,10 @@ variable "cirrus_inputs" {
       memory               = number
       reserved_concurrency = number
     })
+    update_state_lambda = object({
+      timeout = number
+      memory  = number
+    })
   })
   default = {
     data_bucket    = "cirrus-data-bucket-name"
@@ -70,6 +74,10 @@ variable "cirrus_inputs" {
       timeout              = 10
       memory               = 128
       reserved_concurrency = 16
+    }
+    update_state_lambda = {
+      timeout = 15
+      memory  = 128
     }
   }
 }

@@ -49,6 +49,18 @@ variable "cirrus_process_lambda_reserved_concurrency" {
   default     = 16
 }
 
+variable "cirrus_update_state_lambda_timeout" {
+  description = "Cirrus update-state lambda timeout (sec)"
+  type        = number
+  default     = 15
+}
+
+variable "cirrus_update_state_lambda_memory" {
+  description = "Cirrus update-state lambda memory (MB)"
+  type        = number
+  default     = 128
+}
+
 variable "cirrus_state_dynamodb_table_name" {
   description = "Cirrus state dynamodb table name"
   type        = string
@@ -76,6 +88,11 @@ variable "cirrus_state_event_timestreamwrite_table_arn" {
 
 variable "cirrus_process_sqs_queue_arn" {
   description = "Cirrus process sqs queue arn"
+  type        = string
+}
+
+variable "cirrus_process_sqs_queue_url" {
+  description = "Cirrus process sqs queue url"
   type        = string
 }
 
