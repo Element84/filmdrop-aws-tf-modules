@@ -147,8 +147,8 @@ resource "aws_lambda_function" "cirrus_process" {
   }
 
   vpc_config {
-    security_group_ids           = var.vpc_security_group_ids
-    subnet_ids                   = var.vpc_subnet_ids
+    security_group_ids = var.vpc_security_group_ids
+    subnet_ids         = var.vpc_subnet_ids
   }
 }
 

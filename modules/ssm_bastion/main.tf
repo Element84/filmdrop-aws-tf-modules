@@ -2,14 +2,14 @@ resource "aws_instance" "ssm_bastion" {
   ami                  = data.aws_ami.latest_amazon_linux.id
   iam_instance_profile = aws_iam_instance_profile.ssm_bastion_profile.name
   instance_type        = var.instance_type
-  user_data            = templatefile(
+  user_data = templatefile(
     "${path.module}/user_data.tpl",
     {
       PublicKeysBucket = aws_s3_bucket.filmdrop_public_keys_bucket.id
       AWSRegion        = data.aws_region.current.name
     },
   )
-  key_name             = var.key_name
+  key_name = var.key_name
 
   network_interface {
     network_interface_id  = aws_network_interface.ssm_bastion_interface.id

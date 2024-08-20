@@ -67,27 +67,27 @@ resource "aws_iam_role_policy_attachment" "cirrus_pre_batch_lambda_role_policy_a
 }
 
 resource "aws_lambda_function" "cirrus_pre_batch" {
-  filename                       = "${path.module}/cirrus-lambda-dist.zip"
-  function_name                  = "${var.cirrus_prefix}-pre-batch"
-  description                    = "Cirrus Pre-batch Lambda"
-  role                           = aws_iam_role.cirrus_pre_batch_lambda_role.arn
-  handler                        = "pre_batch.lambda_handler"
-  source_code_hash               = filebase64sha256("${path.module}/cirrus-lambda-dist.zip")
-  runtime                        = "python3.12"
-  timeout                        = var.cirrus_pre_batch_lambda_timeout
-  memory_size                    = var.cirrus_pre_batch_lambda_memory
-  publish                        = true
-  architectures                  = ["arm64"]
+  filename         = "${path.module}/cirrus-lambda-dist.zip"
+  function_name    = "${var.cirrus_prefix}-pre-batch"
+  description      = "Cirrus Pre-batch Lambda"
+  role             = aws_iam_role.cirrus_pre_batch_lambda_role.arn
+  handler          = "pre_batch.lambda_handler"
+  source_code_hash = filebase64sha256("${path.module}/cirrus-lambda-dist.zip")
+  runtime          = "python3.12"
+  timeout          = var.cirrus_pre_batch_lambda_timeout
+  memory_size      = var.cirrus_pre_batch_lambda_memory
+  publish          = true
+  architectures    = ["arm64"]
 
   environment {
     variables = {
-      CIRRUS_LOG_LEVEL           = var.cirrus_log_level
-      CIRRUS_PAYLOAD_BUCKET      = var.cirrus_payload_bucket
+      CIRRUS_LOG_LEVEL      = var.cirrus_log_level
+      CIRRUS_PAYLOAD_BUCKET = var.cirrus_payload_bucket
     }
   }
 
   vpc_config {
-    security_group_ids           = var.vpc_security_group_ids
-    subnet_ids                   = var.vpc_subnet_ids
+    security_group_ids = var.vpc_security_group_ids
+    subnet_ids         = var.vpc_subnet_ids
   }
 }

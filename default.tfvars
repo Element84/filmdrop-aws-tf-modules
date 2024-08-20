@@ -164,25 +164,25 @@ cirrus_inputs = {
     timestream_memory_store_retention_period_in_hours  = 24
   }
   api_lambda = {
-      timeout = 10
-      memory  = 128
+    timeout = 10
+    memory  = 128
   }
   process_lambda = {
-      timeout              = 10
-      memory               = 128
-      reserved_concurrency = 16
+    timeout              = 10
+    memory               = 128
+    reserved_concurrency = 16
   }
   update_state_lambda = {
-      timeout = 15
-      memory  = 128
+    timeout = 15
+    memory  = 128
   }
   pre_batch_lambda = {
-      timeout = 15
-      memory  = 128
+    timeout = 15
+    memory  = 128
   }
   post_batch_lambda = {
-      timeout = 15
-      memory  = 128
+    timeout = 15
+    memory  = 128
   }
 }
 
