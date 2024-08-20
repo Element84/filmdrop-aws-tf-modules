@@ -49,3 +49,85 @@ variable "cirrus_payload_bucket" {
   description = "Cirrus payload bucket"
   type        = string
 }
+
+variable "cirrus_log_level" {
+  description = "Cirrus log level (DEBUG, INFO, WARNING, ERROR)"
+  type        = string
+  default     = "INFO"
+}
+
+variable "cirrus_api_lambda_timeout" {
+  description = "Cirrus API lambda timeout (sec)"
+  type        = number
+  default     = 10
+}
+
+variable "cirrus_api_lambda_memory" {
+  description = "Cirrus API lambda memory (MB)"
+  type        = number
+  default     = 128
+}
+
+variable "cirrus_process_lambda_timeout" {
+  description = "Cirrus process lambda timeout (sec)"
+  type        = number
+  default     = 10
+}
+
+variable "cirrus_process_lambda_memory" {
+  description = "Cirrus process lambda memory (MB)"
+  type        = number
+  default     = 128
+}
+
+variable "cirrus_process_lambda_reserved_concurrency" {
+  description = "Cirrus process reserved concurrency"
+  type        = number
+  default     = 16
+}
+
+variable "cirrus_update_state_lambda_timeout" {
+  description = "Cirrus update-state lambda timeout (sec)"
+  type        = number
+  default     = 15
+}
+
+variable "cirrus_update_state_lambda_memory" {
+  description = "Cirrus update-state lambda memory (MB)"
+  type        = number
+  default     = 128
+}
+
+variable "cirrus_pre_batch_lambda_timeout" {
+  description = "Cirrus pre-batch lambda timeout (sec)"
+  type        = number
+  default     = 15
+}
+
+variable "cirrus_pre_batch_lambda_memory" {
+  description = "Cirrus pre-batch lambda memory (MB)"
+  type        = number
+  default     = 128
+}
+
+variable "cirrus_post_batch_lambda_timeout" {
+  description = "Cirrus post-batch lambda timeout (sec)"
+  type        = number
+  default     = 15
+}
+
+variable "cirrus_post_batch_lambda_memory" {
+  description = "Cirrus post-batch lambda memory (MB)"
+  type        = number
+  default     = 128
+}
+
+variable "vpc_subnet_ids" {
+  description = "List of subnet ids in the FilmDrop vpc"
+  type        = list(string)
+}
+
+variable "vpc_security_group_ids" {
+  description = "List of security groups in the FilmDrop vpc"
+  type        = list(string)
+}

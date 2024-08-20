@@ -3,10 +3,24 @@ module "cirrus" {
 
   project_name                                              = var.project_name
   environment                                               = var.environment
+  vpc_subnet_ids                                            = var.private_subnet_ids
+  vpc_security_group_ids                                    = [var.security_group_id]
   cirrus_process_sqs_timeout                                = var.cirrus_inputs.process.sqs_timeout
   cirrus_process_sqs_max_receive_count                      = var.cirrus_inputs.process.sqs_max_receive_count
   cirrus_timestream_magnetic_store_retention_period_in_days = var.cirrus_inputs.state.timestream_magnetic_store_retention_period_in_days
   cirrus_timestream_memory_store_retention_period_in_hours  = var.cirrus_inputs.state.timestream_memory_store_retention_period_in_hours
   cirrus_data_bucket                                        = var.cirrus_inputs.data_bucket
   cirrus_payload_bucket                                     = var.cirrus_inputs.payload_bucket
+  cirrus_log_level                                          = var.cirrus_inputs.log_level
+  cirrus_api_lambda_timeout                                 = var.cirrus_inputs.api_lambda.timeout
+  cirrus_api_lambda_memory                                  = var.cirrus_inputs.api_lambda.memory
+  cirrus_process_lambda_timeout                             = var.cirrus_inputs.process_lambda.timeout
+  cirrus_process_lambda_memory                              = var.cirrus_inputs.process_lambda.memory
+  cirrus_process_lambda_reserved_concurrency                = var.cirrus_inputs.process_lambda.reserved_concurrency
+  cirrus_update_state_lambda_timeout                        = var.cirrus_inputs.update_state_lambda.timeout
+  cirrus_update_state_lambda_memory                         = var.cirrus_inputs.update_state_lambda.memory
+  cirrus_pre_batch_lambda_timeout                           = var.cirrus_inputs.pre_batch_lambda.timeout
+  cirrus_pre_batch_lambda_memory                            = var.cirrus_inputs.pre_batch_lambda.memory
+  cirrus_post_batch_lambda_timeout                          = var.cirrus_inputs.post_batch_lambda.timeout
+  cirrus_post_batch_lambda_memory                           = var.cirrus_inputs.post_batch_lambda.memory
 }
