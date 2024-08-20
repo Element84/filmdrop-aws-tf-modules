@@ -14,6 +14,7 @@ jobs:
     env:
       CI: true
       STAC_SERVER_TAG: v3.7.0
+      CIRRUS_TAG: v1.0.0a0
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
