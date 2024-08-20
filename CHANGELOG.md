@@ -5,15 +5,21 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
+## Unreleased
+
+### Added
+
+- Builtin lambdas added to cirrus module along with script to update deployment zip
+
 ## 2.27.0 - 2024-05-31
 
-## Changed
+### Changed
 
 - Rolled back vpc infrastructure changes to support creation of VPC if `deploy_vpc` is set to `true`.
 
 ## 2.26.0 - 2024-05-29
 
-## Changed
+### Changed
 
 - Default to stac-server 3.8.0 and OpenSearch 2.13
 - For both `stac_server_inputs` and `titiler_inputs`, renamed
@@ -39,7 +45,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 - Added Cirrus terraform base resource set and new cirrus terraform module
 
-## Changed
+### Changed
 
 - `titiler_inputs.mosaic_titiler_release_tag` is now `titiler_inputs.version`
 - `cirrus_dashboard_inputs.cirrus_dashboard_release` is now `cirrus_dashboard_inputs.version`
