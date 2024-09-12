@@ -151,7 +151,7 @@ variable "stac_server_inputs" {
     ingest_sns_topic_arns                       = []
     additional_ingest_sqs_senders_arns          = []
     opensearch_ebs_volume_size                  = 35
-    cors_origin                                 = ""
+    cors_origin                                 = "*"
     cors_credentials                            = false
     cors_methods                                = ""
     cors_headers                                = ""
