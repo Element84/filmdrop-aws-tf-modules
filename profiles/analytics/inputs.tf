@@ -138,3 +138,9 @@ variable "log_bucket_domain_name" {
   type        = string
   default     = ""
 }
+
+variable "fd_web_acl_id" {
+  description = "The id of the FilmDrop WAF resource."
+  type        = string
+  default     = ""
+}

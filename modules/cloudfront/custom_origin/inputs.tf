@@ -145,7 +145,7 @@ variable "price_class" {
 variable "create_waf_rule" {
   description = "Create WAF for cloudfront"
   type        = string
-  default     = true
+  default     = false
 }
 
 variable "ip_blocklist" {

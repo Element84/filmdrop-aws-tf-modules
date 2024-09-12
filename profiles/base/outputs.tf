@@ -42,3 +42,8 @@ output "s3_logs_archive_bucket" {
   description = "FilmDrop S3 Archive Log Bucket Name"
   value       = var.deploy_log_archive ? module.filmdrop_log_archive[0].s3_logs_archive_bucket : var.s3_logs_archive_bucket
 }
+
+output "web_acl_id" {
+  description = "The id of the FilmDrop WAF ACL"
+  value       = module.fd_waf_acl.web_acl_id
+}

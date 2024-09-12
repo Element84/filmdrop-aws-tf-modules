@@ -97,7 +97,7 @@ variable "create_content_website" {
 variable "create_waf_rule" {
   description = "Create WAF for cloudfront"
   type        = bool
-  default     = true
+  default     = false
 }
 
 variable "price_class" {

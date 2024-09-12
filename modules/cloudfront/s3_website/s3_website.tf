@@ -19,7 +19,7 @@ module "cloudfront_distribution" {
   source = "../s3_origin"
 
   create_content_website       = var.create_content_website
-  create_waf_rule              = true
+  create_waf_rule              = false
   ssl_certificate_arn          = module.cloudfront_certificate.certificate_arn
   domain_aliases               = var.domain_alias == "" ? [] : [var.domain_alias]
   min_ttl                      = var.min_ttl
@@ -27,6 +27,7 @@ module "cloudfront_distribution" {
   max_ttl                      = var.max_ttl
   domain_name                  = var.domain_name
   custom_error_response        = var.custom_error_response
+  web_acl_id                   = var.web_acl_id
   cf_function_name             = var.cf_function_name
   cf_function_runtime          = var.cf_function_runtime
   cf_function_code_path        = var.cf_function_code_path

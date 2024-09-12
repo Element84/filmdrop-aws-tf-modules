@@ -48,7 +48,7 @@ resource "aws_cloudfront_distribution" "filmdrop_managed_cloudfront_distribution
   enabled             = var.enabled
   is_ipv6_enabled     = var.ipv6_enabled
   default_root_object = var.default_root
-  web_acl_id          = var.create_waf_rule == false ? var.web_acl_id : module.cloudfront_waf[0].web_acl_id
+  web_acl_id          = var.web_acl_id
 
   logging_config {
     include_cookies = var.log_cookies
@@ -145,17 +145,6 @@ module "content_website" {
   source = "../content"
 
   origin_id = local.origin_id_prefix
-}
-
-
-module "cloudfront_waf" {
-  count  = var.create_waf_rule == false ? 0 : 1
-  source = "../waf"
-
-  logging_bucket_name = var.create_log_bucket ? aws_s3_bucket.log_bucket[0].id : var.log_bucket_name
-  whitelist_ips       = var.whitelist_ips
-  ip_blocklist        = var.ip_blocklist
-  cf_origin_appendix  = replace(replace(local.origin_id_prefix, "_", ""), "-", "")
 }
 
 module "cloudfront_function" {

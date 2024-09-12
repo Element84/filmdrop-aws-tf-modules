@@ -1,8 +1,3 @@
-variable "cf_origin_appendix" {
-  description = "Unique CloudFront Orign appendix for the WAF.  Required if the account needs more than one WAF."
-  type        = string
-}
-
 variable "logging_bucket_name" {
   description = "Name for bucket used for cloudfront logging"
   type        = string
@@ -32,3 +27,20 @@ variable "whitelist_ips" {
   default     = []
 }
 
+variable "environment" {
+  description = "Project environment."
+  type        = string
+  validation {
+    condition     = length(var.environment) <= 10
+    error_message = "The environment value must be 10 or fewer characters."
+  }
+}
+
+variable "project_name" {
+  description = "Project Name"
+  type        = string
+  validation {
+    condition     = length(var.project_name) <= 10
+    error_message = "The project_name value must be a 10 or fewer characters."
+  }
+}

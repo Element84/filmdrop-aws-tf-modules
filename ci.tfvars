@@ -225,3 +225,9 @@ deploy_console_ui                        = true
 deploy_cirrus                            = true
 deploy_cirrus_dashboard                  = true
 deploy_local_stac_server_artifacts       = false
+deploy_waf_rule                          = true
+
+
+#### WAF Rule Settings
+ip_blocklist  = []
+whitelist_ips = []

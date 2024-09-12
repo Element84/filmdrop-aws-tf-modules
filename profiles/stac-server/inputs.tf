@@ -169,3 +169,9 @@ variable "deploy_stac_server_outside_vpc" {
   default     = false
   description = "Deploy FilmDrop Stac-Server resources, including OpenSearch outside VPC. Defaults to false. If False, Stac-server resources will be deployed within the vpc."
 }
+
+variable "fd_web_acl_id" {
+  description = "The id of the FilmDrop WAF resource."
+  type        = string
+  default     = ""
+}

@@ -40,4 +40,7 @@ module "filmdrop" {
   deploy_cirrus                            = var.deploy_cirrus
   deploy_cirrus_dashboard                  = var.deploy_cirrus_dashboard
   deploy_local_stac_server_artifacts       = var.deploy_local_stac_server_artifacts
+  deploy_waf_rule                          = var.deploy_waf_rule
+  ip_blocklist                             = var.ip_blocklist
+  whitelist_ips                            = var.whitelist_ips
 }
