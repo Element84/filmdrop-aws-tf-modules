@@ -116,3 +116,188 @@ resource "aws_lambda_function" "cirrus_api" {
     subnet_ids         = var.vpc_subnet_ids
   }
 }
+
+resource "aws_api_gateway_rest_api" "cirrus_api_gateway" {
+  name = "${var.cirrus_prefix}-api"
+
+  endpoint_configuration {
+    types = [var.api_rest_type]
+  }
+
+  lifecycle {
+    ignore_changes = [policy]
+  }
+
+}
+
+resource "aws_api_gateway_method" "cirrus_api_gateway_root_method" {
+  rest_api_id   = aws_api_gateway_rest_api.cirrus_api_gateway.id
+  resource_id   = aws_api_gateway_rest_api.cirrus_api_gateway.root_resource_id
+  http_method   = "GET"
+  authorization = "NONE"
+}
+
+resource "aws_api_gateway_integration" "cirrus_api_gateway_root_method_integration" {
+  rest_api_id             = aws_api_gateway_rest_api.cirrus_api_gateway.id
+  resource_id             = aws_api_gateway_rest_api.cirrus_api_gateway.root_resource_id
+  http_method             = aws_api_gateway_method.cirrus_api_gateway_root_method.http_method
+  type                    = "AWS_PROXY"
+  uri                     = "arn:aws:apigateway:${data.aws_region.current.name}:lambda:path/2015-03-31/functions/${aws_lambda_function.cirrus_api.arn}/invocations"
+  integration_http_method = "GET"
+}
+
+resource "aws_api_gateway_resource" "cirrus_api_gateway_proxy_resource" {
+  rest_api_id = aws_api_gateway_rest_api.cirrus_api_gateway.id
+  parent_id   = aws_api_gateway_rest_api.cirrus_api_gateway.root_resource_id
+  path_part   = "{proxy+}"
+}
+
+resource "aws_api_gateway_method" "cirrus_api_gateway_proxy_resource_method" {
+  rest_api_id   = aws_api_gateway_rest_api.cirrus_api_gateway.id
+  resource_id   = aws_api_gateway_resource.cirrus_api_gateway_proxy_resource.id
+  http_method   = "GET"
+  authorization = "NONE"
+}
+
+resource "aws_api_gateway_integration" "cirrus_root_options_integration" {
+  rest_api_id = aws_api_gateway_rest_api.cirrus_api_gateway.id
+  resource_id = aws_api_gateway_rest_api.cirrus_api_gateway.root_resource_id
+  http_method = aws_api_gateway_method.cirrus_api_gateway_root_method.http_method
+  type        = "AWS_PROXY"
+}
+
+resource "aws_api_gateway_integration" "cirrus_options_integration" {
+  rest_api_id = aws_api_gateway_rest_api.cirrus_api_gateway.id
+  resource_id = aws_api_gateway_resource.cirrus_api_gateway_proxy_resource.id
+  http_method = aws_api_gateway_method.cirrus_api_gateway_proxy_resource_method.http_method
+  type        = "AWS_PROXY"
+}
+
+resource "aws_api_gateway_integration" "cirrus_api_gateway_proxy_resource_method_integration" {
+  rest_api_id             = aws_api_gateway_rest_api.cirrus_api_gateway.id
+  resource_id             = aws_api_gateway_resource.cirrus_api_gateway_proxy_resource.id
+  http_method             = aws_api_gateway_method.cirrus_api_gateway_proxy_resource_method.http_method
+  type                    = "AWS_PROXY"
+  uri                     = "arn:aws:apigateway:${data.aws_region.current.name}:lambda:path/2015-03-31/functions/${aws_lambda_function.cirrus_api.arn}/invocations"
+  integration_http_method = "GET"
+}
+
+resource "aws_api_gateway_deployment" "cirrus_api_gateway" {
+  depends_on = [
+    aws_api_gateway_integration.cirrus_api_gateway_root_method_integration,
+    aws_api_gateway_integration.cirrus_api_gateway_proxy_resource_method_integration,
+  ]
+
+  rest_api_id       = aws_api_gateway_rest_api.cirrus_api_gateway.id
+  stage_name        = var.cirrus_api_stage
+  stage_description = var.cirrus_api_stage_description
+
+  lifecycle {
+    create_before_destroy = true
+  }
+}
+
+resource "aws_cloudwatch_log_group" "cirrus_api_gateway_logs_group" {
+  name = "/aws/apigateway/${var.cirrus_prefix}-api-${aws_api_gateway_deployment.cirrus_api_gateway.rest_api_id}/${aws_api_gateway_deployment.cirrus_api_gateway.stage_name}"
+}
+
+locals {
+  access_log_format = "{\"requestId\":\"\\$context.requestId\",\"ip\":\"\\$context.identity.sourceIp\",\"caller\":\"\\$context.identity.caller\",\"user\":\"\\$context.identity.user\",\"requestTime\":\"\\$context.requestTime\",\"httpMethod\":\"\\$context.httpMethod\",\"resourcePath\":\"\\$context.resourcePath\",\"status\":\"\\$context.status\",\"protocol\":\"\\$context.protocol\",\"responseLength\":\"\\$context.responseLength\"}"
+}
+
+resource "null_resource" "enable_access_logs" {
+  triggers = {
+    stage_name              = aws_api_gateway_deployment.cirrus_api_gateway.stage_name
+    rest_api_id             = aws_api_gateway_deployment.cirrus_api_gateway.rest_api_id
+    apigw_access_logs_group = aws_cloudwatch_log_group.cirrus_api_gateway_logs_group.arn
+    access_log_format       = local.access_log_format
+  }
+
+  provisioner "local-exec" {
+    interpreter = ["bash", "-ec"]
+    command     = <<EOF
+export AWS_DEFAULT_REGION=${data.aws_region.current.name}
+export AWS_REGION=${data.aws_region.current.name}
+
+echo "Update Access Logging on FilmDrop Cirrus API."
+aws apigateway update-stage --rest-api-id ${aws_api_gateway_deployment.cirrus_api_gateway.rest_api_id} --stage-name ${aws_api_gateway_deployment.cirrus_api_gateway.stage_name} --patch-operations "[{\"op\": \"replace\",\"path\": \"/accessLogSettings/destinationArn\",\"value\": \"${aws_cloudwatch_log_group.cirrus_api_gateway_logs_group.arn}\"},{\"op\": \"replace\",\"path\": \"/accessLogSettings/format\",\"value\": \"${local.access_log_format}\"}]"
+
+EOF
+  }
+
+  depends_on = [
+    aws_api_gateway_account.cirrus_api_gateway_cw_role
+  ]
+}
+
+resource "aws_lambda_permission" "cirrus_api_gateway_lambda_permission_root_resource" {
+  statement_id  = "AllowExecutionFromAPIGatewayRootResource"
+  action        = "lambda:InvokeFunction"
+  function_name = aws_lambda_function.cirrus_api.arn
+  principal     = "apigateway.amazonaws.com"
+
+  source_arn = "arn:aws:execute-api:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:${aws_api_gateway_rest_api.cirrus_api_gateway.id}/*/*"
+}
+
+resource "aws_lambda_permission" "cirrus_api_gateway_lambda_permission_proxy_resource" {
+  statement_id  = "AllowExecutionFromAPIGatewayProxyResource"
+  action        = "lambda:InvokeFunction"
+  function_name = aws_lambda_function.cirrus_api.arn
+  principal     = "apigateway.amazonaws.com"
+
+  source_arn = "arn:aws:execute-api:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:${aws_api_gateway_rest_api.cirrus_api_gateway.id}/*/*${aws_api_gateway_resource.cirrus_api_gateway_proxy_resource.path}"
+}
+
+resource "aws_api_gateway_account" "cirrus_api_gateway_cw_role" {
+  cloudwatch_role_arn = aws_iam_role.cirrus_api_gw_role.arn
+}
+
+resource "aws_iam_role" "cirrus_api_gw_role" {
+  name_prefix = "${var.cirrus_prefix}-cirrus-${data.aws_region.current.name}"
+
+  assume_role_policy = <<EOF
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Action": "sts:AssumeRole",
+      "Principal": {
+        "Service": "apigateway.amazonaws.com"
+      },
+      "Effect": "Allow"
+    }
+  ]
+}
+EOF
+}
+
+resource "aws_iam_policy" "cirrus_api_gw_policy" {
+  name_prefix = "${var.cirrus_prefix}-cirrus-${data.aws_region.current.name}-apigw"
+
+  policy = <<EOF
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Action": [
+              "logs:CreateLogGroup",
+              "logs:CreateLogStream",
+              "logs:DescribeLogGroups",
+              "logs:DescribeLogStreams",
+              "logs:PutLogEvents",
+              "logs:GetLogEvents",
+              "logs:FilterLogEvents"
+            ],
+            "Resource": "*",
+            "Effect": "Allow"
+        }
+    ]
+}
+EOF
+
+}
+
+resource "aws_iam_role_policy_attachment" "cirrus_api_gw_base_policy" {
+  role       = aws_iam_role.cirrus_api_gw_role.name
+  policy_arn = aws_iam_policy.cirrus_api_gw_policy.arn
+}
