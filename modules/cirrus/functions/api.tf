@@ -143,7 +143,7 @@ resource "aws_api_gateway_integration" "cirrus_api_gateway_root_method_integrati
   http_method             = aws_api_gateway_method.cirrus_api_gateway_root_method.http_method
   type                    = "AWS_PROXY"
   uri                     = "arn:aws:apigateway:${data.aws_region.current.name}:lambda:path/2015-03-31/functions/${aws_lambda_function.cirrus_api.arn}/invocations"
-  integration_http_method = "GET"
+  integration_http_method = "POST"
 }
 
 resource "aws_api_gateway_resource" "cirrus_api_gateway_proxy_resource" {
@@ -159,27 +159,13 @@ resource "aws_api_gateway_method" "cirrus_api_gateway_proxy_resource_method" {
   authorization = "NONE"
 }
 
-resource "aws_api_gateway_integration" "cirrus_root_options_integration" {
-  rest_api_id = aws_api_gateway_rest_api.cirrus_api_gateway.id
-  resource_id = aws_api_gateway_rest_api.cirrus_api_gateway.root_resource_id
-  http_method = aws_api_gateway_method.cirrus_api_gateway_root_method.http_method
-  type        = "AWS_PROXY"
-}
-
-resource "aws_api_gateway_integration" "cirrus_options_integration" {
-  rest_api_id = aws_api_gateway_rest_api.cirrus_api_gateway.id
-  resource_id = aws_api_gateway_resource.cirrus_api_gateway_proxy_resource.id
-  http_method = aws_api_gateway_method.cirrus_api_gateway_proxy_resource_method.http_method
-  type        = "AWS_PROXY"
-}
-
 resource "aws_api_gateway_integration" "cirrus_api_gateway_proxy_resource_method_integration" {
   rest_api_id             = aws_api_gateway_rest_api.cirrus_api_gateway.id
   resource_id             = aws_api_gateway_resource.cirrus_api_gateway_proxy_resource.id
   http_method             = aws_api_gateway_method.cirrus_api_gateway_proxy_resource_method.http_method
   type                    = "AWS_PROXY"
   uri                     = "arn:aws:apigateway:${data.aws_region.current.name}:lambda:path/2015-03-31/functions/${aws_lambda_function.cirrus_api.arn}/invocations"
-  integration_http_method = "GET"
+  integration_http_method = "POST"
 }
 
 resource "aws_api_gateway_deployment" "cirrus_api_gateway" {
