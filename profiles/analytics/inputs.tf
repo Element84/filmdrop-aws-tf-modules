@@ -66,6 +66,7 @@ variable "analytics_inputs" {
   type = object({
     app_name                    = string
     domain_alias                = string
+    web_acl_id                  = string
     jupyterhub_elb_acm_cert_arn = string
     jupyterhub_elb_domain_alias = string
     create_credentials          = bool
@@ -94,6 +95,7 @@ variable "analytics_inputs" {
   default = {
     app_name                    = "analytics"
     domain_alias                = ""
+    web_acl_id                  = ""
     jupyterhub_elb_acm_cert_arn = ""
     jupyterhub_elb_domain_alias = ""
     create_credentials          = true

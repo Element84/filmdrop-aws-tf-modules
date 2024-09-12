@@ -42,6 +42,7 @@ variable "stac_server_inputs" {
     app_name                                    = string
     version                                     = string
     deploy_cloudfront                           = bool
+    web_acl_id                                  = string
     domain_alias                                = string
     enable_transactions_extension               = bool
     collection_to_index_mappings                = string
@@ -53,12 +54,11 @@ variable "stac_server_inputs" {
     ingest_sns_topic_arns                       = list(string)
     additional_ingest_sqs_senders_arns          = list(string)
     opensearch_ebs_volume_size                  = number
-    authorized_s3_arns                          = list(string)
     cors_origin                                 = string
     cors_credentials                            = bool
     cors_methods                                = string
     cors_headers                                = string
-    web_acl_id                                  = string
+    authorized_s3_arns                          = list(string)
     auth_function = object({
       cf_function_name             = string
       cf_function_runtime          = string
@@ -87,6 +87,7 @@ variable "stac_server_inputs" {
     app_name                                    = "stac_server"
     version                                     = "v3.8.0"
     deploy_cloudfront                           = true
+    web_acl_id                                  = ""
     domain_alias                                = ""
     enable_transactions_extension               = false
     collection_to_index_mappings                = ""
@@ -98,12 +99,11 @@ variable "stac_server_inputs" {
     ingest_sns_topic_arns                       = []
     additional_ingest_sqs_senders_arns          = []
     opensearch_ebs_volume_size                  = 35
-    authorized_s3_arns                          = []
-    cors_origin                                 = "*"
+    cors_origin                                 = ""
     cors_credentials                            = false
     cors_methods                                = ""
     cors_headers                                = ""
-    web_acl_id                                  = ""
+    authorized_s3_arns                          = []
     auth_function = {
       cf_function_name             = ""
       cf_function_runtime          = "cloudfront-js-2.0"
