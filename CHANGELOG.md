@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Added
 
 - Builtin lambdas added to cirrus module along with script to update deployment zip
+- API Gateway infrastructure for Cirrus API
 
 ## 2.27.0 - 2024-05-31
 
