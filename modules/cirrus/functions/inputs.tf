@@ -139,3 +139,21 @@ variable "vpc_security_group_ids" {
   description = "List of security groups in the FilmDrop vpc"
   type        = list(string)
 }
+
+variable "api_rest_type" {
+  description = "Cirrus API Gateway type"
+  type        = string
+  default     = "EDGE"
+}
+
+variable "cirrus_api_stage" {
+  description = "Cirrus API stage"
+  type        = string
+  default     = "dev"
+}
+
+variable "cirrus_api_stage_description" {
+  description = "Cirrus API stage description"
+  type        = string
+  default     = ""
+}
