@@ -142,24 +142,6 @@ variable "price_class" {
   default     = "PriceClass_100"
 }
 
-variable "create_waf_rule" {
-  description = "Create WAF for cloudfront"
-  type        = string
-  default     = false
-}
-
-variable "ip_blocklist" {
-  description = "List of ip cidr ranges to block access to. "
-  type        = set(string)
-  default     = []
-}
-
-variable "whitelist_ips" {
-  description = "List of ips to filter access for."
-  type        = set(string)
-  default     = []
-}
-
 variable "cf_function_name" {
   description = "Name of the CF function"
   type        = string

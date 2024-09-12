@@ -19,7 +19,6 @@ module "cloudfront_distribution" {
   source = "../s3_origin"
 
   create_content_website       = var.create_content_website
-  create_waf_rule              = false
   ssl_certificate_arn          = module.cloudfront_certificate.certificate_arn
   domain_aliases               = var.domain_alias == "" ? [] : [var.domain_alias]
   min_ttl                      = var.min_ttl

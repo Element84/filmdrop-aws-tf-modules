@@ -94,28 +94,10 @@ variable "create_content_website" {
   default     = true
 }
 
-variable "create_waf_rule" {
-  description = "Create WAF for cloudfront"
-  type        = bool
-  default     = false
-}
-
 variable "price_class" {
   description = "CloudFront Price Class."
   type        = string
   default     = "PriceClass_100"
-}
-
-variable "ip_blocklist" {
-  description = "List of ip cidr ranges to block access to. "
-  type        = set(string)
-  default     = []
-}
-
-variable "whitelist_ips" {
-  description = "List of ips to filter access for."
-  type        = set(string)
-  default     = []
 }
 
 variable "cf_function_name" {
