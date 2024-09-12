@@ -49,6 +49,11 @@ variable "load_balancer_dns_name" {
   type        = string
 }
 
+variable "web_acl_id" {
+  description = "The id of the WAF resource to attach to the CloudFront endpoint."
+  type        = string
+  default     = ""
+}
 
 variable "min_ttl" {
   description = "Minimum amount of time, in seconds, that you want objects to stay in the CloudFront cache before CloudFront sends another request to the origin to determine whether the object has been updated."

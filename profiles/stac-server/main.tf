@@ -41,7 +41,7 @@ module "cloudfront_api_gateway_endpoint" {
   application_name             = var.stac_server_inputs.app_name
   api_gateway_dns_name         = module.stac-server.stac_server_api_domain_name
   api_gateway_path             = module.stac-server.stac_server_api_path
-  web_acl_id                   = var.stac_server_inputs.web_acl_id
+  web_acl_id                   = var.stac_server_inputs.web_acl_id == "" ? var.fd_web_acl_id : var.stac_server_inputs.web_acl_id
   project_name                 = var.project_name
   environment                  = var.environment
   create_log_bucket            = var.create_log_bucket

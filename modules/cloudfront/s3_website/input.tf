@@ -20,6 +20,12 @@ variable "min_ttl" {
   default     = 0
 }
 
+variable "web_acl_id" {
+  description = "The id of the WAF resource to attach to the CloudFront endpoint."
+  type        = string
+  default     = ""
+}
+
 variable "default_ttl" {
   description = "Default amount of time, in seconds, that you want objects to stay in CloudFront caches before CloudFront forwards another request to your origin to determine whether the object has been updated"
   type        = number

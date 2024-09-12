@@ -29,7 +29,6 @@ module "cloudfront_distribution" {
   default_ttl                     = var.default_ttl
   max_ttl                         = var.max_ttl
   custom_error_response           = var.custom_error_response
-  create_waf_rule                 = var.web_acl_id == "" ? true : false
   web_acl_id                      = var.web_acl_id
   project_name                    = var.project_name
   environment                     = var.environment

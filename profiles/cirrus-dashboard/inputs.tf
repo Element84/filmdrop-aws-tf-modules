@@ -37,6 +37,7 @@ variable "cirrus_dashboard_inputs" {
     app_name             = string
     domain_alias         = string
     deploy_cloudfront    = bool
+    web_acl_id           = string
     version              = string
     cirrus_api_endpoint  = string
     metrics_api_endpoint = string
@@ -61,9 +62,11 @@ variable "cirrus_dashboard_inputs" {
     app_name             = "dashboard"
     domain_alias         = ""
     deploy_cloudfront    = true
+    web_acl_id           = ""
     version              = "v0.5.1"
     cirrus_api_endpoint  = ""
     metrics_api_endpoint = ""
+
     custom_error_response = [
       {
         error_caching_min_ttl = "10"
@@ -109,6 +112,12 @@ variable "log_bucket_name" {
 
 variable "log_bucket_domain_name" {
   description = "Domain Name of existing CloudFront Distribution Logging bucket"
+  type        = string
+  default     = ""
+}
+
+variable "fd_web_acl_id" {
+  description = "The id of the FilmDrop WAF resource."
   type        = string
   default     = ""
 }

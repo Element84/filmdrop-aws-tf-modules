@@ -244,6 +244,7 @@ deploy_titiler                      = false
 deploy_console_ui                   = false
 deploy_cirrus_dashboard             = false
 deploy_local_stac_server_artifacts  = false
+deploy_waf_rule                     = false
 ```
 
 ```shell

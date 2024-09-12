@@ -12,6 +12,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Builtin lambdas added to cirrus module along with script to update deployment zip
 - API Gateway infrastructure for Cirrus API
 
+### Changed
+
+- Consolidated WAF rules into a single one by default for cost savings
+
 ## 2.27.0 - 2024-05-31
 
 ### Changed

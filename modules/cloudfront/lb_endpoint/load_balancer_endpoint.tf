@@ -29,6 +29,7 @@ module "cloudfront_distribution" {
   default_ttl                     = var.default_ttl
   max_ttl                         = var.max_ttl
   custom_error_response           = var.custom_error_response
+  web_acl_id                      = var.web_acl_id
   project_name                    = var.project_name
   environment                     = var.environment
   create_log_bucket               = var.create_log_bucket

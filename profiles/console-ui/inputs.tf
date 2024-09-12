@@ -37,6 +37,7 @@ variable "console_ui_inputs" {
     app_name          = string
     domain_alias      = string
     deploy_cloudfront = bool
+    web_acl_id        = string
     custom_error_response = list(object({
       error_caching_min_ttl = string
       error_code            = string
@@ -62,6 +63,7 @@ variable "console_ui_inputs" {
     app_name          = "console"
     domain_alias      = ""
     deploy_cloudfront = true
+    web_acl_id        = ""
     custom_error_response = [
       {
         error_caching_min_ttl = "10"
@@ -71,8 +73,8 @@ variable "console_ui_inputs" {
       }
     ]
     version                 = "v5.3.0"
-    filmdrop_ui_config_file = "./default-config/config.dev.json"
-    filmdrop_ui_logo_file   = "./default-config/logo.png"
+    filmdrop_ui_config_file = "./profiles/console-ui/default-config/config.dev.json"
+    filmdrop_ui_logo_file   = "./profiles/console-ui/default-config/logo.png"
     filmdrop_ui_logo        = "bm9uZQo=" # Base64: 'none'
     auth_function = {
       cf_function_name             = ""
@@ -111,6 +113,12 @@ variable "log_bucket_name" {
 
 variable "log_bucket_domain_name" {
   description = "Domain Name of existing CloudFront Distribution Logging bucket"
+  type        = string
+  default     = ""
+}
+
+variable "fd_web_acl_id" {
+  description = "The id of the FilmDrop WAF resource."
   type        = string
   default     = ""
 }

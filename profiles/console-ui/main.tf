@@ -39,6 +39,7 @@ module "cloudfront_s3_website" {
   create_cf_function           = var.console_ui_inputs.auth_function.create_cf_function
   create_cf_basicauth_function = var.console_ui_inputs.auth_function.create_cf_basicauth_function
   cf_function_arn              = var.console_ui_inputs.auth_function.cf_function_arn
+  web_acl_id                   = var.console_ui_inputs.web_acl_id == "" ? var.fd_web_acl_id : var.console_ui_inputs.web_acl_id
 }
 
 module "content_website" {

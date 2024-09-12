@@ -94,6 +94,7 @@ variable "stac_server_inputs" {
     app_name                                    = string
     version                                     = string
     deploy_cloudfront                           = bool
+    web_acl_id                                  = string
     domain_alias                                = string
     enable_transactions_extension               = bool
     collection_to_index_mappings                = string
@@ -110,7 +111,6 @@ variable "stac_server_inputs" {
     cors_methods                                = string
     cors_headers                                = string
     authorized_s3_arns                          = list(string)
-    web_acl_id                                  = string
     auth_function = object({
       cf_function_name             = string
       cf_function_runtime          = string
@@ -139,6 +139,7 @@ variable "stac_server_inputs" {
     app_name                                    = "stac_server"
     version                                     = "v3.8.0"
     deploy_cloudfront                           = true
+    web_acl_id                                  = ""
     domain_alias                                = ""
     enable_transactions_extension               = false
     collection_to_index_mappings                = ""
@@ -155,7 +156,6 @@ variable "stac_server_inputs" {
     cors_methods                                = ""
     cors_headers                                = ""
     authorized_s3_arns                          = []
-    web_acl_id                                  = ""
     auth_function = {
       cf_function_name             = ""
       cf_function_runtime          = "cloudfront-js-2.0"
@@ -233,6 +233,7 @@ variable "analytics_inputs" {
   type = object({
     app_name                    = string
     domain_alias                = string
+    web_acl_id                  = string
     jupyterhub_elb_acm_cert_arn = string
     jupyterhub_elb_domain_alias = string
     create_credentials          = bool
@@ -261,6 +262,7 @@ variable "analytics_inputs" {
   default = {
     app_name                    = "analytics"
     domain_alias                = ""
+    web_acl_id                  = ""
     jupyterhub_elb_acm_cert_arn = ""
     jupyterhub_elb_domain_alias = ""
     create_credentials          = true
@@ -294,6 +296,7 @@ variable "console_ui_inputs" {
     app_name          = string
     domain_alias      = string
     deploy_cloudfront = bool
+    web_acl_id        = string
     custom_error_response = list(object({
       error_caching_min_ttl = string
       error_code            = string
@@ -319,6 +322,7 @@ variable "console_ui_inputs" {
     app_name          = "console"
     domain_alias      = ""
     deploy_cloudfront = true
+    web_acl_id        = ""
     custom_error_response = [
       {
         error_caching_min_ttl = "10"
@@ -422,6 +426,7 @@ variable "cirrus_dashboard_inputs" {
     app_name             = string
     domain_alias         = string
     deploy_cloudfront    = bool
+    web_acl_id           = string
     version              = string
     cirrus_api_endpoint  = string
     metrics_api_endpoint = string
@@ -446,6 +451,7 @@ variable "cirrus_dashboard_inputs" {
     app_name             = "dashboard"
     domain_alias         = ""
     deploy_cloudfront    = true
+    web_acl_id           = ""
     version              = "v0.5.1"
     cirrus_api_endpoint  = ""
     metrics_api_endpoint = ""
@@ -547,4 +553,28 @@ variable "deploy_local_stac_server_artifacts" {
   description = "Deploy STAC Server artifacts for local deploy"
   type        = bool
   default     = true
+}
+
+variable "deploy_waf_rule" {
+  description = "Deploy FilmDrop WAF rule"
+  type        = bool
+  default     = true
+}
+
+variable "ip_blocklist" {
+  description = "List of ip cidr ranges to block access to. "
+  type        = set(string)
+  default     = []
+}
+
+variable "whitelist_ips" {
+  description = "List of ips to filter access for."
+  type        = set(string)
+  default     = []
+}
+
+variable "ext_web_acl_id" {
+  description = "The id of the external WAF resource to attach to the FilmDrop CloudFront Endpoints."
+  type        = string
+  default     = ""
 }

@@ -37,6 +37,7 @@ module "cloudfront_s3_website" {
   create_cf_function           = var.cirrus_dashboard_inputs.auth_function.create_cf_function
   create_cf_basicauth_function = var.cirrus_dashboard_inputs.auth_function.create_cf_basicauth_function
   cf_function_arn              = var.cirrus_dashboard_inputs.auth_function.cf_function_arn
+  web_acl_id                   = var.cirrus_dashboard_inputs.web_acl_id == "" ? var.fd_web_acl_id : var.cirrus_dashboard_inputs.web_acl_id
 }
 
 module "content_website" {

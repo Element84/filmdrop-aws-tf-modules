@@ -66,6 +66,7 @@ variable "analytics_inputs" {
   type = object({
     app_name                    = string
     domain_alias                = string
+    web_acl_id                  = string
     jupyterhub_elb_acm_cert_arn = string
     jupyterhub_elb_domain_alias = string
     create_credentials          = bool
@@ -94,6 +95,7 @@ variable "analytics_inputs" {
   default = {
     app_name                    = "analytics"
     domain_alias                = ""
+    web_acl_id                  = ""
     jupyterhub_elb_acm_cert_arn = ""
     jupyterhub_elb_domain_alias = ""
     create_credentials          = true
@@ -135,6 +137,12 @@ variable "log_bucket_name" {
 
 variable "log_bucket_domain_name" {
   description = "Domain Name of existing CloudFront Distribution Logging bucket"
+  type        = string
+  default     = ""
+}
+
+variable "fd_web_acl_id" {
+  description = "The id of the FilmDrop WAF resource."
   type        = string
   default     = ""
 }

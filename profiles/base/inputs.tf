@@ -106,3 +106,27 @@ variable "deploy_vpc_search" {
   default     = true
   description = "Perform a FilmDrop VPC search"
 }
+
+variable "deploy_waf_rule" {
+  description = "Deploy FilmDrop WAF rule"
+  type        = bool
+  default     = true
+}
+
+variable "ip_blocklist" {
+  description = "List of ip cidr ranges to block access to. "
+  type        = set(string)
+  default     = []
+}
+
+variable "whitelist_ips" {
+  description = "List of ips to filter access for."
+  type        = set(string)
+  default     = []
+}
+
+variable "ext_web_acl_id" {
+  description = "The id of the external WAF resource to attach to the FilmDrop CloudFront Endpoints."
+  type        = string
+  default     = ""
+}

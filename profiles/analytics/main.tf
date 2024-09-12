@@ -60,6 +60,7 @@ module "cloudfront_load_balancer_endpoint" {
   log_bucket_domain_name       = var.log_bucket_domain_name
   filmdrop_archive_bucket_name = var.s3_logs_archive_bucket
   load_balancer_dns_name       = var.analytics_inputs.jupyterhub_elb_domain_alias
+  web_acl_id                   = var.analytics_inputs.web_acl_id == "" ? var.fd_web_acl_id : var.analytics_inputs.web_acl_id
   project_name                 = var.project_name
   environment                  = var.environment
   cf_function_name             = var.analytics_inputs.auth_function.cf_function_name
