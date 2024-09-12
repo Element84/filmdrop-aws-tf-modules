@@ -565,3 +565,9 @@ variable "whitelist_ips" {
   type        = set(string)
   default     = []
 }
+
+variable "ext_web_acl_id" {
+  description = "The id of the external WAF resource to attach to the FilmDrop CloudFront Endpoints."
+  type        = string
+  default     = ""
+}

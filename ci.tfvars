@@ -229,5 +229,6 @@ deploy_waf_rule                          = true
 
 
 #### WAF Rule Settings
-ip_blocklist  = []
-whitelist_ips = []
+ext_web_acl_id  = "" # Specify if bringing an externally managed WAF
+ip_blocklist    = []
+whitelist_ips   = []

@@ -6,6 +6,7 @@ module "base_infra" {
   deploy_alarms                  = var.deploy_alarms
   deploy_log_archive             = var.deploy_log_archive
   deploy_waf_rule                = var.deploy_waf_rule
+  ext_web_acl_id                 = var.ext_web_acl_id
   ip_blocklist                   = var.ip_blocklist
   whitelist_ips                  = var.whitelist_ips
   environment                    = var.environment
@@ -51,7 +52,7 @@ module "stac-server" {
   domain_zone                              = var.domain_zone
   deploy_stac_server_opensearch_serverless = var.deploy_stac_server_opensearch_serverless
   deploy_stac_server_outside_vpc           = var.deploy_stac_server_outside_vpc
-  fd_web_acl_id                            = var.deploy_waf_rule ? module.base_infra.web_acl_id : ""
+  fd_web_acl_id                            = var.deploy_waf_rule ? module.base_infra.web_acl_id : var.ext_web_acl_id
 
   depends_on = [
     module.setup
@@ -96,7 +97,7 @@ module "analytics" {
   environment                = var.environment
   domain_zone                = var.domain_zone
   analytics_inputs           = var.analytics_inputs
-  fd_web_acl_id              = var.deploy_waf_rule ? module.base_infra.web_acl_id : ""
+  fd_web_acl_id              = var.deploy_waf_rule ? module.base_infra.web_acl_id : var.ext_web_acl_id
 }
 
 module "console-ui" {
@@ -116,7 +117,7 @@ module "console-ui" {
   console_ui_inputs      = var.console_ui_inputs
   domain_zone            = var.domain_zone
   s3_logs_archive_bucket = module.base_infra.s3_logs_archive_bucket
-  fd_web_acl_id          = var.deploy_waf_rule ? module.base_infra.web_acl_id : ""
+  fd_web_acl_id          = var.deploy_waf_rule ? module.base_infra.web_acl_id : var.ext_web_acl_id
 }
 
 module "cirrus" {
@@ -147,5 +148,5 @@ module "cirrus-dashboard" {
   s3_logs_archive_bucket  = module.base_infra.s3_logs_archive_bucket
   domain_zone             = var.domain_zone
   cirrus_dashboard_inputs = var.cirrus_dashboard_inputs
-  fd_web_acl_id           = var.deploy_waf_rule ? module.base_infra.web_acl_id : ""
+  fd_web_acl_id           = var.deploy_waf_rule ? module.base_infra.web_acl_id : var.ext_web_acl_id
 }

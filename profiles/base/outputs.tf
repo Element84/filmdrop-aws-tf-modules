@@ -45,5 +45,5 @@ output "s3_logs_archive_bucket" {
 
 output "web_acl_id" {
   description = "The id of the FilmDrop WAF ACL"
-  value       = module.fd_waf_acl.web_acl_id
+  value       = var.deploy_waf_rule ? module.fd_waf_acl[0].web_acl_id : var.ext_web_acl_id
 }
