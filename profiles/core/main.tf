@@ -1,6 +1,10 @@
 module "base_infra" {
   source = "../base"
 
+  providers = {
+    aws.east = aws.east
+  }
+
   deploy_vpc                     = var.deploy_vpc
   deploy_vpc_search              = var.deploy_vpc_search
   deploy_alarms                  = var.deploy_alarms
