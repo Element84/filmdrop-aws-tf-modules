@@ -66,6 +66,10 @@ module "fd_waf_acl" {
   count  = var.deploy_waf_rule ? 1 : 0
   source = "../../modules/cloudfront/waf"
 
+  providers = {
+    aws = aws.east
+  }
+
   logging_bucket_name = var.deploy_log_archive ? module.filmdrop_log_archive[0].s3_logs_archive_bucket : var.s3_logs_archive_bucket
   whitelist_ips       = var.whitelist_ips
   ip_blocklist        = var.ip_blocklist
