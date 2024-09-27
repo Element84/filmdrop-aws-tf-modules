@@ -22,44 +22,26 @@ module "filmdrop_vpc" {
 }
 
 module "sns_alarm_topics" {
-  count  = var.deploy_alarms ? 1 : 0
   source = "../../modules/base_infra/sns"
 
-  sns_topics_map = var.sns_topics_map
-}
-
-module "base_warning_alarms" {
-  count  = var.deploy_alarms ? 1 : 0
-  source = "../../modules/base_infra/alerts"
-
-  cloudwatch_alarms_map = var.cloudwatch_warning_alarms_map
-  alarm_actions_list    = [module.sns_alarm_topics[0].sns_topic_arns["FilmDropWarning"]]
-  ok_actions_list       = [module.sns_alarm_topics[0].sns_topic_arns["FilmDropWarning"]]
-}
-
-module "base_critical_alarms" {
-  count  = var.deploy_alarms ? 1 : 0
-  source = "../../modules/base_infra/alerts"
-
-  cloudwatch_alarms_map = var.cloudwatch_critical_alarms_map
-  alarm_actions_list    = [module.sns_alarm_topics[0].sns_topic_arns["FilmDropCritical"]]
-  ok_actions_list       = [module.sns_alarm_topics[0].sns_topic_arns["FilmDropWarning"]]
+  sns_topics_map = {
+    "fd-${var.project_name}-${var.environment}-AlarmWarning"  = {}
+    "fd-${var.project_name}-${var.environment}-AlarmCritical" = {}
+  }
 }
 
 module "sns_warning_subscriptions" {
-  count  = var.deploy_alarms ? 1 : 0
   source = "../../modules/base_infra/sns_subscriptions"
 
   sns_topics_subscriptions_map = var.sns_warning_subscriptions_map
-  sns_topic_arn                = module.sns_alarm_topics[0].sns_topic_arns["FilmDropWarning"]
+  sns_topic_arn                = module.sns_alarm_topics[0].sns_topic_arns["fd-${var.project_name}-${var.environment}-AlarmWarning"]
 }
 
 module "sns_critical_subscriptions" {
-  count  = var.deploy_alarms ? 1 : 0
   source = "../../modules/base_infra/sns_subscriptions"
 
   sns_topics_subscriptions_map = var.sns_critical_subscriptions_map
-  sns_topic_arn                = module.sns_alarm_topics[0].sns_topic_arns["FilmDropCritical"]
+  sns_topic_arn                = module.sns_alarm_topics[0].sns_topic_arns["fd-${var.project_name}-${var.environment}-AlarmCritical"]
 }
 
 module "fd_waf_acl" {

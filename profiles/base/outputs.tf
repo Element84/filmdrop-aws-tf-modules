@@ -47,3 +47,13 @@ output "web_acl_id" {
   description = "The id of the FilmDrop WAF ACL"
   value       = var.deploy_waf_rule ? module.fd_waf_acl[0].web_acl_id : var.ext_web_acl_id
 }
+
+output "warning_sns_topic_arn" {
+  description = "The ARN of the FilmDrop Warning SNS Topic"
+  value       = module.sns_alarm_topics.sns_topic_arns["fd-${var.project_name}-${var.environment}-AlarmWarning"]
+}
+
+output "critical_sns_topic_arn" {
+  description = "The ARN of the FilmDrop Warning SNS Topic"
+  value       = module.sns_alarm_topics.sns_topic_arns["fd-${var.project_name}-${var.environment}-AlarmCritical"]
+}

@@ -141,3 +141,11 @@ output "cirrus_data_bucket" {
 output "cirrus_payload_bucket" {
   value = module.filmdrop.cirrus_payload_bucket
 }
+
+output "warning_sns_topic_arn" {
+  value = module.filmdrop.warning_sns_topic_arn
+}
+
+output "critical_sns_topic_arn" {
+  value = module.filmdrop.critical_sns_topic_arn
+}

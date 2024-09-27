@@ -13,9 +13,6 @@ module "filmdrop" {
   public_subnets_az_to_id_map              = var.public_subnets_az_to_id_map
   private_subnets_az_to_id_map             = var.private_subnets_az_to_id_map
   security_group_id                        = var.security_group_id
-  sns_topics_map                           = var.sns_topics_map
-  cloudwatch_warning_alarms_map            = var.cloudwatch_warning_alarms_map
-  cloudwatch_critical_alarms_map           = var.cloudwatch_critical_alarms_map
   sns_warning_subscriptions_map            = var.sns_warning_subscriptions_map
   sns_critical_subscriptions_map           = var.sns_critical_subscriptions_map
   s3_access_log_bucket                     = var.s3_access_log_bucket
@@ -30,7 +27,6 @@ module "filmdrop" {
   deploy_vpc                               = var.deploy_vpc
   deploy_vpc_search                        = var.deploy_vpc_search
   deploy_log_archive                       = var.deploy_log_archive
-  deploy_alarms                            = var.deploy_alarms
   deploy_stac_server                       = var.deploy_stac_server
   deploy_stac_server_opensearch_serverless = var.deploy_stac_server_opensearch_serverless
   deploy_stac_server_outside_vpc           = var.deploy_stac_server_outside_vpc

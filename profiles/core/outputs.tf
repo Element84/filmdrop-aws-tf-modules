@@ -141,3 +141,11 @@ output "cirrus_data_bucket" {
 output "cirrus_payload_bucket" {
   value = var.deploy_cirrus ? module.cirrus[0].cirrus_payload_bucket : ""
 }
+
+output "warning_sns_topic_arn" {
+  value = module.base_infra.warning_sns_topic_arn
+}
+
+output "critical_sns_topic_arn" {
+  value = module.base_infra.critical_sns_topic_arn
+}

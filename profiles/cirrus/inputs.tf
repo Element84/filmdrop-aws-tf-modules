@@ -32,6 +32,11 @@ variable "cirrus_inputs" {
     data_bucket    = string
     payload_bucket = string
     log_level      = string
+    deploy_alarms  = bool
+    custom_alarms = object({
+      warning  = map(any)
+      critical = map(any)
+    })
     process = object({
       sqs_timeout           = number
       sqs_max_receive_count = number
@@ -66,6 +71,11 @@ variable "cirrus_inputs" {
     data_bucket    = "cirrus-data-bucket-name"
     payload_bucket = "cirrus-payload-bucket-name"
     log_level      = "INFO"
+    deploy_alarms  = true
+    custom_alarms = {
+      warning  = {}
+      critical = {}
+    }
     process = {
       sqs_timeout           = 180
       sqs_max_receive_count = 5
@@ -96,4 +106,14 @@ variable "cirrus_inputs" {
       memory  = 128
     }
   }
+}
+
+variable "warning_sns_topic_arn" {
+  description = "String with FilmDrop Warning SNS topic ARN"
+  type        = string
+}
+
+variable "critical_sns_topic_arn" {
+  description = "String with FilmDrop Critical SNS topic ARN"
+  type        = string
 }

@@ -91,3 +91,45 @@ resource "aws_lambda_function" "cirrus_pre_batch" {
     subnet_ids         = var.vpc_subnet_ids
   }
 }
+
+resource "aws_cloudwatch_metric_alarm" "cirrus_pre_batch_lambda_errors_warning_alarm" {
+  count                     = var.deploy_alarms ? 1 : 0
+  alarm_name                = "WARNING: ${var.cirrus_prefix}-pre-batch Lambda Errors Warning Alarm"
+  comparison_operator       = "GreaterThanOrEqualToThreshold"
+  evaluation_periods        = 5
+  metric_name               = "Errors"
+  namespace                 = "AWS/Lambda"
+  period                    = 60
+  statistic                 = "Sum"
+  threshold                 = 10
+  treat_missing_data        = "notBreaching"
+  alarm_description         = "${var.cirrus_prefix}-pre-batch Cirrus Update-State Lambda Errors Warning Alarm"
+  alarm_actions             = [var.warning_sns_topic_arn]
+  ok_actions                = [var.warning_sns_topic_arn]
+  insufficient_data_actions = []
+
+  dimensions = {
+    FunctionName = aws_lambda_function.cirrus_pre_batch.function_name
+  }
+}
+
+resource "aws_cloudwatch_metric_alarm" "cirrus_pre_batch_lambda_errors_critical_alarm" {
+  count                     = var.deploy_alarms ? 1 : 0
+  alarm_name                = "CRITICAL: ${var.cirrus_prefix}-pre-batch Lambda Errors Critical Alarm"
+  comparison_operator       = "GreaterThanOrEqualToThreshold"
+  evaluation_periods        = 5
+  metric_name               = "Errors"
+  namespace                 = "AWS/Lambda"
+  period                    = 60
+  statistic                 = "Sum"
+  threshold                 = 100
+  treat_missing_data        = "notBreaching"
+  alarm_description         = "${var.cirrus_prefix}-pre-batch Cirrus Update-State Lambda Errors Critical Alarm"
+  alarm_actions             = [var.critical_sns_topic_arn]
+  ok_actions                = [var.warning_sns_topic_arn]
+  insufficient_data_actions = []
+
+  dimensions = {
+    FunctionName = aws_lambda_function.cirrus_pre_batch.function_name
+  }
+}
