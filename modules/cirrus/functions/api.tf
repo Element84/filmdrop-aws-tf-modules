@@ -287,3 +287,87 @@ resource "aws_iam_role_policy_attachment" "cirrus_api_gw_base_policy" {
   role       = aws_iam_role.cirrus_api_gw_role.name
   policy_arn = aws_iam_policy.cirrus_api_gw_policy.arn
 }
+
+resource "aws_cloudwatch_metric_alarm" "cirrus_api_lambda_errors_warning_alarm" {
+  count                     = var.deploy_alarms ? 1 : 0
+  alarm_name                = "WARNING: ${var.cirrus_prefix}-api Lambda Errors Warning Alarm"
+  comparison_operator       = "GreaterThanOrEqualToThreshold"
+  evaluation_periods        = 5
+  metric_name               = "Errors"
+  namespace                 = "AWS/Lambda"
+  period                    = 60
+  statistic                 = "Sum"
+  threshold                 = 10
+  treat_missing_data        = "notBreaching"
+  alarm_description         = "${var.cirrus_prefix}-api Cirrus Update-State Lambda Errors Warning Alarm"
+  alarm_actions             = [var.warning_sns_topic_arn]
+  ok_actions                = [var.warning_sns_topic_arn]
+  insufficient_data_actions = []
+
+  dimensions = {
+    FunctionName = aws_lambda_function.cirrus_api.function_name
+  }
+}
+
+resource "aws_cloudwatch_metric_alarm" "cirrus_api_lambda_errors_critical_alarm" {
+  count                     = var.deploy_alarms ? 1 : 0
+  alarm_name                = "CRITICAL: ${var.cirrus_prefix}-api Lambda Errors Critical Alarm"
+  comparison_operator       = "GreaterThanOrEqualToThreshold"
+  evaluation_periods        = 5
+  metric_name               = "Errors"
+  namespace                 = "AWS/Lambda"
+  period                    = 60
+  statistic                 = "Sum"
+  threshold                 = 100
+  treat_missing_data        = "notBreaching"
+  alarm_description         = "${var.cirrus_prefix}-api Cirrus Update-State Lambda Errors Critical Alarm"
+  alarm_actions             = [var.critical_sns_topic_arn]
+  ok_actions                = [var.warning_sns_topic_arn]
+  insufficient_data_actions = []
+
+  dimensions = {
+    FunctionName = aws_lambda_function.cirrus_api.function_name
+  }
+}
+
+resource "aws_cloudwatch_metric_alarm" "cirrus_api_gw_errors_warning_alarm" {
+  count                     = var.deploy_alarms ? 1 : 0
+  alarm_name                = "WARNING: ${aws_api_gateway_rest_api.cirrus_api_gateway.name} API Gateway 5XX Errors Warning Alarm"
+  comparison_operator       = "GreaterThanOrEqualToThreshold"
+  evaluation_periods        = 5
+  metric_name               = "5XXError"
+  namespace                 = "AWS/ApiGateway"
+  period                    = 60
+  statistic                 = "Sum"
+  threshold                 = 10
+  treat_missing_data        = "notBreaching"
+  alarm_description         = "${aws_api_gateway_rest_api.cirrus_api_gateway.name} Cirrus API Gateway 5XX Errors Warning Alarm"
+  alarm_actions             = [var.warning_sns_topic_arn]
+  ok_actions                = [var.warning_sns_topic_arn]
+  insufficient_data_actions = []
+
+  dimensions = {
+    FunctionName = aws_api_gateway_rest_api.cirrus_api_gateway.name
+  }
+}
+
+resource "aws_cloudwatch_metric_alarm" "cirrus_api_gw_errors_critical_alarm" {
+  count                     = var.deploy_alarms ? 1 : 0
+  alarm_name                = "CRITICAL: ${aws_api_gateway_rest_api.cirrus_api_gateway.name} API Gateway 5XX Errors Critical Alarm"
+  comparison_operator       = "GreaterThanOrEqualToThreshold"
+  evaluation_periods        = 5
+  metric_name               = "5XXError"
+  namespace                 = "AWS/ApiGateway"
+  period                    = 60
+  statistic                 = "Sum"
+  threshold                 = 100
+  treat_missing_data        = "notBreaching"
+  alarm_description         = "${aws_api_gateway_rest_api.cirrus_api_gateway.name} Cirrus API Gateway 5XX Errors Critical Alarm"
+  alarm_actions             = [var.critical_sns_topic_arn]
+  ok_actions                = [var.warning_sns_topic_arn]
+  insufficient_data_actions = []
+
+  dimensions = {
+    FunctionName = aws_api_gateway_rest_api.cirrus_api_gateway.name
+  }
+}

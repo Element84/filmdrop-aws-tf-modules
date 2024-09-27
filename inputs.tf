@@ -46,21 +46,6 @@ variable "security_group_id" {
   default     = ""
 }
 
-variable "sns_topics_map" {
-  type    = map(any)
-  default = {}
-}
-
-variable "cloudwatch_warning_alarms_map" {
-  type    = map(any)
-  default = {}
-}
-
-variable "cloudwatch_critical_alarms_map" {
-  type    = map(any)
-  default = {}
-}
-
 variable "sns_warning_subscriptions_map" {
   type    = map(any)
   default = {}
@@ -354,6 +339,11 @@ variable "cirrus_inputs" {
     data_bucket    = string
     payload_bucket = string
     log_level      = string
+    deploy_alarms  = bool
+    custom_alarms = object({
+      warning  = map(any)
+      critical = map(any)
+    })
     process = object({
       sqs_timeout           = number
       sqs_max_receive_count = number
@@ -388,6 +378,11 @@ variable "cirrus_inputs" {
     data_bucket    = "cirrus-data-bucket-name"
     payload_bucket = "cirrus-payload-bucket-name"
     log_level      = "INFO"
+    deploy_alarms  = true
+    custom_alarms = {
+      warning  = {}
+      critical = {}
+    }
     process = {
       sqs_timeout           = 180
       sqs_max_receive_count = 5
@@ -493,12 +488,6 @@ variable "deploy_log_archive" {
   type        = bool
   default     = true
   description = "Deploy FilmDrop Log Archive Bucket"
-}
-
-variable "deploy_alarms" {
-  type        = bool
-  default     = false
-  description = "Deploy FilmDrop Alarms stack"
 }
 
 variable "deploy_stac_server" {

@@ -23,4 +23,7 @@ module "cirrus" {
   cirrus_pre_batch_lambda_memory                            = var.cirrus_inputs.pre_batch_lambda.memory
   cirrus_post_batch_lambda_timeout                          = var.cirrus_inputs.post_batch_lambda.timeout
   cirrus_post_batch_lambda_memory                           = var.cirrus_inputs.post_batch_lambda.memory
+  warning_sns_topic_arn                                     = var.warning_sns_topic_arn
+  critical_sns_topic_arn                                    = var.critical_sns_topic_arn
+  deploy_alarms                                             = var.cirrus_inputs.deploy_alarms
 }

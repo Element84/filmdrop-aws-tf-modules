@@ -8,4 +8,6 @@ module "base-builtins" {
   cirrus_timestream_memory_store_retention_period_in_hours  = var.cirrus_timestream_memory_store_retention_period_in_hours
   cirrus_data_bucket                                        = var.cirrus_data_bucket
   cirrus_payload_bucket                                     = var.cirrus_payload_bucket
+  warning_sns_topic_arn                                     = var.warning_sns_topic_arn
+  deploy_alarms                                             = var.deploy_alarms
 }

@@ -7,7 +7,6 @@ module "base_infra" {
 
   deploy_vpc                     = var.deploy_vpc
   deploy_vpc_search              = var.deploy_vpc_search
-  deploy_alarms                  = var.deploy_alarms
   deploy_log_archive             = var.deploy_log_archive
   deploy_waf_rule                = var.deploy_waf_rule
   ext_web_acl_id                 = var.ext_web_acl_id
@@ -17,12 +16,9 @@ module "base_infra" {
   project_name                   = var.project_name
   vpc_cidr                       = var.vpc_cidr
   vpc_id                         = var.vpc_id
-  sns_topics_map                 = var.sns_topics_map
   security_group_id              = var.security_group_id
   private_subnets_az_to_id_map   = var.private_subnets_az_to_id_map
   public_subnets_az_to_id_map    = var.public_subnets_az_to_id_map
-  cloudwatch_warning_alarms_map  = var.cloudwatch_warning_alarms_map
-  cloudwatch_critical_alarms_map = var.cloudwatch_critical_alarms_map
   sns_warning_subscriptions_map  = var.sns_warning_subscriptions_map
   sns_critical_subscriptions_map = var.sns_critical_subscriptions_map
   s3_access_log_bucket           = var.s3_access_log_bucket
@@ -128,11 +124,13 @@ module "cirrus" {
   count  = var.deploy_cirrus ? 1 : 0
   source = "../cirrus"
 
-  project_name       = var.project_name
-  environment        = var.environment
-  private_subnet_ids = module.base_infra.private_subnet_ids
-  security_group_id  = module.base_infra.security_group_id
-  cirrus_inputs      = var.cirrus_inputs
+  project_name           = var.project_name
+  environment            = var.environment
+  private_subnet_ids     = module.base_infra.private_subnet_ids
+  security_group_id      = module.base_infra.security_group_id
+  cirrus_inputs          = var.cirrus_inputs
+  warning_sns_topic_arn  = module.base_infra.warning_sns_topic_arn
+  critical_sns_topic_arn = module.base_infra.critical_sns_topic_arn
 }
 
 module "cirrus-dashboard" {

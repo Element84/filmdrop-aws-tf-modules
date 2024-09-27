@@ -237,7 +237,6 @@ or by changing all infrastructure flags to false in your tfvars and performing a
 deploy_vpc                          = false
 deploy_vpc_search                   = false
 deploy_log_archive                  = false
-deploy_alarms                       = false
 deploy_stac_server                  = false
 deploy_analytics                    = false
 deploy_titiler                      = false

@@ -13,9 +13,6 @@ public_subnets_az_to_id_map  = {}
 private_subnets_az_to_id_map = {}
 
 ##### ALARM VARIABLES ####
-sns_topics_map                 = {}
-cloudwatch_warning_alarms_map  = {}
-cloudwatch_critical_alarms_map = {}
 sns_warning_subscriptions_map  = {}
 sns_critical_subscriptions_map = {}
 
@@ -153,6 +150,11 @@ cirrus_inputs = {
   data_bucket    = "cirrus-data-bucket-name"
   payload_bucket = "cirrus-payload-bucket-name"
   log_level      = "DEBUG"
+  deploy_alarms  = true
+  custom_alarms = {
+    warning  = {}
+    critical = {}
+  }
   process = {
     sqs_timeout           = 180
     sqs_max_receive_count = 5
@@ -218,7 +220,6 @@ cirrus_dashboard_inputs = {
 deploy_vpc                               = false
 deploy_vpc_search                        = true
 deploy_log_archive                       = true
-deploy_alarms                            = false
 deploy_stac_server_opensearch_serverless = true
 deploy_stac_server                       = true
 deploy_stac_server_outside_vpc           = false

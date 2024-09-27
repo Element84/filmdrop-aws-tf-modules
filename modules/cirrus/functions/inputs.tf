@@ -157,3 +157,19 @@ variable "cirrus_api_stage_description" {
   type        = string
   default     = ""
 }
+
+variable "warning_sns_topic_arn" {
+  description = "String with FilmDrop Warning SNS topic ARN"
+  type        = string
+}
+
+variable "critical_sns_topic_arn" {
+  description = "String with FilmDrop Critical SNS topic ARN"
+  type        = string
+}
+
+variable "deploy_alarms" {
+  type        = bool
+  default     = true
+  description = "Deploy Cirrus Alarms stack"
+}

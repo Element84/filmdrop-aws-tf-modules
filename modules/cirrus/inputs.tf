@@ -131,3 +131,31 @@ variable "vpc_security_group_ids" {
   description = "List of security groups in the FilmDrop vpc"
   type        = list(string)
 }
+
+variable "warning_sns_topic_arn" {
+  description = "String with FilmDrop Warning SNS topic ARN"
+  type        = string
+}
+
+variable "critical_sns_topic_arn" {
+  description = "String with FilmDrop Critical SNS topic ARN"
+  type        = string
+}
+
+variable "deploy_alarms" {
+  type        = bool
+  default     = true
+  description = "Deploy Cirrus Alarms stack"
+}
+
+variable "custom_cloudwatch_warning_alarms_map" {
+  description = "Map with custom CloudWatch Warning Alarms"
+  type        = map(any)
+  default     = {}
+}
+
+variable "custom_cloudwatch_critical_alarms_map" {
+  description = "Map with custom CloudWatch Critical Alarms"
+  type        = map(any)
+  default     = {}
+}

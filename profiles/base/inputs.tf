@@ -46,21 +46,6 @@ variable "security_group_id" {
   default     = ""
 }
 
-variable "sns_topics_map" {
-  type    = map(any)
-  default = {}
-}
-
-variable "cloudwatch_warning_alarms_map" {
-  type    = map(any)
-  default = {}
-}
-
-variable "cloudwatch_critical_alarms_map" {
-  type    = map(any)
-  default = {}
-}
-
 variable "sns_warning_subscriptions_map" {
   type    = map(any)
   default = {}
@@ -93,12 +78,6 @@ variable "deploy_log_archive" {
   type        = bool
   default     = true
   description = "Deploy FilmDrop Log Archive Bucket"
-}
-
-variable "deploy_alarms" {
-  type        = bool
-  default     = false
-  description = "Deploy FilmDrop Alarms stack"
 }
 
 variable "deploy_vpc_search" {

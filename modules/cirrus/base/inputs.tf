@@ -36,3 +36,14 @@ variable "cirrus_payload_bucket" {
   description = "Cirrus payload bucket"
   type        = string
 }
+
+variable "warning_sns_topic_arn" {
+  description = "String with FilmDrop Warning SNS topic ARN"
+  type        = string
+}
+
+variable "deploy_alarms" {
+  type        = bool
+  default     = true
+  description = "Deploy Cirrus Alarms stack"
+}
