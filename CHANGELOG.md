@@ -15,6 +15,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Removed
 
+## 2.29.0 - 2024-09-27
+
+### Added
+
+- Base Cirrus alarms
+- Default FilmDrop Warning and Critical SNS Topics
+
 ## 2.28.0 - 2024-09-13
 
 ### Added
