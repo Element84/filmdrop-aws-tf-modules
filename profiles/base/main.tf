@@ -34,14 +34,14 @@ module "sns_warning_subscriptions" {
   source = "../../modules/base_infra/sns_subscriptions"
 
   sns_topics_subscriptions_map = var.sns_warning_subscriptions_map
-  sns_topic_arn                = module.sns_alarm_topics[0].sns_topic_arns["fd-${var.project_name}-${var.environment}-AlarmWarning"]
+  sns_topic_arn                = module.sns_alarm_topics.sns_topic_arns["fd-${var.project_name}-${var.environment}-AlarmWarning"]
 }
 
 module "sns_critical_subscriptions" {
   source = "../../modules/base_infra/sns_subscriptions"
 
   sns_topics_subscriptions_map = var.sns_critical_subscriptions_map
-  sns_topic_arn                = module.sns_alarm_topics[0].sns_topic_arns["fd-${var.project_name}-${var.environment}-AlarmCritical"]
+  sns_topic_arn                = module.sns_alarm_topics.sns_topic_arns["fd-${var.project_name}-${var.environment}-AlarmCritical"]
 }
 
 module "fd_waf_acl" {
