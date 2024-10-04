@@ -151,8 +151,8 @@ console_ui_inputs = {
 }
 
 cirrus_inputs = {
-  data_bucket    = "cirrus-data-bucket-name"
-  payload_bucket = "cirrus-payload-bucket-name"
+  data_bucket    = "" # If left blank the deployment will create the data bucket
+  payload_bucket = "" # If left blank the deployment will create the payload bucket
   log_level      = "DEBUG"
   deploy_alarms  = true
   custom_alarms = {

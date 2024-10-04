@@ -5,8 +5,8 @@ module "functions" {
   vpc_security_group_ids                           = var.vpc_security_group_ids
   cirrus_prefix                                    = local.cirrus_prefix
   cirrus_log_level                                 = var.cirrus_log_level
-  cirrus_data_bucket                               = var.cirrus_data_bucket
-  cirrus_payload_bucket                            = var.cirrus_payload_bucket
+  cirrus_data_bucket                               = module.base-builtins.cirrus_data_bucket
+  cirrus_payload_bucket                            = module.base-builtins.cirrus_payload_bucket
   cirrus_api_lambda_timeout                        = var.cirrus_api_lambda_timeout
   cirrus_api_lambda_memory                         = var.cirrus_api_lambda_memory
   cirrus_process_lambda_timeout                    = var.cirrus_process_lambda_timeout
