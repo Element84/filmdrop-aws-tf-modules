@@ -28,6 +28,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 - Builtin lambdas added to cirrus module along with script to update deployment zip
 - API Gateway infrastructure for Cirrus API
+- Creation of Cirrus Data and Payload S3 bucket if none is defined via inputs
 
 ### Changed
 

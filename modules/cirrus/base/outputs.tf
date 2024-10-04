@@ -63,9 +63,9 @@ output "cirrus_instance_profile_arn" {
 }
 
 output "cirrus_data_bucket" {
-  value = var.cirrus_data_bucket
+  value = var.cirrus_data_bucket != "" ? var.cirrus_data_bucket : aws_s3_bucket.cirrus_data_bucket[0].id
 }
 
 output "cirrus_payload_bucket" {
-  value = var.cirrus_payload_bucket
+  value = var.cirrus_payload_bucket != "" ? var.cirrus_payload_bucket : aws_s3_bucket.cirrus_payload_bucket[0].id
 }
