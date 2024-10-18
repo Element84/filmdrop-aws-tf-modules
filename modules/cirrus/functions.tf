@@ -30,4 +30,8 @@ module "functions" {
   warning_sns_topic_arn                            = var.warning_sns_topic_arn
   critical_sns_topic_arn                           = var.critical_sns_topic_arn
   deploy_alarms                                    = var.deploy_alarms
+  additional_lambdas                               = var.additional_lambdas
+  additional_lambda_roles                          = var.additional_lambda_roles
+  additional_warning_alarms                        = var.additional_warning_alarms
+  additional_error_alarms                          = var.additional_error_alarms
 }
