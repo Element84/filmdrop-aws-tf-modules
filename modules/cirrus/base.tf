@@ -1,4 +1,9 @@
-module "base-builtins" {
+moved {
+  from = module.base-builtins
+  to   = module.base
+}
+
+module "base" {
   source = "./base"
 
   cirrus_prefix                                             = local.cirrus_prefix
