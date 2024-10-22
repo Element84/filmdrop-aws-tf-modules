@@ -14,7 +14,7 @@
 set -euo pipefail
 
 
-CIRRUS_LAMBDA_DIST_PATH="modules/cirrus/cirrus-lambda-dist.zip"
+CIRRUS_LAMBDA_DIST_PATH="modules/cirrus/builtin-functions/cirrus-lambda-dist.zip"
 
 
 find_this () {

@@ -19,7 +19,7 @@ ignore:
     - 'modules/stac-server/api.tf > *':
         reason: Open API - no auth required
         created: 2024-03-21T14:35:23.783Z
-    - './profiles/core/../cirrus/../../modules/cirrus/functions/api.tf > *':
+    - './profiles/core/../cirrus/../../modules/cirrus/builtin-functions/api.tf > *':
         reason: Open API - no auth required
         created: 2024-09-12T14:35:23.783Z
   SNYK-CC-00185:

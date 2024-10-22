@@ -239,7 +239,7 @@ resource "aws_api_gateway_account" "cirrus_api_gateway_cw_role" {
 }
 
 resource "aws_iam_role" "cirrus_api_gw_role" {
-  name_prefix = "${var.cirrus_prefix}-cirrus-${data.aws_region.current.name}"
+  name_prefix = "${var.cirrus_prefix}-${data.aws_region.current.name}"
 
   assume_role_policy = <<EOF
 {
@@ -258,7 +258,7 @@ EOF
 }
 
 resource "aws_iam_policy" "cirrus_api_gw_policy" {
-  name_prefix = "${var.cirrus_prefix}-cirrus-${data.aws_region.current.name}-apigw"
+  name_prefix = "${var.cirrus_prefix}-${data.aws_region.current.name}-apigw"
 
   policy = <<EOF
 {
