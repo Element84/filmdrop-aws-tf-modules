@@ -13,6 +13,7 @@ resource "aws_lambda_function" "additional" {
   memory_size   = each.value.memory_mb
   publish       = each.value.publish
   architectures = each.value.architectures
+  package_type  = each.value.ecr_image_uri == null ? "Zip" : "Image"
 
   environment {
     variables = {
