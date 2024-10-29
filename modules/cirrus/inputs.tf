@@ -210,3 +210,75 @@ variable "additional_error_alarms" {
   )
   default = {}
 }
+
+variable "cirrus_tasks" {
+  description = "List of configuration blocks each defining a single Cirrus Task"
+  type = list(object({
+    name = string
+    lambda = optional(object({
+      description   = optional(string)
+      ecr_image_uri = optional(string)
+      image_config = optional(object({
+        command           = optional(list(string))
+        entry_point       = optional(list(string))
+        working_directory = optional(string)
+      }))
+      s3_bucket       = optional(string)
+      s3_key          = optional(string)
+      handler         = optional(string)
+      runtime         = optional(string)
+      timeout_seconds = optional(number)
+      memory_mb       = optional(number)
+      publish         = optional(bool)
+      architectures   = optional(list(string))
+      env_vars        = optional(map(string))
+      vpc_enabled     = optional(bool)
+      role_statements = optional(list(object({
+        sid           = string
+        effect        = string
+        actions       = list(string)
+        resources     = list(string)
+        not_actions   = optional(list(string))
+        not_resources = optional(list(string))
+        condition = optional(object({
+          test     = string
+          variable = string
+          values   = list(string)
+        }))
+        principals = optional(object({
+          type        = string
+          identifiers = list(string)
+        }))
+        not_principals = optional(object({
+          type        = string
+          identifiers = list(string)
+        }))
+      })))
+      alarms = optional(list(object({
+        critical            = bool
+        statistic           = string
+        metric_name         = string
+        comparison_operator = string
+        threshold           = number
+        period              = optional(number, 60)
+        evaluation_periods  = optional(number, 5)
+      })))
+    }))
+    batch = optional(any)
+  }))
+  default = []
+}
+
+variable "cirrus_workflows" {
+  description = "List of configuration blocks each defining a single Cirrus Workflow"
+  type = list(object({
+    name     = string
+    template = string
+    variables = optional(map(object({
+      task_name = string
+      task_type = string
+      task_attr = string
+    })))
+  }))
+  default = []
+}

@@ -184,6 +184,9 @@ cirrus_inputs = {
     timeout = 15
     memory  = 128
   }
+  # TODO - CVG - add proper tests
+  tasks     = []
+  workflows = []
 }
 
 cirrus_dashboard_inputs = {
