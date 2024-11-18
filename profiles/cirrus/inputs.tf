@@ -27,7 +27,7 @@ variable "security_group_id" {
 }
 
 variable "cirrus_inputs" {
-  description = "Inputs for FilmDrop Cirrus deployment."
+  description = "Inputs for FilmDrop Cirrus deployment"
   type = object({
     data_bucket    = string
     payload_bucket = string
@@ -66,8 +66,97 @@ variable "cirrus_inputs" {
       timeout = number
       memory  = number
     })
-    tasks = list(object({
+    tasks_batch_compute = optional(list(object({
       name = string
+      batch_compute_environment_existing = optional(object({
+        name       = string
+        is_fargate = bool
+      }))
+      batch_compute_environment = optional(object({
+        compute_resources = object({
+          max_vcpus           = number
+          type                = string
+          allocation_strategy = optional(string)
+          bid_percentage      = optional(number)
+          desired_vcpus       = optional(number)
+          ec2_configuration = optional(object({
+            image_id_override = optional(string)
+            image_type        = optional(string)
+          }))
+          ec2_key_pair       = optional(string)
+          instance_type      = optional(list(string))
+          min_vcpus          = optional(number)
+          placement_group    = optional(string)
+          security_group_ids = optional(list(string))
+          subnets            = optional(list(string))
+        })
+        state = optional(string)
+        type  = optional(string)
+        update_policy = optional(object({
+          job_execution_timeout_minutes = number
+          terminate_jobs_on_update      = bool
+        }))
+      }))
+      batch_job_queue_existing = optional(object({
+        name = string
+      }))
+      batch_job_queue = optional(object({
+        fair_share_policy = optional(object({
+          compute_reservation = optional(number)
+          share_decay_seconds = optional(number)
+          share_distributions = list(object({
+            share_identifier = string
+            weight_factor    = number
+          }))
+        }))
+        state = optional(string)
+      }))
+      ec2_launch_template_existing = optional(object({
+        name = string
+      }))
+      ec2_launch_template = optional(object({
+        user_data     = optional(string)
+        ebs_optimized = optional(bool)
+        block_device_mappings = optional(list(object({
+          device_name  = string
+          no_device    = optional(bool)
+          virtual_name = optional(string)
+          ebs = optional(object({
+            delete_on_termination = optional(bool)
+            encrypted             = optional(bool)
+            iops                  = optional(string)
+            kms_key_id            = optional(string)
+            snapshot_id           = optional(string)
+            throughput            = optional(number)
+            volume_size           = optional(number)
+            volume_type           = optional(string)
+          }))
+        })))
+      }))
+    })))
+    tasks = optional(list(object({
+      name = string
+      common_role_statements = optional(list(object({
+        sid           = string
+        effect        = string
+        actions       = list(string)
+        resources     = list(string)
+        not_actions   = optional(list(string))
+        not_resources = optional(list(string))
+        condition = optional(object({
+          test     = string
+          variable = string
+          values   = list(string)
+        }))
+        principals = optional(object({
+          type        = string
+          identifiers = list(string)
+        }))
+        not_principals = optional(object({
+          type        = string
+          identifiers = list(string)
+        }))
+      })))
       lambda = optional(object({
         description   = optional(string)
         ecr_image_uri = optional(string)
@@ -117,17 +206,54 @@ variable "cirrus_inputs" {
           evaluation_periods  = optional(number, 5)
         })))
       }))
-      batch = optional(any)
-    }))
-    workflows = list(object({
-      name     = string
-      template = string
+      batch = optional(object({
+        tasks_batch_compute_name = string
+        container_properties     = string
+        retry_strategy = optional(object({
+          attempts = number
+          evaluate_on_exit = optional(list(object({
+            action           = string
+            on_exit_code     = optional(string)
+            on_reason        = optional(string)
+            on_status_reason = optional(string)
+          })))
+        }))
+        parameters = optional(map(string))
+        role_statements = optional(list(object({
+          sid           = string
+          effect        = string
+          actions       = list(string)
+          resources     = list(string)
+          not_actions   = optional(list(string))
+          not_resources = optional(list(string))
+          condition = optional(object({
+            test     = string
+            variable = string
+            values   = list(string)
+          }))
+          principals = optional(object({
+            type        = string
+            identifiers = list(string)
+          }))
+          not_principals = optional(object({
+            type        = string
+            identifiers = list(string)
+          }))
+        })))
+        scheduling_priority = optional(number)
+        timeout_seconds     = optional(number)
+      }))
+    })))
+    workflows = optional(list(object({
+      name                   = string
+      template               = string
+      non_cirrus_lambda_arns = optional(list(string))
       variables = optional(map(object({
         task_name = string
         task_type = string
         task_attr = string
       })))
-    }))
+    })))
   })
   default = {
     data_bucket    = "cirrus-data-bucket-name"
@@ -167,8 +293,9 @@ variable "cirrus_inputs" {
       timeout = 15
       memory  = 128
     }
-    tasks     = []
-    workflows = []
+    tasks_batch_compute = []
+    tasks               = []
+    workflows           = []
   }
 }
 

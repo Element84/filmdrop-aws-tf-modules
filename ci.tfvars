@@ -185,8 +185,9 @@ cirrus_inputs = {
     memory  = 128
   }
   # TODO - CVG - add proper tests
-  tasks     = []
-  workflows = []
+  tasks_batch_compute = []
+  tasks               = []
+  workflows           = []
 }
 
 cirrus_dashboard_inputs = {

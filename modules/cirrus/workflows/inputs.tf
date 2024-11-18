@@ -4,23 +4,36 @@ variable "cirrus_prefix" {
 }
 
 variable "cirrus_tasks" {
-  description = "The Cirrus Task Terraform module output which describes created Cirrus Tasks"
+  description = "Optional output from the Cirrus Terraform tasks module"
   type = map(object({
     lambda = object({
-      arn = optional(string)
+      function_arn = optional(string)
+    })
+    batch = object({
+      job_queue_arn      = optional(string)
+      job_definition_arn = optional(string)
     })
   }))
+
+  # Tasks aren't technically needed if the user's workflow JSON template doesn't
+  # reference any variables, though this is unlikely.
+  nullable = true
 }
 
 variable "workflow_config" {
-  description = "Configuration block defining a single Cirrus Workflow"
+  description = "Configuration object defining a single Cirrus Workflow"
   type = object({
-    name     = string
-    template = string
+    name                   = string
+    template               = string
+    additional_lambda_arns = optional(list(string))
+    # Each map key here must be a key in the 'cirrus_tasks' map above
     variables = optional(map(object({
       task_name = string
       task_type = string
       task_attr = string
     })))
   })
+
+  # Value must be provided else this module serves no purpose
+  nullable = false
 }

@@ -188,8 +188,9 @@ cirrus_inputs = {
     timeout = 15
     memory  = 128
   }
-  tasks     = []
-  workflows = []
+  tasks_batch_compute = []
+  tasks               = []
+  workflows           = []
 }
 
 cirrus_dashboard_inputs = {

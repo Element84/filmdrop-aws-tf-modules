@@ -1,14 +1,12 @@
 output "lambda" {
   value = {
-    arn = one(aws_lambda_function.task_lambda[*].arn)
-    # ... other things that are needed
+    function_arn = one(aws_lambda_function.task_lambda[*].arn)
   }
 }
 
-# TODO - CVG - no Batch yet
-# output "batch" {
-#   value = {
-#     arn = one(aws_lambda_function.task_lambda[*].arn)
-#     # ... other things that are needed
-#   }
-# }
+output "batch" {
+  value = {
+    job_queue_arn      = try(local.batch_compute_config.job_queue_arn, null)
+    job_definition_arn = one(aws_batch_job_definition.task[*].arn)
+  }
+}
