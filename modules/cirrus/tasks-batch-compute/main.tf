@@ -99,6 +99,8 @@ data "aws_iam_policy_document" "task_ec2_assume_role_policy" {
     }
 
     # Conditions to prevent the "confused deputy" security problem
+    # The "aws:SourceArn" can't be strictly defined as the Batch-managed EC2
+    # instances will have unique IDs.
     condition {
       test     = "ArnEquals"
       variable = "aws:SourceArn"
@@ -153,8 +155,9 @@ data "aws_iam_policy_document" "task_ecs_assume_role_policy" {
       identifiers = ["ecs-tasks.amazonaws.com"]
     }
 
-    # TODO - CVG - test Fargate further
     # Conditions to prevent the "confused deputy" security problem
+    # The "aws:SourceArn" can't be strictly defined as ECS clusters do not
+    # currently support it.
     condition {
       test     = "ArnEquals"
       variable = "aws:SourceArn"
@@ -201,12 +204,13 @@ data "aws_iam_policy_document" "task_spot_fleet_assume_role_policy" {
       identifiers = ["spotfleet.amazonaws.com"]
     }
 
-    # TODO - CVG - test spot fleet further
-    # Conditions to prevent the "confused deputy" security problem
+    # Conditions to prevent the "confused deputy" security problem.
+    # The "aws:SourceArn" can't be strictly defined as Spot Fleet request ARNs
+    # have UUID suffixes.
     condition {
       test     = "ArnEquals"
       variable = "aws:SourceArn"
-      values   = ["arn:aws:ecs:${local.current_region}:${local.current_account}:*"]
+      values   = ["arn:aws:ec2:${local.current_region}:${local.current_account}:spot-fleet-request/sfr-*"]
     }
     condition {
       test     = "StringEquals"
@@ -250,12 +254,17 @@ data "aws_iam_policy_document" "task_batch_assume_role_policy" {
       identifiers = ["batch.amazonaws.com"]
     }
 
-    # TODO - CVG - test this
-    # Conditions to prevent the "confused deputy" security problem
+    # Conditions to prevent the "confused deputy" security problem.
+    # The Batch compute environment "aws:SourceArn" can't be strictly defined as
+    # they have randomly-generated suffixes added to their name.
+    # The Batch job "aws:SourceArn" can't be strictly defined as they use UUIDs.
     condition {
       test     = "ArnEquals"
       variable = "aws:SourceArn"
-      values   = ["arn:aws:batch:${local.current_region}:${local.current_account}:compute-environment/*"]
+      values   = [
+        "arn:aws:batch:${local.current_region}:${local.current_account}:compute-environment/*",
+        "arn:aws:batch:${local.current_region}:${local.current_account}:job/*"
+      ]
     }
     condition {
       test     = "StringEquals"
