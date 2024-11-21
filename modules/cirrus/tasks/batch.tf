@@ -56,7 +56,7 @@ data "aws_iam_policy_document" "task_batch_assume_role_policy" {
 resource "aws_iam_role" "task_batch" {
   count = local.create_batch_job_role ? 1 : 0
 
-  name_prefix        = "${var.cirrus_prefix}-task-role-gerp-"
+  name_prefix        = "${var.cirrus_prefix}-task-role-"
   description        = "Batch Job / ECS Task role for Cirrus Task '${var.task_config.name}'"
   assume_role_policy = data.aws_iam_policy_document.task_batch_assume_role_policy[0].json
 }
@@ -181,7 +181,6 @@ resource "aws_batch_job_definition" "task" {
     content {
       attempts = retry_strategy.value.attempts
 
-      # TODO - test without evaluate on exit
       dynamic "evaluate_on_exit" {
         for_each = coalesce(retry_strategy.value.evaluate_on_exit, [])
         iterator = eoe

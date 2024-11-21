@@ -42,6 +42,10 @@ locals {
       v_cfg.task_attr == "job_queue_arn" || v_cfg.task_attr == "job_definition_arn"
     )
   ]
+
+  # Submit/Invoke permissions only necessary if Batch/Lambda resources are used
+  create_batch_policy = (length(local.workflow_tasks_batch_resources) != 0)
+  create_lambda_policy = (length(local.workflow_tasks_lambda_functions) != 0)
 }
 
 
@@ -85,6 +89,8 @@ resource "aws_iam_role" "workflow_machine" {
 # WORKFLOW STATE MACHINE IAM ROLE -- LAMBDA PERMISSIONS
 # ------------------------------------------------------------------------------
 data "aws_iam_policy_document" "workflow_machine_task_lambda_policy" {
+  count = local.create_lambda_policy ? 1 : 0
+
   statement {
     # Allow the state machine to invoke all referenced task Lambdas
     effect    = "Allow"
@@ -94,9 +100,11 @@ data "aws_iam_policy_document" "workflow_machine_task_lambda_policy" {
 }
 
 resource "aws_iam_role_policy" "workflow_machine_task_lambda_policy" {
+  count = local.create_lambda_policy ? 1 : 0
+
   name_prefix = "${var.cirrus_prefix}-workflow-role-task-lambda-policy-"
   role        = aws_iam_role.workflow_machine.name
-  policy      = data.aws_iam_policy_document.workflow_machine_task_lambda_policy.json
+  policy      = data.aws_iam_policy_document.workflow_machine_task_lambda_policy[0].json
 }
 # ==============================================================================
 
@@ -104,6 +112,8 @@ resource "aws_iam_role_policy" "workflow_machine_task_lambda_policy" {
 # WORKFLOW STATE MACHINE IAM ROLE -- BATCH PERMISSIONS
 # ------------------------------------------------------------------------------
 data "aws_iam_policy_document" "workflow_machine_task_batch_policy" {
+  count = local.create_batch_policy ? 1 : 0
+
   statement {
     # Batch only has partial support for resource-level permissions. See:
     # https://docs.aws.amazon.com/batch/latest/userguide/batch-supported-iam-actions-resources.html
@@ -144,9 +154,11 @@ data "aws_iam_policy_document" "workflow_machine_task_batch_policy" {
 }
 
 resource "aws_iam_role_policy" "workflow_machine_task_batch_policy" {
+  count = local.create_batch_policy ? 1 : 0
+
   name_prefix = "${var.cirrus_prefix}-workflow-role-task-batch-policy-"
   role        = aws_iam_role.workflow_machine.name
-  policy      = data.aws_iam_policy_document.workflow_machine_task_batch_policy.json
+  policy      = data.aws_iam_policy_document.workflow_machine_task_batch_policy[0].json
 }
 # ==============================================================================
 

@@ -25,7 +25,7 @@ variable "workflow_config" {
   type = object({
     name                   = string
     template               = string
-    additional_lambda_arns = optional(list(string))
+    non_cirrus_lambda_arns = optional(list(string))
     # Each map key here must be a key in the 'cirrus_tasks' map above
     variables = optional(map(object({
       task_name = string

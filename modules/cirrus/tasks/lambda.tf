@@ -16,6 +16,12 @@ locals {
   # This is needed by the Lambda execution role prior to function creation, so a
   # resource reference cannot be used.
   task_lambda_function_name = "${var.cirrus_prefix}-${var.task_config.name}"
+
+  # Lambdas running within the VPC will require additional permissions
+  deploy_lambda_in_vpc = (
+    local.create_lambda
+    && try(coalesce(var.task_config.lambda.vpc_enabled, true), true)
+  )
 }
 
 
@@ -75,10 +81,7 @@ resource "aws_iam_role_policy_attachment" "lambda_read_only" {
 }
 
 resource "aws_iam_role_policy_attachment" "lambda_vpc_access" {
-  count = (
-    local.create_lambda
-    && try(var.task_config.lambda.vpc_enabled, false)
-  ) ? 1 : 0
+  count = (local.create_lambda && local.deploy_lambda_in_vpc) ? 1 : 0
 
   role       = aws_iam_role.task_lambda[0].name
   policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole"
@@ -219,7 +222,7 @@ resource "aws_lambda_function" "task_lambda" {
   # Optional value stored as a configuration block.
   # A single instance is created only if 'vpc_config' was provided.
   dynamic "vpc_config" {
-    for_each = var.task_config.lambda.vpc_enabled ? [1] : []
+    for_each = local.deploy_lambda_in_vpc ? [1] : []
     content {
       security_group_ids = var.vpc_security_group_ids
       subnet_ids         = var.vpc_subnet_ids

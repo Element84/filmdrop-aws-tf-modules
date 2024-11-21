@@ -117,7 +117,7 @@ data "aws_iam_policy_document" "task_ec2_assume_role_policy" {
 resource "aws_iam_role" "task_ec2" {
   count = local.create_instance_profile ? 1 : 0
 
-  name_prefix        = "${var.cirrus_prefix}-task-role-"
+  name_prefix        = "${var.cirrus_prefix}-compute-role-"
   description        = "EC2 instance role for Cirrus Task Compute '${var.batch_compute_config.name}'"
   assume_role_policy = data.aws_iam_policy_document.task_ec2_assume_role_policy[0].json
 }
@@ -132,7 +132,7 @@ resource "aws_iam_role_policy_attachment" "aws_managed_ecs_for_ec2" {
 resource "aws_iam_instance_profile" "task_ec2" {
   count = local.create_instance_profile ? 1 : 0
 
-  name_prefix = "${var.cirrus_prefix}-task-profile-"
+  name_prefix = "${var.cirrus_prefix}-compute-role-"
   role        = aws_iam_role.task_ec2[0].name
 }
 # ==============================================================================
@@ -174,7 +174,7 @@ data "aws_iam_policy_document" "task_ecs_assume_role_policy" {
 resource "aws_iam_role" "task_ecs" {
   count = local.create_ecs_execution_role ? 1 : 0
 
-  name_prefix        = "${var.cirrus_prefix}-task-role-"
+  name_prefix        = "${var.cirrus_prefix}-compute-role-"
   assume_role_policy = data.aws_iam_policy_document.task_ecs_assume_role_policy[0].json
 }
 
@@ -223,7 +223,7 @@ data "aws_iam_policy_document" "task_spot_fleet_assume_role_policy" {
 resource "aws_iam_role" "task_spot_fleet" {
   count = local.create_spot_fleet_role ? 1 : 0
 
-  name_prefix        = "${var.cirrus_prefix}-task-role-"
+  name_prefix        = "${var.cirrus_prefix}-compute-role-"
   description        = "EC2 Spot Fleet role for Cirrus Task Compute '${var.batch_compute_config.name}'"
   assume_role_policy = data.aws_iam_policy_document.task_spot_fleet_assume_role_policy[0].json
 }
@@ -277,7 +277,7 @@ data "aws_iam_policy_document" "task_batch_assume_role_policy" {
 resource "aws_iam_role" "task_batch" {
   count = local.create_compute_environment ? 1 : 0
 
-  name_prefix        = "${var.cirrus_prefix}-task-role-"
+  name_prefix        = "${var.cirrus_prefix}-compute-role-"
   description        = "Batch service role for Cirrus Task Compute '${var.batch_compute_config.name}'"
   assume_role_policy = data.aws_iam_policy_document.task_batch_assume_role_policy[0].json
 }
@@ -320,7 +320,7 @@ data "aws_launch_template" "task_batch" {
 resource "aws_launch_template" "task_batch" {
   count = local.create_launch_template ? 1 : 0
 
-  name        = "${var.cirrus_prefix}-task-compute-${var.batch_compute_config.name}"
+  name        = "${var.cirrus_prefix}-compute-${var.batch_compute_config.name}"
   description = "EC2 Launch Template for Cirrus Task Batch Compute item '${var.batch_compute_config.name}'"
 
   # Always update default to be the latest one managed by Terraform.
@@ -446,6 +446,11 @@ resource "aws_batch_compute_environment" "task_batch" {
 
   # Explicit dependency needed to avoid race condition during deletion
   depends_on = [aws_iam_role_policy_attachment.aws_managed_batch_service_role]
+
+  lifecycle {
+    # Create a new CE first to allow the job queue to migrate before CE deletion
+    create_before_destroy = true
+  }
 }
 # ==============================================================================
 

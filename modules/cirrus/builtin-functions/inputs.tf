@@ -174,6 +174,7 @@ variable "deploy_alarms" {
   description = "Deploy Cirrus Alarms stack"
 }
 
+# TODO - CVG - remove if necessary
 variable "additional_lambdas" {
   description = "Map of lambda name (without cirrus prefix) to lambda detailed configuration"
   type = map(

@@ -441,7 +441,7 @@ variable "cirrus_inputs" {
         })))
       }))
     })))
-    tasks = list(object({
+    tasks = optional(list(object({
       name = string
       common_role_statements = optional(list(object({
         sid           = string
@@ -550,8 +550,8 @@ variable "cirrus_inputs" {
         scheduling_priority = optional(number)
         timeout_seconds     = optional(number)
       }))
-    }))
-    workflows = list(object({
+    })))
+    workflows = optional(list(object({
       name                   = string
       template               = string
       non_cirrus_lambda_arns = optional(list(string))
@@ -560,7 +560,7 @@ variable "cirrus_inputs" {
         task_type = string
         task_attr = string
       })))
-    }))
+    })))
   })
   default = {
     data_bucket    = "cirrus-data-bucket-name"
