@@ -160,57 +160,6 @@ variable "custom_cloudwatch_critical_alarms_map" {
   default     = {}
 }
 
-variable "additional_lambdas" {
-  description = "Map of lambda name (without cirrus prefix) to lambda detailed configuration"
-  type = map(
-    object({
-      description     = string,
-      ecr_image_uri   = optional(string, null),
-      s3_bucket       = optional(string, null),
-      s3_key          = optional(string, null),
-      handler         = string,
-      memory_mb       = optional(number, 128),
-      timeout_seconds = optional(number, 10),
-      runtime         = string,
-      publish         = optional(bool, true),
-      architectures   = optional(list(string), ["x86_64"]),
-      env_vars        = optional(map(string), {}),
-      vpc_enabled     = optional(bool, true)
-    })
-  )
-  default = {}
-}
-
-variable "additional_lambda_roles" {
-  description = "Map of lambda name (without cirrus prefix) to custom lambda role policy json"
-  type        = map(string)
-  default     = {}
-}
-
-variable "additional_warning_alarms" {
-  description = "Map of lambda name (without cirrus prefix) to warning alarm configuration"
-  type = map(
-    object({
-      evaluation_periods = optional(number, 5),
-      period             = optional(number, 60),
-      threshold          = optional(number, 10),
-    })
-  )
-  default = {}
-}
-
-variable "additional_error_alarms" {
-  description = "Map of lambda name (without cirrus prefix) to error alarm configuration"
-  type = map(
-    object({
-      evaluation_periods = optional(number, 5),
-      period             = optional(number, 60),
-      threshold          = optional(number, 100),
-    })
-  )
-  default = {}
-}
-
 variable "cirrus_tasks_batch_compute" {
   description = "Optional list of config objects each defining a single Cirrus Task Batch Compute resource set"
   type = list(object({
