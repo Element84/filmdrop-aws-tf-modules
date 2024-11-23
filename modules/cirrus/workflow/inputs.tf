@@ -27,7 +27,7 @@ variable "workflow_config" {
     template               = string
     non_cirrus_lambda_arns = optional(list(string))
     # Each map key here must be a key in the 'cirrus_tasks' map above
-    variables = optional(map(object({
+    template_variables = optional(map(object({
       task_name = string
       task_type = string
       task_attr = string
@@ -35,5 +35,23 @@ variable "workflow_config" {
   })
 
   # Value must be provided else this module serves no purpose
+  nullable = false
+}
+
+variable "builtin_task_template_variables" {
+  description = <<-DESCRIPTION
+    Key/value pairs of builtin task variables used during workflow state machine
+    templating. This should be set in the parent module and not by user input.
+  DESCRIPTION
+
+  # Each map key here must be a key in the 'cirrus_tasks' map above
+  type = map(object({
+    task_name = string
+    task_type = string
+    task_attr = string
+  }))
+
+  # Value should always be a map (empty map is OK)
+  default  = {}
   nullable = false
 }

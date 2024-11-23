@@ -101,12 +101,12 @@ resource "aws_iam_role_policy_attachment" "cirrus_update_state_lambda_role_polic
 }
 
 resource "aws_lambda_function" "cirrus_update_state" {
-  filename         = "${path.module}/cirrus-lambda-dist.zip"
+  filename         = "${path.module}/../cirrus-lambda-dist.zip"
   function_name    = "${var.cirrus_prefix}-update-state"
   description      = "Cirrus Update-State Lambda"
   role             = aws_iam_role.cirrus_update_state_lambda_role.arn
   handler          = "update_state.lambda_handler"
-  source_code_hash = filebase64sha256("${path.module}/cirrus-lambda-dist.zip")
+  source_code_hash = filebase64sha256("${path.module}/../cirrus-lambda-dist.zip")
   runtime          = "python3.12"
   timeout          = var.cirrus_update_state_lambda_timeout
   memory_size      = var.cirrus_update_state_lambda_memory

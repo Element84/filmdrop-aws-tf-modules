@@ -373,7 +373,7 @@ variable "cirrus_inputs" {
       timeout = number
       memory  = number
     })
-    tasks_batch_compute = optional(list(object({
+    task_batch_compute = optional(list(object({
       name = string
       batch_compute_environment_existing = optional(object({
         name       = string
@@ -467,6 +467,7 @@ variable "cirrus_inputs" {
       lambda = optional(object({
         description   = optional(string)
         ecr_image_uri = optional(string)
+        filename      = optional(string)
         image_config = optional(object({
           command           = optional(list(string))
           entry_point       = optional(list(string))
@@ -514,8 +515,8 @@ variable "cirrus_inputs" {
         })))
       }))
       batch = optional(object({
-        tasks_batch_compute_name = string
-        container_properties     = string
+        task_batch_compute_name = string
+        container_properties    = string
         retry_strategy = optional(object({
           attempts = number
           evaluate_on_exit = optional(list(object({
@@ -555,7 +556,7 @@ variable "cirrus_inputs" {
       name                   = string
       template               = string
       non_cirrus_lambda_arns = optional(list(string))
-      variables = optional(map(object({
+      template_variables = optional(map(object({
         task_name = string
         task_type = string
         task_attr = string
@@ -600,9 +601,9 @@ variable "cirrus_inputs" {
       timeout = 15
       memory  = 128
     }
-    tasks_batch_compute = []
-    tasks               = []
-    workflows           = []
+    task_batch_compute = []
+    tasks              = []
+    workflows          = []
   }
 }
 

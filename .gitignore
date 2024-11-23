@@ -32,4 +32,4 @@ stac-server.tgz
 terraform-visual-report
 terraform.tgz
 modules/stac-server/historical-ingest/lambda/package/*
-!modules/cirrus/builtin-functions/cirrus-lambda-dist.zip
+!modules/cirrus/cirrus-lambda-dist.zip

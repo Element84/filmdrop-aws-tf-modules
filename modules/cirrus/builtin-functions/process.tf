@@ -121,12 +121,12 @@ resource "aws_iam_role_policy_attachment" "cirrus_process_lambda_role_policy_att
 }
 
 resource "aws_lambda_function" "cirrus_process" {
-  filename                       = "${path.module}/cirrus-lambda-dist.zip"
+  filename                       = "${path.module}/../cirrus-lambda-dist.zip"
   function_name                  = "${var.cirrus_prefix}-process"
   description                    = "Cirrus Process Lambda"
   role                           = aws_iam_role.cirrus_process_lambda_role.arn
   handler                        = "process.lambda_handler"
-  source_code_hash               = filebase64sha256("${path.module}/cirrus-lambda-dist.zip")
+  source_code_hash               = filebase64sha256("${path.module}/../cirrus-lambda-dist.zip")
   runtime                        = "python3.12"
   timeout                        = var.cirrus_process_lambda_timeout
   memory_size                    = var.cirrus_process_lambda_memory

@@ -160,7 +160,7 @@ variable "custom_cloudwatch_critical_alarms_map" {
   default     = {}
 }
 
-variable "cirrus_tasks_batch_compute" {
+variable "cirrus_task_batch_compute" {
   description = "Optional list of config objects each defining a single Cirrus Task Batch Compute resource set"
   type = list(object({
     name                                    = string
@@ -232,23 +232,23 @@ variable "cirrus_tasks_batch_compute" {
 
   validation {
     condition = (
-      var.cirrus_tasks_batch_compute != null
-      ? length(var.cirrus_tasks_batch_compute) == length(distinct(var.cirrus_tasks_batch_compute[*].name))
+      var.cirrus_task_batch_compute != null
+      ? length(var.cirrus_task_batch_compute) == length(distinct(var.cirrus_task_batch_compute[*].name))
       : true
     )
-    error_message = "Each cirrus_tasks_batch_compute object name must be unique to avoid resource clobbering"
+    error_message = "Each cirrus_task_batch_compute object name must be unique to avoid resource clobbering"
   }
 
   validation {
     condition = (
-      var.cirrus_tasks_batch_compute != null
+      var.cirrus_task_batch_compute != null
       ? alltrue([
-        for name in var.cirrus_tasks_batch_compute[*].name :
+        for name in var.cirrus_task_batch_compute[*].name :
         length(regexall("^[A-Za-z0-9-]+$", name)) > 0 ? true : false
       ])
       : true
     )
-    error_message = "Each cirrus_tasks_batch_compute object name must only use alphanumeric characters and hyphens"
+    error_message = "Each cirrus_task_batch_compute object name must only use alphanumeric characters and hyphens"
   }
 }
 
@@ -280,6 +280,7 @@ variable "cirrus_tasks" {
     lambda = optional(object({
       description   = optional(string)
       ecr_image_uri = optional(string)
+      filename      = optional(string)
       image_config = optional(object({
         command           = optional(list(string))
         entry_point       = optional(list(string))
@@ -327,8 +328,8 @@ variable "cirrus_tasks" {
       })))
     }))
     batch = optional(object({
-      tasks_batch_compute_name = string
-      container_properties     = string
+      task_batch_compute_name = string
+      container_properties    = string
       retry_strategy = optional(object({
         attempts = number
         evaluate_on_exit = optional(list(object({
@@ -395,7 +396,7 @@ variable "cirrus_workflows" {
     name                   = string
     template               = string
     non_cirrus_lambda_arns = optional(list(string))
-    variables = optional(map(object({
+    template_variables = optional(map(object({
       task_name = string
       task_type = string
       task_attr = string

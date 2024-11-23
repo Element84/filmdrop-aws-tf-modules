@@ -261,7 +261,7 @@ data "aws_iam_policy_document" "task_batch_assume_role_policy" {
     condition {
       test     = "ArnEquals"
       variable = "aws:SourceArn"
-      values   = [
+      values = [
         "arn:aws:batch:${local.current_region}:${local.current_account}:compute-environment/*",
         "arn:aws:batch:${local.current_region}:${local.current_account}:job/*"
       ]

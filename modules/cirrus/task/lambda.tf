@@ -3,7 +3,7 @@ locals {
   create_lambda = (var.task_config.lambda != null)
 
   # Gather all user-defined IAM statements needed by the Lambda execution role
-  task_lambda_role_statements = (
+  additional_task_role_statements = (
     local.create_lambda
     ? concat(
       try(coalesce(var.task_config.common_role_statements, []), []),
@@ -89,22 +89,22 @@ resource "aws_iam_role_policy_attachment" "lambda_vpc_access" {
 # ==============================================================================
 
 
-# TASK LAMBDA IAM ROLE -- ADDITIONAL INLINE POLICY
+# TASK LAMBDA IAM ROLE -- ADDITIONAL USER INLINE POLICY
 # ------------------------------------------------------------------------------
 # Optionally creates an inline policy based on user input variables
 # ------------------------------------------------------------------------------
-data "aws_iam_policy_document" "task_lambda_additional_role_policy" {
+data "aws_iam_policy_document" "task_lambda_role_additional_policy" {
   # If one or more role statements were provided, this document is created
   count = (
     local.create_lambda
-    && length(local.task_lambda_role_statements) > 0
+    && length(local.additional_task_role_statements) > 0
   ) ? 1 : 0
 
   # Generate a statement block for each object in the input variable.
   # They are all added to this single policy document.
   dynamic "statement" {
     for_each = {
-      for _, statement in local.task_lambda_role_statements :
+      for statement in local.additional_task_role_statements :
       statement.sid => statement
     }
 
@@ -165,15 +165,15 @@ data "aws_iam_policy_document" "task_lambda_additional_role_policy" {
   }
 }
 
-resource "aws_iam_role_policy" "task_lambda_additional_role_policy" {
+resource "aws_iam_role_policy" "task_lambda_role_additional_policy" {
   count = (
     local.create_lambda
-    && length(local.task_lambda_role_statements) > 0
+    && length(local.additional_task_role_statements) > 0
   ) ? 1 : 0
 
   name_prefix = "${var.cirrus_prefix}-task-role-additional-policy-"
   role        = aws_iam_role.task_lambda[0].name
-  policy      = data.aws_iam_policy_document.task_lambda_additional_role_policy[0].json
+  policy      = data.aws_iam_policy_document.task_lambda_role_additional_policy[0].json
 }
 # ==============================================================================
 
@@ -184,18 +184,25 @@ resource "aws_lambda_function" "task_lambda" {
   count = local.create_lambda ? 1 : 0
 
   function_name = local.task_lambda_function_name
+
+  architectures = var.task_config.lambda.architectures
   description   = var.task_config.lambda.description
-  role          = aws_iam_role.task_lambda[0].arn
-  package_type  = var.task_config.lambda.ecr_image_uri != null ? "Image" : "Zip"
+  filename      = var.task_config.lambda.filename
+  handler       = var.task_config.lambda.handler
   image_uri     = var.task_config.lambda.ecr_image_uri
+  memory_size   = var.task_config.lambda.memory_mb
+  package_type  = var.task_config.lambda.ecr_image_uri != null ? "Image" : "Zip"
+  publish       = var.task_config.lambda.publish
+  role          = aws_iam_role.task_lambda[0].arn
+  runtime       = var.task_config.lambda.runtime
   s3_bucket     = var.task_config.lambda.s3_bucket
   s3_key        = var.task_config.lambda.s3_key
-  handler       = var.task_config.lambda.handler
-  runtime       = var.task_config.lambda.runtime
-  architectures = var.task_config.lambda.architectures
-  memory_size   = var.task_config.lambda.memory_mb
   timeout       = var.task_config.lambda.timeout_seconds
-  publish       = var.task_config.lambda.publish
+  source_code_hash = (
+    var.task_config.lambda.filename != null
+    ? filebase64sha256(var.task_config.lambda.filename)
+    : null
+  )
 
   # Optional value stored as a configuration block.
   # A single instance is created only if 'env_vars' was provided.
@@ -234,7 +241,7 @@ resource "aws_lambda_function" "task_lambda" {
     aws_iam_role_policy_attachment.lambda_basic_execution,
     aws_iam_role_policy_attachment.lambda_read_only,
     aws_iam_role_policy_attachment.lambda_vpc_access,
-    aws_iam_role_policy.task_lambda_additional_role_policy
+    aws_iam_role_policy.task_lambda_role_additional_policy
   ]
 }
 # ==============================================================================
@@ -243,7 +250,7 @@ resource "aws_lambda_function" "task_lambda" {
 # TASK LAMBDA CLOUDWATCH ALARMS
 # ------------------------------------------------------------------------------
 resource "aws_cloudwatch_metric_alarm" "task_lambda" {
-  # Create a cloudwatch alarm for each provided configuration object.
+  # Create a cloudwatch alarm for each provided configuration object
   for_each = (
     (
       local.create_lambda

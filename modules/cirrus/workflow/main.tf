@@ -6,27 +6,18 @@ locals {
   current_account = data.aws_caller_identity.current.account_id
   current_region  = data.aws_region.current.name
 
-  # Create the template variable mapping.
-  # Use each variable config as a lookup into the Cirrus Task outputs.
-  template_variables = {
-    for v_name, v_cfg in var.workflow_config.variables :
-    v_name => var.cirrus_tasks[v_cfg.task_name][v_cfg.task_type][v_cfg.task_attr]
-  }
-
-  # Create the workflow's state machine JSON.
-  # Use the template variable mapping above for interpolation.
-  # Decode the rendered JSON to strip newlines then encode to minify.
-  workflow_state_machine_json = jsonencode(jsondecode(templatefile(
-    "${path.root}/${var.workflow_config.template}",
-    local.template_variables
-  )))
+  # Merge builtin template variable configs with the user-defined ones
+  merged_workflow_template_variables = merge(
+    var.builtin_task_template_variables,
+    var.workflow_config.template_variables
+  )
 
   # Gather any referenced Lambda Function ARNs.
   # These are needed for generating the workflow machine's IAM policies.
   # This includes both Cirrus- and non-Cirrus-managed Lambdas, if any.
   workflow_tasks_lambda_functions = concat(
     [
-      for _, v_cfg in var.workflow_config.variables :
+      for _, v_cfg in local.merged_workflow_template_variables :
       var.cirrus_tasks[v_cfg.task_name][v_cfg.task_type][v_cfg.task_attr]
       if v_cfg.task_type == "lambda" && v_cfg.task_attr == "function_arn"
     ],
@@ -36,15 +27,31 @@ locals {
   # Gather any referenced Job Queue and Definition ARNs.
   # These are needed for generating the workflow machine's IAM policies.
   workflow_tasks_batch_resources = [
-    for _, v_cfg in var.workflow_config.variables :
+    for _, v_cfg in local.merged_workflow_template_variables :
     var.cirrus_tasks[v_cfg.task_name][v_cfg.task_type][v_cfg.task_attr]
     if v_cfg.task_type == "batch" && (
       v_cfg.task_attr == "job_queue_arn" || v_cfg.task_attr == "job_definition_arn"
     )
   ]
 
+  # Create the template variable mapping.
+  # Use each variable config as a lookup into the Cirrus Task outputs to obtain
+  # its intended string value that templatefile can use for interpolation.
+  workflow_template_variables_map = {
+    for v_name, v_cfg in local.merged_workflow_template_variables :
+    v_name => var.cirrus_tasks[v_cfg.task_name][v_cfg.task_type][v_cfg.task_attr]
+  }
+
+  # Create the workflow's state machine JSON.
+  # Use the template variable mapping above for interpolation.
+  # Decode the rendered JSON to strip newlines then encode to minify.
+  workflow_state_machine_json = jsonencode(jsondecode(templatefile(
+    "${path.root}/${var.workflow_config.template}",
+    local.workflow_template_variables_map
+  )))
+
   # Submit/Invoke permissions only necessary if Batch/Lambda resources are used
-  create_batch_policy = (length(local.workflow_tasks_batch_resources) != 0)
+  create_batch_policy  = (length(local.workflow_tasks_batch_resources) != 0)
   create_lambda_policy = (length(local.workflow_tasks_lambda_functions) != 0)
 }
 

@@ -3,6 +3,11 @@ variable "cirrus_prefix" {
   type        = string
 }
 
+variable "cirrus_payload_bucket" {
+  description = "Cirrus payload bucket"
+  type        = string
+}
+
 variable "vpc_subnet_ids" {
   description = "List of subnet ids in the FilmDrop vpc"
   type        = list(string)
@@ -23,8 +28,8 @@ variable "critical_sns_topic_arn" {
   type        = string
 }
 
-variable "cirrus_tasks_batch_compute" {
-  description = "Optional output from the Cirrus Terraform tasks_batch_compute module"
+variable "cirrus_task_batch_compute" {
+  description = "Optional output from the Cirrus Terraform task_batch_compute module"
   type = map(object({
     batch = object({
       compute_environment_arn        = string
@@ -71,6 +76,7 @@ variable "task_config" {
     lambda = optional(object({
       description   = optional(string)
       ecr_image_uri = optional(string)
+      filename      = optional(string)
       image_config = optional(object({
         command           = optional(list(string))
         entry_point       = optional(list(string))
@@ -118,8 +124,8 @@ variable "task_config" {
       })))
     }))
     batch = optional(object({
-      tasks_batch_compute_name = string
-      container_properties     = string
+      task_batch_compute_name = string
+      container_properties    = string
       retry_strategy = optional(object({
         attempts = number
         evaluate_on_exit = optional(list(object({
