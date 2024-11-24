@@ -247,8 +247,8 @@ variable "cirrus_inputs" {
     })))
     workflows = optional(list(object({
       name                   = string
-      template               = string
       non_cirrus_lambda_arns = optional(list(string))
+      template_filepath      = string
       template_variables = optional(map(object({
         task_name = string
         task_type = string

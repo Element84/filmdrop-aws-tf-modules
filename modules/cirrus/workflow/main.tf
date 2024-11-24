@@ -46,7 +46,7 @@ locals {
   # Use the template variable mapping above for interpolation.
   # Decode the rendered JSON to strip newlines then encode to minify.
   workflow_state_machine_json = jsonencode(jsondecode(templatefile(
-    "${path.root}/${var.workflow_config.template}",
+    "${path.root}/${var.workflow_config.template_filepath}",
     local.workflow_template_variables_map
   )))
 

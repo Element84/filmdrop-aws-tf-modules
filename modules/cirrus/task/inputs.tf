@@ -29,7 +29,12 @@ variable "critical_sns_topic_arn" {
 }
 
 variable "cirrus_task_batch_compute" {
-  description = "Optional output from the Cirrus Terraform task_batch_compute module"
+  description = <<-DESCRIPTION
+  (optional, map[object]) A map of the 'task_batch_compute' module outputs.
+  These are used to link Batch Cirrus tasks with a target compute resource set.
+  This should be set in the parent module and not by user input.
+  DESCRIPTION
+
   type = map(object({
     batch = object({
       compute_environment_arn        = string
@@ -49,7 +54,51 @@ variable "cirrus_task_batch_compute" {
 }
 
 variable "task_config" {
-  description = "Configuration object defining a single Cirrus Task"
+  description = <<-DESCRIPTION
+    (required, object) Defines a single Cirrus Task. This Task may be used by
+    zero..many Cirrus Workflows (see 'workflow' module). A Task may have Lambda
+    config, Batch config, or both.
+    Contents:
+      - name: (required, string) Identifier for the Cirrus Task. Must be unique
+        across all Cirrus Tasks. Valid characters are: [A-Za-z0-9-]
+
+      - common_role_statements: (optional, list[object]) List of IAM statements
+        to be applied to both the Lambda function and the Batch Job. This object
+        is used to create an 'aws_iam_policy_document' data source. Refer to the
+        documentation for more information on the available arguments in an IAM
+        statement block:
+        https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_policy_document
+
+      - lambda: (optional, object) Used to create a Lambda function and all its
+        ancillary resources. Many of the available arguments map directly to the
+        ones in the 'aws_lambda_function' resource. Refer to the documentation
+        for more information on those arguments:
+        https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/lambda_function
+        Contents:
+          - vpc_enabled: (optional, bool) Whether the Lambda should be deployed
+            within the FilmDrop VPC.
+          - role_statements: (optional, list[object]) List of IAM statements to
+            be applied to the Lambda execution role. Similar arguments to the
+            'common_role_statements' variable above.
+          - alarms: (optional, list[object]): List of CloudWatch alarm configs
+            that will be created to monitor the resulting Lambda function.
+          - ... subset of common 'aws_lambda_function' arguments ...
+
+      - batch: (optional, object) Used to create a Batch Job Definition and all
+        ancillary resources. Many of the available arguments map directly to the
+        ones in the 'aws_batch_job_definition' resource. Refer to the
+        documentation for more information on those arguments:
+        https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/batch_job_definition
+        Contents:
+          - task_batch_compute_name: (required, string) The name of a batch
+            compute resource set created by the 'task_batch_compute' module.
+            This determines where invocations of this Job definition will run.
+          - role_statements: (optional, list[object]) List of IAM statements to
+            be applied to the Batch Job / ECS Task execution role. Similar
+            arguments to the 'common_role_statements' variable above.
+          - ... subset of common 'aws_batch_job_definition' arguments ...
+  DESCRIPTION
+
   type = object({
     name = string
     common_role_statements = optional(list(object({
