@@ -41,6 +41,7 @@ variable "cirrus_task_batch_compute" {
       compute_environment_is_fargate = bool
       ecs_task_execution_role_arn    = string
       job_queue_arn                  = string
+      job_queue_is_fair_share        = string
     })
   }))
 

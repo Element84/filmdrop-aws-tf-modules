@@ -493,7 +493,7 @@ resource "aws_batch_job_queue" "task_batch" {
   count = local.create_job_queue ? 1 : 0
 
   name     = "${var.cirrus_prefix}-task-compute-${var.batch_compute_config.name}"
-  state    = try(var.batch_compute_config.batch_job_queue.state, "ENABLED")
+  state    = try(coalesce(var.batch_compute_config.batch_job_queue.state, "ENABLED"), "ENABLED")
   priority = 1
 
   scheduling_policy_arn = (

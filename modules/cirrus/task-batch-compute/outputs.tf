@@ -16,5 +16,10 @@ output "batch" {
       one(data.aws_batch_job_queue.task_batch[*].arn),
       one(aws_batch_job_queue.task_batch[*].arn)
     )
+    job_queue_is_fair_share = (
+      local.create_job_queue
+      ? local.create_fair_share_policy
+      : one(data.aws_batch_job_queue.task_batch[*].scheduling_policy_arn) != null
+    )
   }
 }

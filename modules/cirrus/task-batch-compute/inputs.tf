@@ -55,8 +55,11 @@ variable "batch_compute_config" {
         scheduling policy; if omitted, a default job queue will be created.
         Contents:
           - fair_share_policy: (optional, object) Used to create and attach an
-            'aws_batch_scheduling_policy' resource to the job queue. Refer to
-            that resource's documentation for more information:
+            'aws_batch_scheduling_policy' resource to the job queue. To utilize
+            any defined share identifiers, you will need to add 'ShareIdentifer'
+            with the applicable value under 'Parameters' in a Workflow State
+            Machine definition. Refer to that resource's documentation for more
+            information:
             https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/batch_scheduling_policy
 
       - ec2_launch_template_existing: (optional, object) Identifies an existing

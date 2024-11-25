@@ -208,13 +208,28 @@ resource "aws_batch_job_definition" "task" {
     jsondecode(var.task_config.batch.container_properties)
   ))
 
-  # TODO - CVG
   deregister_on_new_revision = true
-  platform_capabilities      = local.batch_compute_config.compute_environment_is_fargate ? ["FARGATE"] : ["EC2"]
   propagate_tags             = true
-  scheduling_priority        = var.task_config.batch.scheduling_priority
   type                       = "container"
   parameters                 = var.task_config.batch.parameters
+
+  # Determine platform capabilities
+  platform_capabilities = (
+    local.batch_compute_config.compute_environment_is_fargate
+    ? ["FARGATE"]
+    : ["EC2"]
+  )
+
+  # Determine scheduling priority.
+  # Jobs submitted to fair-share queues must have a scheduling priority set; if
+  # not, deployment will succeed but future job submissions will fail. Thus, if
+  # that value was not provided, this job is given a default priority to avoid
+  # silently deploying erroneous config.
+  scheduling_priority = (
+    local.batch_compute_config.job_queue_is_fair_share
+    ? try(coalesce(var.task_config.batch.scheduling_priority, 100), 100)
+    : null
+  )
 
   dynamic "retry_strategy" {
     for_each = (
