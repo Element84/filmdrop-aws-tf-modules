@@ -232,7 +232,8 @@ variable "cirrus_task_batch_compute" {
   DESCRIPTION
 
   type = list(object({
-    name                               = string
+    name = string
+
     batch_compute_environment_existing = optional(object({
       name       = string
       is_fargate = bool

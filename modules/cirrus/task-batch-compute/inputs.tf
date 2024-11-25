@@ -153,4 +153,15 @@ variable "batch_compute_config" {
 
   # Value must be provided else this module serves no purpose
   nullable = false
+
+  validation {
+    condition = (
+      var.batch_compute_config.batch_compute_environment_existing != null
+      || var.batch_compute_config.batch_compute_environment != null
+    )
+    error_message = <<-ERROR
+      Task Batch Compute inputs must provide 'batch_compute_environment' or
+      'batch_compute_environment_existing' configuration objects.
+    ERROR
+  }
 }

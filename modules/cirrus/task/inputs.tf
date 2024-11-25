@@ -215,4 +215,25 @@ variable "task_config" {
 
   # Value must be provided else this module serves no purpose
   nullable = false
+
+  validation {
+    condition     = var.task_config.batch != null || var.task_config.lambda != null
+    error_message = "Tasks must specify Batch config, Lambda config, or both."
+  }
+
+  validation {
+    condition = (
+      try(var.task_config.batch.parameters, null) != null
+      ? alltrue([
+        for param_key, param_val in var.task_config.batch.parameters :
+        param_val != ""
+      ])
+      : true
+    )
+    error_message = <<-ERROR
+      Batch Job Definition 'parameters' key/val pairs must not have empty string
+      values; doing so will result in Terraform creating new definition versions
+      during every deploy. Use a filler value instead.
+    ERROR
+  }
 }

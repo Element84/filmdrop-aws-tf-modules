@@ -97,6 +97,32 @@ variable "workflow_config" {
 
   # Value must be provided else this module serves no purpose
   nullable = false
+
+  validation {
+    condition = (
+      var.workflow_config.template_variables != null
+      ? alltrue([
+        for _, tpl_variable in var.workflow_config.template_variables :
+        (
+          contains(
+            ["lambda", "batch"],
+            tpl_variable.task_type
+          )
+          && contains(
+            ["function_arn", "job_definition_arn", "job_queue_arn"],
+            tpl_variable.task_attr
+          )
+        )
+      ])
+      : true
+    )
+
+    error_message = <<-ERROR
+      Invalid template variable config. Each key must have a valid value:
+        - task_type => one of ["lambda", "batch"]
+        - task_attr => one of ["function_arn", "job_definition_arn", "job_queue_arn"]
+    ERROR
+  }
 }
 
 variable "builtin_task_template_variables" {
