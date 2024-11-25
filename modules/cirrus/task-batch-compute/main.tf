@@ -86,7 +86,7 @@ locals {
 # Optionally create the role for instances deployed in the compute environment.
 # It is only necessary for non-Fargate compute environments.
 # ------------------------------------------------------------------------------
-data "aws_iam_policy_document" "task_ec2_assume_role_policy" {
+data "aws_iam_policy_document" "task_ec2_assume_role" {
   count = local.create_instance_profile ? 1 : 0
 
   statement {
@@ -98,7 +98,7 @@ data "aws_iam_policy_document" "task_ec2_assume_role_policy" {
       identifiers = ["ec2.amazonaws.com"]
     }
 
-    # Conditions to prevent the "confused deputy" security problem
+    # Conditions to prevent the "confused deputy" security problem.
     # The "aws:SourceArn" can't be strictly defined as the Batch-managed EC2
     # instances will have unique IDs.
     condition {
@@ -119,7 +119,7 @@ resource "aws_iam_role" "task_ec2" {
 
   name_prefix        = "${var.cirrus_prefix}-compute-role-"
   description        = "EC2 instance role for Cirrus Task Compute '${var.batch_compute_config.name}'"
-  assume_role_policy = data.aws_iam_policy_document.task_ec2_assume_role_policy[0].json
+  assume_role_policy = data.aws_iam_policy_document.task_ec2_assume_role[0].json
 }
 
 resource "aws_iam_role_policy_attachment" "aws_managed_ecs_for_ec2" {
@@ -143,7 +143,7 @@ resource "aws_iam_instance_profile" "task_ec2" {
 # Create the role used by Fargate Agents for managing ECS task execution.
 # It is only necessary for Fargate compute environments.
 # ------------------------------------------------------------------------------
-data "aws_iam_policy_document" "task_ecs_assume_role_policy" {
+data "aws_iam_policy_document" "task_ecs_assume_role" {
   count = local.create_ecs_execution_role ? 1 : 0
 
   statement {
@@ -175,7 +175,7 @@ resource "aws_iam_role" "task_ecs" {
   count = local.create_ecs_execution_role ? 1 : 0
 
   name_prefix        = "${var.cirrus_prefix}-compute-role-"
-  assume_role_policy = data.aws_iam_policy_document.task_ecs_assume_role_policy[0].json
+  assume_role_policy = data.aws_iam_policy_document.task_ecs_assume_role[0].json
 }
 
 resource "aws_iam_role_policy_attachment" "aws_managed_ecs_task_execution" {
@@ -192,7 +192,7 @@ resource "aws_iam_role_policy_attachment" "aws_managed_ecs_task_execution" {
 # Optionally create the role for managing SPOT in the compute environment.
 # It is only necessary for SPOT-type compute environments.
 # ------------------------------------------------------------------------------
-data "aws_iam_policy_document" "task_spot_fleet_assume_role_policy" {
+data "aws_iam_policy_document" "task_spot_fleet_assume_role" {
   count = local.create_spot_fleet_role ? 1 : 0
 
   statement {
@@ -225,7 +225,7 @@ resource "aws_iam_role" "task_spot_fleet" {
 
   name_prefix        = "${var.cirrus_prefix}-compute-role-"
   description        = "EC2 Spot Fleet role for Cirrus Task Compute '${var.batch_compute_config.name}'"
-  assume_role_policy = data.aws_iam_policy_document.task_spot_fleet_assume_role_policy[0].json
+  assume_role_policy = data.aws_iam_policy_document.task_spot_fleet_assume_role[0].json
 }
 
 resource "aws_iam_role_policy_attachment" "aws_managed_spot_fleet_tagging" {
@@ -242,7 +242,7 @@ resource "aws_iam_role_policy_attachment" "aws_managed_spot_fleet_tagging" {
 # Optionally create the role for managing instances in the compute environment.
 # It is needed for any compute environment deployed by this module.
 # ------------------------------------------------------------------------------
-data "aws_iam_policy_document" "task_batch_assume_role_policy" {
+data "aws_iam_policy_document" "task_batch_assume_role" {
   count = local.create_compute_environment ? 1 : 0
 
   statement {
@@ -279,7 +279,7 @@ resource "aws_iam_role" "task_batch" {
 
   name_prefix        = "${var.cirrus_prefix}-compute-role-"
   description        = "Batch service role for Cirrus Task Compute '${var.batch_compute_config.name}'"
-  assume_role_policy = data.aws_iam_policy_document.task_batch_assume_role_policy[0].json
+  assume_role_policy = data.aws_iam_policy_document.task_batch_assume_role[0].json
 }
 
 resource "aws_iam_role_policy_attachment" "aws_managed_batch_service_role" {
@@ -496,7 +496,11 @@ resource "aws_batch_job_queue" "task_batch" {
   state    = try(var.batch_compute_config.batch_job_queue.state, "ENABLED")
   priority = 1
 
-  scheduling_policy_arn = local.create_fair_share_policy ? aws_batch_scheduling_policy.task_batch[0].arn : null
+  scheduling_policy_arn = (
+    local.create_fair_share_policy
+    ? aws_batch_scheduling_policy.task_batch[0].arn
+    : null
+  )
 
   compute_environment_order {
     # Attach to either the compute environment data source or resource

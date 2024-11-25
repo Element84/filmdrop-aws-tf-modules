@@ -222,7 +222,7 @@ variable "cirrus_task_batch_compute" {
         Contents:
           - user_data: (optional, string) Path to the user data start script.
             The path must be relative to the ROOT module of the Terraform
-            deployment calling this module.
+            deployment.
           - ebs_optimized: (optional, bool)
           - block_device_mappings: (optional, list[object])
 

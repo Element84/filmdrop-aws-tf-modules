@@ -75,6 +75,8 @@ variable "task_config" {
         for more information on those arguments:
         https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/lambda_function
         Contents:
+          - filename: (optional, str): Path to the local Lambda ZIP. The path
+            must be relative to the ROOT module of the Terraform deployment.
           - vpc_enabled: (optional, bool) Whether the Lambda should be deployed
             within the FilmDrop VPC.
           - role_statements: (optional, list[object]) List of IAM statements to

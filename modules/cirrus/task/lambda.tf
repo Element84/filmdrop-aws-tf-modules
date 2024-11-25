@@ -3,13 +3,19 @@ locals {
   create_lambda = (var.task_config.lambda != null)
 
   # Gather all user-defined IAM statements needed by the Lambda execution role
-  additional_task_role_statements = (
+  additional_lambda_role_statements = (
     local.create_lambda
     ? concat(
       try(coalesce(var.task_config.common_role_statements, []), []),
       try(coalesce(var.task_config.lambda.role_statements, []), [])
     )
     : []
+  )
+
+  # Only create an additional policy if role statements were provided
+  create_additional_lambda_policy = (
+    local.create_lambda
+    && length(local.additional_lambda_role_statements) > 0
   )
 
   # Create the Lambda function name.
@@ -27,7 +33,7 @@ locals {
 
 # TASK LAMBDA IAM ROLE -- BASIC SETUP
 # ------------------------------------------------------------------------------
-data "aws_iam_policy_document" "task_lambda_assume_role_policy" {
+data "aws_iam_policy_document" "task_lambda_assume_role" {
   count = local.create_lambda ? 1 : 0
 
   statement {
@@ -59,7 +65,7 @@ resource "aws_iam_role" "task_lambda" {
 
   name_prefix        = "${var.cirrus_prefix}-task-role-"
   description        = "Lambda execution role for Cirrus Task '${var.task_config.name}'"
-  assume_role_policy = data.aws_iam_policy_document.task_lambda_assume_role_policy[0].json
+  assume_role_policy = data.aws_iam_policy_document.task_lambda_assume_role[0].json
 }
 # ==============================================================================
 
@@ -93,18 +99,15 @@ resource "aws_iam_role_policy_attachment" "lambda_vpc_access" {
 # ------------------------------------------------------------------------------
 # Optionally creates an inline policy based on user input variables
 # ------------------------------------------------------------------------------
-data "aws_iam_policy_document" "task_lambda_role_additional_policy" {
+data "aws_iam_policy_document" "task_lambda_role_additional" {
   # If one or more role statements were provided, this document is created
-  count = (
-    local.create_lambda
-    && length(local.additional_task_role_statements) > 0
-  ) ? 1 : 0
+  count = local.create_additional_lambda_policy ? 1 : 0
 
   # Generate a statement block for each object in the input variable.
   # They are all added to this single policy document.
   dynamic "statement" {
     for_each = {
-      for statement in local.additional_task_role_statements :
+      for statement in local.additional_lambda_role_statements :
       statement.sid => statement
     }
 
@@ -165,29 +168,25 @@ data "aws_iam_policy_document" "task_lambda_role_additional_policy" {
   }
 }
 
-resource "aws_iam_role_policy" "task_lambda_role_additional_policy" {
-  count = (
-    local.create_lambda
-    && length(local.additional_task_role_statements) > 0
-  ) ? 1 : 0
+resource "aws_iam_role_policy" "task_lambda_role_additional" {
+  count = local.create_additional_lambda_policy ? 1 : 0
 
   name_prefix = "${var.cirrus_prefix}-task-role-additional-policy-"
   role        = aws_iam_role.task_lambda[0].name
-  policy      = data.aws_iam_policy_document.task_lambda_role_additional_policy[0].json
+  policy      = data.aws_iam_policy_document.task_lambda_role_additional[0].json
 }
 # ==============================================================================
 
 
-# TASK LAMBDA FUNCTION -- ZIP OR IMAGE BASED
+# TASK LAMBDA FUNCTION -- REMOTE ZIP, LOCAL ZIP, OR IMAGE BASED
 # ------------------------------------------------------------------------------
-resource "aws_lambda_function" "task_lambda" {
+resource "aws_lambda_function" "task" {
   count = local.create_lambda ? 1 : 0
 
   function_name = local.task_lambda_function_name
 
   architectures = var.task_config.lambda.architectures
   description   = var.task_config.lambda.description
-  filename      = var.task_config.lambda.filename
   handler       = var.task_config.lambda.handler
   image_uri     = var.task_config.lambda.ecr_image_uri
   memory_size   = var.task_config.lambda.memory_mb
@@ -198,14 +197,21 @@ resource "aws_lambda_function" "task_lambda" {
   s3_bucket     = var.task_config.lambda.s3_bucket
   s3_key        = var.task_config.lambda.s3_key
   timeout       = var.task_config.lambda.timeout_seconds
+
+  # Local ZIP handling.
+  # Path is expected to be relative to the ROOT module of this deployment.
+  filename = (
+    var.task_config.lambda.filename != null
+    ? "${path.root}/${var.task_config.lambda.filename}"
+    : null
+  )
   source_code_hash = (
     var.task_config.lambda.filename != null
-    ? filebase64sha256(var.task_config.lambda.filename)
+    ? filebase64sha256("${path.root}/${var.task_config.lambda.filename}")
     : null
   )
 
-  # Optional value stored as a configuration block.
-  # A single instance is created only if 'env_vars' was provided.
+  # Create zero or one environment configuration blocks
   dynamic "environment" {
     for_each = var.task_config.lambda.env_vars != null ? [1] : []
     content {
@@ -215,8 +221,7 @@ resource "aws_lambda_function" "task_lambda" {
     }
   }
 
-  # Optional value stored as a configuration block.
-  # A single instance is created only if 'image_config' was provided.
+  # Create zero or one image configuration blocks
   dynamic "image_config" {
     for_each = var.task_config.lambda.image_config != null ? [1] : []
     content {
@@ -226,8 +231,7 @@ resource "aws_lambda_function" "task_lambda" {
     }
   }
 
-  # Optional value stored as a configuration block.
-  # A single instance is created only if 'vpc_config' was provided.
+  # Create zero or one VPC configuration blocks
   dynamic "vpc_config" {
     for_each = local.deploy_lambda_in_vpc ? [1] : []
     content {
@@ -241,7 +245,7 @@ resource "aws_lambda_function" "task_lambda" {
     aws_iam_role_policy_attachment.lambda_basic_execution,
     aws_iam_role_policy_attachment.lambda_read_only,
     aws_iam_role_policy_attachment.lambda_vpc_access,
-    aws_iam_role_policy.task_lambda_role_additional_policy
+    aws_iam_role_policy.task_lambda_role_additional
   ]
 }
 # ==============================================================================
@@ -293,7 +297,7 @@ resource "aws_cloudwatch_metric_alarm" "task_lambda" {
   )
 
   dimensions = {
-    FunctionName = aws_lambda_function.task_lambda[0].arn
+    FunctionName = aws_lambda_function.task[0].arn
   }
 }
 # ==============================================================================

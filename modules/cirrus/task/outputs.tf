@@ -1,6 +1,6 @@
 output "lambda" {
   value = {
-    function_arn = one(aws_lambda_function.task_lambda[*].arn)
+    function_arn = one(aws_lambda_function.task[*].arn)
   }
 }
 

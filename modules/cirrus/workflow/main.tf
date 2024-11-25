@@ -58,7 +58,7 @@ locals {
 
 # WORKFLOW STATE MACHINE IAM ROLE -- BASIC SETUP
 # ------------------------------------------------------------------------------
-data "aws_iam_policy_document" "workflow_machine_assume_role_policy" {
+data "aws_iam_policy_document" "workflow_machine_assume_role" {
   statement {
     effect  = "Allow"
     actions = ["sts:AssumeRole"]
@@ -88,14 +88,14 @@ data "aws_iam_policy_document" "workflow_machine_assume_role_policy" {
 resource "aws_iam_role" "workflow_machine" {
   name_prefix        = "${var.cirrus_prefix}-workflow-role-"
   description        = "State Machine execution role for Cirrus Workflow '${var.workflow_config.name}'"
-  assume_role_policy = data.aws_iam_policy_document.workflow_machine_assume_role_policy.json
+  assume_role_policy = data.aws_iam_policy_document.workflow_machine_assume_role.json
 }
 # ==============================================================================
 
 
 # WORKFLOW STATE MACHINE IAM ROLE -- LAMBDA PERMISSIONS
 # ------------------------------------------------------------------------------
-data "aws_iam_policy_document" "workflow_machine_task_lambda_policy" {
+data "aws_iam_policy_document" "workflow_machine_task_lambda" {
   count = local.create_lambda_policy ? 1 : 0
 
   statement {
@@ -106,19 +106,19 @@ data "aws_iam_policy_document" "workflow_machine_task_lambda_policy" {
   }
 }
 
-resource "aws_iam_role_policy" "workflow_machine_task_lambda_policy" {
+resource "aws_iam_role_policy" "workflow_machine_task_lambda" {
   count = local.create_lambda_policy ? 1 : 0
 
   name_prefix = "${var.cirrus_prefix}-workflow-role-task-lambda-policy-"
   role        = aws_iam_role.workflow_machine.name
-  policy      = data.aws_iam_policy_document.workflow_machine_task_lambda_policy[0].json
+  policy      = data.aws_iam_policy_document.workflow_machine_task_lambda[0].json
 }
 # ==============================================================================
 
 
 # WORKFLOW STATE MACHINE IAM ROLE -- BATCH PERMISSIONS
 # ------------------------------------------------------------------------------
-data "aws_iam_policy_document" "workflow_machine_task_batch_policy" {
+data "aws_iam_policy_document" "workflow_machine_task_batch" {
   count = local.create_batch_policy ? 1 : 0
 
   statement {
@@ -160,19 +160,19 @@ data "aws_iam_policy_document" "workflow_machine_task_batch_policy" {
   }
 }
 
-resource "aws_iam_role_policy" "workflow_machine_task_batch_policy" {
+resource "aws_iam_role_policy" "workflow_machine_task_batch" {
   count = local.create_batch_policy ? 1 : 0
 
   name_prefix = "${var.cirrus_prefix}-workflow-role-task-batch-policy-"
   role        = aws_iam_role.workflow_machine.name
-  policy      = data.aws_iam_policy_document.workflow_machine_task_batch_policy[0].json
+  policy      = data.aws_iam_policy_document.workflow_machine_task_batch[0].json
 }
 # ==============================================================================
 
 
 # WORKFLOW STATE MACHINE
 # ------------------------------------------------------------------------------
-resource "aws_sfn_state_machine" "workflow_machine" {
+resource "aws_sfn_state_machine" "workflow" {
   name       = "${var.cirrus_prefix}-${var.workflow_config.name}"
   definition = local.workflow_state_machine_json
   publish    = true

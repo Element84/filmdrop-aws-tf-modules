@@ -16,6 +16,12 @@ locals {
     try(coalesce(var.task_config.common_role_statements, []), []),
     try(coalesce(var.task_config.batch.role_statements, []), [])
   )
+
+  # Only create an additional policy if role statements were provided
+  create_additional_batch_policy = (
+    local.create_batch_job
+    && length(local.additional_batch_role_statements) > 0
+  )
 }
 
 
@@ -26,7 +32,7 @@ locals {
 # and write permissions on the Cirrus payload bucket; this is necessary for the
 # pre-batch and post-batch wrappers used in workflow state machine definitions.
 # ------------------------------------------------------------------------------
-data "aws_iam_policy_document" "task_batch_assume_role_policy" {
+data "aws_iam_policy_document" "task_batch_assume_role" {
   count = local.create_batch_job ? 1 : 0
 
   statement {
@@ -60,10 +66,10 @@ resource "aws_iam_role" "task_batch" {
 
   name_prefix        = "${var.cirrus_prefix}-task-role-"
   description        = "Batch Job / ECS Task role for Cirrus Task '${var.task_config.name}'"
-  assume_role_policy = data.aws_iam_policy_document.task_batch_assume_role_policy[0].json
+  assume_role_policy = data.aws_iam_policy_document.task_batch_assume_role[0].json
 }
 
-data "aws_iam_policy_document" "task_batch_role_payload_policy" {
+data "aws_iam_policy_document" "task_batch_role_payload_bucket_access" {
   # Allow the Batch Job / ECS Task to read/write to the Cirrus payload bucket
   count = local.create_batch_job ? 1 : 0
 
@@ -92,12 +98,12 @@ data "aws_iam_policy_document" "task_batch_role_payload_policy" {
   }
 }
 
-resource "aws_iam_role_policy" "task_batch_role_payload_policy" {
+resource "aws_iam_role_policy" "task_batch_role_payload_bucket_access" {
   count = local.create_batch_job ? 1 : 0
 
   name_prefix = "${var.cirrus_prefix}-task-role-payload-policy-"
   role        = aws_iam_role.task_batch[0].name
-  policy      = data.aws_iam_policy_document.task_batch_role_payload_policy[0].json
+  policy      = data.aws_iam_policy_document.task_batch_role_payload_bucket_access[0].json
 }
 # ==============================================================================
 
@@ -106,12 +112,8 @@ resource "aws_iam_role_policy" "task_batch_role_payload_policy" {
 # ------------------------------------------------------------------------------
 # Optionally creates an inline policy based on input variables
 # ------------------------------------------------------------------------------
-data "aws_iam_policy_document" "task_batch_role_additional_policy" {
-  # If one or more role statements were provided, this document is created
-  count = (
-    local.create_batch_job
-    && length(local.additional_batch_role_statements) > 0
-  ) ? 1 : 0
+data "aws_iam_policy_document" "task_batch_role_additional" {
+  count = local.create_additional_batch_policy ? 1 : 0
 
   # Generate a statement block for each object in the input variable.
   # They are all added to this single policy document.
@@ -178,15 +180,12 @@ data "aws_iam_policy_document" "task_batch_role_additional_policy" {
   }
 }
 
-resource "aws_iam_role_policy" "task_batch_role_additional_policy" {
-  count = (
-    local.create_batch_job
-    && length(local.additional_batch_role_statements) > 0
-  ) ? 1 : 0
+resource "aws_iam_role_policy" "task_batch_role_additional" {
+  count = local.create_additional_batch_policy ? 1 : 0
 
   name_prefix = "${var.cirrus_prefix}-task-role-additional-policy-"
   role        = aws_iam_role.task_batch[0].name
-  policy      = data.aws_iam_policy_document.task_batch_role_additional_policy[0].json
+  policy      = data.aws_iam_policy_document.task_batch_role_additional[0].json
 }
 # ==============================================================================
 
