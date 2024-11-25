@@ -18,41 +18,43 @@ locals {
   # their desired compute environment type (e.g., don't supply 'instance_type'
   # if using Fargate). Any such validation errors would be raised naturally by
   # Terraform at plan/apply time.
-  compute_environment_is_fargate = startswith(
-    var.batch_compute_config.batch_compute_environment.compute_resources.type,
-    "FARGATE"
+  new_compute_environment_is_fargate = (
+    local.create_compute_environment
+    ? startswith(var.batch_compute_config.batch_compute_environment.compute_resources.type, "FARGATE")
+    : false
   )
 
   # Spot-type environments require special handling
-  compute_environment_is_spot = endswith(
-    var.batch_compute_config.batch_compute_environment.compute_resources.type,
-    "SPOT"
+  new_compute_environment_is_spot = (
+    local.create_compute_environment
+    ? endswith(var.batch_compute_config.batch_compute_environment.compute_resources.type, "SPOT")
+    : false
   )
 
   # Only create if a non-Fargate compute environment will be created
   create_instance_profile = (
     local.create_compute_environment
-    && (!local.compute_environment_is_fargate)
+    && (!local.new_compute_environment_is_fargate)
   )
 
   # Only create if a Fargate compute environment will be created
   create_ecs_execution_role = (
     local.create_compute_environment
-    && local.compute_environment_is_fargate
+    && local.new_compute_environment_is_fargate
   )
 
   # Only create if a non-Fargate Spot compute environment will be created
   create_spot_fleet_role = (
     local.create_compute_environment
-    && local.compute_environment_is_spot
-    && (!local.compute_environment_is_fargate)
+    && local.new_compute_environment_is_spot
+    && (!local.new_compute_environment_is_fargate)
   )
 
   # Only create if a non-Fargate compute environment will be created and the
   # user provided a launch template configuration and not an existing name
   create_launch_template = (
     local.create_compute_environment
-    && (!local.compute_environment_is_fargate)
+    && (!local.new_compute_environment_is_fargate)
     && var.batch_compute_config.ec2_launch_template_existing == null
     && var.batch_compute_config.ec2_launch_template != null
   )
@@ -63,7 +65,7 @@ locals {
   # existing) is not required by batch.
   get_launch_template = (
     local.create_compute_environment
-    && (!local.compute_environment_is_fargate)
+    && (!local.new_compute_environment_is_fargate)
     && var.batch_compute_config.ec2_launch_template_existing != null
   )
 
@@ -402,7 +404,7 @@ resource "aws_batch_compute_environment" "task_batch" {
     # Create zero or one EC2 configuration blocks
     dynamic "ec2_configuration" {
       for_each = (
-        (!local.compute_environment_is_fargate)
+        (!local.new_compute_environment_is_fargate)
         && var.batch_compute_config.batch_compute_environment.compute_resources.ec2_configuration != null
       ) ? [var.batch_compute_config.batch_compute_environment.compute_resources.ec2_configuration] : []
       iterator = ec2_configuration

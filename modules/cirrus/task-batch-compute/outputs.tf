@@ -6,7 +6,7 @@ output "batch" {
     )
     compute_environment_is_fargate = (
       local.create_compute_environment
-      ? local.compute_environment_is_fargate
+      ? local.new_compute_environment_is_fargate
       : var.batch_compute_config.batch_compute_environment_existing.is_fargate
     )
     ecs_task_execution_role_arn = one(
