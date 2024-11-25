@@ -69,3 +69,11 @@ output "cirrus_data_bucket" {
 output "cirrus_payload_bucket" {
   value = module.base.cirrus_payload_bucket
 }
+
+output "cirrus_workflow_state_machine_arns" {
+  description = "Map of Cirrus Workflow names to their State Machine ARN"
+  value = {
+    for workflow_name, workflow_output in module.workflow :
+    workflow_name => workflow_output.state_machine_arn
+  }
+}

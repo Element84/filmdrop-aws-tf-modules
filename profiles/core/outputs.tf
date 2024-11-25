@@ -142,6 +142,11 @@ output "cirrus_payload_bucket" {
   value = var.deploy_cirrus ? module.cirrus[0].cirrus_payload_bucket : ""
 }
 
+output "cirrus_workflow_state_machine_arns" {
+  description = "Map of Cirrus Workflow names to their State Machine ARN"
+  value       = var.deploy_cirrus ? module.cirrus[0].cirrus_workflow_state_machine_arns : tomap({})
+}
+
 output "warning_sns_topic_arn" {
   value = module.base_infra.warning_sns_topic_arn
 }
