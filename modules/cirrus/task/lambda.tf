@@ -55,7 +55,7 @@ data "aws_iam_policy_document" "task_lambda_assume_role" {
     condition {
       test     = "StringEquals"
       variable = "aws:SourceAccount"
-      values   = ["${local.current_account}"]
+      values   = [local.current_account]
     }
   }
 }

@@ -109,7 +109,7 @@ data "aws_iam_policy_document" "task_ec2_assume_role" {
     condition {
       test     = "StringEquals"
       variable = "aws:SourceAccount"
-      values   = ["${local.current_account}"]
+      values   = [local.current_account]
     }
   }
 }
@@ -166,7 +166,7 @@ data "aws_iam_policy_document" "task_ecs_assume_role" {
     condition {
       test     = "StringEquals"
       variable = "aws:SourceAccount"
-      values   = ["${local.current_account}"]
+      values   = [local.current_account]
     }
   }
 }
@@ -215,7 +215,7 @@ data "aws_iam_policy_document" "task_spot_fleet_assume_role" {
     condition {
       test     = "StringEquals"
       variable = "aws:SourceAccount"
-      values   = ["${local.current_account}"]
+      values   = [local.current_account]
     }
   }
 }
@@ -269,7 +269,7 @@ data "aws_iam_policy_document" "task_batch_assume_role" {
     condition {
       test     = "StringEquals"
       variable = "aws:SourceAccount"
-      values   = ["${local.current_account}"]
+      values   = [local.current_account]
     }
   }
 }

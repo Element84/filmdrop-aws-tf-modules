@@ -19,10 +19,6 @@ module "builtin_functions" {
   cirrus_process_lambda_reserved_concurrency       = var.cirrus_process_lambda_reserved_concurrency
   cirrus_update_state_lambda_timeout               = var.cirrus_update_state_lambda_timeout
   cirrus_update_state_lambda_memory                = var.cirrus_update_state_lambda_memory
-  cirrus_pre_batch_lambda_timeout                  = var.cirrus_pre_batch_lambda_timeout
-  cirrus_pre_batch_lambda_memory                   = var.cirrus_pre_batch_lambda_memory
-  cirrus_post_batch_lambda_timeout                 = var.cirrus_post_batch_lambda_timeout
-  cirrus_post_batch_lambda_memory                  = var.cirrus_post_batch_lambda_memory
   cirrus_state_dynamodb_table_name                 = module.base.cirrus_state_dynamodb_table_name
   cirrus_state_dynamodb_table_arn                  = module.base.cirrus_state_dynamodb_table_arn
   cirrus_state_event_timestreamwrite_database_name = module.base.cirrus_state_event_timestreamwrite_database_name
