@@ -1,4 +1,4 @@
-resource "aws_iam_role" "cirrus_process_lambda_role" {
+resource "aws_iam_role" "cirrus_update_state_lambda_role" {
   name_prefix = "${var.cirrus_prefix}-process-role-"
 
   assume_role_policy = <<EOF
@@ -18,7 +18,7 @@ EOF
 
 }
 
-resource "aws_iam_policy" "cirrus_process_lambda_policy" {
+resource "aws_iam_policy" "cirrus_update_state_lambda_policy" {
   name_prefix = "${var.cirrus_prefix}-process-policy-"
 
   # TODO: the secret thing is probably not gonna work without some fixes in boto3utils...
@@ -28,28 +28,11 @@ resource "aws_iam_policy" "cirrus_process_lambda_policy" {
   "Version": "2012-10-17",
   "Statement": [
     {
-      "Action": [
-        "s3:ListBucket",
-        "s3:GetObject",
-        "s3:GetBucketLocation"
-      ],
-      "Resource": "*",
-      "Effect": "Allow"
-    },
-    {
-      "Action": "secretsmanager:GetSecretValue",
-      "Resource": [
-        "arn:aws:secretsmanager:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:secret:${var.cirrus_prefix}*"
-      ],
-      "Effect": "Allow"
-    },
-    {
       "Effect": "Allow",
       "Action": [
         "dynamodb:Query",
         "dynamodb:Scan",
         "dynamodb:GetItem",
-        "dynamodb:BatchGetItem",
         "dynamodb:PutItem",
         "dynamodb:UpdateItem",
         "dynamodb:DescribeTable"
@@ -76,24 +59,21 @@ resource "aws_iam_policy" "cirrus_process_lambda_policy" {
     {
       "Effect": "Allow",
       "Action": [
-        "sqs:GetQueueUrl",
-        "sqs:GetQueueAttributes",
-        "sqs:ReceiveMessage",
-        "sqs:DeleteMessage"
-      ],
-      "Resource": "${var.cirrus_process_sqs_queue_arn}"
-    },
-    {
-      "Effect": "Allow",
-      "Action": [
-        "states:StartExecution"
+        "states:GetExecutionHistory"
       ],
       "Resource": "arn:aws:states:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:stateMachine:${var.cirrus_prefix}-*"
     },
     {
       "Effect": "Allow",
       "Action": [
-        "s3:PutObject"
+        "sqs:SendMessage"
+      ],
+      "Resource": "${var.cirrus_process_sqs_queue_arn}"
+    },
+    {
+      "Effect": "Allow",
+      "Action": [
+        "s3:GetObject"
       ],
       "Resource": "arn:aws:s3:::${var.cirrus_payload_bucket}*"
     },
@@ -110,29 +90,28 @@ EOF
 
 }
 
-resource "aws_iam_role_policy_attachment" "cirrus_process_lambda_role_policy_attachment1" {
-  role       = aws_iam_role.cirrus_process_lambda_role.name
-  policy_arn = aws_iam_policy.cirrus_process_lambda_policy.arn
+resource "aws_iam_role_policy_attachment" "cirrus_update_state_lambda_role_policy_attachment1" {
+  role       = aws_iam_role.cirrus_update_state_lambda_role.name
+  policy_arn = aws_iam_policy.cirrus_update_state_lambda_policy.arn
 }
 
-resource "aws_iam_role_policy_attachment" "cirrus_process_lambda_role_policy_attachment2" {
-  role       = aws_iam_role.cirrus_process_lambda_role.name
+resource "aws_iam_role_policy_attachment" "cirrus_update_state_lambda_role_policy_attachment2" {
+  role       = aws_iam_role.cirrus_update_state_lambda_role.name
   policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole"
 }
 
-resource "aws_lambda_function" "cirrus_process" {
-  filename                       = "${path.module}/cirrus-lambda-dist.zip"
-  function_name                  = "${var.cirrus_prefix}-process"
-  description                    = "Cirrus Process Lambda"
-  role                           = aws_iam_role.cirrus_process_lambda_role.arn
-  handler                        = "process.lambda_handler"
-  source_code_hash               = filebase64sha256("${path.module}/cirrus-lambda-dist.zip")
-  runtime                        = "python3.12"
-  timeout                        = var.cirrus_process_lambda_timeout
-  memory_size                    = var.cirrus_process_lambda_memory
-  reserved_concurrent_executions = var.cirrus_process_lambda_reserved_concurrency
-  publish                        = true
-  architectures                  = ["arm64"]
+resource "aws_lambda_function" "cirrus_update_state" {
+  filename         = "${path.module}/../cirrus-lambda-dist.zip"
+  function_name    = "${var.cirrus_prefix}-update-state"
+  description      = "Cirrus Update-State Lambda"
+  role             = aws_iam_role.cirrus_update_state_lambda_role.arn
+  handler          = "update_state.lambda_handler"
+  source_code_hash = filebase64sha256("${path.module}/../cirrus-lambda-dist.zip")
+  runtime          = "python3.12"
+  timeout          = var.cirrus_update_state_lambda_timeout
+  memory_size      = var.cirrus_update_state_lambda_memory
+  publish          = true
+  architectures    = ["arm64"]
 
   environment {
     variables = {
@@ -142,7 +121,7 @@ resource "aws_lambda_function" "cirrus_process" {
       CIRRUS_STATE_DB                 = var.cirrus_state_dynamodb_table_name
       CIRRUS_EVENT_DB_AND_TABLE       = "${var.cirrus_state_event_timestreamwrite_database_name}|${var.cirrus_state_event_timestreamwrite_table_name}"
       CIRRUS_WORKFLOW_EVENT_TOPIC_ARN = var.cirrus_workflow_event_sns_topic_arn
-      CIRRUS_BASE_WORKFLOW_ARN        = "arn:aws:states:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:stateMachine:${var.cirrus_prefix}-"
+      CIRRUS_PROCESS_QUEUE_URL        = var.cirrus_process_sqs_queue_url
     }
   }
 
@@ -152,21 +131,59 @@ resource "aws_lambda_function" "cirrus_process" {
   }
 }
 
-resource "aws_lambda_event_source_mapping" "cirrus_process_sqs_lambda_event_source_mapping" {
-  event_source_arn = var.cirrus_process_sqs_queue_arn
-  function_name    = aws_lambda_function.cirrus_process.function_name
+resource "aws_cloudwatch_event_rule" "cirrus_update_state_rule" {
+  name = "${var.cirrus_prefix}-update-state-sfn-events"
+
+  event_pattern = <<EOF
+{
+  "detail-type": [
+    "Step Functions Execution Status Change"
+  ],
+  "source": [
+    "aws.states"
+  ],
+  "detail": {
+    "stateMachineArn": [
+      {
+        "prefix": "arn:aws:states:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:stateMachine:${var.cirrus_prefix}-*"
+      }
+    ],
+    "status": [
+      "SUCCEEDED",
+      "FAILED",
+      "ABORTED",
+      "TIMED_OUT"
+    ]
+  }
+}
+EOF
+
 }
 
-resource "aws_lambda_permission" "cirrus_process_sqs_lambda_permission" {
+resource "aws_cloudwatch_event_target" "cirrus_update_state_target" {
+  target_id = "${var.cirrus_prefix}-update-state-event-target"
+  arn       = aws_lambda_function.cirrus_update_state.arn
+  rule      = aws_cloudwatch_event_rule.cirrus_update_state_rule.name
+
+  dead_letter_config {
+    arn = var.cirrus_update_state_dead_letter_sqs_queue_arn
+  }
+
+  retry_policy {
+    maximum_event_age_in_seconds = 1800
+  }
+}
+
+resource "aws_lambda_permission" "cirrus_update_state_event_bridge_lambda_permission" {
   action        = "lambda:InvokeFunction"
-  function_name = aws_lambda_function.cirrus_process.function_name
-  principal     = "sqs.amazonaws.com"
-  source_arn    = var.cirrus_process_sqs_queue_arn
+  function_name = aws_lambda_function.cirrus_update_state.function_name
+  principal     = "events.amazonaws.com"
+  source_arn    = aws_cloudwatch_event_rule.cirrus_update_state_rule.arn
 }
 
-resource "aws_cloudwatch_metric_alarm" "cirrus_process_lambda_errors_warning_alarm" {
+resource "aws_cloudwatch_metric_alarm" "cirrus_update_state_lambda_errors_warning_alarm" {
   count                     = var.deploy_alarms ? 1 : 0
-  alarm_name                = "WARNING: ${var.cirrus_prefix}-process Lambda Errors Warning Alarm"
+  alarm_name                = "WARNING: ${var.cirrus_prefix}-update-state Lambda Errors Warning Alarm"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 5
   metric_name               = "Errors"
@@ -175,19 +192,19 @@ resource "aws_cloudwatch_metric_alarm" "cirrus_process_lambda_errors_warning_ala
   statistic                 = "Sum"
   threshold                 = 10
   treat_missing_data        = "notBreaching"
-  alarm_description         = "${var.cirrus_prefix}-process Cirrus Update-State Lambda Errors Warning Alarm"
+  alarm_description         = "${var.cirrus_prefix}-update-state Cirrus Update-State Lambda Errors Warning Alarm"
   alarm_actions             = [var.warning_sns_topic_arn]
   ok_actions                = [var.warning_sns_topic_arn]
   insufficient_data_actions = []
 
   dimensions = {
-    FunctionName = aws_lambda_function.cirrus_process.function_name
+    FunctionName = aws_lambda_function.cirrus_update_state.function_name
   }
 }
 
-resource "aws_cloudwatch_metric_alarm" "cirrus_process_lambda_errors_critical_alarm" {
+resource "aws_cloudwatch_metric_alarm" "cirrus_update_state_lambda_errors_critical_alarm" {
   count                     = var.deploy_alarms ? 1 : 0
-  alarm_name                = "CRITICAL: ${var.cirrus_prefix}-process Lambda Errors Critical Alarm"
+  alarm_name                = "CRITICAL: ${var.cirrus_prefix}-update-state Lambda Errors Critical Alarm"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 5
   metric_name               = "Errors"
@@ -196,12 +213,12 @@ resource "aws_cloudwatch_metric_alarm" "cirrus_process_lambda_errors_critical_al
   statistic                 = "Sum"
   threshold                 = 100
   treat_missing_data        = "notBreaching"
-  alarm_description         = "${var.cirrus_prefix}-process Cirrus Update-State Lambda Errors Critical Alarm"
+  alarm_description         = "${var.cirrus_prefix}-update-state Cirrus Update-State Lambda Errors Critical Alarm"
   alarm_actions             = [var.critical_sns_topic_arn]
   ok_actions                = [var.warning_sns_topic_arn]
   insufficient_data_actions = []
 
   dimensions = {
-    FunctionName = aws_lambda_function.cirrus_process.function_name
+    FunctionName = aws_lambda_function.cirrus_update_state.function_name
   }
 }

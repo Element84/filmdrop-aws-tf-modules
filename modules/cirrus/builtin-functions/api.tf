@@ -89,12 +89,12 @@ resource "aws_iam_role_policy_attachment" "cirrus_api_lambda_role_policy_attachm
 }
 
 resource "aws_lambda_function" "cirrus_api" {
-  filename         = "${path.module}/cirrus-lambda-dist.zip"
+  filename         = "${path.module}/../cirrus-lambda-dist.zip"
   function_name    = "${var.cirrus_prefix}-api"
   description      = "Cirrus API Lambda"
   role             = aws_iam_role.cirrus_api_lambda_role.arn
   handler          = "api.lambda_handler"
-  source_code_hash = filebase64sha256("${path.module}/cirrus-lambda-dist.zip")
+  source_code_hash = filebase64sha256("${path.module}/../cirrus-lambda-dist.zip")
   runtime          = "python3.12"
   timeout          = var.cirrus_api_lambda_timeout
   memory_size      = var.cirrus_api_lambda_memory
@@ -239,7 +239,7 @@ resource "aws_api_gateway_account" "cirrus_api_gateway_cw_role" {
 }
 
 resource "aws_iam_role" "cirrus_api_gw_role" {
-  name_prefix = "${var.cirrus_prefix}-cirrus-${data.aws_region.current.name}"
+  name_prefix = "${var.cirrus_prefix}-${data.aws_region.current.name}"
 
   assume_role_policy = <<EOF
 {
@@ -258,7 +258,7 @@ EOF
 }
 
 resource "aws_iam_policy" "cirrus_api_gw_policy" {
-  name_prefix = "${var.cirrus_prefix}-cirrus-${data.aws_region.current.name}-apigw"
+  name_prefix = "${var.cirrus_prefix}-${data.aws_region.current.name}-apigw"
 
   policy = <<EOF
 {

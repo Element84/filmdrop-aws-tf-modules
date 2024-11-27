@@ -61,30 +61,6 @@ variable "cirrus_update_state_lambda_memory" {
   default     = 128
 }
 
-variable "cirrus_pre_batch_lambda_timeout" {
-  description = "Cirrus pre-batch lambda timeout (sec)"
-  type        = number
-  default     = 15
-}
-
-variable "cirrus_pre_batch_lambda_memory" {
-  description = "Cirrus pre-batch lambda memory (MB)"
-  type        = number
-  default     = 128
-}
-
-variable "cirrus_post_batch_lambda_timeout" {
-  description = "Cirrus post-batch lambda timeout (sec)"
-  type        = number
-  default     = 15
-}
-
-variable "cirrus_post_batch_lambda_memory" {
-  description = "Cirrus post-batch lambda memory (MB)"
-  type        = number
-  default     = 128
-}
-
 variable "cirrus_state_dynamodb_table_name" {
   description = "Cirrus state dynamodb table name"
   type        = string

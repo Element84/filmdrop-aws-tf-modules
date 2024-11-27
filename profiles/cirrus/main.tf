@@ -26,4 +26,7 @@ module "cirrus" {
   warning_sns_topic_arn                                     = var.warning_sns_topic_arn
   critical_sns_topic_arn                                    = var.critical_sns_topic_arn
   deploy_alarms                                             = var.cirrus_inputs.deploy_alarms
+  cirrus_task_batch_compute                                 = var.cirrus_inputs.task_batch_compute
+  cirrus_tasks                                              = var.cirrus_inputs.tasks
+  cirrus_workflows                                          = var.cirrus_inputs.workflows
 }

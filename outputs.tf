@@ -142,6 +142,11 @@ output "cirrus_payload_bucket" {
   value = module.filmdrop.cirrus_payload_bucket
 }
 
+output "cirrus_workflow_state_machine_arns" {
+  description = "Map of Cirrus Workflow names to their State Machine ARN"
+  value       = module.filmdrop.cirrus_workflow_state_machine_arns
+}
+
 output "warning_sns_topic_arn" {
   value = module.filmdrop.warning_sns_topic_arn
 }
