@@ -15,14 +15,28 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Removed
 
-## 2.29.0 - 2024-09-27
+## [2.30.0] - 2024-11-27
+
+### Added
+
+- Final migration of Cirrus IaC to Terraform for compatibility with `cirrus-geo` [v1.0.0a0](https://github.com/cirrus-geo/cirrus-geo/releases) and beyond. The following modules were created to manage all Cirrus Task and Workflow resources through input variables:
+  - `modules.cirrus.task_batch_compute`
+  - `modules.cirrus.task`
+  - `modules.cirrus.workflow`
+
+### Changed
+
+- Moved `modules.cirrus.functions` module to `modules.cirrus.builtin_functions`
+- Moved `modules.cirrus.base-builtins` module to `modules.cirrus.base`
+
+## [2.29.0] - 2024-09-27
 
 ### Added
 
 - Base Cirrus alarms
 - Default FilmDrop Warning and Critical SNS Topics
 
-## 2.28.0 - 2024-09-13
+## [2.28.0] - 2024-09-13
 
 ### Added
 
@@ -34,13 +48,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 - Consolidated WAF rules into a single one by default for cost savings
 
-## 2.27.0 - 2024-05-31
+## [2.27.0] - 2024-05-31
 
 ### Changed
 
 - Rolled back vpc infrastructure changes to support creation of VPC if `deploy_vpc` is set to `true`.
 
-## 2.26.0 - 2024-05-29
+## [2.26.0] - 2024-05-29
 
 ### Changed
 
