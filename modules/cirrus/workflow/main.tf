@@ -6,49 +6,148 @@ locals {
   current_account = data.aws_caller_identity.current.account_id
   current_region  = data.aws_region.current.name
 
-  # Merge builtin template variable configs with the user-defined ones
-  merged_workflow_template_variables = merge(
-    var.builtin_task_template_variables,
-    var.workflow_config.template_variables
+  # Whether to construct a simple state machine definition or render the user's
+  use_default_template = try(var.workflow_config.default_template_config, null) != null
+
+  # Default Template - Each state must have a name.
+  # If one was not explicitly provided, use the task name instead.
+  default_template_states = (
+    local.use_default_template
+    ? [
+      for s_cfg in var.workflow_config.default_template_config.state_sequence :
+      merge(s_cfg, { state_name = coalesce(s_cfg.state_name, s_cfg.task_name) })
+    ]
+    : []
   )
 
-  # Gather any referenced Lambda Function ARNs.
+  # Default Template - Construct state contents using the Lambda/Batch template.
+  # The merged template variables map consists of:
+  #  - State configuration variables
+  #  - Builtin variables and their associated Cirrus Task resource ARNs
+  #  - Outputs from the state's associated Cirrus Task
+  default_template_state_strings = (
+    local.use_default_template
+    ? [
+      for idx, s_cfg in local.default_template_states :
+      templatefile(
+        "${path.module}/templates/${s_cfg.task_type}_state.tftpl",
+        merge(
+          {
+            state_name  = s_cfg.state_name
+            allow_retry = var.workflow_config.default_template_config.allow_retry
+            next_or_end = (
+              idx != (length(local.default_template_states) - 1)
+              ? local.default_template_states[idx + 1].state_name
+              : null
+            )
+          },
+          {
+            for v, v_cfg in var.builtin_task_template_variables :
+            v => var.cirrus_tasks[v_cfg.task_name][v_cfg.task_type][v_cfg.task_attr]
+          },
+          var.cirrus_tasks[s_cfg.task_name][s_cfg.task_type]
+        )
+      )
+    ]
+    : []
+  )
+
+  # Custom Template - Merge builtin template variables with user-defined ones
+  merged_workflow_template_variables = (
+    local.use_default_template
+    ? null
+    : merge(
+      var.builtin_task_template_variables,
+      coalesce(var.workflow_config.custom_template_config.variables, tomap({}))
+    )
+  )
+
+  # Default or Custom Template - Gather referenced Lambda Function ARNs.
   # These are needed for generating the workflow machine's IAM policies.
   # This includes both Cirrus- and non-Cirrus-managed Lambdas, if any.
-  workflow_tasks_lambda_functions = concat(
-    [
-      for _, v_cfg in local.merged_workflow_template_variables :
-      var.cirrus_tasks[v_cfg.task_name][v_cfg.task_type][v_cfg.task_attr]
-      if v_cfg.task_type == "lambda" && v_cfg.task_attr == "function_arn"
-    ],
-    try(coalesce(var.workflow_config.non_cirrus_lambda_arns, []), [])
+  workflow_tasks_lambda_functions = (
+    local.use_default_template
+    # Get Lambda resource ARNs from state configs and builtin variables
+    ? concat(
+      [
+        for state_cfg in local.default_template_states :
+        var.cirrus_tasks[state_cfg.task_name][state_cfg.task_type]["function_arn"]
+        if state_cfg.task_type == "lambda"
+      ],
+      [
+        for _, v_cfg in var.builtin_task_template_variables :
+        var.cirrus_tasks[v_cfg.task_name][v_cfg.task_type][v_cfg.task_attr]
+        if v_cfg.task_type == "lambda" && v_cfg.task_attr == "function_arn"
+      ],
+      try(coalesce(var.workflow_config.non_cirrus_lambda_arns, []), [])
+    )
+    # Get Lambda resource ARNs from the merged user and builtin variables
+    : concat(
+      [
+        for _, v_cfg in local.merged_workflow_template_variables :
+        var.cirrus_tasks[v_cfg.task_name][v_cfg.task_type][v_cfg.task_attr]
+        if v_cfg.task_type == "lambda" && v_cfg.task_attr == "function_arn"
+      ],
+      try(coalesce(var.workflow_config.non_cirrus_lambda_arns, []), [])
+    )
   )
 
-  # Gather any referenced Job Queue and Definition ARNs.
+  # Default or Custom Template - Gather referenced Job Queue/Definition ARNs.
   # These are needed for generating the workflow machine's IAM policies.
-  workflow_tasks_batch_resources = [
-    for _, v_cfg in local.merged_workflow_template_variables :
-    var.cirrus_tasks[v_cfg.task_name][v_cfg.task_type][v_cfg.task_attr]
-    if v_cfg.task_type == "batch" && (
-      v_cfg.task_attr == "job_queue_arn" || v_cfg.task_attr == "job_definition_arn"
+  workflow_tasks_batch_resources = (
+    local.use_default_template
+    # Get Batch resource ARNs from state configs and builtin variables
+    ? concat(
+      flatten([
+        for s_cfg in local.default_template_states :
+        s_cfg.task_type == "batch"
+        ? [
+          var.cirrus_tasks[s_cfg.task_name][s_cfg.task_type]["job_definition_arn"],
+          var.cirrus_tasks[s_cfg.task_name][s_cfg.task_type]["job_queue_arn"]
+        ]
+        : []
+      ]),
+      [
+        for _, v_cfg in var.builtin_task_template_variables :
+        var.cirrus_tasks[v_cfg.task_name][v_cfg.task_type][v_cfg.task_attr]
+        if v_cfg.task_type == "batch" && (
+          v_cfg.task_attr == "job_queue_arn" || v_cfg.task_attr == "job_definition_arn"
+        )
+      ]
     )
-  ]
+    # Get Batch resource ARNs from the merged user and builtin variables
+    : [
+      for _, v_cfg in local.merged_workflow_template_variables :
+      var.cirrus_tasks[v_cfg.task_name][v_cfg.task_type][v_cfg.task_attr]
+      if v_cfg.task_type == "batch" && (
+        v_cfg.task_attr == "job_queue_arn" || v_cfg.task_attr == "job_definition_arn"
+      )
+    ]
+  )
 
-  # Create the template variable mapping.
-  # Use each variable config as a lookup into the Cirrus Task outputs to obtain
-  # its intended string value that templatefile can use for interpolation.
-  workflow_template_variables_map = {
-    for v_name, v_cfg in local.merged_workflow_template_variables :
-    v_name => var.cirrus_tasks[v_cfg.task_name][v_cfg.task_type][v_cfg.task_attr]
-  }
-
-  # Create the workflow's state machine JSON.
-  # Use the template variable mapping above for interpolation.
-  # Decode the rendered JSON to strip newlines then encode to minify.
-  workflow_state_machine_json = jsonencode(jsondecode(templatefile(
-    "${path.root}/${var.workflow_config.template_filepath}",
-    local.workflow_template_variables_map
-  )))
+  # Default & Custom Template - Create the workflow's state machine JSON.
+  # Decode to strip newlines and then encode to minify.
+  workflow_state_machine_json = (
+    local.use_default_template
+    # Render the default template using contents of all rendered state objects
+    ? jsonencode(jsondecode(templatefile(
+      "${path.module}/templates/default.tftpl",
+      {
+        workflow_description = var.workflow_config.default_template_config.description
+        first_state_name     = local.default_template_states[0].state_name
+        state_strings        = local.default_template_state_strings
+      }
+    )))
+    # Render the user-provided template using the variable mapping to replace
+    # interpolation sequences with their desired resource ARNs
+    : jsonencode(jsondecode(templatefile(
+      "${path.root}/${var.workflow_config.custom_template_config.filepath}",
+      {
+        for v_name, v_cfg in local.merged_workflow_template_variables :
+        v_name => var.cirrus_tasks[v_cfg.task_name][v_cfg.task_type][v_cfg.task_attr]
+      }
+    )))
+  )
 
   # Submit/Invoke permissions only necessary if Batch/Lambda resources are used
   create_batch_policy  = (length(local.workflow_tasks_batch_resources) != 0)

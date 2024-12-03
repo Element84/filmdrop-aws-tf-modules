@@ -1,0 +1,31 @@
+"${state_name}": {
+  "Type": "Task",
+  "Resource": "${function_arn}",
+  %{ if allow_retry }
+  "Retry": [
+    {
+      "ErrorEquals": [
+        "Lambda.TooManyRequestsException",
+        "Lambda.Unknown"
+      ],
+      "IntervalSeconds": 10,
+      "MaxDelaySeconds": 86400,
+      "BackoffRate": 2.0,
+      "MaxAttempts": 20,
+      "JitterStrategy": "FULL"
+    }
+  ],
+  %{ endif }
+  "Catch": [
+    {
+      "ErrorEquals": ["States.ALL"],
+      "ResultPath": "$.error",
+      "Next": "failure"
+    }
+  ],
+  %{ if next_or_end != null }
+  "Next": "${next_or_end}"
+  %{ else }
+  "End": true
+  %{ endif }
+},
