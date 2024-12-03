@@ -1,0 +1,106 @@
+"${state_name}": {
+  "Type": "Parallel",
+  "Branches": [{
+    "StartAt": "${state_name}-pre-batch",
+    "States": {
+      "${state_name}-pre-batch": {
+        "Type": "Task",
+        "Resource": "${PRE-BATCH}",
+        %{ if allow_retry }
+        "Retry": [
+          {
+            "ErrorEquals": [
+              "Lambda.TooManyRequestsException",
+              "Lambda.Unknown"
+            ],
+            "IntervalSeconds": 10,
+            "MaxDelaySeconds": 86400,
+            "BackoffRate": 2.0,
+            "MaxAttempts": 20,
+            "JitterStrategy": "FULL"
+          }
+        ],
+        %{ endif }
+        "Next": "${state_name}-batch"
+      },
+      "${state_name}-batch": {
+        "Type": "Task",
+        "Resource": "arn:aws:states:::batch:submitJob.sync",
+        "Parameters": {
+          "JobName": "${state_name}",
+          "JobQueue": "${job_queue_arn}",
+          "JobDefinition": "${job_definition_arn}",
+          "Parameters": {
+            "url.$": "$.url",
+            "url_out.$": "$.url_out"
+          }
+        },
+        %{ if allow_retry }
+        "Retry": [
+          {
+            "ErrorEquals": ["Batch.AWSBatchException"],
+            "IntervalSeconds": 600,
+            "MaxDelaySeconds": 86400,
+            "BackoffRate": 2.0,
+            "MaxAttempts": 20,
+            "JitterStrategy": "FULL"
+          }
+        ],
+        %{ endif }
+        "Catch": [
+          {
+            "ErrorEquals": ["States.ALL"],
+            "ResultPath": "$.error",
+            "Next": "${state_name}-post-batch"
+          }
+        ],
+        "Next": "${state_name}-post-batch"
+      },
+      "${state_name}-post-batch": {
+        "Type": "Task",
+        "Resource": "${POST-BATCH}",
+        %{ if allow_retry }
+        "Retry": [
+          {
+            "ErrorEquals": [
+              "Lambda.TooManyRequestsException",
+              "Lambda.Unknown"
+            ],
+            "IntervalSeconds": 10,
+            "MaxDelaySeconds": 86400,
+            "BackoffRate": 2.0,
+            "MaxAttempts": 20,
+            "JitterStrategy": "FULL"
+          }
+        ],
+        %{ endif }
+        "End": true
+      }
+    }
+  }],
+  "OutputPath": "$[0]",
+  %{ if allow_retry }
+  "Retry": [
+    {
+      "ErrorEquals": ["States.ALL"],
+      "MaxAttempts": 3,
+      "IntervalSeconds": 1200,
+      "MaxDelaySeconds": 86400,
+      "BackoffRate": 2.0,
+      "JitterStrategy": "FULL"
+    }
+  ],
+  %{ endif }
+  "Catch": [
+    {
+      "ErrorEquals": ["States.ALL"],
+      "ResultPath": "$.error",
+      "Next": "failure"
+    }
+  ],
+  %{ if next_or_end != null }
+  "Next": "${next_or_end}"
+  %{ else }
+  "End": true
+  %{ endif }
+},

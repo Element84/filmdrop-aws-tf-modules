@@ -1,0 +1,12 @@
+{
+  "Comment": "${workflow_description}",
+  "StartAt": "${first_state_name}",
+  "States": {
+    %{ for state_string in state_strings }
+    ${ state_string }
+    %{ endfor }
+    "failure": {
+      "Type": "Fail"
+    }
+  }
+}

@@ -555,12 +555,23 @@ variable "cirrus_inputs" {
     workflows = optional(list(object({
       name                   = string
       non_cirrus_lambda_arns = optional(list(string))
-      template_filepath      = string
-      template_variables = optional(map(object({
-        task_name = string
-        task_type = string
-        task_attr = string
-      })))
+      default_template_config = optional(object({
+        description = string
+        allow_retry = bool
+        state_sequence = list(object({
+          state_name = optional(string)
+          task_name  = string
+          task_type  = string
+        }))
+      }))
+      custom_template_config = optional(object({
+        filepath = string
+        variables = optional(map(object({
+          task_name = string
+          task_type = string
+          task_attr = string
+        })))
+      }))
     })))
   })
   default = {
