@@ -9,6 +9,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Added
 
+- Cirrus Workflows may now be created without a user-provided State Machine template
+  - Intended for Workflows that are simple sequential executions of Cirrus Tasks
+  - Complex Workflows may still be defined using a State Machine template
+
 ### Changed
 
 ### Fixed
