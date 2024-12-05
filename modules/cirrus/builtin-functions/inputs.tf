@@ -106,6 +106,11 @@ variable "cirrus_workflow_event_sns_topic_arn" {
   type        = string
 }
 
+variable "cirrus_publish_sns_topic_arn" {
+  description = "Cirrus publish sns topic arn"
+  type        = string
+}
+
 variable "vpc_subnet_ids" {
   description = "List of subnet ids in the FilmDrop vpc"
   type        = list(string)

@@ -21,8 +21,6 @@ EOF
 resource "aws_iam_policy" "cirrus_update_state_lambda_policy" {
   name_prefix = "${var.cirrus_prefix}-process-policy-"
 
-  # TODO: the secret thing is probably not gonna work without some fixes in boto3utils...
-  # We should probably reconsider if this is the right solution.
   policy = <<EOF
 {
   "Version": "2012-10-17",
@@ -73,16 +71,20 @@ resource "aws_iam_policy" "cirrus_update_state_lambda_policy" {
     {
       "Effect": "Allow",
       "Action": [
-        "s3:GetObject"
+        "s3:GetObject",
+        "s3:PutObject"
       ],
-      "Resource": "arn:aws:s3:::${var.cirrus_payload_bucket}*"
+      "Resource": "arn:aws:s3:::${var.cirrus_payload_bucket}/*"
     },
     {
       "Effect": "Allow",
       "Action": [
         "sns:Publish"
       ],
-      "Resource": "${var.cirrus_workflow_event_sns_topic_arn}"
+      "Resource": [
+        "${var.cirrus_publish_sns_topic_arn}",
+        "${var.cirrus_workflow_event_sns_topic_arn}"
+      ]
     }
   ]
 }
@@ -145,7 +147,7 @@ resource "aws_cloudwatch_event_rule" "cirrus_update_state_rule" {
   "detail": {
     "stateMachineArn": [
       {
-        "prefix": "arn:aws:states:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:stateMachine:${var.cirrus_prefix}-*"
+        "prefix": "arn:aws:states:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:stateMachine:${var.cirrus_prefix}-"
       }
     ],
     "status": [
