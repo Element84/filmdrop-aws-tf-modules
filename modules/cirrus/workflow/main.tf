@@ -90,6 +90,21 @@ resource "aws_iam_role" "workflow_machine" {
   description        = "State Machine execution role for Cirrus Workflow '${var.workflow_config.name}'"
   assume_role_policy = data.aws_iam_policy_document.workflow_machine_assume_role.json
 }
+
+data "aws_iam_policy_document" "workflow_machine_events" {
+  statement {
+    # Allow the state machine to push state transition events
+    effect    = "Allow"
+    actions   = ["events:PutEvents"]
+    resources = ["*"]
+  }
+}
+
+resource "aws_iam_role_policy" "workflow_machine_events" {
+  name_prefix = "${var.cirrus_prefix}-workflow-role-event-creation-"
+  role        = aws_iam_role.workflow_machine.name
+  policy      = data.aws_iam_policy_document.workflow_machine_events.json
+}
 # ==============================================================================
 
 
