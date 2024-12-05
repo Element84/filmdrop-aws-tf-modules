@@ -95,7 +95,7 @@ resource "aws_iam_policy" "cirrus_process_lambda_policy" {
       "Action": [
         "s3:PutObject"
       ],
-      "Resource": "arn:aws:s3:::${var.cirrus_payload_bucket}*"
+      "Resource": "arn:aws:s3:::${var.cirrus_payload_bucket}/*"
     },
     {
       "Effect": "Allow",
