@@ -19,6 +19,15 @@ variable "cirrus_payload_bucket" {
   type        = string
 }
 
+variable "cirrus_lambda_dist_zip_filepath" {
+  description = <<-DESCRIPTION
+  (Optional) Filepath to a Cirrus Lambda Dist ZIP relative to the root module of
+  this Terraform deployment.
+  DESCRIPTION
+  type        = string
+  nullable    = false
+}
+
 variable "cirrus_api_lambda_timeout" {
   description = "Cirrus API lambda timeout (sec)"
   type        = number
