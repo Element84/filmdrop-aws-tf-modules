@@ -17,6 +17,7 @@ module "stac-server" {
   ingest_sns_topic_arns                       = var.stac_server_inputs.ingest_sns_topic_arns
   additional_ingest_sqs_senders_arns          = var.stac_server_inputs.additional_ingest_sqs_senders_arns
   opensearch_ebs_volume_size                  = var.stac_server_inputs.opensearch_ebs_volume_size
+  api_rest_type                               = var.stac_server_inputs.api_rest_type
   project_name                                = var.project_name
   authorized_s3_arns                          = var.stac_server_inputs.authorized_s3_arns
   deploy_stac_server_opensearch_serverless    = var.deploy_stac_server_opensearch_serverless

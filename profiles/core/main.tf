@@ -126,6 +126,7 @@ module "cirrus" {
 
   project_name           = var.project_name
   environment            = var.environment
+  vpc_id                 = module.base_infra.vpc_id
   private_subnet_ids     = module.base_infra.private_subnet_ids
   security_group_id      = module.base_infra.security_group_id
   cirrus_inputs          = var.cirrus_inputs

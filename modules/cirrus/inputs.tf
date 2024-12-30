@@ -68,6 +68,12 @@ variable "cirrus_log_level" {
   default     = "INFO"
 }
 
+variable "cirrus_api_rest_type" {
+  description = "Cirrus API Gateway type"
+  type        = string
+  default     = "EDGE"
+}
+
 variable "cirrus_api_lambda_timeout" {
   description = "Cirrus API lambda timeout (sec)"
   type        = number
@@ -132,6 +138,11 @@ variable "cirrus_post_batch_lambda_memory" {
   description = "Cirrus post-batch lambda memory (MB)"
   type        = number
   default     = 128
+}
+
+variable "vpc_id" {
+  description = "FilmDrop VPC ID"
+  type        = string
 }
 
 variable "vpc_subnet_ids" {

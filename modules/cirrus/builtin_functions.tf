@@ -6,6 +6,7 @@ moved {
 module "builtin_functions" {
   source = "./builtin-functions"
 
+  vpc_id                                           = var.vpc_id
   vpc_subnet_ids                                   = var.vpc_subnet_ids
   vpc_security_group_ids                           = var.vpc_security_group_ids
   cirrus_prefix                                    = local.cirrus_prefix
@@ -13,6 +14,7 @@ module "builtin_functions" {
   cirrus_data_bucket                               = module.base.cirrus_data_bucket
   cirrus_payload_bucket                            = module.base.cirrus_payload_bucket
   cirrus_lambda_dist_zip_filepath                  = local.cirrus_lambda_dist_zip_filepath
+  cirrus_api_rest_type                             = var.cirrus_api_rest_type
   cirrus_api_lambda_timeout                        = var.cirrus_api_lambda_timeout
   cirrus_api_lambda_memory                         = var.cirrus_api_lambda_memory
   cirrus_process_lambda_timeout                    = var.cirrus_process_lambda_timeout
