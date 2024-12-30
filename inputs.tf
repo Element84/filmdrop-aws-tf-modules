@@ -96,6 +96,7 @@ variable "stac_server_inputs" {
     cors_methods                                = string
     cors_headers                                = string
     authorized_s3_arns                          = list(string)
+    api_rest_type                               = string
     auth_function = object({
       cf_function_name             = string
       cf_function_runtime          = string
@@ -141,6 +142,7 @@ variable "stac_server_inputs" {
     cors_methods                                = ""
     cors_headers                                = ""
     authorized_s3_arns                          = []
+    api_rest_type                               = "EDGE"
     auth_function = {
       cf_function_name             = ""
       cf_function_runtime          = "cloudfront-js-2.0"
@@ -339,6 +341,7 @@ variable "cirrus_inputs" {
     data_bucket    = string
     payload_bucket = string
     log_level      = string
+    api_rest_type  = string
     deploy_alarms  = bool
     custom_alarms = object({
       warning  = map(any)
@@ -567,6 +570,7 @@ variable "cirrus_inputs" {
     data_bucket    = "cirrus-data-bucket-name"
     payload_bucket = "cirrus-payload-bucket-name"
     log_level      = "INFO"
+    api_rest_type  = "EDGE"
     deploy_alarms  = true
     custom_alarms = {
       warning  = {}

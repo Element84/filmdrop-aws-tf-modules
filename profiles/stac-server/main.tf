@@ -6,7 +6,6 @@ module "stac-server" {
   vpc_subnet_ids                              = var.private_subnet_ids
   vpc_security_group_ids                      = [var.security_group_id]
   stac_api_stage                              = var.environment
-  stac_api_rootpath                           = var.stac_server_inputs.deploy_cloudfront ? "" : "/${var.environment}"
   enable_transactions_extension               = var.stac_server_inputs.enable_transactions_extension
   collection_to_index_mappings                = var.stac_server_inputs.collection_to_index_mappings
   opensearch_cluster_instance_type            = var.stac_server_inputs.opensearch_cluster_instance_type
@@ -17,15 +16,20 @@ module "stac-server" {
   ingest_sns_topic_arns                       = var.stac_server_inputs.ingest_sns_topic_arns
   additional_ingest_sqs_senders_arns          = var.stac_server_inputs.additional_ingest_sqs_senders_arns
   opensearch_ebs_volume_size                  = var.stac_server_inputs.opensearch_ebs_volume_size
+  api_rest_type                               = var.stac_server_inputs.api_rest_type
   project_name                                = var.project_name
   authorized_s3_arns                          = var.stac_server_inputs.authorized_s3_arns
   deploy_stac_server_opensearch_serverless    = var.deploy_stac_server_opensearch_serverless
   deploy_stac_server_outside_vpc              = var.deploy_stac_server_outside_vpc
-  stac_api_url                                = var.stac_server_inputs.deploy_cloudfront && var.stac_server_inputs.domain_alias != "" ? "https://${var.stac_server_inputs.domain_alias}" : ""
-  cors_origin                                 = var.stac_server_inputs.cors_origin
-  cors_credentials                            = var.stac_server_inputs.cors_credentials
-  cors_methods                                = var.stac_server_inputs.cors_methods
-  cors_headers                                = var.stac_server_inputs.cors_headers
+
+  # CloudFront or a custom domain implies the rootpath is simply "/"
+  stac_api_rootpath = var.stac_server_inputs.deploy_cloudfront || var.stac_server_inputs.domain_alias != "" ? "" : "/${var.environment}"
+  stac_api_url      = var.stac_server_inputs.domain_alias != "" ? "https://${var.stac_server_inputs.domain_alias}" : ""
+
+  cors_origin      = var.stac_server_inputs.cors_origin
+  cors_credentials = var.stac_server_inputs.cors_credentials
+  cors_methods     = var.stac_server_inputs.cors_methods
+  cors_headers     = var.stac_server_inputs.cors_headers
 }
 
 module "cloudfront_api_gateway_endpoint" {

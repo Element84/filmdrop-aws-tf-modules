@@ -1,3 +1,8 @@
+locals {
+  is_private_endpoint = var.api_rest_type == "PRIVATE" ? true : false
+}
+
+
 resource "aws_lambda_function" "stac_server_api" {
   filename         = "${path.module}/lambda/api/api.zip"
   function_name    = "${local.name_prefix}-stac-server-api"
@@ -54,17 +59,92 @@ resource "aws_lambda_function" "stac_server_api" {
   }
 }
 
+resource "aws_security_group" "stac_server_api_gateway_private_vpce" {
+  count = local.is_private_endpoint ? 1 : 0
+
+  name_prefix = "${local.name_prefix}-apigw-vcpe-sg-"
+  description = "Allows TCP inbound on 443 from VPC private subnet CIDRs"
+
+  vpc_id = var.vpc_id
+}
+
+resource "aws_vpc_security_group_ingress_rule" "stac_server_api_gateway_private_vcpe" {
+  for_each = local.is_private_endpoint ? data.aws_subnet.selected : {}
+
+  security_group_id = aws_security_group.stac_server_api_gateway_private_vpce[0].id
+  description       = "Allow TCP on 443 for subnet ${each.value.id}"
+
+  cidr_ipv4   = each.value.cidr_block
+  ip_protocol = "tcp"
+  from_port   = 443
+  to_port     = 443
+}
+
+resource "aws_vpc_endpoint" "stac_server_api_gateway_private" {
+  count = local.is_private_endpoint ? 1 : 0
+
+  service_name        = "com.amazonaws.${data.aws_region.current.name}.execute-api"
+  vpc_id              = var.vpc_id
+  vpc_endpoint_type   = "Interface"
+  ip_address_type     = "ipv4"
+  subnet_ids          = [for subnet in data.aws_subnet.selected : subnet.id]
+  security_group_ids  = aws_security_group.stac_server_api_gateway_private_vpce[*].id
+  auto_accept         = true
+  private_dns_enabled = false
+
+  dns_options {
+    dns_record_ip_type = "ipv4"
+  }
+}
+
 resource "aws_api_gateway_rest_api" "stac_server_api_gateway" {
   name = "${local.name_prefix}-stac-server"
 
   endpoint_configuration {
-    types = [var.api_rest_type]
+    types            = [var.api_rest_type]
+    vpc_endpoint_ids = local.is_private_endpoint ? aws_vpc_endpoint.stac_server_api_gateway_private[*].id : null
+  }
+}
+
+data "aws_iam_policy_document" "stac_server_api_gateway_private" {
+  count = local.is_private_endpoint ? 1 : 0
+
+  statement {
+    sid       = "DenyApiInvokeForNonVpceTraffic"
+    effect    = "Deny"
+    actions   = ["execute-api:Invoke"]
+    resources = ["arn:aws:execute-api:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:${aws_api_gateway_rest_api.stac_server_api_gateway.id}/*"]
+
+    principals {
+      type        = "AWS"
+      identifiers = ["*"]
+    }
+
+    condition {
+      variable = "aws:SourceVpce"
+      test     = "StringNotEquals"
+      values   = [aws_vpc_endpoint.stac_server_api_gateway_private[0].id]
+    }
   }
 
-  lifecycle {
-    ignore_changes = [policy]
-  }
+  statement {
+    sid       = "AllowApiInvoke"
+    effect    = "Allow"
+    actions   = ["execute-api:Invoke"]
+    resources = ["arn:aws:execute-api:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:${aws_api_gateway_rest_api.stac_server_api_gateway.id}/*"]
 
+    principals {
+      type        = "AWS"
+      identifiers = ["*"]
+    }
+  }
+}
+
+resource "aws_api_gateway_rest_api_policy" "stac_server_api_gateway_private" {
+  count = local.is_private_endpoint ? 1 : 0
+
+  rest_api_id = aws_api_gateway_rest_api.stac_server_api_gateway.id
+  policy      = data.aws_iam_policy_document.stac_server_api_gateway_private[0].json
 }
 
 resource "aws_api_gateway_method" "stac_server_api_gateway_root_method" {

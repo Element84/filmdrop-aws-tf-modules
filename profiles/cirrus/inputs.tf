@@ -16,6 +16,11 @@ variable "project_name" {
   }
 }
 
+variable "vpc_id" {
+  description = "FilmDrop VPC ID"
+  type        = string
+}
+
 variable "private_subnet_ids" {
   description = "List of private subnet ids in the FilmDrop vpc"
   type        = list(string)
@@ -32,6 +37,7 @@ variable "cirrus_inputs" {
     data_bucket    = string
     payload_bucket = string
     log_level      = string
+    api_rest_type  = string
     deploy_alarms  = bool
     custom_alarms = object({
       warning  = map(any)
@@ -260,6 +266,7 @@ variable "cirrus_inputs" {
     data_bucket    = "cirrus-data-bucket-name"
     payload_bucket = "cirrus-payload-bucket-name"
     log_level      = "INFO"
+    api_rest_type  = "EDGE"
     deploy_alarms  = true
     custom_alarms = {
       warning  = {}
