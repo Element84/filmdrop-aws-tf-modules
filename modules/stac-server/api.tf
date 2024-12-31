@@ -113,7 +113,7 @@ data "aws_iam_policy_document" "stac_server_api_gateway_private" {
     sid       = "DenyApiInvokeForNonVpceTraffic"
     effect    = "Deny"
     actions   = ["execute-api:Invoke"]
-    resources = ["execute-api:/*"]
+    resources = ["arn:aws:execute-api:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:${aws_api_gateway_rest_api.stac_server_api_gateway.id}/*"]
 
     principals {
       type        = "AWS"
@@ -131,7 +131,7 @@ data "aws_iam_policy_document" "stac_server_api_gateway_private" {
     sid       = "AllowApiInvoke"
     effect    = "Allow"
     actions   = ["execute-api:Invoke"]
-    resources = ["execute-api:/*"]
+    resources = ["arn:aws:execute-api:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:${aws_api_gateway_rest_api.stac_server_api_gateway.id}/*"]
 
     principals {
       type        = "AWS"
