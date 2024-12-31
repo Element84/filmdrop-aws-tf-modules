@@ -12,7 +12,7 @@ output "stac_server_api_domain_name" {
     ? replace(
       element(split("/", aws_api_gateway_deployment.stac_server_api_gateway.invoke_url), 2),
       aws_api_gateway_rest_api.stac_server_api_gateway.id,
-      "${aws_api_gateway_rest_api.stac_server_api_gateway.id}-${aws_vpc_endpoint.stac_server_api_gateway_private.id}"
+      "${aws_api_gateway_rest_api.stac_server_api_gateway.id}-${aws_vpc_endpoint.stac_server_api_gateway_private[0].id}"
     )
     : element(split("/", aws_api_gateway_deployment.stac_server_api_gateway.invoke_url), 2)
   )
