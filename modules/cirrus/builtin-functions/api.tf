@@ -193,7 +193,7 @@ data "aws_iam_policy_document" "cirrus_api_gateway_private" {
     condition {
       variable = "aws:SourceVpce"
       test     = "StringNotEquals"
-      values   = [var.aws_vpc_endpoint.cirrus_api_gateway_private[0].id]
+      values   = [aws_vpc_endpoint.cirrus_api_gateway_private[0].id]
     }
   }
 
