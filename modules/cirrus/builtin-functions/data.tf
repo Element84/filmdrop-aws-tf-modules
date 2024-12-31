@@ -7,5 +7,5 @@ data "aws_region" "current" {
 data "aws_subnet" "selected" {
   for_each = toset(var.vpc_subnet_ids)
 
-  id = each.key
+  id = each.value
 }

@@ -63,16 +63,13 @@ resource "aws_security_group" "stac_server_api_gateway_private_vpce" {
   count = local.is_private_endpoint ? 1 : 0
 
   name_prefix = "${local.name_prefix}-apigw-vcpe-sg-"
-  description = <<-DESCRIPTION
-    Allows TCP inbound on 443 from VPC private subnet CIDRs.
-    No outbound rules necessary for interface VPCe.
-  DESCRIPTION
+  description = "Allows TCP inbound on 443 from VPC private subnet CIDRs"
 
   vpc_id = var.vpc_id
 }
 
 resource "aws_vpc_security_group_ingress_rule" "stac_server_api_gateway_private_vcpe" {
-  for_each = local.is_private_endpoint ? data.aws_subnet.selected : []
+  for_each = local.is_private_endpoint ? data.aws_subnet.selected : {}
 
   security_group_id = aws_security_group.stac_server_api_gateway_private_vpce[0].id
   description       = "Allow TCP on 443 for subnet ${each.value.id}"
@@ -86,14 +83,14 @@ resource "aws_vpc_security_group_ingress_rule" "stac_server_api_gateway_private_
 resource "aws_vpc_endpoint" "stac_server_api_gateway_private" {
   count = local.is_private_endpoint ? 1 : 0
 
-  service_name        = "com.amazonaws.${data.aws_region.current}.execute-api"
+  service_name        = "com.amazonaws.${data.aws_region.current.name}.execute-api"
   vpc_id              = var.vpc_id
   vpc_endpoint_type   = "Interface"
   ip_address_type     = "ipv4"
-  subnet_ids          = data.aws_subnet.selected[*].id
-  security_group_ids  = [aws_security_group.stac_server_api_gateway_private_vpce[0].id]
+  subnet_ids          = [for subnet in data.aws_subnet.selected : subnet.id]
+  security_group_ids  = aws_security_group.stac_server_api_gateway_private_vpce[*].id
   auto_accept         = true
-  private_dns_enabled = true
+  private_dns_enabled = false
 
   dns_options {
     dns_record_ip_type = "ipv4"
@@ -106,10 +103,6 @@ resource "aws_api_gateway_rest_api" "stac_server_api_gateway" {
   endpoint_configuration {
     types            = [var.api_rest_type]
     vpc_endpoint_ids = local.is_private_endpoint ? aws_vpc_endpoint.stac_server_api_gateway_private[*].id : null
-  }
-
-  lifecycle {
-    ignore_changes = [policy]
   }
 }
 
