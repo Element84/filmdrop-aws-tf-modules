@@ -6,7 +6,6 @@ module "stac-server" {
   vpc_subnet_ids                              = var.private_subnet_ids
   vpc_security_group_ids                      = [var.security_group_id]
   stac_api_stage                              = var.environment
-  stac_api_rootpath                           = var.stac_server_inputs.deploy_cloudfront ? "" : "/${var.environment}"
   enable_transactions_extension               = var.stac_server_inputs.enable_transactions_extension
   collection_to_index_mappings                = var.stac_server_inputs.collection_to_index_mappings
   opensearch_cluster_instance_type            = var.stac_server_inputs.opensearch_cluster_instance_type
@@ -22,11 +21,16 @@ module "stac-server" {
   authorized_s3_arns                          = var.stac_server_inputs.authorized_s3_arns
   deploy_stac_server_opensearch_serverless    = var.deploy_stac_server_opensearch_serverless
   deploy_stac_server_outside_vpc              = var.deploy_stac_server_outside_vpc
-  stac_api_url                                = var.stac_server_inputs.deploy_cloudfront && var.stac_server_inputs.domain_alias != "" ? "https://${var.stac_server_inputs.domain_alias}" : ""
-  cors_origin                                 = var.stac_server_inputs.cors_origin
-  cors_credentials                            = var.stac_server_inputs.cors_credentials
-  cors_methods                                = var.stac_server_inputs.cors_methods
-  cors_headers                                = var.stac_server_inputs.cors_headers
+
+  # TODO - CVG - tmp testing
+  # stac_api_rootpath                           = var.stac_server_inputs.deploy_cloudfront ? "" : "/${var.environment}"
+  stac_api_rootpath = ""
+  stac_api_url      = var.stac_server_inputs.domain_alias != "" ? "https://${var.stac_server_inputs.domain_alias}" : ""
+
+  cors_origin      = var.stac_server_inputs.cors_origin
+  cors_credentials = var.stac_server_inputs.cors_credentials
+  cors_methods     = var.stac_server_inputs.cors_methods
+  cors_headers     = var.stac_server_inputs.cors_headers
 }
 
 module "cloudfront_api_gateway_endpoint" {
