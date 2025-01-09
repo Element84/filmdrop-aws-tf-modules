@@ -7,6 +7,12 @@ output "stac_server_opensearch_endpoint" {
 }
 
 output "stac_server_api_domain_name" {
+  # Given:
+  #  - https://abcd1234.execute-api.us-west-2.amazonaws.com/prod
+  # The following is returned for a PRIVATE API Gateway (VPCe must be included):
+  #  - abcd1234-vpce-123456789.execute-api.us-west-2.amazonaws.com
+  # Or for an EDGE API Gateway:
+  #  - abcd1234.execute-api.us-west-2.amazonaws.com
   value = (
     local.is_private_endpoint
     ? replace(
