@@ -59,7 +59,13 @@ variable "stac_api_stage_description" {
 }
 
 variable "stac_api_rootpath" {
-  description = "This should be set to an empty string when there is a cloudfront distribution in front of stac-server. This should be set to null to default to use the stac_api_stage var as the root path.  The cloudfront distros are created via the `cloudfront/apigw_endpoint` module."
+  description = <<-DESCRIPTION
+    If stac-server has a cloudfront distribution, this should be an empty string.
+    If stac-server does not have a cloudfront distribution, the api_rest_type is
+    PRIVATE, and you're managing a custom API Gateway domain outside of this module,
+    this should be an empty string.
+    If neither is true, the stac_api_stage var should be used.
+  DESCRIPTION
   type        = string
   default     = ""
 }
