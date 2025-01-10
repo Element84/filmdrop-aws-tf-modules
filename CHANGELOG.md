@@ -9,9 +9,16 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Added
 
+- A custom Cirrus lambda dist ZIP can now be used instead of the default
+
 ### Changed
 
 ### Fixed
+
+- Fixed the Cirrus `update-state` lambda permissions to allow:
+  - Pushing messages to the Cirrus `publish` SNS topic
+  - Creating objects in the Cirrus `payload` S3 bucket
+- Fixed Cirrus workflow state machine permissions to allow creating state transition events
 
 ### Removed
 
