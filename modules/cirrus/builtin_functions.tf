@@ -13,6 +13,7 @@ module "builtin_functions" {
   cirrus_log_level                                 = var.cirrus_log_level
   cirrus_data_bucket                               = module.base.cirrus_data_bucket
   cirrus_payload_bucket                            = module.base.cirrus_payload_bucket
+  cirrus_lambda_dist_zip_filepath                  = local.cirrus_lambda_dist_zip_filepath
   cirrus_api_rest_type                             = var.cirrus_api_rest_type
   cirrus_api_lambda_timeout                        = var.cirrus_api_lambda_timeout
   cirrus_api_lambda_memory                         = var.cirrus_api_lambda_memory
@@ -27,6 +28,7 @@ module "builtin_functions" {
   cirrus_state_event_timestreamwrite_table_name    = module.base.cirrus_state_event_timestreamwrite_table_name
   cirrus_state_event_timestreamwrite_table_arn     = module.base.cirrus_state_event_timestreamwrite_table_arn
   cirrus_workflow_event_sns_topic_arn              = module.base.cirrus_workflow_event_sns_topic_arn
+  cirrus_publish_sns_topic_arn                     = module.base.cirrus_publish_sns_topic_arn
   cirrus_process_sqs_queue_arn                     = module.base.cirrus_process_sqs_queue_arn
   cirrus_process_sqs_queue_url                     = module.base.cirrus_process_sqs_queue_url
   cirrus_update_state_dead_letter_sqs_queue_arn    = module.base.cirrus_update_state_dead_letter_sqs_queue_arn

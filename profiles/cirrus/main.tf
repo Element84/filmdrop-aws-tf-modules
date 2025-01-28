@@ -6,6 +6,7 @@ module "cirrus" {
   vpc_id                                                    = var.vpc_id
   vpc_subnet_ids                                            = var.private_subnet_ids
   vpc_security_group_ids                                    = [var.security_group_id]
+  cirrus_lambda_dist_zip_filepath                           = var.cirrus_inputs.lambda_dist_zip_filepath
   cirrus_process_sqs_timeout                                = var.cirrus_inputs.process.sqs_timeout
   cirrus_process_sqs_max_receive_count                      = var.cirrus_inputs.process.sqs_max_receive_count
   cirrus_timestream_magnetic_store_retention_period_in_days = var.cirrus_inputs.state.timestream_magnetic_store_retention_period_in_days

@@ -21,8 +21,6 @@ EOF
 resource "aws_iam_policy" "cirrus_update_state_lambda_policy" {
   name_prefix = "${var.cirrus_prefix}-process-policy-"
 
-  # TODO: the secret thing is probably not gonna work without some fixes in boto3utils...
-  # We should probably reconsider if this is the right solution.
   policy = <<EOF
 {
   "Version": "2012-10-17",
@@ -73,16 +71,20 @@ resource "aws_iam_policy" "cirrus_update_state_lambda_policy" {
     {
       "Effect": "Allow",
       "Action": [
-        "s3:GetObject"
+        "s3:GetObject",
+        "s3:PutObject"
       ],
-      "Resource": "arn:aws:s3:::${var.cirrus_payload_bucket}*"
+      "Resource": "arn:aws:s3:::${var.cirrus_payload_bucket}/*"
     },
     {
       "Effect": "Allow",
       "Action": [
         "sns:Publish"
       ],
-      "Resource": "${var.cirrus_workflow_event_sns_topic_arn}"
+      "Resource": [
+        "${var.cirrus_publish_sns_topic_arn}",
+        "${var.cirrus_workflow_event_sns_topic_arn}"
+      ]
     }
   ]
 }
@@ -101,12 +103,12 @@ resource "aws_iam_role_policy_attachment" "cirrus_update_state_lambda_role_polic
 }
 
 resource "aws_lambda_function" "cirrus_update_state" {
-  filename         = "${path.module}/../cirrus-lambda-dist.zip"
+  filename         = var.cirrus_lambda_dist_zip_filepath
   function_name    = "${var.cirrus_prefix}-update-state"
   description      = "Cirrus Update-State Lambda"
   role             = aws_iam_role.cirrus_update_state_lambda_role.arn
   handler          = "update_state.lambda_handler"
-  source_code_hash = filebase64sha256("${path.module}/../cirrus-lambda-dist.zip")
+  source_code_hash = filebase64sha256(var.cirrus_lambda_dist_zip_filepath)
   runtime          = "python3.12"
   timeout          = var.cirrus_update_state_lambda_timeout
   memory_size      = var.cirrus_update_state_lambda_memory
@@ -121,6 +123,7 @@ resource "aws_lambda_function" "cirrus_update_state" {
       CIRRUS_STATE_DB                 = var.cirrus_state_dynamodb_table_name
       CIRRUS_EVENT_DB_AND_TABLE       = "${var.cirrus_state_event_timestreamwrite_database_name}|${var.cirrus_state_event_timestreamwrite_table_name}"
       CIRRUS_WORKFLOW_EVENT_TOPIC_ARN = var.cirrus_workflow_event_sns_topic_arn
+      CIRRUS_PUBLISH_TOPIC_ARN        = var.cirrus_publish_sns_topic_arn
       CIRRUS_PROCESS_QUEUE_URL        = var.cirrus_process_sqs_queue_url
     }
   }
@@ -145,7 +148,7 @@ resource "aws_cloudwatch_event_rule" "cirrus_update_state_rule" {
   "detail": {
     "stateMachineArn": [
       {
-        "prefix": "arn:aws:states:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:stateMachine:${var.cirrus_prefix}-*"
+        "prefix": "arn:aws:states:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:stateMachine:${var.cirrus_prefix}-"
       }
     ],
     "status": [

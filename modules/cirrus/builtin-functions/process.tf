@@ -95,7 +95,7 @@ resource "aws_iam_policy" "cirrus_process_lambda_policy" {
       "Action": [
         "s3:PutObject"
       ],
-      "Resource": "arn:aws:s3:::${var.cirrus_payload_bucket}*"
+      "Resource": "arn:aws:s3:::${var.cirrus_payload_bucket}/*"
     },
     {
       "Effect": "Allow",
@@ -121,12 +121,12 @@ resource "aws_iam_role_policy_attachment" "cirrus_process_lambda_role_policy_att
 }
 
 resource "aws_lambda_function" "cirrus_process" {
-  filename                       = "${path.module}/../cirrus-lambda-dist.zip"
+  filename                       = var.cirrus_lambda_dist_zip_filepath
   function_name                  = "${var.cirrus_prefix}-process"
   description                    = "Cirrus Process Lambda"
   role                           = aws_iam_role.cirrus_process_lambda_role.arn
   handler                        = "process.lambda_handler"
-  source_code_hash               = filebase64sha256("${path.module}/../cirrus-lambda-dist.zip")
+  source_code_hash               = filebase64sha256(var.cirrus_lambda_dist_zip_filepath)
   runtime                        = "python3.12"
   timeout                        = var.cirrus_process_lambda_timeout
   memory_size                    = var.cirrus_process_lambda_memory

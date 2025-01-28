@@ -16,6 +16,18 @@ variable "project_name" {
   }
 }
 
+variable "cirrus_lambda_dist_zip_filepath" {
+  description = <<-DESCRIPTION
+  (Optional) Filepath to a Cirrus Lambda Dist ZIP relative to the root module
+  of this Terraform deployment. Used to override the ZIP that's included with
+  this module; only set if you're confident the replacement ZIP is compatible
+  with this module. If omitted, the default ZIP is used.
+  DESCRIPTION
+  type        = string
+  nullable    = true
+  default     = null
+}
+
 variable "cirrus_process_sqs_timeout" {
   description = "Cirrus Process SQS Visibility Timeout"
   type        = number

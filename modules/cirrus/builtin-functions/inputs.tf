@@ -19,6 +19,15 @@ variable "cirrus_payload_bucket" {
   type        = string
 }
 
+variable "cirrus_lambda_dist_zip_filepath" {
+  description = <<-DESCRIPTION
+  (Optional) Filepath to a Cirrus Lambda Dist ZIP relative to the root module of
+  this Terraform deployment.
+  DESCRIPTION
+  type        = string
+  nullable    = false
+}
+
 variable "cirrus_api_lambda_timeout" {
   description = "Cirrus API lambda timeout (sec)"
   type        = number
@@ -103,6 +112,11 @@ variable "cirrus_update_state_dead_letter_sqs_queue_arn" {
 
 variable "cirrus_workflow_event_sns_topic_arn" {
   description = "Cirrus workflow event sns topic arn"
+  type        = string
+}
+
+variable "cirrus_publish_sns_topic_arn" {
+  description = "Cirrus publish sns topic arn"
   type        = string
 }
 

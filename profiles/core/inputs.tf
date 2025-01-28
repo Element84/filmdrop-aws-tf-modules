@@ -355,6 +355,7 @@ variable "cirrus_inputs" {
       timestream_magnetic_store_retention_period_in_days = number
       timestream_memory_store_retention_period_in_hours  = number
     })
+    lambda_dist_zip_filepath = optional(string)
     api_lambda = object({
       timeout = number
       memory  = number
@@ -584,6 +585,7 @@ variable "cirrus_inputs" {
       timestream_magnetic_store_retention_period_in_days = 93
       timestream_memory_store_retention_period_in_hours  = 24
     }
+    lambda_dist_zip_filepath = null
     api_lambda = {
       timeout = 10
       memory  = 128
