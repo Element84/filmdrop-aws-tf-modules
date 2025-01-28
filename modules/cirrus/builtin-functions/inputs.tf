@@ -120,6 +120,11 @@ variable "cirrus_publish_sns_topic_arn" {
   type        = string
 }
 
+variable "vpc_id" {
+  description = "FilmDrop VPC ID"
+  type        = string
+}
+
 variable "vpc_subnet_ids" {
   description = "List of subnet ids in the FilmDrop vpc"
   type        = list(string)
@@ -130,7 +135,7 @@ variable "vpc_security_group_ids" {
   type        = list(string)
 }
 
-variable "api_rest_type" {
+variable "cirrus_api_rest_type" {
   description = "Cirrus API Gateway type"
   type        = string
   default     = "EDGE"

@@ -3,6 +3,7 @@ module "cirrus" {
 
   project_name                                              = var.project_name
   environment                                               = var.environment
+  vpc_id                                                    = var.vpc_id
   vpc_subnet_ids                                            = var.private_subnet_ids
   vpc_security_group_ids                                    = [var.security_group_id]
   cirrus_lambda_dist_zip_filepath                           = var.cirrus_inputs.lambda_dist_zip_filepath
@@ -13,6 +14,7 @@ module "cirrus" {
   cirrus_data_bucket                                        = var.cirrus_inputs.data_bucket
   cirrus_payload_bucket                                     = var.cirrus_inputs.payload_bucket
   cirrus_log_level                                          = var.cirrus_inputs.log_level
+  cirrus_api_rest_type                                      = var.cirrus_inputs.api_rest_type
   cirrus_api_lambda_timeout                                 = var.cirrus_inputs.api_lambda.timeout
   cirrus_api_lambda_memory                                  = var.cirrus_inputs.api_lambda.memory
   cirrus_process_lambda_timeout                             = var.cirrus_inputs.process_lambda.timeout
