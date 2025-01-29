@@ -290,10 +290,6 @@ aws apigateway update-stage --rest-api-id ${aws_api_gateway_deployment.cirrus_ap
 
 EOF
   }
-
-  depends_on = [
-    aws_api_gateway_account.cirrus_api_gateway_cw_role
-  ]
 }
 
 resource "aws_lambda_permission" "cirrus_api_gateway_lambda_permission_root_resource" {
@@ -312,60 +308,6 @@ resource "aws_lambda_permission" "cirrus_api_gateway_lambda_permission_proxy_res
   principal     = "apigateway.amazonaws.com"
 
   source_arn = "arn:aws:execute-api:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:${aws_api_gateway_rest_api.cirrus_api_gateway.id}/*/*${aws_api_gateway_resource.cirrus_api_gateway_proxy_resource.path}"
-}
-
-resource "aws_api_gateway_account" "cirrus_api_gateway_cw_role" {
-  cloudwatch_role_arn = aws_iam_role.cirrus_api_gw_role.arn
-}
-
-resource "aws_iam_role" "cirrus_api_gw_role" {
-  name_prefix = "${var.cirrus_prefix}-${data.aws_region.current.name}"
-
-  assume_role_policy = <<EOF
-{
-  "Version": "2012-10-17",
-  "Statement": [
-    {
-      "Action": "sts:AssumeRole",
-      "Principal": {
-        "Service": "apigateway.amazonaws.com"
-      },
-      "Effect": "Allow"
-    }
-  ]
-}
-EOF
-}
-
-resource "aws_iam_policy" "cirrus_api_gw_policy" {
-  name_prefix = "${var.cirrus_prefix}-${data.aws_region.current.name}-apigw"
-
-  policy = <<EOF
-{
-    "Version": "2012-10-17",
-    "Statement": [
-        {
-            "Action": [
-              "logs:CreateLogGroup",
-              "logs:CreateLogStream",
-              "logs:DescribeLogGroups",
-              "logs:DescribeLogStreams",
-              "logs:PutLogEvents",
-              "logs:GetLogEvents",
-              "logs:FilterLogEvents"
-            ],
-            "Resource": "*",
-            "Effect": "Allow"
-        }
-    ]
-}
-EOF
-
-}
-
-resource "aws_iam_role_policy_attachment" "cirrus_api_gw_base_policy" {
-  role       = aws_iam_role.cirrus_api_gw_role.name
-  policy_arn = aws_iam_policy.cirrus_api_gw_policy.arn
 }
 
 resource "aws_cloudwatch_metric_alarm" "cirrus_api_lambda_errors_warning_alarm" {
