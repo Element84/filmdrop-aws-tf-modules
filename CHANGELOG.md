@@ -20,6 +20,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
   - Pushing messages to the Cirrus `publish` SNS topic
   - Creating objects in the Cirrus `payload` S3 bucket
 - Fixed Cirrus workflow state machine permissions to allow creating state transition events
+- Fixed constant state drift caused by multiple `aws_api_gateway_account` resources (one in `stac-server`, one in `cirrus`)
 
 ### Removed
 
