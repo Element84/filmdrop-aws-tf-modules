@@ -9,9 +9,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Added
 
-- A custom Cirrus lambda dist ZIP can now be used instead of the default
+- Custom cirrus lambda dist ZIP can now be used instead of the default
 - Custom stac-server lambda dist ZIPs and configuration overrides can now be used for the `api`, `ingest`, and `pre-hook` lambdas
-- Added support for PRIVATE-type cirrus and stac-server API Gateways
+- Support for PRIVATE-type cirrus and stac-server API Gateways
+- Ephemeral storage option for cirrus lambda tasks
 
 ### Changed
 

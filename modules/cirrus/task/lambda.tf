@@ -240,6 +240,14 @@ resource "aws_lambda_function" "task" {
     }
   }
 
+  # Create zero or one ephemeral storage configuration blocks
+  dynamic "ephemeral_storage" {
+    for_each = var.task_config.lambda.ephemeral_storage_mb != null ? [1] : []
+    content {
+      size = var.task_config.lambda.ephemeral_storage_mb
+    }
+  }
+
   # Dependent on all IAM policies being created/attached to the role first
   depends_on = [
     aws_iam_role_policy_attachment.lambda_basic_execution,
