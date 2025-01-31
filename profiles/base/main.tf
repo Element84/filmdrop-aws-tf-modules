@@ -21,6 +21,18 @@ module "filmdrop_vpc" {
   archive_log_bucket_name      = var.deploy_log_archive ? module.filmdrop_log_archive[0].s3_logs_archive_bucket : var.s3_logs_archive_bucket
 }
 
+module "api_gateway_account" {
+  # Create the single API Gateway account resource for setting log permissions.
+  # This is only needed once per account per region with API Gateway resources
+  # that need to manage logging. Having multiple within the same account and
+  # region (e.g., one for both stac-server and cirrus) would lead to constant
+  # state drift as Terraform will continuously switch which one is used.
+  source = "../../modules/base_infra/api_gateway_account"
+
+  environment  = var.environment
+  project_name = var.project_name
+}
+
 module "sns_alarm_topics" {
   source = "../../modules/base_infra/sns"
 

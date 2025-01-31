@@ -303,10 +303,6 @@ aws apigateway update-stage --rest-api-id ${aws_api_gateway_deployment.stac_serv
 
 EOF
   }
-
-  depends_on = [
-    aws_api_gateway_account.stac_server_api_gateway_cw_role
-  ]
 }
 
 resource "aws_lambda_permission" "stac_server_api_gateway_lambda_permission_root_resource" {
@@ -325,8 +321,4 @@ resource "aws_lambda_permission" "stac_server_api_gateway_lambda_permission_prox
   principal     = "apigateway.amazonaws.com"
 
   source_arn = "arn:aws:execute-api:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:${aws_api_gateway_rest_api.stac_server_api_gateway.id}/*/*${aws_api_gateway_resource.stac_server_api_gateway_proxy_resource.path}"
-}
-
-resource "aws_api_gateway_account" "stac_server_api_gateway_cw_role" {
-  cloudwatch_role_arn = aws_iam_role.stac_api_gw_role.arn
 }
