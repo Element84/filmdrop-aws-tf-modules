@@ -97,6 +97,27 @@ variable "stac_server_inputs" {
     cors_headers                                = string
     authorized_s3_arns                          = list(string)
     api_rest_type                               = string
+    api_lambda = optional(object({
+      handler         = optional(string)
+      memory_mb       = optional(number)
+      runtime         = optional(string)
+      timeout_seconds = optional(number)
+      zip_filepath    = optional(string)
+    }))
+    ingest_lambda = optional(object({
+      handler         = optional(string)
+      memory_mb       = optional(number)
+      runtime         = optional(string)
+      timeout_seconds = optional(number)
+      zip_filepath    = optional(string)
+    }))
+    pre_hook_lambda = optional(object({
+      handler         = optional(string)
+      memory_mb       = optional(number)
+      runtime         = optional(string)
+      timeout_seconds = optional(number)
+      zip_filepath    = optional(string)
+    }))
     auth_function = object({
       cf_function_name             = string
       cf_function_runtime          = string
@@ -143,6 +164,9 @@ variable "stac_server_inputs" {
     cors_headers                                = ""
     authorized_s3_arns                          = []
     api_rest_type                               = "EDGE"
+    api_lambda                                  = null
+    ingest_lambda                               = null
+    pre_hook_lambda                             = null
     auth_function = {
       cf_function_name             = ""
       cf_function_runtime          = "cloudfront-js-2.0"
@@ -355,7 +379,7 @@ variable "cirrus_inputs" {
       timestream_magnetic_store_retention_period_in_days = number
       timestream_memory_store_retention_period_in_hours  = number
     })
-    lambda_dist_zip_filepath = optional(string)
+    lambda_zip_filepath = optional(string)
     api_lambda = object({
       timeout = number
       memory  = number
@@ -585,7 +609,7 @@ variable "cirrus_inputs" {
       timestream_magnetic_store_retention_period_in_days = 93
       timestream_memory_store_retention_period_in_hours  = 24
     }
-    lambda_dist_zip_filepath = null
+    lambda_zip_filepath = null
     api_lambda = {
       timeout = 10
       memory  = 128

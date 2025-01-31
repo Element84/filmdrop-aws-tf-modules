@@ -1,13 +1,13 @@
 resource "aws_lambda_function" "stac_server_ingest" {
-  filename                       = "${path.module}/lambda/ingest/ingest.zip"
+  filename                       = local.resolved_ingest_lambda_zip_filepath
   function_name                  = "${local.name_prefix}-stac-server-ingest"
   description                    = "stac-server Ingest Lambda"
   role                           = aws_iam_role.stac_api_lambda_role.arn
-  handler                        = "index.handler"
-  source_code_hash               = filebase64sha256("${path.module}/lambda/ingest/ingest.zip")
-  runtime                        = "nodejs18.x"
-  timeout                        = var.ingest_lambda_timeout
-  memory_size                    = var.ingest_lambda_memory
+  handler                        = var.ingest_lambda.handler
+  source_code_hash               = filebase64sha256(local.resolved_ingest_lambda_zip_filepath)
+  runtime                        = var.ingest_lambda.runtime
+  timeout                        = var.ingest_lambda.timeout_seconds
+  memory_size                    = var.ingest_lambda.memory_mb
   reserved_concurrent_executions = var.reserved_concurrent_executions
 
   environment {

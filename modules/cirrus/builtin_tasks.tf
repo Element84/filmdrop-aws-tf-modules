@@ -5,7 +5,7 @@ locals {
     name = "pre-batch"
     lambda = {
       description     = "Cirrus Pre-Batch Lambda"
-      filename        = local.cirrus_lambda_dist_zip_filepath
+      filename        = local.cirrus_lambda_zip_filepath
       handler         = "pre_batch.lambda_handler"
       runtime         = "python3.12"
       architectures   = ["arm64"]
@@ -77,7 +77,7 @@ locals {
     name = "post-batch"
     lambda = {
       description     = "Cirrus Post-Batch Lambda"
-      filename        = local.cirrus_lambda_dist_zip_filepath
+      filename        = local.cirrus_lambda_zip_filepath
       handler         = "post_batch.lambda_handler"
       runtime         = "python3.12"
       architectures   = ["arm64"]
