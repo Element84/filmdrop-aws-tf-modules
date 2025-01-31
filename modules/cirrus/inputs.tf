@@ -16,7 +16,7 @@ variable "project_name" {
   }
 }
 
-variable "cirrus_lambda_dist_zip_filepath" {
+variable "cirrus_lambda_zip_filepath" {
   description = <<-DESCRIPTION
   (Optional) Filepath to a Cirrus Lambda Dist ZIP relative to the root module
   of this Terraform deployment. Used to override the ZIP that's included with

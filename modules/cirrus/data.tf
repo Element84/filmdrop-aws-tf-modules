@@ -10,9 +10,9 @@ locals {
   cirrus_prefix = lower(substr(replace("fd-${var.project_name}-${var.environment}-cirrus", "_", "-"), 0, 63))
 
   # Use a custom Cirrus Lambda Dist ZIP or accept the module's builtin version
-  cirrus_lambda_dist_zip_filepath = (
-    var.cirrus_lambda_dist_zip_filepath != null
-    ? "${path.root}/${var.cirrus_lambda_dist_zip_filepath}"
+  cirrus_lambda_zip_filepath = (
+    var.cirrus_lambda_zip_filepath != null
+    ? "${path.root}/${var.cirrus_lambda_zip_filepath}"
     : "${path.module}/cirrus-lambda-dist.zip"
   )
 }
