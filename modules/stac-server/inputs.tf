@@ -60,56 +60,107 @@ variable "stac_api_stage_description" {
 
 variable "stac_api_rootpath" {
   description = <<-DESCRIPTION
-    If stac-server has a cloudfront distribution, this should be an empty string.
-    If stac-server does not have a cloudfront distribution, the api_rest_type is
-    PRIVATE, and you're managing a custom API Gateway domain outside of this module,
-    this should be an empty string.
-    If neither is true, the stac_api_stage var should be used.
+  If stac-server has a cloudfront distribution, this should be an empty string.
+  If stac-server does not have a cloudfront distribution, the api_rest_type is
+  PRIVATE, and you're managing a custom API Gateway domain outside of this module,
+  this should be an empty string.
+  If neither is true, the stac_api_stage var should be used.
   DESCRIPTION
   type        = string
   default     = ""
 }
 
-variable "api_lambda_timeout" {
-  description = "STAC API lambda timeout in seconds"
-  type        = number
-  default     = 30
+variable "api_lambda" {
+  description = <<-DESCRIPTION
+  (optional, object) Parameters for the stac-server API Lambda function.
+    - zip_filepath: (optional, string) Filepath to a ZIP that implements the
+      stac-server API Lambda. Path is relative to the root module of this
+      deployment. Overrides the default ZIP included with this module.
+    - runtime: (optional, string) Lambda runtime.
+    - handler: (optional, string) Lambda handler.
+    - memory_mb: (optional, number) Lambda max memory (MB).
+    - timeout_seconds (optional, number) Lambda timeout (seconds).
+  DESCRIPTION
+
+  type = object({
+    zip_filepath    = optional(string)
+    runtime         = optional(string, "nodejs18.x")
+    handler         = optional(string, "index.handler")
+    memory_mb       = optional(number, 1024)
+    timeout_seconds = optional(number, 30)
+  })
+  default = {
+    zip_filepath    = null
+    runtime         = "nodejs18.x"
+    handler         = "index.handler"
+    memory_mb       = 1024
+    timeout_seconds = 30
+  }
+  nullable = false
 }
 
-variable "api_lambda_memory" {
-  description = "STAC API lambda max memory size in MB"
-  type        = number
-  default     = 1024
+variable "ingest_lambda" {
+  description = <<-DESCRIPTION
+  (optional, object) Parameters for the stac-server ingest Lambda function.
+    - zip_filepath: (optional, string) Filepath to a ZIP that implements the
+      stac-server ingest Lambda. Path is relative to the root module of this
+      deployment. Overrides the default ZIP included with this module.
+    - runtime: (optional, string) Lambda runtime.
+    - handler: (optional, string) Lambda handler.
+    - memory_mb: (optional, number) Lambda max memory (MB).
+    - timeout_seconds (optional, number) Lambda timeout (seconds).
+  DESCRIPTION
+
+  type = object({
+    zip_filepath    = optional(string)
+    runtime         = optional(string, "nodejs18.x")
+    handler         = optional(string, "index.handler")
+    memory_mb       = optional(number, 512)
+    timeout_seconds = optional(number, 60)
+  })
+  default = {
+    zip_filepath    = null
+    runtime         = "nodejs18.x"
+    handler         = "index.handler"
+    memory_mb       = 512
+    timeout_seconds = 60
+  }
+  nullable = false
 }
 
-variable "ingest_lambda_timeout" {
-  description = "STAC Ingest lambda timeout in seconds"
-  type        = number
-  default     = 60
-}
+variable "pre_hook_lambda" {
+  description = <<-DESCRIPTION
+  (optional, object) Parameters for the stac-server pre-hook Lambda function.
+    - zip_filepath: (optional, string) Filepath to a ZIP that implements the
+      stac-server auth pre-hook Lambda. Path is relative to the root module of
+      this deployment. Overrides the default ZIP included with this module.
+    - runtime: (optional, string) Lambda runtime.
+    - handler: (optional, string) Lambda handler.
+    - memory_mb: (optional, number) Lambda max memory (MB).
+    - timeout_seconds (optional, number) Lambda timeout (seconds).
+  DESCRIPTION
 
-variable "ingest_lambda_memory" {
-  description = "STAC ingest lambda max memory size in MB"
-  type        = number
-  default     = 512
+  type = object({
+    zip_filepath    = optional(string)
+    runtime         = optional(string, "nodejs18.x")
+    handler         = optional(string, "index.handler")
+    memory_mb       = optional(number, 128)
+    timeout_seconds = optional(number, 25)
+  })
+  default = {
+    zip_filepath    = null
+    runtime         = "nodejs18.x"
+    handler         = "index.handler"
+    memory_mb       = 128
+    timeout_seconds = 25
+  }
+  nullable = false
 }
 
 variable "reserved_concurrent_executions" {
   description = "STAC ingest lambda reserved concurrent executions (max concurrency)"
   type        = number
   default     = 10
-}
-
-variable "pre_hook_lambda_timeout" {
-  description = "STAC API auth pre-hook lambda timeout in seconds"
-  type        = number
-  default     = 25
-}
-
-variable "pre_hook_lambda_memory" {
-  description = "STAC API auth pre-hook lambda max memory size in MB"
-  type        = number
-  default     = 128
 }
 
 variable "api_rest_type" {

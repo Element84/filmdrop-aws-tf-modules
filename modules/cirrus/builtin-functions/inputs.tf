@@ -19,7 +19,7 @@ variable "cirrus_payload_bucket" {
   type        = string
 }
 
-variable "cirrus_lambda_dist_zip_filepath" {
+variable "cirrus_lambda_zip_filepath" {
   description = <<-DESCRIPTION
   (Optional) Filepath to a Cirrus Lambda Dist ZIP relative to the root module of
   this Terraform deployment.

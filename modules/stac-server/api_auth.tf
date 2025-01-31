@@ -1,14 +1,15 @@
 resource "aws_lambda_function" "stac_server_api_auth_pre_hook" {
-  count            = var.stac_server_auth_pre_hook_enabled ? 1 : 0
-  filename         = "${path.module}/lambda/pre-hook/pre-hook.zip"
+  count = var.stac_server_auth_pre_hook_enabled ? 1 : 0
+
+  filename         = local.resolved_pre_hook_lambda_zip_filepath
   function_name    = "${local.name_prefix}-stac-server-pre-hook"
   description      = "stac-server Auth Pre-Hook Lambda"
   role             = aws_iam_role.stac_api_lambda_role.arn
-  handler          = "index.handler"
-  source_code_hash = filebase64sha256("${path.module}/lambda/pre-hook/pre-hook.zip")
-  runtime          = "nodejs18.x"
-  timeout          = var.pre_hook_lambda_timeout
-  memory_size      = var.pre_hook_lambda_memory
+  handler          = var.pre_hook_lambda.handler
+  source_code_hash = filebase64sha256(local.resolved_pre_hook_lambda_zip_filepath)
+  runtime          = var.pre_hook_lambda.runtime
+  timeout          = var.pre_hook_lambda.timeout_seconds
+  memory_size      = var.pre_hook_lambda.memory_mb
 
   environment {
     variables = {

@@ -4,15 +4,15 @@ locals {
 
 
 resource "aws_lambda_function" "stac_server_api" {
-  filename         = "${path.module}/lambda/api/api.zip"
+  filename         = local.resolved_api_lambda_zip_filepath
   function_name    = "${local.name_prefix}-stac-server-api"
   description      = "stac-server API Lambda"
   role             = aws_iam_role.stac_api_lambda_role.arn
-  handler          = "index.handler"
-  source_code_hash = filebase64sha256("${path.module}/lambda/api/api.zip")
-  runtime          = "nodejs18.x"
-  timeout          = var.api_lambda_timeout
-  memory_size      = var.api_lambda_memory
+  handler          = var.api_lambda.handler
+  source_code_hash = filebase64sha256(local.resolved_api_lambda_zip_filepath)
+  runtime          = var.api_lambda.runtime
+  timeout          = var.api_lambda.timeout_seconds
+  memory_size      = var.api_lambda.memory_mb
 
   environment {
     variables = {
