@@ -255,13 +255,7 @@ variable "cirrus_inputs" {
     })))
     workflows = optional(list(object({
       name                   = string
-      non_cirrus_lambda_arns = optional(list(string))
-      template_filepath      = string
-      template_variables = optional(map(object({
-        task_name = string
-        task_type = string
-        task_attr = string
-      })))
+      state_machine_filepath = string
     })))
   })
   default = {

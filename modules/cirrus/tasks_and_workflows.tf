@@ -15,15 +15,6 @@ locals {
     local.has_batch_task ? local.pre_batch_post_batch_task_configs : []
     # ... any future builtin tasks added here ...
   )
-
-  # Construct the full map of builtin task template variables:
-  # - If at least one Batch-style task was configured, the user may reference
-  #   pre-batch and post-batch function ARNs using their builtin variable names
-  # - ...
-  builtin_task_template_variables = merge(
-    local.has_batch_task ? local.pre_batch_post_batch_task_template_variables : {}
-    # ... any future builtin task variables added here ...
-  )
 }
 
 module "task_batch_compute" {
@@ -63,8 +54,7 @@ module "workflow" {
     workflow.name => workflow
   }
 
-  cirrus_prefix                   = local.cirrus_prefix
-  cirrus_tasks                    = module.task
-  workflow_config                 = each.value
-  builtin_task_template_variables = local.builtin_task_template_variables
+  cirrus_prefix   = local.cirrus_prefix
+  cirrus_tasks    = module.task
+  workflow_config = each.value
 }
