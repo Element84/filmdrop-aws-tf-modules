@@ -154,20 +154,4 @@ locals {
     local.pre_batch_task_config,
     local.post_batch_task_config
   ]
-
-  # Map of pre-batch and post-batch builtin variables.
-  # Allows users to use "${PRE-BATCH}" and "${POST-BATCH}" in workflow templates
-  # without any additional config.
-  pre_batch_post_batch_task_template_variables = {
-    PRE-BATCH = {
-      task_name = local.pre_batch_task_config.name
-      task_type = "lambda"
-      task_attr = "function_arn"
-    }
-    POST-BATCH = {
-      task_name = local.post_batch_task_config.name
-      task_type = "lambda"
-      task_attr = "function_arn"
-    }
-  }
 }

@@ -15,6 +15,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Changed
 
+- Cirrus workflow's `template_variables` config is removed in favor of referencing cirrus task output attributes directly
+
 ### Fixed
 
 - Fixed the Cirrus `update-state` lambda permissions to allow:

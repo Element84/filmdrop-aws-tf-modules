@@ -6,49 +6,39 @@ locals {
   current_account = data.aws_caller_identity.current.account_id
   current_region  = data.aws_region.current.name
 
-  # Merge builtin template variable configs with the user-defined ones
-  merged_workflow_template_variables = merge(
-    var.builtin_task_template_variables,
-    var.workflow_config.template_variables
-  )
+  # Create the workflow's state machine JSON.
+  # Use the Cirrus task output mapping for interpolation.
+  # Decode the rendered JSON to strip newlines then encode to minify.
+  workflow_state_machine_json = jsonencode(jsondecode(templatefile(
+    "${path.root}/${var.workflow_config.state_machine_filepath}",
+    var.cirrus_tasks
+  )))
 
   # Gather any referenced Lambda Function ARNs.
   # These are needed for generating the workflow machine's IAM policies.
   # This includes both Cirrus- and non-Cirrus-managed Lambdas, if any.
-  workflow_tasks_lambda_functions = concat(
-    [
-      for _, v_cfg in local.merged_workflow_template_variables :
-      var.cirrus_tasks[v_cfg.task_name][v_cfg.task_type][v_cfg.task_attr]
-      if v_cfg.task_type == "lambda" && v_cfg.task_attr == "function_arn"
-    ],
-    try(coalesce(var.workflow_config.non_cirrus_lambda_arns, []), [])
-  )
+  workflow_tasks_lambda_functions = distinct(regexall(
+    "arn:aws:lambda:[a-z0-9-]+:[0-9]{12}:function:[a-zA-Z0-9_-]+",
+    local.workflow_state_machine_json
+  ))
 
   # Gather any referenced Job Queue and Definition ARNs.
   # These are needed for generating the workflow machine's IAM policies.
-  workflow_tasks_batch_resources = [
-    for _, v_cfg in local.merged_workflow_template_variables :
-    var.cirrus_tasks[v_cfg.task_name][v_cfg.task_type][v_cfg.task_attr]
-    if v_cfg.task_type == "batch" && (
-      v_cfg.task_attr == "job_queue_arn" || v_cfg.task_attr == "job_definition_arn"
-    )
+  # Job definition ARNs add a wildcard suffix for the version number.
+  workflow_tasks_batch_job_resources = [
+    for job_def in distinct(regexall(
+      "arn:aws:batch:[a-z0-9-]+:[0-9]{12}:job-definition/[a-zA-Z0-9_-]+",
+      local.workflow_state_machine_json
+    )) : format("%s:*", job_def)
   ]
-
-  # Create the template variable mapping.
-  # Use each variable config as a lookup into the Cirrus Task outputs to obtain
-  # its intended string value that templatefile can use for interpolation.
-  workflow_template_variables_map = {
-    for v_name, v_cfg in local.merged_workflow_template_variables :
-    v_name => var.cirrus_tasks[v_cfg.task_name][v_cfg.task_type][v_cfg.task_attr]
-  }
-
-  # Create the workflow's state machine JSON.
-  # Use the template variable mapping above for interpolation.
-  # Decode the rendered JSON to strip newlines then encode to minify.
-  workflow_state_machine_json = jsonencode(jsondecode(templatefile(
-    "${path.root}/${var.workflow_config.template_filepath}",
-    local.workflow_template_variables_map
-  )))
+  workflow_tasks_batch_queue_resources = distinct(regexall(
+    "arn:aws:batch:[a-z0-9-]+:[0-9]{12}:job-queue/[a-zA-Z0-9_-]+",
+    local.workflow_state_machine_json
+  ))
+  workflow_tasks_batch_resources = concat(
+    local.workflow_tasks_batch_job_resources,
+    local.workflow_tasks_batch_queue_resources
+  )
 
   # Submit/Invoke permissions only necessary if Batch/Lambda resources are used
   create_batch_policy  = (length(local.workflow_tasks_batch_resources) != 0)
@@ -94,6 +84,7 @@ resource "aws_iam_role" "workflow_machine" {
 data "aws_iam_policy_document" "workflow_machine_events" {
   statement {
     # Allow the state machine to push state transition events
+    sid       = "AllowWorkflowToCreateStateTransitionEvents"
     effect    = "Allow"
     actions   = ["events:PutEvents"]
     resources = ["*"]
@@ -108,79 +99,80 @@ resource "aws_iam_role_policy" "workflow_machine_events" {
 # ==============================================================================
 
 
-# WORKFLOW STATE MACHINE IAM ROLE -- LAMBDA PERMISSIONS
+# WORKFLOW STATE MACHINE IAM ROLE -- BATCH AND LAMBDA PERMISSIONS
 # ------------------------------------------------------------------------------
-data "aws_iam_policy_document" "workflow_machine_task_lambda" {
-  count = local.create_lambda_policy ? 1 : 0
+data "aws_iam_policy_document" "workflow_machine_task_lambda_and_batch" {
 
-  statement {
-    # Allow the state machine to invoke all referenced task Lambdas
-    effect    = "Allow"
-    actions   = ["lambda:InvokeFunction"]
-    resources = local.workflow_tasks_lambda_functions
+  # Allow the state machine to invoke any referenced task Lambdas
+  dynamic "statement" {
+    for_each = local.create_lambda_policy ? [1] : []
+
+    content {
+      sid       = "AllowWorkflowToInvokeTaskLambdaFunctions"
+      effect    = "Allow"
+      actions   = ["lambda:InvokeFunction"]
+      resources = local.workflow_tasks_lambda_functions
+    }
+  }
+
+  # Batch only has partial support for resource-level permissions. See:
+  # https://docs.aws.amazon.com/batch/latest/userguide/batch-supported-iam-actions-resources.html
+  #
+  # While "batch:TerminateJob" can be limited to specific Job ARNs, those ARNs
+  # are not known until Job submission. That action does support conditional
+  # policies via "aws:ResourceTag/Key", but there's no way to set Job tags via
+  # Terraform; the Job Definition's "propagate_tags" field only passes tags to
+  # the underlying ECS task and not the Batch Job itself. Thus, we cannot set
+  # a resource restriction for that action, either.
+  dynamic "statement" {
+    for_each = local.create_batch_policy ? [1] : []
+
+    content {
+      sid    = "AllowWorkflowToManageTaskBatchJobs"
+      effect = "Allow"
+      actions = [
+        "batch:DescribeJobs",
+        "batch:TerminateJob"
+      ]
+      resources = ["*"]
+    }
+  }
+
+  # Restrict Job submissions to the specified Job Definitions and Job Queues.
+  # Those resources are determined by the user's template variables, so this
+  # statement is nothing more than a simple guardrail against user error.
+  dynamic "statement" {
+    for_each = local.create_batch_policy ? [1] : []
+
+    content {
+      sid       = "AllowWorkflowToSubmitTaskBatchJobs"
+      effect    = "Allow"
+      actions   = ["batch:SubmitJob"]
+      resources = local.workflow_tasks_batch_resources
+    }
+  }
+
+  # Allow the state machine to monitor any Batch Jobs via the managed AWS rule
+  dynamic "statement" {
+    for_each = local.create_batch_policy ? [1] : []
+
+    content {
+      sid    = "AllowWorkflowToManageTaskBatchJobEvents"
+      effect = "Allow"
+      actions = [
+        "events:PutTargets",
+        "events:PutRule",
+        "events:DescribeRule"
+      ]
+      resources = ["arn:aws:events:${local.current_region}:${local.current_account}:rule/StepFunctionsGetEventsForBatchJobsRule"]
+    }
   }
 }
 
-resource "aws_iam_role_policy" "workflow_machine_task_lambda" {
-  count = local.create_lambda_policy ? 1 : 0
-
-  name_prefix = "${var.cirrus_prefix}-workflow-role-task-lambda-policy-"
+resource "aws_iam_role_policy" "workflow_machine_task_lambda_and_batch" {
+  name_prefix = "${var.cirrus_prefix}-workflow-role-task-policy-"
   role        = aws_iam_role.workflow_machine.name
-  policy      = data.aws_iam_policy_document.workflow_machine_task_lambda[0].json
-}
-# ==============================================================================
-
-
-# WORKFLOW STATE MACHINE IAM ROLE -- BATCH PERMISSIONS
-# ------------------------------------------------------------------------------
-data "aws_iam_policy_document" "workflow_machine_task_batch" {
-  count = local.create_batch_policy ? 1 : 0
-
-  statement {
-    # Batch only has partial support for resource-level permissions. See:
-    # https://docs.aws.amazon.com/batch/latest/userguide/batch-supported-iam-actions-resources.html
-
-    # While "batch:TerminateJob" can be limited to specific Job ARNs, those ARNs
-    # are not known until Job submission. That action does support conditional
-    # policies via "aws:ResourceTag/Key", but there's no way to set Job tags via
-    # Terraform; the Job Definition's "propagate_tags" field only passes tags to
-    # the underlying ECS task and not the Batch Job itself. Thus, we cannot set
-    # a resource restriction for that action, either.
-    effect = "Allow"
-    actions = [
-      "batch:DescribeJobs",
-      "batch:TerminateJob"
-    ]
-    resources = ["*"]
-  }
-
-  statement {
-    # Restrict Job submissions to the specified Job Definitions and Job Queues.
-    # Those resources are determined by the user's input template variables, so
-    # this statement is nothing more than a simple guardrail against user error.
-    effect    = "Allow"
-    actions   = ["batch:SubmitJob"]
-    resources = local.workflow_tasks_batch_resources
-  }
-
-  statement {
-    # Allow the state machine to monitor Batch Jobs via the managed AWS rule
-    effect = "Allow"
-    actions = [
-      "events:PutTargets",
-      "events:PutRule",
-      "events:DescribeRule"
-    ]
-    resources = ["arn:aws:events:${local.current_region}:${local.current_account}:rule/StepFunctionsGetEventsForBatchJobsRule"]
-  }
-}
-
-resource "aws_iam_role_policy" "workflow_machine_task_batch" {
-  count = local.create_batch_policy ? 1 : 0
-
-  name_prefix = "${var.cirrus_prefix}-workflow-role-task-batch-policy-"
-  role        = aws_iam_role.workflow_machine.name
-  policy      = data.aws_iam_policy_document.workflow_machine_task_batch[0].json
+  policy      = data.aws_iam_policy_document.workflow_machine_task_lambda_and_batch.json
 }
 # ==============================================================================
 
