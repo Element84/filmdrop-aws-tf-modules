@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Changed
 
+- Inputs to the `cirrus` module's `task-batch-compute`, `task`, and `workflow` submodules are now defined via YAML files instead of HCL object lists
 - Cirrus workflow's `template_variables` config is removed in favor of referencing cirrus task output attributes directly
 
 ### Fixed
