@@ -183,413 +183,120 @@ variable "custom_cloudwatch_critical_alarms_map" {
   default     = {}
 }
 
-variable "cirrus_task_batch_compute" {
+variable "cirrus_task_batch_compute_definitions_dir" {
   description = <<-DESCRIPTION
-    (optional, list[objects]) List of configuration objects that each define a
-    single set of Cirrus Task batch compute resources. Each set may be used by
-    zero..many batch Cirrus Tasks (see 'task' module).
-    Object contents:
-      - name: (required, string) Identifier for the Batch compute resources.
-        Must be unique across all compute resource sets. Valid characters are:
-        [A-Za-z0-9-]
+  (Optional) Filepath to a directory containing task batch compute definition
+  subdirectories. Path is relative to this Terraform deployment's root module.
+  The directory's expected subdirectory structure is:
 
-      - batch_compute_environment_existing: (optional, object) Identifies an
-        existing compute environment in the current AWS account. If specified,
-        this module will use that CE instead of creating a new one. Useful if
-        the argument subset exposed in the 'batch_compute_environment' variable
-        is insufficient and/or you've deployed your own CE through other means.
-        Contents:
-          - name: (required, string) Name of the existing CE
-          - is_fargate (required, bool): Whether the existing CE uses Fargate
+    example-compute-1/
+      definition.yaml
+      README.md (optional)
+    example-compute-2/
+      definition.yaml
+      README.md (optional)
+    ... more task-batch-compute subdirs ...
 
-      - batch_compute_environment: (optional, object) Used to create a compute
-        environment with necessary ancillary resources. This exposes a minimal
-        subset of the arguments available in the 'aws_batch_compute_environment'
-        resource. Refer to that resource's documentation for more information:
-        https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/batch_compute_environment
-        Contents:
-          - compute_resources: (required, object)
-          - state: (optional, string)
-          - type: (optional, string)
-          - update_policy: (optional, object)
+  Where each definition.yaml is a YAML representation of the task-batch-compute
+  module's "batch_compute_config" HCL object. See that module's inputs.tf for
+  valid object attributes.
 
-      - batch_job_queue_existing_name: (optional, object) Identifies an existing
-        job queue in the current AWS account. If specified, this module will use
-        that queue instead of creating a new one.
-        Contents:
-          - name: (required, string) Name of the existing job queue
-
-      - batch_job_queue: (optional, object) Used to create a job queue with the
-        necessary ancillary resources and automatic attachment to the target CE
-        defined above. Only necessary if the job queue requires a fair share
-        scheduling policy; if omitted, a default job queue will be created.
-        Contents:
-          - fair_share_policy: (optional, object) Used to create and attach an
-            'aws_batch_scheduling_policy' resource to the job queue. Refer to
-            that resource's documentation for more information:
-            https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/batch_scheduling_policy
-
-      - ec2_launch_template_existing: (optional, object) Identifies an existing
-        launch template in the current AWS account. If specified, this module
-        will use that template instead of creating a new one. Useful if the
-        argument subset exposed in the 'ec2_launch_template' variable is
-        insufficient and you've deployed your own template through other means.
-        Contents:
-          - name: (required, string) Name of the existing launch template
-
-      - ec2_launch_template: (optional, object) Used to create a launch template
-        with the necessary ancillary resources. This exposes a minimal subset of
-        the arguments available in the 'aws_launch_template' resource. Refer to
-        that resource's documentation for more information:
-        https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/launch_template
-        Contents:
-          - user_data: (optional, string) Path to the user data start script.
-            The path must be relative to the ROOT module of the Terraform
-            deployment.
-          - ebs_optimized: (optional, bool)
-          - block_device_mappings: (optional, list[object])
-
-    Prefer to configure the resources above through this module and not through
-    the "existing" arguments wherever possible; this ensures consistent resource
-    configuration and behavior across the Cirrus deployment.
+  If null, no task-batch-compute resources will be created.
   DESCRIPTION
-
-  type = list(object({
-    name = string
-
-    batch_compute_environment_existing = optional(object({
-      name       = string
-      is_fargate = bool
-    }))
-    batch_compute_environment = optional(object({
-      compute_resources = object({
-        max_vcpus           = number
-        type                = string
-        allocation_strategy = optional(string)
-        bid_percentage      = optional(number)
-        desired_vcpus       = optional(number)
-        ec2_configuration = optional(object({
-          image_id_override = optional(string)
-          image_type        = optional(string)
-        }))
-        ec2_key_pair       = optional(string)
-        instance_type      = optional(list(string))
-        min_vcpus          = optional(number)
-        placement_group    = optional(string)
-        security_group_ids = optional(list(string))
-        subnets            = optional(list(string))
-      })
-      state = optional(string)
-      type  = optional(string)
-      update_policy = optional(object({
-        job_execution_timeout_minutes = number
-        terminate_jobs_on_update      = bool
-      }))
-    }))
-    batch_job_queue_existing = optional(object({
-      name = string
-    }))
-    batch_job_queue = optional(object({
-      fair_share_policy = optional(object({
-        compute_reservation = optional(number)
-        share_decay_seconds = optional(number)
-        share_distributions = list(object({
-          share_identifier = string
-          weight_factor    = number
-        }))
-      }))
-      state = optional(string)
-    }))
-    ec2_launch_template_existing = optional(object({
-      name = string
-    }))
-    ec2_launch_template = optional(object({
-      user_data     = optional(string)
-      ebs_optimized = optional(bool)
-      block_device_mappings = optional(list(object({
-        device_name  = string
-        no_device    = optional(bool)
-        virtual_name = optional(string)
-        ebs = optional(object({
-          delete_on_termination = optional(bool)
-          encrypted             = optional(bool)
-          iops                  = optional(string)
-          kms_key_id            = optional(string)
-          snapshot_id           = optional(string)
-          throughput            = optional(number)
-          volume_size           = optional(number)
-          volume_type           = optional(string)
-        }))
-      })))
-    }))
-  }))
-
-  default  = []
-  nullable = true
-
-  validation {
-    condition = (
-      var.cirrus_task_batch_compute != null
-      ? length(var.cirrus_task_batch_compute) == length(distinct(var.cirrus_task_batch_compute[*].name))
-      : true
-    )
-    error_message = "Each cirrus_task_batch_compute object name must be unique to avoid resource clobbering"
-  }
-
-  validation {
-    condition = (
-      var.cirrus_task_batch_compute != null
-      ? alltrue([
-        for name in var.cirrus_task_batch_compute[*].name :
-        length(regexall("^[A-Za-z0-9-]+$", name)) > 0 ? true : false
-      ])
-      : true
-    )
-    error_message = "Each cirrus_task_batch_compute object name must only use alphanumeric characters and hyphens"
-  }
+  type        = string
+  nullable    = true
+  default     = null
 }
 
-variable "cirrus_tasks" {
+variable "cirrus_task_definitions_dir" {
   description = <<-DESCRIPTION
-    (optional, list[objects]) List of configuration objects that each define a
-    single Cirrus Task. Each Task may used by zero..many Cirrus Workflows (see
-    'workflow' module). A Task may have a Lambda config, Batch config, or both.
-    Object contents:
-      - name: (required, string) Identifier for the Cirrus Task. Must be unique
-        across all Cirrus Tasks. Valid characters are: [A-Za-z0-9-]
+  (Optional) Filepath to directory containing task definition subdirectories.
+  Path is relative to this Terraform deployment's root module. The directory's
+  expected subdirectory structure is:
 
-      - common_role_statements: (optional, list[object]) List of IAM statements
-        to be applied to both the Lambda function and the Batch Job. This object
-        is used to create an 'aws_iam_policy_document' data source. Refer to the
-        documentation for more information on the available arguments in an IAM
-        statement block:
-        https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_policy_document
+    example-task-1/
+      definition.yaml
+      README.md (optional)
+    example-task-2/
+      definition.yaml
+      README.md (optional)
+    ... more task subdirs ...
 
-      - lambda: (optional, object) Used to create a Lambda function and all its
-        ancillary resources. Many of the available arguments map directly to the
-        ones in the 'aws_lambda_function' resource. Refer to the documentation
-        for more information on those arguments:
-        https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/lambda_function
-        Contents:
-          - vpc_enabled: (optional, bool) Whether the Lambda should be deployed
-            within the FilmDrop VPC.
-          - role_statements: (optional, list[object]) List of IAM statements to
-            be applied to the Lambda execution role. Similar arguments to the
-            'common_role_statements' variable above.
-          - alarms: (optional, list[object]): List of CloudWatch alarm configs
-            that will be created to monitor the resulting Lambda function.
-          - ... subset of common 'aws_lambda_function' arguments ...
+  Where each definition.yaml is a YAML representation of the task module's
+  "task_config" HCL object. See that module's inputs.tf for valid object
+  attributes.
 
-      - batch: (optional, object) Used to create a Batch Job Definition and all
-        ancillary resources. Many of the available arguments map directly to the
-        ones in the 'aws_batch_job_definition' resource. Refer to the
-        documentation for more information on those arguments:
-        https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/batch_job_definition
-        Contents:
-          - task_batch_compute_name: (required, string) The name of a batch
-            compute resource set created by the 'task_batch_compute' module.
-            This determines where invocations of this Job definition will run.
-          - role_statements: (optional, list[object]) List of IAM statements to
-            be applied to the Batch Job / ECS Task execution role. Similar
-            arguments to the 'common_role_statements' variable above.
-          - ... subset of common 'aws_batch_job_definition' arguments ...
+  If null, no task resources will be created.
   DESCRIPTION
-
-  type = list(object({
-    name = string
-    common_role_statements = optional(list(object({
-      sid           = string
-      effect        = string
-      actions       = list(string)
-      resources     = list(string)
-      not_actions   = optional(list(string))
-      not_resources = optional(list(string))
-      condition = optional(object({
-        test     = string
-        variable = string
-        values   = list(string)
-      }))
-      principals = optional(object({
-        type        = string
-        identifiers = list(string)
-      }))
-      not_principals = optional(object({
-        type        = string
-        identifiers = list(string)
-      }))
-    })))
-    lambda = optional(object({
-      description   = optional(string)
-      ecr_image_uri = optional(string)
-      filename      = optional(string)
-      image_config = optional(object({
-        command           = optional(list(string))
-        entry_point       = optional(list(string))
-        working_directory = optional(string)
-      }))
-      s3_bucket            = optional(string)
-      s3_key               = optional(string)
-      handler              = optional(string)
-      runtime              = optional(string)
-      timeout_seconds      = optional(number)
-      memory_mb            = optional(number)
-      ephemeral_storage_mb = optional(number)
-      publish              = optional(bool)
-      architectures        = optional(list(string))
-      env_vars             = optional(map(string))
-      vpc_enabled          = optional(bool)
-      role_statements = optional(list(object({
-        sid           = string
-        effect        = string
-        actions       = list(string)
-        resources     = list(string)
-        not_actions   = optional(list(string))
-        not_resources = optional(list(string))
-        condition = optional(object({
-          test     = string
-          variable = string
-          values   = list(string)
-        }))
-        principals = optional(object({
-          type        = string
-          identifiers = list(string)
-        }))
-        not_principals = optional(object({
-          type        = string
-          identifiers = list(string)
-        }))
-      })))
-      alarms = optional(list(object({
-        critical            = bool
-        statistic           = string
-        metric_name         = string
-        comparison_operator = string
-        threshold           = number
-        period              = optional(number, 60)
-        evaluation_periods  = optional(number, 5)
-      })))
-    }))
-    batch = optional(object({
-      task_batch_compute_name = string
-      container_properties    = string
-      retry_strategy = optional(object({
-        attempts = number
-        evaluate_on_exit = optional(list(object({
-          action           = string
-          on_exit_code     = optional(string)
-          on_reason        = optional(string)
-          on_status_reason = optional(string)
-        })))
-      }))
-      parameters = optional(map(string))
-      role_statements = optional(list(object({
-        sid           = string
-        effect        = string
-        actions       = list(string)
-        resources     = list(string)
-        not_actions   = optional(list(string))
-        not_resources = optional(list(string))
-        condition = optional(object({
-          test     = string
-          variable = string
-          values   = list(string)
-        }))
-        principals = optional(object({
-          type        = string
-          identifiers = list(string)
-        }))
-        not_principals = optional(object({
-          type        = string
-          identifiers = list(string)
-        }))
-      })))
-      scheduling_priority = optional(number)
-      timeout_seconds     = optional(number)
-    }))
-  }))
-
-  default  = []
-  nullable = true
-
-  validation {
-    condition = (
-      var.cirrus_tasks != null
-      ? length(var.cirrus_tasks) == length(distinct(var.cirrus_tasks[*].name))
-      : true
-    )
-    error_message = "Each cirrus_tasks object name must be unique to avoid resource clobbering"
-  }
-
-  validation {
-    condition = (
-      var.cirrus_tasks != null
-      ? alltrue([
-        for name in var.cirrus_tasks[*].name :
-        length(regexall("^[A-Za-z0-9-]+$", name)) > 0 ? true : false
-      ])
-      : true
-    )
-    error_message = "Each cirrus_tasks object name must only use alphanumeric characters and hyphens"
-  }
+  type        = string
+  nullable    = true
+  default     = null
 }
 
-variable "cirrus_workflows" {
+variable "cirrus_task_definitions_variables" {
   description = <<-DESCRIPTION
-    (optional, list[objects]) List of configuration objects that each define a
-    single Cirrus Workflow.
-    Object contents:
-      - name: (required, string) Identifier for the Cirrus Workflow. Must be
-        unique across all Cirrus Workflows. Valid characters are: [A-Za-z0-9-]
+  (Optional) Map of maps to strings used when templating task YAML definitions
+  prior to their conversion to HCL. Intended for abstracting environment-
+  specific values away from the task definition. The expected (but not
+  explicitly required) structure of this map is:
 
-      - state_machine_filepath: (required, string) Path to an Amazon State
-        Machine definition template file. The path must be relative to the ROOT
-        module of the Terraform deployment. The template should use valid Amazon
-        States Language syntax; wherever a Cirrus Task resource ARN is needed, a
-        Terraform interpolation sequence (a "$\{...}" without the "\") may be
-        used instead. The interpolation sequence should have the following form:
-          <TASK NAME>.<TASK TYPE>.<TASK ATTR>
+    {
+      example-task-1 = {
+        image_tag = "v1.0"
+      }
+      example-task-2 = {
+        image_tag = "v1.3"
+        source_data_bucket = "dev-source-data-bucket-name"
+      }
+      ... other task maps ...
+    }
 
-        Where:
-          <TASK NAME> : name of the task
-          <TASK TYPE> : one of [lambda, batch]
-          <TASK ATTR> : one of [function_arn, job_definition_arn, job_queue_arn]
+  Your task YAML definitions would leverage this templating by using an
+  interpolation sequence $\{...} like so (remove the "\"):
 
-        Example template snippet:
-          "States": {
-            "FirstState": {
-              "Type": "Task",
-              "Resource": "$\{my-task.lambda.function_arn}",  // REMOVE THE "\"
-              "Next": "SecondState",
-              ...
-            },
+    name: example-task-2
+    common_role_statements:
+      - sid: ReadSomeBucketThatChangesForEachEnvironment
+        effect: Allow
+        actions:
+          - s3:ListBucket
+          - s3:GetObject
+          - s3:GetBucketLocation
+        resources:
+          - arn:aws:s3:::$\{example-task-2.source_data_bucket}   # remove the \
+          - arn:aws:s3:::$\{example-task-2.source_data_bucket}/* # remove the \
+    lambda:
+      ecr_image_uri: <full ECR image URI>:$\{example-task-2.image_tag} # remove the \
+      ... any other config ...
   DESCRIPTION
+  type        = map(map(string))
+  nullable    = false
+  default     = {}
+}
 
-  type = list(object({
-    name                   = string
-    state_machine_filepath = string
-  }))
+variable "cirrus_workflow_definitions_dir" {
+  description = <<-DESCRIPTION
+  (Optional) Filepath to directory containing workflow definition
+  subdirectories. Path is relative to this Terraform deployment's root module.
+  The directory's expected subdirectory structure is:
 
-  default  = []
-  nullable = true
+    example-workflow-1/
+      definition.yaml
+      state-machine.json
+      README.md (optional)
+    example-workflow-2/
+      definition.yaml
+      state-machine.json
+      README.md (optional)
+    ... more workflow subdirs ...
 
-  validation {
-    condition = (
-      var.cirrus_workflows != null
-      ? length(var.cirrus_workflows) == length(distinct(var.cirrus_workflows[*].name))
-      : true
-    )
-    error_message = "Each cirrus_workflows object name must be unique to avoid resource clobbering"
-  }
+  Where each definition.yaml is a YAML representation of the workflow module's
+  "workflow_config" HCL object. See that module's inputs.tf for valid object
+  attributes.
 
-  validation {
-    condition = (
-      var.cirrus_workflows != null
-      ? alltrue([
-        for name in var.cirrus_workflows[*].name :
-        length(regexall("^[A-Za-z0-9-]+$", name)) > 0 ? true : false
-      ])
-      : true
-    )
-    error_message = "Each cirrus_workflows object name must only use alphanumeric characters and hyphens"
-  }
+  If null, no workflow resources will be created.
+  DESCRIPTION
+  type        = string
+  nullable    = true
+  default     = null
 }
