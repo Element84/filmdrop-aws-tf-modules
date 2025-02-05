@@ -14,6 +14,7 @@ variable "vpc_security_group_ids" {
 }
 
 variable "batch_compute_config" {
+  # NOTE: type changes here require changes in the typed-definitions module, too
   description = <<-DESCRIPTION
     (required, object) Defines a single set of Cirrus Task batch compute
     resources. This set may be used by zero..many batch Cirrus Tasks (see 'task'

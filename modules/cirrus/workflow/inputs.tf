@@ -26,6 +26,7 @@ variable "cirrus_tasks" {
 }
 
 variable "workflow_config" {
+  # NOTE: type changes here require changes in the typed-definitions module, too
   description = <<-DESCRIPTION
     (required, object) Defines a single Cirrus Workflow.
     Contents:
