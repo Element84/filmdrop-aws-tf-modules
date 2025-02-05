@@ -55,6 +55,7 @@ variable "cirrus_task_batch_compute" {
 }
 
 variable "task_config" {
+  # NOTE: type changes here require changes in the typed-definitions module, too
   description = <<-DESCRIPTION
     (required, object) Defines a single Cirrus Task. This Task may be used by
     zero..many Cirrus Workflows (see 'workflow' module). A Task may have Lambda
