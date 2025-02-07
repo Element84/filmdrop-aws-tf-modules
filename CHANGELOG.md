@@ -9,6 +9,16 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Added
 
+### Changed
+
+### Fixed
+
+### Removed
+
+## [2.31.0] - 2024-02-06
+
+### Added
+
 - Custom cirrus lambda dist ZIP can now be used instead of the default
 - Custom stac-server lambda dist ZIPs and configuration overrides can now be used for the `api`, `ingest`, and `pre-hook` lambdas
 - Support for PRIVATE-type cirrus and stac-server API Gateways
@@ -26,8 +36,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
   - Creating objects in the Cirrus `payload` S3 bucket
 - Fixed Cirrus workflow state machine permissions to allow creating state transition events
 - Fixed constant state drift caused by multiple `aws_api_gateway_account` resources (one in `stac-server`, one in `cirrus`)
-
-### Removed
 
 ## [2.30.0] - 2024-11-27
 
