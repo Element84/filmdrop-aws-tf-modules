@@ -15,6 +15,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Removed
 
+- Removing monokai from daskhub Dockerfile which was causing the jupyterhub image build to fail
+
 ## [2.31.0] - 2024-02-06
 
 ### Added
