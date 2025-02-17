@@ -132,7 +132,7 @@ resource "aws_security_group" "cirrus_api_gateway_private_vpce" {
 }
 
 resource "aws_vpc_security_group_ingress_rule" "cirrus_api_gateway_private_vpce" {
-  for_each = local.is_private_endpoint ? { for x in data.aws_subnet.selected : x.id => x } : {}
+  for_each = local.is_private_endpoint ? { for s in data.aws_subnet.selected : s.id => s } : {}
 
   security_group_id = aws_security_group.cirrus_api_gateway_private_vpce[0].id
   description       = "Allow TCP on 443 for subnet ${each.value.id}"
