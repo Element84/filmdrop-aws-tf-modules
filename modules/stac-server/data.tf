@@ -22,10 +22,17 @@ data "archive_file" "waiting_for_opensearch_lambda_zip" {
   ]
 }
 
-data "aws_subnet" "selected" {
-  for_each = toset(var.vpc_subnet_ids)
+data "aws_subnets" "selected" {
+  filter {
+    name   = "subnet-id"
+    values = var.vpc_subnet_ids
+  }
+}
 
-  id = each.key
+data "aws_subnet" "selected" {
+  for_each = toset(data.aws_subnets.selected.ids)
+
+  id = each.value
 }
 
 # this forces the user_init_lambda_zip to always be built
