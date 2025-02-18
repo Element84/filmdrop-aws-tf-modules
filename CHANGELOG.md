@@ -13,17 +13,21 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Fixed
 
-- Fixed occasional planning-time issue with a `data.aws_subnet` block in the `cirrus` and `stac-server` modules
-
 ### Removed
 
-## [2.32.0] - 2024-02-12
+## [2.33.0] - 2025-02-17
+
+### Fixed
+
+- Fixed occasional planning-time issue with a `data.aws_subnet` block in the `cirrus` and `stac-server` modules
+
+## [2.32.0] - 2025-02-12
 
 ### Removed
 
 - Removing monokai from daskhub Dockerfile which was causing the jupyterhub image build to fail
 
-## [2.31.0] - 2024-02-06
+## [2.31.0] - 2025-02-06
 
 ### Added
 
