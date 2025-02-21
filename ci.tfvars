@@ -189,10 +189,10 @@ cirrus_inputs = {
     timeout = 15
     memory  = 128
   }
-  # TODO - CVG - add proper tests
-  task_batch_compute = []
-  tasks              = []
-  workflows          = []
+  task_batch_compute_definitions_dir = null
+  task_definitions_dir               = null
+  task_definitions_variables         = null
+  workflow_definitions_dir           = null
 }
 
 cirrus_dashboard_inputs = {
