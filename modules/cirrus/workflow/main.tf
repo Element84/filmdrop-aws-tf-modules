@@ -177,6 +177,26 @@ resource "aws_iam_role_policy" "workflow_machine_task_lambda_and_batch" {
 # ==============================================================================
 
 
+# WORKFLOW STATE MACHINE IAM ROLE -- ADDITIONAL PERMISSIONS
+# ------------------------------------------------------------------------------
+# TODO - CVG - hardcoded to allow all SQS queues for now
+data "aws_iam_policy_document" "workflow_machine_additional" {
+  statement {
+    sid       = "AllowWorkflowToUseSqsCallbackEvents"
+    effect    = "Allow"
+    actions   = ["sqs:SendMessage"]
+    resources = ["arn:aws:sqs:${local.current_region}:${local.current_account}:*"]
+  }
+}
+
+resource "aws_iam_role_policy" "workflow_machine_additional" {
+  name_prefix = "${var.cirrus_prefix}-workflow-role-additional-"
+  role        = aws_iam_role.workflow_machine.name
+  policy      = data.aws_iam_policy_document.workflow_machine_additional.json
+}
+# ==============================================================================
+
+
 # WORKFLOW STATE MACHINE
 # ------------------------------------------------------------------------------
 resource "aws_sfn_state_machine" "workflow" {
