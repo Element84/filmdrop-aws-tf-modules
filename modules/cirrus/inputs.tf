@@ -7,12 +7,13 @@ variable "environment" {
   }
 }
 
+# TODO - CVG - resource naming - temporarily increasing project name length
 variable "project_name" {
   description = "Project Name"
   type        = string
   validation {
-    condition     = length(var.project_name) <= 8
-    error_message = "The project_name value must be a 8 or fewer characters."
+    condition     = length(var.project_name) <= 10
+    error_message = "The project_name value must be a 10 or fewer characters."
   }
 }
 
