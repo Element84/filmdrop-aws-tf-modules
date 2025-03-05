@@ -58,13 +58,11 @@ resource "aws_ssm_parameter" "state_db" {
 resource "aws_ssm_parameter" "base_workflow_arn" {
   name  = "${local.deployment_prefix}${local.deployment_name}/CIRRUS_BASE_WORKFLOW_ARN"
   type  = "String"
-  value = module.workflow.state_machine_arn
+  value = aws_iam_role.workflow_machine.arn
 }
 
 resource "aws_ssm_parameter" "cirrus_prefix" {
   name  = "${local.deployment_prefix}${local.deployment_name}/CIRRUS_PREFIX"
   type  = "String"
-  value = "${module.base.cirrus_prefix}"
+  value = module.base.cirrus_prefix
 }
-
-
