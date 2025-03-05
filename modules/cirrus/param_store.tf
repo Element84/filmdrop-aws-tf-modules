@@ -64,7 +64,7 @@ resource "aws_ssm_parameter" "base_workflow_arn" {
 resource "aws_ssm_parameter" "cirrus_prefix" {
   name  = "${local.deployment_prefix}${local.deployment_name}/CIRRUS_PREFIX"
   type  = "String"
-  value = module.base.cirrus_prefix
+  value = "${module.base.cirrus_prefix}"
 }
 
 
