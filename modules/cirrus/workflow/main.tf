@@ -103,14 +103,6 @@ resource "aws_iam_role_policy" "workflow_machine_events" {
 # ------------------------------------------------------------------------------
 data "aws_iam_policy_document" "workflow_machine_task_lambda_and_batch" {
 
-  # TODO - CVG - hardcoded to allow all SQS queues for now
-  statement {
-    sid       = "AllowWorkflowToUseSqsCallbackEvents"
-    effect    = "Allow"
-    actions   = ["sqs:SendMessage"]
-    resources = ["arn:aws:sqs:${local.current_region}:${local.current_account}:*"]
-  }
-
   # Allow the state machine to invoke any referenced task Lambdas
   dynamic "statement" {
     for_each = local.create_lambda_policy ? [1] : []
@@ -178,6 +170,8 @@ data "aws_iam_policy_document" "workflow_machine_task_lambda_and_batch" {
 }
 
 resource "aws_iam_role_policy" "workflow_machine_task_lambda_and_batch" {
+  count = local.create_lambda_policy || local.create_batch_policy ? 1 : 0
+
   name_prefix = "${var.cirrus_prefix}-workflow-role-task-policy-"
   role        = aws_iam_role.workflow_machine.name
   policy      = data.aws_iam_policy_document.workflow_machine_task_lambda_and_batch.json
@@ -188,20 +182,20 @@ resource "aws_iam_role_policy" "workflow_machine_task_lambda_and_batch" {
 # WORKFLOW STATE MACHINE IAM ROLE -- ADDITIONAL PERMISSIONS
 # ------------------------------------------------------------------------------
 # TODO - CVG - hardcoded to allow all SQS queues for now
-# data "aws_iam_policy_document" "workflow_machine_additional" {
-#   statement {
-#     sid       = "AllowWorkflowToUseSqsCallbackEvents"
-#     effect    = "Allow"
-#     actions   = ["sqs:SendMessage"]
-#     resources = ["arn:aws:sqs:${local.current_region}:${local.current_account}:*"]
-#   }
-# }
-#
-# resource "aws_iam_role_policy" "workflow_machine_additional" {
-#   name_prefix = "${var.cirrus_prefix}-workflow-role-additional-"
-#   role        = aws_iam_role.workflow_machine.name
-#   policy      = data.aws_iam_policy_document.workflow_machine_additional.json
-# }
+data "aws_iam_policy_document" "workflow_machine_additional" {
+  statement {
+    sid       = "AllowWorkflowToUseSqsCallbackEvents"
+    effect    = "Allow"
+    actions   = ["sqs:SendMessage"]
+    resources = ["arn:aws:sqs:${local.current_region}:${local.current_account}:*"]
+  }
+}
+
+resource "aws_iam_role_policy" "workflow_machine_additional" {
+  name_prefix = "${var.cirrus_prefix}-workflow-role-additional-"
+  role        = aws_iam_role.workflow_machine.name
+  policy      = data.aws_iam_policy_document.workflow_machine_additional.json
+}
 # ==============================================================================
 
 
