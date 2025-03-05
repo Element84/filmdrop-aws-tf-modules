@@ -74,11 +74,20 @@ variable "cirrus_inputs" {
       timeout = number
       memory  = number
     })
+<<<<<<< HEAD
     task_batch_compute_definitions_dir  = optional(string)
     task_definitions_dir                = optional(string)
     task_definitions_variables          = optional(map(map(string)))
     workflow_definitions_dir            = optional(string)
     cirrus_cli_iam_role_trust_principal = optional(list(string))
+=======
+    task_batch_compute_definitions_dir       = optional(string)
+    task_batch_compute_definitions_variables = optional(map(map(string)))
+    task_definitions_dir                     = optional(string)
+    task_definitions_variables               = optional(map(map(string)))
+    workflow_definitions_dir                 = optional(string)
+    workflow_definitions_variables           = optional(map(map(string)))
+>>>>>>> 97d6fc8 (Add templating to workflows and task batch compute)
   })
   default = {
     data_bucket                               = "cirrus-data-bucket-name"
@@ -121,11 +130,20 @@ variable "cirrus_inputs" {
       timeout = 15
       memory  = 128
     }
+<<<<<<< HEAD
     task_batch_compute_definitions_dir  = null
     task_definitions_dir                = null
     task_definitions_variables          = null
     workflow_definitions_dir            = null
     cirrus_cli_iam_role_trust_principal = null
+=======
+    task_batch_compute_definitions_dir       = null
+    task_batch_compute_definitions_variables = null
+    task_definitions_dir                     = null
+    task_definitions_variables               = null
+    workflow_definitions_dir                 = null
+    workflow_definitions_variables           = null
+>>>>>>> 97d6fc8 (Add templating to workflows and task batch compute)
   }
 }
 

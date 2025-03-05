@@ -218,7 +218,7 @@ variable "cirrus_task_batch_compute_definitions_dir" {
   (Optional) Filepath to a directory containing task batch compute definition
   subdirectories. Path is relative to this Terraform deployment's root module.
   The directory's expected subdirectory structure is:
-
+  ```
     example-compute-1/
       definition.yaml
       README.md (optional)
@@ -226,6 +226,7 @@ variable "cirrus_task_batch_compute_definitions_dir" {
       definition.yaml
       README.md (optional)
     ... more task-batch-compute subdirs ...
+  ```
 
   Where each definition.yaml is a YAML representation of the task-batch-compute
   module's "batch_compute_config" HCL object. See that module's inputs.tf for
@@ -238,12 +239,56 @@ variable "cirrus_task_batch_compute_definitions_dir" {
   default     = null
 }
 
+variable "cirrus_task_batch_compute_definitions_variables" {
+  description = <<-DESCRIPTION
+  (Optional) Map of maps to strings used when templating task batch compute YAML
+  definitions prior to their conversion to HCL. Intended for abstracting any
+  environment-specific values away from the task batch compute definition. One
+  such example would be restricting the maximum vCPU size of a batch compute
+  environment in a dev environment.
+
+  If you do not require any environment-specific values, you do not need to use
+  this.
+
+  The expected (but not explicitly required) structure of this map is to group
+  template variables by their task batch compute name:
+  ```hcl
+    {
+      example-task-batch-compute-1 = {
+        max_vcpus      = 10
+        instance_types = ["t2.micro"]
+      }
+      example-task-batch-compute-2 = {
+        max_vcpus = 40
+      }
+      ... other task-batch-compute maps ...
+    }
+  ```
+
+  Your task batch compute YAML definitions would leverage this templating by
+  using an attribute lookup in an interpolation sequence $\{...} like so (remove
+  the "\"):
+  ```yaml
+    name: example-task-batch-compute-1
+    batch_compute_environment:
+      compute_resources:
+        type: EC2
+        max_vcpus: $\{example-task-batch-compute-1.max_vcpus}           # remove the \
+        instance_types: $\{example-task-batch-compute-1.instance_types} # remove the \
+    ... any other config ...
+  ```
+  DESCRIPTION
+  type        = map(map(string))
+  nullable    = false
+  default     = {}
+}
+
 variable "cirrus_task_definitions_dir" {
   description = <<-DESCRIPTION
   (Optional) Filepath to directory containing task definition subdirectories.
   Path is relative to this Terraform deployment's root module. The directory's
   expected subdirectory structure is:
-
+  ```
     example-task-1/
       definition.yaml
       README.md (optional)
@@ -251,6 +296,7 @@ variable "cirrus_task_definitions_dir" {
       definition.yaml
       README.md (optional)
     ... more task subdirs ...
+  ```
 
   Where each definition.yaml is a YAML representation of the task module's
   "task_config" HCL object. See that module's inputs.tf for valid object
@@ -267,23 +313,27 @@ variable "cirrus_task_definitions_variables" {
   description = <<-DESCRIPTION
   (Optional) Map of maps to strings used when templating task YAML definitions
   prior to their conversion to HCL. Intended for abstracting environment-
-  specific values away from the task definition. The expected (but not
-  explicitly required) structure of this map is:
+  specific values away from the task definition.
 
+  The suggested (but not explicitly required) structure of this map is to group
+  template variables by their task name:
+  ```hcl
     {
       example-task-1 = {
         image_tag = "v1.0"
       }
       example-task-2 = {
-        image_tag = "v1.3"
+        image_tag          = "v1.3"
         source_data_bucket = "dev-source-data-bucket-name"
       }
       ... other task maps ...
     }
+  ```
 
   Your task YAML definitions would leverage this templating by using an
-  interpolation sequence $\{...} like so (remove the "\"):
-
+  attribute lookup in an interpolation sequence $\{...} like so (remove
+  the "\"):
+  ```yaml
     name: example-task-2
     common_role_statements:
       - sid: ReadSomeBucketThatChangesForEachEnvironment
@@ -298,6 +348,7 @@ variable "cirrus_task_definitions_variables" {
     lambda:
       ecr_image_uri: <full ECR image URI>:$\{example-task-2.image_tag} # remove the \
       ... any other config ...
+  ```
   DESCRIPTION
   type        = map(map(string))
   nullable    = false
@@ -309,7 +360,7 @@ variable "cirrus_workflow_definitions_dir" {
   (Optional) Filepath to directory containing workflow definition
   subdirectories. Path is relative to this Terraform deployment's root module.
   The directory's expected subdirectory structure is:
-
+  ```
     example-workflow-1/
       definition.yaml
       state-machine.json
@@ -319,6 +370,7 @@ variable "cirrus_workflow_definitions_dir" {
       state-machine.json
       README.md (optional)
     ... more workflow subdirs ...
+  ```
 
   Where each definition.yaml is a YAML representation of the workflow module's
   "workflow_config" HCL object. See that module's inputs.tf for valid object
@@ -329,4 +381,68 @@ variable "cirrus_workflow_definitions_dir" {
   type        = string
   nullable    = true
   default     = null
+}
+
+variable "cirrus_workflow_definitions_variables" {
+  description = <<-DESCRIPTION
+  (Optional) Map of maps to strings used when templating workflow YAML
+  definitions prior to their conversion to HCL and state machine JSONs prior to
+  state machine creation. Intended for abstracting environment-specific values
+  away from the workflow definition and state machine JSON. This is only needed
+  if your workflow's state machine will be using AWS services/resources that are
+  unrelated to Cirrus tasks. One such example would be the callback task
+  functionality provided by "arn:aws:states:::sqs:sendMessage.waitForTaskToken"
+  state machine resources.
+
+  If your state machine does not invoke any non-cirrus task resources, you do
+  not need to use this.
+
+  The suggested (but not explicitly required) structure of this map is to group
+  template variables by their workflow name:
+  ```hcl
+    {
+      example-workflow-1 = {
+        callback_sqs_queue_arn = "dev-some-sqs-queue-arn"
+        callback_sqs_queue_url = "https://..."
+      }
+      example-workflow-2 = {
+        non_task_resource_arn = "dev-some-resource-arn"
+        ...
+      }
+      ... other workflow maps ...
+    }
+  ```
+
+  Your workflow YAML definitions would leverage this templating by using an
+  attribute lookup in an interpolation sequence $\{...} like so (remove "\"):
+  ```yaml
+    name: example-workflow-1
+    common_role_statements:
+      - sid: AllowWaitForTaskTokenWithQueueThatChangesByEnvironment
+        effect: Allow
+        actions:
+          - sqs:SendMessage
+        resources:
+          - arn:aws:s3:::$\{example-workflow-1.callback_sqs_queue_arn} # remove the \
+  ```
+
+  And part of your workflow state machine JSON would look something like this:
+  ```json
+    {
+      "Type": "Task",
+      "Resource": "arn:aws:states:::sqs:sendMessage.waitForTaskToken",
+      "Parameters": {
+          "QueueUrl": "$\{example-workflow-1.callback_sqs_queue_url}", # remove the \
+          "MessageBody": {
+              "Message": "Hello from Step Functions!",
+              "TaskToken.$": "$$.Task.Token"
+          }
+      },
+      "Next": "NEXT_STATE"
+    }
+  ```
+  DESCRIPTION
+  type        = map(map(string))
+  nullable    = false
+  default     = {}
 }
