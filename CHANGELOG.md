@@ -15,6 +15,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Removed
 
+## [2.35.0] - 2025-03-05
+
+### Removed
+
+- Removed max terraform required version constrains
+
 ## [2.34.0] - 2025-02-24
 
 ### Fixed
