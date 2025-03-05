@@ -10,8 +10,9 @@ locals {
   # config and promotes readability by enabling each item to be split into its
   # own file without environment-specific redundancy.
   #
-  # Task YAML definitions are templated prior to HCL conversion to allow setting
-  # any environment-specific values, including builtin variables defined above.
+  # The YAML definitions are templated prior to HCL conversion to allow setting
+  # environment-specific values. Task YAML definitions may include the builtin
+  # variables above.
   #
   # Ternary defaults must be 'null' rather than an empty list since Terraform is
   # unable to implicitly typecast the complex config objects into a single type,
@@ -19,7 +20,7 @@ locals {
   cirrus_task_batch_compute_definitions = (
     var.cirrus_task_batch_compute_definitions_dir != null ? [
       for tbc_yaml in fileset(path.root, "${var.cirrus_task_batch_compute_definitions_dir}/**/definition.yaml") :
-      yamldecode(file(tbc_yaml))
+      yamldecode(templatefile(tbc_yaml, var.cirrus_task_batch_compute_definitions_variables))
     ] : null
   )
   cirrus_task_definitions = (
@@ -31,7 +32,7 @@ locals {
   cirrus_workflow_definitions = (
     var.cirrus_workflow_definitions_dir != null ? [
       for workflow_yaml in fileset(path.root, "${var.cirrus_workflow_definitions_dir}/**/definition.yaml") :
-      yamldecode(file(workflow_yaml))
+      yamldecode(templatefile(workflow_yaml, var.cirrus_workflow_definitions_variables))
     ] : null
   )
 
@@ -105,7 +106,8 @@ module "workflow" {
     workflow.name => workflow
   }
 
-  resource_prefix = var.resource_prefix
-  cirrus_tasks    = module.task
-  workflow_config = each.value
+  resource_prefix             = var.resource_prefix
+  cirrus_tasks                = module.task
+  workflow_config             = each.value
+  workflow_template_variables = var.cirrus_workflow_definitions_variables
 }
