@@ -10,8 +10,7 @@ resource "aws_ssm_parameter" "deployment_pointer" {
   value = jsonencode({
     type  = "parameter_store"
     value = local.parameter_prefix
-    }
-  )
+  })
 }
 
 resource "aws_ssm_parameter" "event_db_and_table" {
@@ -47,7 +46,7 @@ resource "aws_ssm_parameter" "workflow_event_topic_arn" {
 resource "aws_ssm_parameter" "log_level" {
   name  = "${local.parameter_prefix}CIRRUS_LOG_LEVEL"
   type  = "String"
-  value = "DEBUG"
+  value = var.cirrus_log_level
 }
 
 resource "aws_ssm_parameter" "state_db" {
@@ -65,5 +64,5 @@ resource "aws_ssm_parameter" "base_workflow_arn" {
 resource "aws_ssm_parameter" "cirrus_prefix" {
   name  = "${local.parameter_prefix}CIRRUS_PREFIX"
   type  = "String"
-  value = local.cirrus_prefix
+  value = "${local.cirrus_prefix}-"
 }
