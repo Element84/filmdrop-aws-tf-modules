@@ -59,7 +59,7 @@ resource "aws_ssm_parameter" "state_db" {
 resource "aws_ssm_parameter" "base_workflow_arn" {
   name  = "${local.parameter_prefix}CIRRUS_BASE_WORKFLOW_ARN"
   type  = "String"
-  value = "arn:aws:states:${local.current_region}:${local.current_account}:stateMachine:${local.cirrus_prefix}"
+  value = "arn:aws:states:${local.current_region}:${local.current_account}:stateMachine:${local.cirrus_prefix}-"
 }
 
 resource "aws_ssm_parameter" "cirrus_prefix" {
