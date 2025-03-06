@@ -1,6 +1,9 @@
 module "cirrus" {
   source = "../../modules/cirrus"
 
+  # Namespace all cirrus resources via prefix
+  resource_prefix = lower(replace("fd-${var.project_name}-${var.environment}-cirrus", "_", "-"))
+
   project_name                                              = var.project_name
   environment                                               = var.environment
   vpc_id                                                    = var.vpc_id

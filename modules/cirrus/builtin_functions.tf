@@ -9,7 +9,7 @@ module "builtin_functions" {
   vpc_id                                           = var.vpc_id
   vpc_subnet_ids                                   = var.vpc_subnet_ids
   vpc_security_group_ids                           = var.vpc_security_group_ids
-  cirrus_prefix                                    = local.cirrus_prefix
+  resource_prefix                                  = var.resource_prefix
   cirrus_log_level                                 = var.cirrus_log_level
   cirrus_data_bucket                               = module.base.cirrus_data_bucket
   cirrus_payload_bucket                            = module.base.cirrus_payload_bucket
