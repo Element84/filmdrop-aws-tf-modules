@@ -106,8 +106,8 @@ module "workflow" {
     workflow.name => workflow
   }
 
-  cirrus_prefix               = local.cirrus_prefix
-  cirrus_tasks                = module.task
-  workflow_config             = each.value
-  workflow_template_variables = var.cirrus_workflow_definitions_variables
+  cirrus_prefix                  = local.cirrus_prefix
+  cirrus_tasks                   = module.task
+  workflow_config                = each.value
+  workflow_definitions_variables = var.cirrus_workflow_definitions_variables
 }
