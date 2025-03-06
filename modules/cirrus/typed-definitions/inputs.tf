@@ -243,6 +243,27 @@ variable "cirrus_workflows" {
   type = list(object({
     name                   = string
     state_machine_filepath = string
+    role_statements = optional(list(object({
+      sid           = string
+      effect        = string
+      actions       = list(string)
+      resources     = list(string)
+      not_actions   = optional(list(string))
+      not_resources = optional(list(string))
+      condition = optional(object({
+        test     = string
+        variable = string
+        values   = list(string)
+      }))
+      principals = optional(object({
+        type        = string
+        identifiers = list(string)
+      }))
+      not_principals = optional(object({
+        type        = string
+        identifiers = list(string)
+      }))
+    })))
   }))
 
   # Force default if null
