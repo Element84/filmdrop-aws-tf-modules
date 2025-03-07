@@ -171,6 +171,13 @@ variable "deploy_alarms" {
   description = "Deploy Cirrus Alarms stack"
 }
 
+variable "cirrus_cli_iam_role_trust_principal" {
+  type        = list(string)
+  default     = null
+  description = "List of principle IAMs that can assume cirrus instance CLI IAM management role"
+}
+
+
 variable "custom_cloudwatch_warning_alarms_map" {
   description = "Map with custom CloudWatch Warning Alarms"
   type        = map(any)

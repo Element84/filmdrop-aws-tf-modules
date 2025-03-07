@@ -401,10 +401,11 @@ variable "cirrus_inputs" {
       timeout = number
       memory  = number
     })
-    task_batch_compute_definitions_dir = optional(string)
-    task_definitions_dir               = optional(string)
-    task_definitions_variables         = optional(map(map(string)))
-    workflow_definitions_dir           = optional(string)
+    task_batch_compute_definitions_dir  = optional(string)
+    task_definitions_dir                = optional(string)
+    task_definitions_variables          = optional(map(map(string)))
+    workflow_definitions_dir            = optional(string)
+    cirrus_cli_iam_role_trust_principal = list(string)
   })
   default = {
     data_bucket    = "cirrus-data-bucket-name"
@@ -446,10 +447,11 @@ variable "cirrus_inputs" {
       timeout = 15
       memory  = 128
     }
-    task_batch_compute_definitions_dir = null
-    task_definitions_dir               = null
-    task_definitions_variables         = null
-    workflow_definitions_dir           = null
+    task_batch_compute_definitions_dir  = null
+    task_definitions_dir                = null
+    task_definitions_variables          = null
+    workflow_definitions_dir            = null
+    cirrus_cli_iam_role_trust_principal = null
   }
 }
 
