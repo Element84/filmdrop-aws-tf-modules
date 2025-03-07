@@ -59,7 +59,6 @@ EOF
 }
 
 resource "aws_iam_role_policy_attachment" "cirrus_instance_cli_management_role_policy_attachment" {
-  role = aws_iam_role.cirrus_instance_cli_management_role[1].name
-  # policy_arn = aws_iam_role.cirrus_instance_cli_management_policy.arn
-  policy_arn = "arn:aws:iam::aws:policy/service-role/cirrus_cli_role"
+  role       = aws_iam_role.cirrus_instance_cli_management_role[1].name
+  policy_arn = aws_iam_role.cirrus_instance_cli_management_role[1].arn
 }

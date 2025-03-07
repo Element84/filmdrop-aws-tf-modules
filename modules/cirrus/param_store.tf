@@ -66,3 +66,9 @@ resource "aws_ssm_parameter" "cirrus_prefix" {
   type  = "String"
   value = "${local.cirrus_prefix}-"
 }
+
+resource "aws_ssm_parameter" "cirrus_IAM_cli_role" {
+  name  = "${local.parameter_prefix}CIRRUS_CLI_IAM_ARN"
+  type  = "String"
+  value = aws_iam_role.cirrus_instance_cli_management_role[1].arn
+}
