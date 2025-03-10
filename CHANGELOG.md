@@ -11,6 +11,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Changed
 
+- Updated FilmDrop Analytics eks kubernetes version to 1.32 and autoscaler version to 1.32.0
+
 ### Fixed
 
 ### Removed
