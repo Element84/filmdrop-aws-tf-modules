@@ -88,41 +88,9 @@ resource "aws_wafv2_web_acl" "fd_waf_acl" {
     }
   }
 
-
-  rule {
-    name     = "${local.origin_appendix}-geo-country-blocklist"
-    priority = 3
-
-    dynamic "action" {
-      for_each = length(var.country_blocklist) > 0 ? [1] : []
-      content {
-        block {}
-      }
-    }
-
-    dynamic "action" {
-      for_each = length(var.country_blocklist) == 0 ? [1] : []
-      content {
-        count {}
-      }
-    }
-
-    statement {
-      geo_match_statement {
-        country_codes = var.country_blocklist
-      }
-    }
-
-    visibility_config {
-      cloudwatch_metrics_enabled = false
-      metric_name                = "${local.origin_appendix}-geo-country-blocklist"
-      sampled_requests_enabled   = false
-    }
-  }
-
   rule {
     name     = "${local.origin_appendix}-http-body-max-length"
-    priority = 4
+    priority = 3
 
     action {
       block {}
@@ -151,7 +119,7 @@ resource "aws_wafv2_web_acl" "fd_waf_acl" {
 
   rule {
     name     = "${local.origin_appendix}-sql-injection"
-    priority = 5
+    priority = 4
 
     action {
       block {}
@@ -180,7 +148,7 @@ resource "aws_wafv2_web_acl" "fd_waf_acl" {
 
   rule {
     name     = "${local.origin_appendix}-xss"
-    priority = 6
+    priority = 5
 
     action {
       block {}
@@ -204,6 +172,30 @@ resource "aws_wafv2_web_acl" "fd_waf_acl" {
       cloudwatch_metrics_enabled = false
       metric_name                = "${local.origin_appendix}-xss"
       sampled_requests_enabled   = false
+    }
+  }
+
+  dynamic "rule" {
+    for_each = length(var.country_blocklist) > 0 ? [1] : []
+
+    content {
+      name     = "${local.origin_appendix}-geo-country-blocklist"
+      priority = 6
+
+      action {
+        block {}
+      }
+      statement {
+        geo_match_statement {
+          country_codes = var.country_blocklist
+        }
+      }
+
+      visibility_config {
+        cloudwatch_metrics_enabled = false
+        metric_name                = "${local.origin_appendix}-geo-country-blocklist"
+        sampled_requests_enabled   = false
+      }
     }
   }
 
