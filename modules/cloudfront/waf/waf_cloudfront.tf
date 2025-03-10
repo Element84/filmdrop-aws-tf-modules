@@ -155,15 +155,30 @@ resource "aws_wafv2_web_acl" "fd_waf_acl" {
     }
 
     statement {
-      xss_match_statement {
-        text_transformation {
-          priority = 0
-          type     = "NONE"
-        }
+      or_statement {
+        statement {
+          xss_match_statement {
+            text_transformation {
+              priority = 0
+              type     = "NONE"
+            }
 
-        field_to_match {
-          uri_path {}
-          all_query_arguments {}
+            field_to_match {
+              uri_path {}
+            }
+          }
+        }
+        statement {
+          xss_match_statement {
+            text_transformation {
+              priority = 0
+              type     = "NONE"
+            }
+
+            field_to_match {
+              all_query_arguments {}
+            }
+          }
         }
       }
     }
