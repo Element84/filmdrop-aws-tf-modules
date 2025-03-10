@@ -1,179 +1,215 @@
-resource "aws_waf_geo_match_set" "fd_waf_geo_match_set" {
-  name = "FDWAFGeo${local.origin_appendix}"
-
-  dynamic "geo_match_constraint" {
-    for_each = var.country_blocklist
-
-    content {
-      type  = "Country"
-      value = geo_match_constraint.value
-    }
-  }
+resource "aws_wafv2_ip_set" "fd_waf_block_ipset" {
+  name               = "FDWAFCFBlock${local.origin_appendix}"
+  description        = "Blocked IPs on ${local.origin_appendix}"
+  scope              = "CloudFront"
+  ip_address_version = "IPV4"
+  addresses          = var.ip_blocklist
 }
 
-resource "aws_waf_ipset" "fd_waf_block_ipset" {
-  name = "FDWAFCFBlock${local.origin_appendix}"
-
-  dynamic "ip_set_descriptors" {
-    for_each = var.ip_blocklist
-
-    content {
-      type  = "IPV4"
-      value = ip_set_descriptors.value
-    }
-  }
+resource "aws_wafv2_ip_set" "fd_waf_allow_ipset" {
+  name               = "FDWAFCFAllow${local.origin_appendix}"
+  description        = "Allowed IPs on ${local.origin_appendix}"
+  scope              = "CloudFront"
+  ip_address_version = "IPV4"
+  addresses          = var.whitelist_ips
 }
 
-resource "aws_waf_ipset" "fd_waf_allow_ipset" {
-  name = "FDWAFCFAllow${local.origin_appendix}"
-
-  dynamic "ip_set_descriptors" {
-    for_each = var.whitelist_ips
-
-    content {
-      type  = "IPV4"
-      value = ip_set_descriptors.value
-    }
-  }
-}
-
-resource "aws_waf_rule" "fd_waf_ip_block_wafrule" {
-  name        = "FDWAFIPBlock${local.origin_appendix}"
-  metric_name = "FDWAFIPBlock${local.origin_appendix}"
-
-  predicates {
-    data_id = aws_waf_ipset.fd_waf_block_ipset.id
-    negated = false
-    type    = "IPMatch"
-  }
-}
-
-resource "aws_waf_rule" "fd_waf_ip_accept_wafrule" {
-  name        = "FDWAFIPAccept${local.origin_appendix}"
-  metric_name = "FDWAFIPAccept${local.origin_appendix}"
-
-  predicates {
-    data_id = aws_waf_ipset.fd_waf_allow_ipset.id
-    negated = length(var.whitelist_ips) > 0
-    type    = "IPMatch"
-  }
-}
-
-resource "aws_waf_size_constraint_set" "fd_waf_size_constraint_set" {
-  name = "FDWAFSize${local.origin_appendix}"
-
-  size_constraints {
-    text_transformation = "NONE"
-    comparison_operator = "GT"
-    size                = var.max_message_body_size
-
-    field_to_match {
-      type = "BODY"
-    }
-  }
-}
-
-resource "aws_waf_sql_injection_match_set" "fd_waf_sql_injection_match_set" {
-  name = "FDWAFSQLInj${local.origin_appendix}"
-
-  sql_injection_match_tuples {
-    text_transformation = "NONE"
-
-    field_to_match {
-      type = "ALL_QUERY_ARGS"
-    }
-  }
-}
-
-resource "aws_waf_xss_match_set" "fd_waf_xss_match_set" {
-  name = "FDWAFXSS${local.origin_appendix}"
-
-  xss_match_tuples {
-    text_transformation = "NONE"
-
-    field_to_match {
-      type = "URI"
-    }
-  }
-
-  xss_match_tuples {
-    text_transformation = "NONE"
-
-    field_to_match {
-      type = "ALL_QUERY_ARGS"
-    }
-  }
-}
-
-# Create the WAF Rules
-resource "aws_waf_rule" "fd_waf_geo_wafrule" {
-  name        = "FDWAFGeo${local.origin_appendix}"
-  metric_name = "FDWAFGeo${local.origin_appendix}"
-
-  predicates {
-    data_id = aws_waf_geo_match_set.fd_waf_geo_match_set.id
-    negated = false
-    type    = "GeoMatch"
-  }
-}
-
-resource "aws_waf_rule" "fd_waf_size_wafrule" {
-  name        = "FDWAFSize${local.origin_appendix}"
-  metric_name = "FDWAFSize${local.origin_appendix}"
-
-  predicates {
-    data_id = aws_waf_size_constraint_set.fd_waf_size_constraint_set.id
-    negated = false
-    type    = "SizeConstraint"
-  }
-}
-
-resource "aws_waf_rule" "fd_waf_sql_wafrule" {
-  name        = "FDWAFSQLInj${local.origin_appendix}"
-  metric_name = "FDWAFSQLInj${local.origin_appendix}"
-
-  predicates {
-    data_id = aws_waf_sql_injection_match_set.fd_waf_sql_injection_match_set.id
-    negated = false
-    type    = "SqlInjectionMatch"
-  }
-}
-
-resource "aws_waf_rule" "fd_waf_xss_wafrule" {
-  name        = "FDWAFXSS${local.origin_appendix}"
-  metric_name = "FDWAFXSS${local.origin_appendix}"
-
-  predicates {
-    data_id = aws_waf_xss_match_set.fd_waf_xss_match_set.id
-    negated = false
-    type    = "XssMatch"
-  }
-}
-
-# Create WAF ACL
-resource "aws_waf_web_acl" "fd_waf_acl" {
+resource "aws_wafv2_web_acl" "fd_waf_acl" {
   name        = "FDWAFACL${local.origin_appendix}"
-  metric_name = "FDWAFACL${local.origin_appendix}"
+  description = "WAF rules for CloudFront ${local.origin_appendix}"
+  scope       = "CLOUDFRONT"
 
   default_action {
-    type = "ALLOW"
+    allow {}
   }
+  rule {
+    name     = "${local.origin_appendix}-allow-whitelisted-ips-only"
+    priority = 1
 
-  logging_configuration {
-    log_destination = aws_kinesis_firehose_delivery_stream.fd_waf_cf_logging_firehose_stream.arn
-  }
-
-  dynamic "rules" {
-    for_each = [aws_waf_rule.fd_waf_xss_wafrule.id, aws_waf_rule.fd_waf_sql_wafrule.id, aws_waf_rule.fd_waf_size_wafrule.id, aws_waf_rule.fd_waf_geo_wafrule.id, aws_waf_rule.fd_waf_ip_block_wafrule.id, aws_waf_rule.fd_waf_ip_accept_wafrule.id]
-
-    content {
-      action {
-        type = "BLOCK"
+    dynamic "action" {
+      for_each = length(var.whitelist_ips) > 0 ? [1] : []
+      content {
+        block {}
       }
-
-      priority = rules.key
-      rule_id  = rules.value
-      type     = "REGULAR"
     }
+
+    dynamic "action" {
+      for_each = length(var.whitelist_ips) == 0 ? [1] : []
+      content {
+        count {}
+      }
+    }
+
+    statement {
+      not_statement {
+        statement {
+          ip_set_reference_statement {
+            arn = aws_wafv2_ip_set.fd_waf_allow_ipset.arn
+          }
+        }
+      }
+    }
+
+    visibility_config {
+      cloudwatch_metrics_enabled = false
+      metric_name                = "${local.origin_appendix}-allow-whitelisted-ips-only"
+      sampled_requests_enabled   = false
+    }
+  }
+
+  rule {
+    name     = "${local.origin_appendix}-block-blacklisted-ips"
+    priority = 2
+
+    dynamic "action" {
+      for_each = length(var.ip_blocklist) > 0 ? [1] : []
+      content {
+        block {}
+      }
+    }
+
+    dynamic "action" {
+      for_each = length(var.ip_blocklist) == 0 ? [1] : []
+      content {
+        count {}
+      }
+    }
+
+    statement {
+      ip_set_reference_statement {
+        arn = aws_wafv2_ip_set.fd_waf_block_ipset.arn
+      }
+    }
+
+    visibility_config {
+      cloudwatch_metrics_enabled = false
+      metric_name                = "${local.origin_appendix}-block-blacklisted-ips"
+      sampled_requests_enabled   = false
+    }
+  }
+
+
+  rule {
+    name     = "${local.origin_appendix}-geo-country-blocklist"
+    priority = 3
+
+    dynamic "action" {
+      for_each = length(var.country_blocklist) > 0 ? [1] : []
+      content {
+        block {}
+      }
+    }
+
+    dynamic "action" {
+      for_each = length(var.country_blocklist) == 0 ? [1] : []
+      content {
+        count {}
+      }
+    }
+
+    statement {
+      geo_match_statement {
+        country_codes = var.country_blocklist
+      }
+    }
+
+    visibility_config {
+      cloudwatch_metrics_enabled = false
+      metric_name                = "${local.origin_appendix}-geo-country-blocklist"
+      sampled_requests_enabled   = false
+    }
+  }
+
+  rule {
+    name     = "${local.origin_appendix}-http-body-max-length"
+    priority = 4
+
+    action {
+      block {}
+    }
+
+    statement {
+      size_constraint_statement {
+        comparison_operator = "GT"
+        size                = var.max_message_body_size
+        field_to_match {
+          body {}
+        }
+        text_transformation {
+          priority = 0
+          type     = "NONE"
+        }
+      }
+    }
+
+    visibility_config {
+      cloudwatch_metrics_enabled = false
+      metric_name                = "${local.origin_appendix}-http-body-max-length"
+      sampled_requests_enabled   = false
+    }
+  }
+
+  rule {
+    name     = "${local.origin_appendix}-sql-injection"
+    priority = 5
+
+    action {
+      block {}
+    }
+
+    statement {
+
+      sqli_match_statement {
+        text_transformation {
+          priority = 0
+          type     = "NONE"
+        }
+
+        field_to_match {
+          all_query_arguments {}
+        }
+      }
+    }
+
+    visibility_config {
+      cloudwatch_metrics_enabled = false
+      metric_name                = "${local.origin_appendix}-sql-injection"
+      sampled_requests_enabled   = false
+    }
+  }
+
+  rule {
+    name     = "${local.origin_appendix}-xss"
+    priority = 6
+
+    action {
+      block {}
+    }
+
+    statement {
+      xss_match_statement {
+        text_transformation {
+          priority = 0
+          type     = "NONE"
+        }
+
+        field_to_match {
+          uri_path {}
+          all_query_arguments {}
+        }
+      }
+    }
+
+    visibility_config {
+      cloudwatch_metrics_enabled = false
+      metric_name                = "${local.origin_appendix}-xss"
+      sampled_requests_enabled   = false
+    }
+  }
+
+  visibility_config {
+    cloudwatch_metrics_enabled = false
+    metric_name                = "${local.origin_appendix}-cloudfront-waf-rules"
+    sampled_requests_enabled   = false
   }
 }
