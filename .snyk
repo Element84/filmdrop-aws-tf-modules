@@ -38,6 +38,9 @@ ignore:
     - './profiles/core/../base/../../modules/cloudfront/waf/waf_cloudfront.tf > *':
         reason: Open API - no auth required
         created: 2025-03-10T14:35:23.783Z
+    - 'modules/cloudfront/waf/waf_cloudfront.tf > *':
+        reason: Open API - no auth required
+        created: 2025-03-10T14:35:23.783Z
   SNYK-CC-00146:
     - 'modules/cloudfront/custom_origin/custom_origin.tf > *':
         reason: Open API - no auth required
