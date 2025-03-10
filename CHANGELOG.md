@@ -17,11 +17,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Removed
 
+- Removed classical WAF support as it is being deprecated by AWS in favor of the newer AWS WAFv2
+
 ## [2.35.0] - 2025-03-05
 
 ### Removed
 
-- Removed max terraform required version constrains
+- Removed max terraform required version constraints
 
 ## [2.34.0] - 2025-02-24
 
