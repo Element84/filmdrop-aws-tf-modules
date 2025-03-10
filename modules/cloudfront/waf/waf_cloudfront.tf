@@ -1,7 +1,7 @@
 resource "aws_wafv2_ip_set" "fd_waf_block_ipset" {
   name               = "FDWAFCFBlock${local.origin_appendix}"
   description        = "Blocked IPs on ${local.origin_appendix}"
-  scope              = "CloudFront"
+  scope              = "CLOUDFRONT"
   ip_address_version = "IPV4"
   addresses          = var.ip_blocklist
 }
@@ -9,7 +9,7 @@ resource "aws_wafv2_ip_set" "fd_waf_block_ipset" {
 resource "aws_wafv2_ip_set" "fd_waf_allow_ipset" {
   name               = "FDWAFCFAllow${local.origin_appendix}"
   description        = "Allowed IPs on ${local.origin_appendix}"
-  scope              = "CloudFront"
+  scope              = "CLOUDFRONT"
   ip_address_version = "IPV4"
   addresses          = var.whitelist_ips
 }
