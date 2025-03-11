@@ -1,14 +1,12 @@
 locals {
   create_cli_role = var.cirrus_cli_iam_role_trust_principal != null
-
 }
 
 resource "aws_iam_role" "cirrus_instance_cli_management_role" {
   count = local.create_cli_role ? 1 : 0
 
-  name_prefix = "${local.cirrus_prefix}-cli-role-"
-  description = "Role for cirrus cli management tool to assume"
-
+  name_prefix        = "${local.cirrus_prefix}-cli-role-"
+  description        = "Role for cirrus cli management tool to assume"
   assume_role_policy = <<-EOF
   {
     "Version": "2012-10-17",
@@ -16,7 +14,7 @@ resource "aws_iam_role" "cirrus_instance_cli_management_role" {
       {
         "Action": "sts:AssumeRole",
         "Principal": {
-          "AWS": "${local.create_cli_role}"
+          "AWS": ${var.cirrus_cli_iam_role_trust_principal}
         },
         "Effect": "Allow"
       }
@@ -65,6 +63,6 @@ data "aws_iam_policy_document" "cirrus_instance_cli_management_policy" {
 resource "aws_iam_role_policy" "cirrus_instance_cli_management_role_policy" {
   count = local.create_cli_role ? 1 : 0
 
-  role   = aws_iam_role.cirrus_instance_cli_management_role[1].name
-  policy = data.aws_iam_policy_document.cirrus_instance_cli_management_policy.json
+  role   = aws_iam_role.cirrus_instance_cli_management_role[0].name
+  policy = data.aws_iam_policy_document.cirrus_instance_cli_management_policy[0].json
 }
