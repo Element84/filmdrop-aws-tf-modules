@@ -66,5 +66,5 @@ resource "aws_iam_role_policy" "cirrus_instance_cli_management_role_policy" {
   count = local.create_cli_role ? 1 : 0
 
   role   = aws_iam_role.cirrus_instance_cli_management_role[1].name
-  policy = data.aws_iam_policy_document.cirrus_instance_cli_management_policy
+  policy = data.aws_iam_policy_document.cirrus_instance_cli_management_policy.json
 }
