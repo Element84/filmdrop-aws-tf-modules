@@ -34,11 +34,12 @@ variable "security_group_id" {
 variable "cirrus_inputs" {
   description = "Inputs for FilmDrop Cirrus deployment"
   type = object({
-    data_bucket    = string
-    payload_bucket = string
-    log_level      = string
-    api_rest_type  = string
-    deploy_alarms  = bool
+    data_bucket                               = string
+    payload_bucket                            = string
+    log_level                                 = string
+    api_rest_type                             = string
+    private_api_additional_security_group_ids = optional(list(string))
+    deploy_alarms                             = bool
     custom_alarms = object({
       warning  = map(any)
       critical = map(any)
@@ -79,11 +80,12 @@ variable "cirrus_inputs" {
     workflow_definitions_dir           = optional(string)
   })
   default = {
-    data_bucket    = "cirrus-data-bucket-name"
-    payload_bucket = "cirrus-payload-bucket-name"
-    log_level      = "INFO"
-    api_rest_type  = "EDGE"
-    deploy_alarms  = true
+    data_bucket                               = "cirrus-data-bucket-name"
+    payload_bucket                            = "cirrus-payload-bucket-name"
+    log_level                                 = "INFO"
+    api_rest_type                             = "EDGE"
+    private_api_additional_security_group_ids = null
+    deploy_alarms                             = true
     custom_alarms = {
       warning  = {}
       critical = {}

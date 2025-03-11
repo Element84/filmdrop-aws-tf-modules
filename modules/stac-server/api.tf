@@ -88,9 +88,12 @@ resource "aws_vpc_endpoint" "stac_server_api_gateway_private" {
   vpc_endpoint_type   = "Interface"
   ip_address_type     = "ipv4"
   subnet_ids          = data.aws_subnet.selected[*].id
-  security_group_ids  = aws_security_group.stac_server_api_gateway_private_vpce[*].id
   auto_accept         = true
   private_dns_enabled = false
+  security_group_ids = concat(
+    aws_security_group.stac_server_api_gateway_private_vpce[*].id,
+    coalesce(var.private_api_additional_security_group_ids, [])
+  )
 
   dns_options {
     dns_record_ip_type = "ipv4"
