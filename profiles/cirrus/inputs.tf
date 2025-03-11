@@ -77,7 +77,7 @@ variable "cirrus_inputs" {
     task_definitions_dir                = optional(string)
     task_definitions_variables          = optional(map(map(string)))
     workflow_definitions_dir            = optional(string)
-    cirrus_cli_iam_role_trust_principal = list(string)
+    cirrus_cli_iam_role_trust_principal = optional(list(string))
   })
   default = {
     data_bucket    = "cirrus-data-bucket-name"

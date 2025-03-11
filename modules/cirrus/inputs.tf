@@ -172,9 +172,9 @@ variable "deploy_alarms" {
 }
 
 variable "cirrus_cli_iam_role_trust_principal" {
+  description = "List of principle IAMs that can assume cirrus instance CLI IAM management role"
   type        = list(string)
   default     = null
-  description = "List of principle IAMs that can assume cirrus instance CLI IAM management role"
 }
 
 
