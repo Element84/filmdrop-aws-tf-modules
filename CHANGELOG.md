@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Added
 
+- A list of additional security groups can now be added to the VPCes for PRIVATE-type stac-server and/or cirrus API gateways
+
 ### Changed
 
 ### Fixed
