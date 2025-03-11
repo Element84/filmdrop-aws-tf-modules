@@ -116,8 +116,8 @@ analytics_inputs = {
   }
 
   eks = {
-    cluster_version    = "1.29"
-    autoscaler_version = "v1.29.0"
+    cluster_version    = "1.32"
+    autoscaler_version = "v1.32.0"
   }
 }
 
