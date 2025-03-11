@@ -169,6 +169,17 @@ variable "api_rest_type" {
   default     = "EDGE"
 }
 
+variable "private_api_additional_security_group_ids" {
+  description = <<-DESCRIPTION
+  Optional list of security group IDs that'll be applied to the VPC interface
+  endpoints of a PRIVATE-type stac-server API Gateway. These security groups are
+  in addition to the security groups that allow traffic from the private subnet
+  CIDR blocks. Only applicable when `var.api_rest_type == PRIVATE`.
+  DESCRIPTION
+  type        = list(string)
+  default     = null
+}
+
 variable "opensearch_version" {
   description = "OpenSearch version for OpenSearch Domain"
   type        = string

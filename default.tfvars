@@ -41,6 +41,7 @@ stac_server_inputs = {
   cors_methods                                = ""
   cors_headers                                = ""
   authorized_s3_arns                          = []
+  private_api_additional_security_group_ids   = null
   api_lambda                                  = null
   ingest_lambda                               = null
   pre_hook_lambda                             = null
@@ -155,11 +156,12 @@ console_ui_inputs = {
 }
 
 cirrus_inputs = {
-  data_bucket    = "" # If left blank the deployment will create the data bucket
-  payload_bucket = "" # If left blank the deployment will create the payload bucket
-  log_level      = "DEBUG"
-  deploy_alarms  = true
-  api_rest_type  = "EDGE"
+  data_bucket                               = "" # If left blank the deployment will create the data bucket
+  payload_bucket                            = "" # If left blank the deployment will create the payload bucket
+  log_level                                 = "DEBUG"
+  deploy_alarms                             = true
+  api_rest_type                             = "EDGE"
+  private_api_additional_security_group_ids = null
   custom_alarms = {
     warning  = {}
     critical = {}
