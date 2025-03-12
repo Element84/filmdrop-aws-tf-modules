@@ -1,6 +1,7 @@
-variable "cirrus_prefix" {
-  description = "Prefix for Cirrus-managed resources"
+variable "resource_prefix" {
+  description = "String prefix to be used in every named resource."
   type        = string
+  nullable    = false
 }
 
 variable "vpc_subnet_ids" {

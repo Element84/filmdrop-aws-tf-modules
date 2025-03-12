@@ -64,7 +64,7 @@ data "aws_iam_policy_document" "task_batch_assume_role" {
 resource "aws_iam_role" "task_batch" {
   count = local.create_batch_job ? 1 : 0
 
-  name_prefix        = "${var.cirrus_prefix}-task-role-"
+  name_prefix        = "${var.resource_prefix}-task-role-"
   description        = "Batch Job / ECS Task role for Cirrus Task '${var.task_config.name}'"
   assume_role_policy = data.aws_iam_policy_document.task_batch_assume_role[0].json
 }
@@ -101,7 +101,7 @@ data "aws_iam_policy_document" "task_batch_role_payload_bucket_access" {
 resource "aws_iam_role_policy" "task_batch_role_payload_bucket_access" {
   count = local.create_batch_job ? 1 : 0
 
-  name_prefix = "${var.cirrus_prefix}-task-role-payload-policy-"
+  name_prefix = "${var.resource_prefix}-task-role-payload-policy-"
   role        = aws_iam_role.task_batch[0].name
   policy      = data.aws_iam_policy_document.task_batch_role_payload_bucket_access[0].json
 }
@@ -183,7 +183,7 @@ data "aws_iam_policy_document" "task_batch_role_additional" {
 resource "aws_iam_role_policy" "task_batch_role_additional" {
   count = local.create_additional_batch_policy ? 1 : 0
 
-  name_prefix = "${var.cirrus_prefix}-task-role-additional-policy-"
+  name_prefix = "${var.resource_prefix}-task-role-additional-policy-"
   role        = aws_iam_role.task_batch[0].name
   policy      = data.aws_iam_policy_document.task_batch_role_additional[0].json
 }
@@ -195,7 +195,7 @@ resource "aws_iam_role_policy" "task_batch_role_additional" {
 resource "aws_batch_job_definition" "task" {
   count = local.create_batch_job ? 1 : 0
 
-  name = "${var.cirrus_prefix}-${var.task_config.name}"
+  name = "${var.resource_prefix}-${var.task_config.name}"
 
   # Create the container properties JSON.
   # This decodes the user's input JSON string, merges the resulting HCL object

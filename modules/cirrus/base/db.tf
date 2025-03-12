@@ -1,5 +1,5 @@
 resource "aws_dynamodb_table" "cirrus_state_dynamodb_table" {
-  name         = "${var.cirrus_prefix}-state"
+  name         = "${var.resource_prefix}-state"
   billing_mode = "PAY_PER_REQUEST"
   hash_key     = "collections_workflow"
   range_key    = "itemids"
@@ -40,12 +40,12 @@ resource "aws_dynamodb_table" "cirrus_state_dynamodb_table" {
 }
 
 resource "aws_timestreamwrite_database" "cirrus_state_event_timestreamwrite_database" {
-  database_name = "${var.cirrus_prefix}-state-events"
+  database_name = "${var.resource_prefix}-state-events"
 }
 
 resource "aws_timestreamwrite_table" "cirrus_state_event_timestreamwrite_table" {
   database_name = aws_timestreamwrite_database.cirrus_state_event_timestreamwrite_database.database_name
-  table_name    = "${var.cirrus_prefix}-state-events-table"
+  table_name    = "${var.resource_prefix}-state-events-table"
 
   retention_properties {
     magnetic_store_retention_period_in_days = var.cirrus_timestream_magnetic_store_retention_period_in_days
@@ -55,7 +55,7 @@ resource "aws_timestreamwrite_table" "cirrus_state_event_timestreamwrite_table" 
 
 resource "aws_cloudwatch_metric_alarm" "cirrus_state_event_system_errors_warning_alarm" {
   count                     = var.deploy_alarms ? 1 : 0
-  alarm_name                = "WARNING: ${var.cirrus_prefix}-state DynamoDB System Errors Warning Alarm"
+  alarm_name                = "WARNING: ${var.resource_prefix}-state DynamoDB System Errors Warning Alarm"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
   metric_name               = "SystemErrors"
@@ -64,7 +64,7 @@ resource "aws_cloudwatch_metric_alarm" "cirrus_state_event_system_errors_warning
   statistic                 = "Sum"
   threshold                 = 1
   treat_missing_data        = "notBreaching"
-  alarm_description         = "${var.cirrus_prefix} Cirrus State DynamoDB System Errors Warning Alarm"
+  alarm_description         = "${var.resource_prefix} Cirrus State DynamoDB System Errors Warning Alarm"
   alarm_actions             = [var.warning_sns_topic_arn]
   ok_actions                = [var.warning_sns_topic_arn]
   insufficient_data_actions = []
@@ -76,7 +76,7 @@ resource "aws_cloudwatch_metric_alarm" "cirrus_state_event_system_errors_warning
 
 resource "aws_cloudwatch_metric_alarm" "cirrus_state_user_errors_warning_alarm" {
   count                     = var.deploy_alarms ? 1 : 0
-  alarm_name                = "WARNING: ${var.cirrus_prefix}-state DynamoDB User Errors Warning Alarm"
+  alarm_name                = "WARNING: ${var.resource_prefix}-state DynamoDB User Errors Warning Alarm"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
   metric_name               = "UserErrors"
@@ -85,7 +85,7 @@ resource "aws_cloudwatch_metric_alarm" "cirrus_state_user_errors_warning_alarm" 
   statistic                 = "Sum"
   threshold                 = 1
   treat_missing_data        = "notBreaching"
-  alarm_description         = "${var.cirrus_prefix} Cirrus State DynamoDB User Errors Warning Alarm"
+  alarm_description         = "${var.resource_prefix} Cirrus State DynamoDB User Errors Warning Alarm"
   alarm_actions             = [var.warning_sns_topic_arn]
   ok_actions                = [var.warning_sns_topic_arn]
   insufficient_data_actions = []
@@ -97,7 +97,7 @@ resource "aws_cloudwatch_metric_alarm" "cirrus_state_user_errors_warning_alarm" 
 
 resource "aws_cloudwatch_metric_alarm" "cirrus_state_events_system_errors_warning_alarm" {
   count                     = var.deploy_alarms ? 1 : 0
-  alarm_name                = "WARNING: ${var.cirrus_prefix}-state-events Timestream Events System Errors Warning Alarm"
+  alarm_name                = "WARNING: ${var.resource_prefix}-state-events Timestream Events System Errors Warning Alarm"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
   metric_name               = "SystemErrors"
@@ -106,7 +106,7 @@ resource "aws_cloudwatch_metric_alarm" "cirrus_state_events_system_errors_warnin
   statistic                 = "Sum"
   threshold                 = 1
   treat_missing_data        = "notBreaching"
-  alarm_description         = "${var.cirrus_prefix} Cirrus State Timestream Events System Errors Warning Alarm"
+  alarm_description         = "${var.resource_prefix} Cirrus State Timestream Events System Errors Warning Alarm"
   alarm_actions             = [var.warning_sns_topic_arn]
   ok_actions                = [var.warning_sns_topic_arn]
   insufficient_data_actions = []
@@ -118,7 +118,7 @@ resource "aws_cloudwatch_metric_alarm" "cirrus_state_events_system_errors_warnin
 
 resource "aws_cloudwatch_metric_alarm" "cirrus_state_events_user_errors_warning_alarm" {
   count                     = var.deploy_alarms ? 1 : 0
-  alarm_name                = "WARNING: ${var.cirrus_prefix}-state-events Timestream Events User Errors Warning Alarm"
+  alarm_name                = "WARNING: ${var.resource_prefix}-state-events Timestream Events User Errors Warning Alarm"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
   metric_name               = "UserErrors"
@@ -127,7 +127,7 @@ resource "aws_cloudwatch_metric_alarm" "cirrus_state_events_user_errors_warning_
   statistic                 = "Sum"
   threshold                 = 1
   treat_missing_data        = "notBreaching"
-  alarm_description         = "${var.cirrus_prefix} Cirrus State Timestream Events User Errors Warning Alarm"
+  alarm_description         = "${var.resource_prefix} Cirrus State Timestream Events User Errors Warning Alarm"
   alarm_actions             = [var.warning_sns_topic_arn]
   ok_actions                = [var.warning_sns_topic_arn]
   insufficient_data_actions = []
