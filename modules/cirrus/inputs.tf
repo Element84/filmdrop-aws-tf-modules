@@ -177,7 +177,6 @@ variable "cirrus_cli_iam_role_trust_principal" {
   default     = null
 }
 
-
 variable "custom_cloudwatch_warning_alarms_map" {
   description = "Map with custom CloudWatch Warning Alarms"
   type        = map(any)
