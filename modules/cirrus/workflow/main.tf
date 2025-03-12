@@ -96,6 +96,14 @@ resource "aws_iam_role" "workflow_machine" {
 data "aws_iam_policy_document" "workflow_machine_basic_services" {
 
   statement {
+    # TODO - CVG - tmp fix
+    sid       = "AllowWorkflowToUseSqsCallbackEvents"
+    effect    = "Allow"
+    actions   = ["sqs:SendMessage"]
+    resources = ["arn:aws:sqs:${local.current_region}:${local.current_account}:*"]
+  }
+
+  statement {
     # Allow the state machine to push state transition events
     sid       = "AllowWorkflowToCreateStateTransitionEvents"
     effect    = "Allow"
