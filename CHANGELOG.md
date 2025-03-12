@@ -9,9 +9,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Added
 
+- Direct invocations of the cirrus module can now specify a custom resource prefix
 - A list of additional security groups can now be added to the VPCes for PRIVATE-type stac-server and/or cirrus API gateways
 
 ### Changed
+
+- Renamed all instances of `cirrus_prefix` to `resource_prefix` as a preliminary step for adopting the latter as an input variable across all modules
 
 ### Fixed
 

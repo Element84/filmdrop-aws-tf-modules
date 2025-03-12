@@ -75,7 +75,7 @@ module "task_batch_compute" {
     compute.name => compute
   }
 
-  cirrus_prefix          = local.cirrus_prefix
+  resource_prefix        = var.resource_prefix
   vpc_subnet_ids         = var.vpc_subnet_ids
   vpc_security_group_ids = var.vpc_security_group_ids
   batch_compute_config   = each.value
@@ -88,7 +88,7 @@ module "task" {
     task.name => task
   }
 
-  cirrus_prefix             = local.cirrus_prefix
+  resource_prefix           = var.resource_prefix
   cirrus_payload_bucket     = var.cirrus_payload_bucket
   vpc_subnet_ids            = var.vpc_subnet_ids
   vpc_security_group_ids    = var.vpc_security_group_ids
@@ -105,7 +105,7 @@ module "workflow" {
     workflow.name => workflow
   }
 
-  cirrus_prefix   = local.cirrus_prefix
+  resource_prefix = var.resource_prefix
   cirrus_tasks    = module.task
   workflow_config = each.value
 }

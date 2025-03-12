@@ -1,5 +1,5 @@
 resource "aws_iam_role" "cirrus_process_lambda_role" {
-  name_prefix = "${var.cirrus_prefix}-process-role-"
+  name_prefix = "${var.resource_prefix}-process-role-"
 
   assume_role_policy = <<EOF
 {
@@ -19,7 +19,7 @@ EOF
 }
 
 resource "aws_iam_policy" "cirrus_process_lambda_policy" {
-  name_prefix = "${var.cirrus_prefix}-process-policy-"
+  name_prefix = "${var.resource_prefix}-process-policy-"
 
   # TODO: the secret thing is probably not gonna work without some fixes in boto3utils...
   # We should probably reconsider if this is the right solution.
@@ -39,7 +39,7 @@ resource "aws_iam_policy" "cirrus_process_lambda_policy" {
     {
       "Action": "secretsmanager:GetSecretValue",
       "Resource": [
-        "arn:aws:secretsmanager:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:secret:${var.cirrus_prefix}*"
+        "arn:aws:secretsmanager:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:secret:${var.resource_prefix}*"
       ],
       "Effect": "Allow"
     },
@@ -88,7 +88,7 @@ resource "aws_iam_policy" "cirrus_process_lambda_policy" {
       "Action": [
         "states:StartExecution"
       ],
-      "Resource": "arn:aws:states:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:stateMachine:${var.cirrus_prefix}-*"
+      "Resource": "arn:aws:states:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:stateMachine:${var.resource_prefix}-*"
     },
     {
       "Effect": "Allow",
@@ -122,7 +122,7 @@ resource "aws_iam_role_policy_attachment" "cirrus_process_lambda_role_policy_att
 
 resource "aws_lambda_function" "cirrus_process" {
   filename                       = var.cirrus_lambda_zip_filepath
-  function_name                  = "${var.cirrus_prefix}-process"
+  function_name                  = "${var.resource_prefix}-process"
   description                    = "Cirrus Process Lambda"
   role                           = aws_iam_role.cirrus_process_lambda_role.arn
   handler                        = "process.lambda_handler"
@@ -142,7 +142,7 @@ resource "aws_lambda_function" "cirrus_process" {
       CIRRUS_STATE_DB                 = var.cirrus_state_dynamodb_table_name
       CIRRUS_EVENT_DB_AND_TABLE       = "${var.cirrus_state_event_timestreamwrite_database_name}|${var.cirrus_state_event_timestreamwrite_table_name}"
       CIRRUS_WORKFLOW_EVENT_TOPIC_ARN = var.cirrus_workflow_event_sns_topic_arn
-      CIRRUS_BASE_WORKFLOW_ARN        = "arn:aws:states:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:stateMachine:${var.cirrus_prefix}-"
+      CIRRUS_BASE_WORKFLOW_ARN        = "arn:aws:states:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:stateMachine:${var.resource_prefix}-"
     }
   }
 
@@ -166,7 +166,7 @@ resource "aws_lambda_permission" "cirrus_process_sqs_lambda_permission" {
 
 resource "aws_cloudwatch_metric_alarm" "cirrus_process_lambda_errors_warning_alarm" {
   count                     = var.deploy_alarms ? 1 : 0
-  alarm_name                = "WARNING: ${var.cirrus_prefix}-process Lambda Errors Warning Alarm"
+  alarm_name                = "WARNING: ${var.resource_prefix}-process Lambda Errors Warning Alarm"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 5
   metric_name               = "Errors"
@@ -175,7 +175,7 @@ resource "aws_cloudwatch_metric_alarm" "cirrus_process_lambda_errors_warning_ala
   statistic                 = "Sum"
   threshold                 = 10
   treat_missing_data        = "notBreaching"
-  alarm_description         = "${var.cirrus_prefix}-process Cirrus Update-State Lambda Errors Warning Alarm"
+  alarm_description         = "${var.resource_prefix}-process Cirrus Update-State Lambda Errors Warning Alarm"
   alarm_actions             = [var.warning_sns_topic_arn]
   ok_actions                = [var.warning_sns_topic_arn]
   insufficient_data_actions = []
@@ -187,7 +187,7 @@ resource "aws_cloudwatch_metric_alarm" "cirrus_process_lambda_errors_warning_ala
 
 resource "aws_cloudwatch_metric_alarm" "cirrus_process_lambda_errors_critical_alarm" {
   count                     = var.deploy_alarms ? 1 : 0
-  alarm_name                = "CRITICAL: ${var.cirrus_prefix}-process Lambda Errors Critical Alarm"
+  alarm_name                = "CRITICAL: ${var.resource_prefix}-process Lambda Errors Critical Alarm"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 5
   metric_name               = "Errors"
@@ -196,7 +196,7 @@ resource "aws_cloudwatch_metric_alarm" "cirrus_process_lambda_errors_critical_al
   statistic                 = "Sum"
   threshold                 = 100
   treat_missing_data        = "notBreaching"
-  alarm_description         = "${var.cirrus_prefix}-process Cirrus Update-State Lambda Errors Critical Alarm"
+  alarm_description         = "${var.resource_prefix}-process Cirrus Update-State Lambda Errors Critical Alarm"
   alarm_actions             = [var.critical_sns_topic_arn]
   ok_actions                = [var.warning_sns_topic_arn]
   insufficient_data_actions = []

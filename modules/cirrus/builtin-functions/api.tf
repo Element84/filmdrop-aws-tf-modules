@@ -4,7 +4,7 @@ locals {
 
 
 resource "aws_iam_role" "cirrus_api_lambda_role" {
-  name_prefix = "${var.cirrus_prefix}-api-role-"
+  name_prefix = "${var.resource_prefix}-api-role-"
 
   assume_role_policy = <<EOF
 {
@@ -24,7 +24,7 @@ EOF
 }
 
 resource "aws_iam_policy" "cirrus_api_lambda_policy" {
-  name_prefix = "${var.cirrus_prefix}-api-policy-"
+  name_prefix = "${var.resource_prefix}-api-policy-"
 
   # TODO: the secret thing is probably not gonna work without some fixes in boto3utils...
   # We should probably reconsider if this is the right solution.
@@ -44,7 +44,7 @@ resource "aws_iam_policy" "cirrus_api_lambda_policy" {
     {
       "Action": "secretsmanager:GetSecretValue",
       "Resource": [
-        "arn:aws:secretsmanager:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:secret:${var.cirrus_prefix}*"
+        "arn:aws:secretsmanager:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:secret:${var.resource_prefix}*"
       ],
       "Effect": "Allow"
     },
@@ -95,7 +95,7 @@ resource "aws_iam_role_policy_attachment" "cirrus_api_lambda_role_policy_attachm
 
 resource "aws_lambda_function" "cirrus_api" {
   filename         = var.cirrus_lambda_zip_filepath
-  function_name    = "${var.cirrus_prefix}-api"
+  function_name    = "${var.resource_prefix}-api"
   description      = "Cirrus API Lambda"
   role             = aws_iam_role.cirrus_api_lambda_role.arn
   handler          = "api.lambda_handler"
@@ -125,7 +125,7 @@ resource "aws_lambda_function" "cirrus_api" {
 resource "aws_security_group" "cirrus_api_gateway_private_vpce" {
   count = local.is_private_endpoint ? 1 : 0
 
-  name_prefix = "${var.cirrus_prefix}-apigw-vcpe-sg-"
+  name_prefix = "${var.resource_prefix}-apigw-vcpe-sg-"
   description = "Allows TCP inbound on 443 from VPC private subnet CIDRs"
 
   vpc_id = var.vpc_id
@@ -164,7 +164,7 @@ resource "aws_vpc_endpoint" "cirrus_api_gateway_private" {
 }
 
 resource "aws_api_gateway_rest_api" "cirrus_api_gateway" {
-  name = "${var.cirrus_prefix}-api"
+  name = "${var.resource_prefix}-api"
 
   endpoint_configuration {
     types            = [var.cirrus_api_rest_type]
@@ -267,7 +267,7 @@ resource "aws_api_gateway_deployment" "cirrus_api_gateway" {
 }
 
 resource "aws_cloudwatch_log_group" "cirrus_api_gateway_logs_group" {
-  name = "/aws/apigateway/${var.cirrus_prefix}-api-${aws_api_gateway_deployment.cirrus_api_gateway.rest_api_id}/${aws_api_gateway_deployment.cirrus_api_gateway.stage_name}"
+  name = "/aws/apigateway/${var.resource_prefix}-api-${aws_api_gateway_deployment.cirrus_api_gateway.rest_api_id}/${aws_api_gateway_deployment.cirrus_api_gateway.stage_name}"
 }
 
 locals {
@@ -315,7 +315,7 @@ resource "aws_lambda_permission" "cirrus_api_gateway_lambda_permission_proxy_res
 
 resource "aws_cloudwatch_metric_alarm" "cirrus_api_lambda_errors_warning_alarm" {
   count                     = var.deploy_alarms ? 1 : 0
-  alarm_name                = "WARNING: ${var.cirrus_prefix}-api Lambda Errors Warning Alarm"
+  alarm_name                = "WARNING: ${var.resource_prefix}-api Lambda Errors Warning Alarm"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 5
   metric_name               = "Errors"
@@ -324,7 +324,7 @@ resource "aws_cloudwatch_metric_alarm" "cirrus_api_lambda_errors_warning_alarm" 
   statistic                 = "Sum"
   threshold                 = 10
   treat_missing_data        = "notBreaching"
-  alarm_description         = "${var.cirrus_prefix}-api Cirrus Update-State Lambda Errors Warning Alarm"
+  alarm_description         = "${var.resource_prefix}-api Cirrus Update-State Lambda Errors Warning Alarm"
   alarm_actions             = [var.warning_sns_topic_arn]
   ok_actions                = [var.warning_sns_topic_arn]
   insufficient_data_actions = []
@@ -336,7 +336,7 @@ resource "aws_cloudwatch_metric_alarm" "cirrus_api_lambda_errors_warning_alarm" 
 
 resource "aws_cloudwatch_metric_alarm" "cirrus_api_lambda_errors_critical_alarm" {
   count                     = var.deploy_alarms ? 1 : 0
-  alarm_name                = "CRITICAL: ${var.cirrus_prefix}-api Lambda Errors Critical Alarm"
+  alarm_name                = "CRITICAL: ${var.resource_prefix}-api Lambda Errors Critical Alarm"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 5
   metric_name               = "Errors"
@@ -345,7 +345,7 @@ resource "aws_cloudwatch_metric_alarm" "cirrus_api_lambda_errors_critical_alarm"
   statistic                 = "Sum"
   threshold                 = 100
   treat_missing_data        = "notBreaching"
-  alarm_description         = "${var.cirrus_prefix}-api Cirrus Update-State Lambda Errors Critical Alarm"
+  alarm_description         = "${var.resource_prefix}-api Cirrus Update-State Lambda Errors Critical Alarm"
   alarm_actions             = [var.critical_sns_topic_arn]
   ok_actions                = [var.warning_sns_topic_arn]
   insufficient_data_actions = []

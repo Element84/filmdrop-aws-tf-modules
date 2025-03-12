@@ -1,5 +1,5 @@
 resource "aws_iam_role" "cirrus_update_state_lambda_role" {
-  name_prefix = "${var.cirrus_prefix}-process-role-"
+  name_prefix = "${var.resource_prefix}-process-role-"
 
   assume_role_policy = <<EOF
 {
@@ -19,7 +19,7 @@ EOF
 }
 
 resource "aws_iam_policy" "cirrus_update_state_lambda_policy" {
-  name_prefix = "${var.cirrus_prefix}-process-policy-"
+  name_prefix = "${var.resource_prefix}-process-policy-"
 
   policy = <<EOF
 {
@@ -59,7 +59,7 @@ resource "aws_iam_policy" "cirrus_update_state_lambda_policy" {
       "Action": [
         "states:GetExecutionHistory"
       ],
-      "Resource": "arn:aws:states:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:stateMachine:${var.cirrus_prefix}-*"
+      "Resource": "arn:aws:states:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:stateMachine:${var.resource_prefix}-*"
     },
     {
       "Effect": "Allow",
@@ -104,7 +104,7 @@ resource "aws_iam_role_policy_attachment" "cirrus_update_state_lambda_role_polic
 
 resource "aws_lambda_function" "cirrus_update_state" {
   filename         = var.cirrus_lambda_zip_filepath
-  function_name    = "${var.cirrus_prefix}-update-state"
+  function_name    = "${var.resource_prefix}-update-state"
   description      = "Cirrus Update-State Lambda"
   role             = aws_iam_role.cirrus_update_state_lambda_role.arn
   handler          = "update_state.lambda_handler"
@@ -135,7 +135,7 @@ resource "aws_lambda_function" "cirrus_update_state" {
 }
 
 resource "aws_cloudwatch_event_rule" "cirrus_update_state_rule" {
-  name = "${var.cirrus_prefix}-update-state-sfn-events"
+  name = "${var.resource_prefix}-update-state-sfn-events"
 
   event_pattern = <<EOF
 {
@@ -148,7 +148,7 @@ resource "aws_cloudwatch_event_rule" "cirrus_update_state_rule" {
   "detail": {
     "stateMachineArn": [
       {
-        "prefix": "arn:aws:states:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:stateMachine:${var.cirrus_prefix}-"
+        "prefix": "arn:aws:states:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:stateMachine:${var.resource_prefix}-"
       }
     ],
     "status": [
@@ -164,7 +164,7 @@ EOF
 }
 
 resource "aws_cloudwatch_event_target" "cirrus_update_state_target" {
-  target_id = "${var.cirrus_prefix}-update-state-event-target"
+  target_id = "${var.resource_prefix}-update-state-event-target"
   arn       = aws_lambda_function.cirrus_update_state.arn
   rule      = aws_cloudwatch_event_rule.cirrus_update_state_rule.name
 
@@ -186,7 +186,7 @@ resource "aws_lambda_permission" "cirrus_update_state_event_bridge_lambda_permis
 
 resource "aws_cloudwatch_metric_alarm" "cirrus_update_state_lambda_errors_warning_alarm" {
   count                     = var.deploy_alarms ? 1 : 0
-  alarm_name                = "WARNING: ${var.cirrus_prefix}-update-state Lambda Errors Warning Alarm"
+  alarm_name                = "WARNING: ${var.resource_prefix}-update-state Lambda Errors Warning Alarm"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 5
   metric_name               = "Errors"
@@ -195,7 +195,7 @@ resource "aws_cloudwatch_metric_alarm" "cirrus_update_state_lambda_errors_warnin
   statistic                 = "Sum"
   threshold                 = 10
   treat_missing_data        = "notBreaching"
-  alarm_description         = "${var.cirrus_prefix}-update-state Cirrus Update-State Lambda Errors Warning Alarm"
+  alarm_description         = "${var.resource_prefix}-update-state Cirrus Update-State Lambda Errors Warning Alarm"
   alarm_actions             = [var.warning_sns_topic_arn]
   ok_actions                = [var.warning_sns_topic_arn]
   insufficient_data_actions = []
@@ -207,7 +207,7 @@ resource "aws_cloudwatch_metric_alarm" "cirrus_update_state_lambda_errors_warnin
 
 resource "aws_cloudwatch_metric_alarm" "cirrus_update_state_lambda_errors_critical_alarm" {
   count                     = var.deploy_alarms ? 1 : 0
-  alarm_name                = "CRITICAL: ${var.cirrus_prefix}-update-state Lambda Errors Critical Alarm"
+  alarm_name                = "CRITICAL: ${var.resource_prefix}-update-state Lambda Errors Critical Alarm"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 5
   metric_name               = "Errors"
@@ -216,7 +216,7 @@ resource "aws_cloudwatch_metric_alarm" "cirrus_update_state_lambda_errors_critic
   statistic                 = "Sum"
   threshold                 = 100
   treat_missing_data        = "notBreaching"
-  alarm_description         = "${var.cirrus_prefix}-update-state Cirrus Update-State Lambda Errors Critical Alarm"
+  alarm_description         = "${var.resource_prefix}-update-state Cirrus Update-State Lambda Errors Critical Alarm"
   alarm_actions             = [var.critical_sns_topic_arn]
   ok_actions                = [var.warning_sns_topic_arn]
   insufficient_data_actions = []

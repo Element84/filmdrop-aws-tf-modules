@@ -59,7 +59,7 @@ locals {
           sid       = "AllowCirrusSecretsManagerRead"
           effect    = "Allow"
           actions   = ["secretsmanager:GetSecretValue"]
-          resources = ["arn:aws:secretsmanager:${local.current_region}:${local.current_account}:secret:${local.cirrus_prefix}*"]
+          resources = ["arn:aws:secretsmanager:${local.current_region}:${local.current_account}:secret:${var.resource_prefix}*"]
         },
         {
           sid       = "AllowCirrusPayloadS3BucketWrite"
@@ -131,7 +131,7 @@ locals {
           sid       = "AllowCirrusSecretsManagerRead"
           effect    = "Allow"
           actions   = ["secretsmanager:GetSecretValue"]
-          resources = ["arn:aws:secretsmanager:${local.current_region}:${local.current_account}:secret:${local.cirrus_prefix}*"]
+          resources = ["arn:aws:secretsmanager:${local.current_region}:${local.current_account}:secret:${var.resource_prefix}*"]
         },
         {
           sid       = "AllowCirrusPayloadS3BucketWrite"
