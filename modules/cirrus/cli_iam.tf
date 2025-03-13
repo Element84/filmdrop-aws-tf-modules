@@ -5,7 +5,7 @@ locals {
 resource "aws_iam_role" "cirrus_instance_cli_management_role" {
   count = local.create_cli_role ? 1 : 0
 
-  name_prefix        = "${local.cirrus_prefix}-cli-role-"
+  name_prefix        = "${var.resource_prefix}-cli-role-"
   description        = "Role for cirrus cli management tool to assume"
   assume_role_policy = <<-EOF
   {
