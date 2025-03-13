@@ -68,7 +68,7 @@ resource "aws_ssm_parameter" "cirrus_prefix" {
 }
 
 resource "aws_ssm_parameter" "cirrus_iam_cli_role" {
-  count = local.create_cli_role ? 1 : 0
+  count = length(aws_iam_role.cirrus_instance_cli_management_role) ? 1 : 0
 
   name  = "${local.parameter_prefix}CIRRUS_CLI_IAM_ARN"
   type  = "String"
