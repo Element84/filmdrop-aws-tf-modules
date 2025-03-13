@@ -1,6 +1,7 @@
-variable "cirrus_prefix" {
-  description = "Prefix for Cirrus-managed resources"
+variable "resource_prefix" {
+  description = "String prefix to be used in every named resource."
   type        = string
+  nullable    = false
 }
 
 variable "cirrus_log_level" {
@@ -139,6 +140,17 @@ variable "cirrus_api_rest_type" {
   description = "Cirrus API Gateway type"
   type        = string
   default     = "EDGE"
+}
+
+variable "cirrus_private_api_additional_security_group_ids" {
+  description = <<-DESCRIPTION
+  Optional list of security group IDs that'll be applied to the VPC interface
+  endpoints of a PRIVATE-type cirrus API Gateway. These security groups are in
+  addition to the security groups that allow traffic from the private subnet
+  CIDR blocks. Only applicable when `var.cirrus_api_rest_type == PRIVATE`.
+  DESCRIPTION
+  type        = list(string)
+  default     = null
 }
 
 variable "cirrus_api_stage" {

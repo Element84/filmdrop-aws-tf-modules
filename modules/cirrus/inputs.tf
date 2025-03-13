@@ -1,19 +1,32 @@
+variable "resource_prefix" {
+  description = "String prefix to be used in every named resource."
+  type        = string
+  nullable    = false
+
+  # We limit the prefix length to 22 characters as that's just under the
+  # maximum possible length before we run into issues with 'name_prefix' limits
+  # on certain resources like IAM roles.
+  # We limit the character set to lowered alphanumerics and hyphens for
+  # consistency across FilmDrop modules. A leading hyphen is not allowed as that
+  # is generally not a valid AWS resource name. A trailing hyphen is not allowed
+  # as this module will add one where needed.
+  validation {
+    condition     = can(regex("^[0-9a-z][0-9a-z-]{0,20}[0-9a-z]$", var.resource_prefix))
+    error_message = <<-ERROR
+    The resource prefix must be 2-22 characters from [a-z0-9-] without a leading
+    or trailing hyphen.
+    ERROR
+  }
+}
+
 variable "environment" {
   description = "Project environment"
   type        = string
-  validation {
-    condition     = length(var.environment) <= 7
-    error_message = "The environment value must be 7 or fewer characters."
-  }
 }
 
 variable "project_name" {
   description = "Project Name"
   type        = string
-  validation {
-    condition     = length(var.project_name) <= 8
-    error_message = "The project_name value must be a 8 or fewer characters."
-  }
 }
 
 variable "cirrus_lambda_zip_filepath" {
@@ -72,6 +85,17 @@ variable "cirrus_api_rest_type" {
   description = "Cirrus API Gateway type"
   type        = string
   default     = "EDGE"
+}
+
+variable "cirrus_private_api_additional_security_group_ids" {
+  description = <<-DESCRIPTION
+  Optional list of security group IDs that'll be applied to the VPC interface
+  endpoints of a PRIVATE-type cirrus API Gateway. These security groups are in
+  addition to the security groups that allow traffic from the private subnet
+  CIDR blocks. Only applicable when `var.cirrus_api_rest_type == PRIVATE`.
+  DESCRIPTION
+  type        = list(string)
+  default     = null
 }
 
 variable "cirrus_api_lambda_timeout" {

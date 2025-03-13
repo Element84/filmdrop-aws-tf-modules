@@ -1,5 +1,5 @@
 resource "aws_sqs_queue" "cirrus_process_sqs_queue" {
-  name                       = "${var.cirrus_prefix}-process"
+  name                       = "${var.resource_prefix}-process"
   visibility_timeout_seconds = var.cirrus_process_sqs_timeout
 
   redrive_policy = jsonencode({
@@ -9,16 +9,16 @@ resource "aws_sqs_queue" "cirrus_process_sqs_queue" {
 }
 
 resource "aws_sqs_queue" "cirrus_process_dead_letter_sqs_queue" {
-  name = "${var.cirrus_prefix}-process-dead-letter"
+  name = "${var.resource_prefix}-process-dead-letter"
 }
 
 resource "aws_sqs_queue" "cirrus_update_state_dead_letter_sqs_queue" {
-  name = "${var.cirrus_prefix}-update-state-dead-letter"
+  name = "${var.resource_prefix}-update-state-dead-letter"
 }
 
 resource "aws_cloudwatch_metric_alarm" "cirrus_update_state_dead_letter_sqs_queue_warning_alarm" {
   count                     = var.deploy_alarms ? 1 : 0
-  alarm_name                = "WARNING: ${var.cirrus_prefix}-update-state-dead-letter SQS DLQ Warning Alarm"
+  alarm_name                = "WARNING: ${var.resource_prefix}-update-state-dead-letter SQS DLQ Warning Alarm"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
   metric_name               = "ApproximateNumberOfMessagesVisible"
@@ -27,7 +27,7 @@ resource "aws_cloudwatch_metric_alarm" "cirrus_update_state_dead_letter_sqs_queu
   statistic                 = "Sum"
   threshold                 = 1
   treat_missing_data        = "notBreaching"
-  alarm_description         = "${var.cirrus_prefix}-update-state-dead-letter DLQ Warning Alarm"
+  alarm_description         = "${var.resource_prefix}-update-state-dead-letter DLQ Warning Alarm"
   alarm_actions             = [var.warning_sns_topic_arn]
   ok_actions                = [var.warning_sns_topic_arn]
   insufficient_data_actions = []

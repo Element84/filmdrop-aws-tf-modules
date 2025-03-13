@@ -76,7 +76,7 @@ data "aws_iam_policy_document" "workflow_machine_assume_role" {
 }
 
 resource "aws_iam_role" "workflow_machine" {
-  name_prefix        = "${var.cirrus_prefix}-workflow-role-"
+  name_prefix        = "${var.resource_prefix}-workflow-role-"
   description        = "State Machine execution role for Cirrus Workflow '${var.workflow_config.name}'"
   assume_role_policy = data.aws_iam_policy_document.workflow_machine_assume_role.json
 }
@@ -92,7 +92,7 @@ data "aws_iam_policy_document" "workflow_machine_events" {
 }
 
 resource "aws_iam_role_policy" "workflow_machine_events" {
-  name_prefix = "${var.cirrus_prefix}-workflow-role-event-creation-"
+  name_prefix = "${var.resource_prefix}-workflow-role-event-creation-"
   role        = aws_iam_role.workflow_machine.name
   policy      = data.aws_iam_policy_document.workflow_machine_events.json
 }
@@ -170,7 +170,7 @@ data "aws_iam_policy_document" "workflow_machine_task_lambda_and_batch" {
 }
 
 resource "aws_iam_role_policy" "workflow_machine_task_lambda_and_batch" {
-  name_prefix = "${var.cirrus_prefix}-workflow-role-task-policy-"
+  name_prefix = "${var.resource_prefix}-workflow-role-task-policy-"
   role        = aws_iam_role.workflow_machine.name
   policy      = data.aws_iam_policy_document.workflow_machine_task_lambda_and_batch.json
 }
@@ -180,7 +180,7 @@ resource "aws_iam_role_policy" "workflow_machine_task_lambda_and_batch" {
 # WORKFLOW STATE MACHINE
 # ------------------------------------------------------------------------------
 resource "aws_sfn_state_machine" "workflow" {
-  name       = "${var.cirrus_prefix}-${var.workflow_config.name}"
+  name       = "${var.resource_prefix}-${var.workflow_config.name}"
   definition = local.workflow_state_machine_json
   publish    = true
   role_arn   = aws_iam_role.workflow_machine.arn

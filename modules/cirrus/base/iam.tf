@@ -1,5 +1,5 @@
 resource "aws_iam_role" "cirrus_instance_role" {
-  name_prefix = "${var.cirrus_prefix}-instance-role-"
+  name_prefix = "${var.resource_prefix}-instance-role-"
 
   assume_role_policy = <<EOF
 {
@@ -24,6 +24,6 @@ resource "aws_iam_role_policy_attachment" "cirrus_instance_role_policy_attachmen
 }
 
 resource "aws_iam_instance_profile" "cirrus_instance_profile" {
-  name_prefix = "${var.cirrus_prefix}-instance-profile-"
+  name_prefix = "${var.resource_prefix}-instance-profile-"
   role        = aws_iam_role.cirrus_instance_role.name
 }

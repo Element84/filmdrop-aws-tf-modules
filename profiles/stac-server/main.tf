@@ -17,6 +17,7 @@ module "stac-server" {
   additional_ingest_sqs_senders_arns          = var.stac_server_inputs.additional_ingest_sqs_senders_arns
   opensearch_ebs_volume_size                  = var.stac_server_inputs.opensearch_ebs_volume_size
   api_rest_type                               = var.stac_server_inputs.api_rest_type
+  private_api_additional_security_group_ids   = var.stac_server_inputs.private_api_additional_security_group_ids
   api_lambda                                  = var.stac_server_inputs.api_lambda
   ingest_lambda                               = var.stac_server_inputs.ingest_lambda
   pre_hook_lambda                             = var.stac_server_inputs.pre_hook_lambda
