@@ -19,180 +19,281 @@ variable "resource_prefix" {
   }
 }
 
-variable "environment" {
-  description = "Project environment"
+variable "project_name" {
+  description = "Project name."
   type        = string
+  nullable    = false
 }
 
-variable "project_name" {
-  description = "Project Name"
+variable "environment" {
+  description = "Project environment name."
   type        = string
+  nullable    = false
+}
+
+variable "vpc_id" {
+  description = "VPC in which all cirrus resources will be deployed."
+  type        = string
+  nullable    = false
+}
+
+variable "vpc_subnet_ids" {
+  description = "List of subnet ids in the target VPC that cirrus resources should be connected to."
+  type        = list(string)
+  nullable    = false
+}
+
+variable "vpc_security_group_ids" {
+  description = "List of security groups in the target VPC that cirrus resources should use."
+  type        = list(string)
+  nullable    = false
 }
 
 variable "cirrus_lambda_zip_filepath" {
   description = <<-DESCRIPTION
-  (Optional) Filepath to a Cirrus Lambda Dist ZIP relative to the root module
-  of this Terraform deployment. Used to override the ZIP that's included with
-  this module; only set if you're confident the replacement ZIP is compatible
-  with this module. If omitted, the default ZIP is used.
+  (Optional) filepath to a cirrus lambda dist ZIP. The filepath is relative to the root module of this Terraform deployment.  Used to override the ZIP that's included with this module; only set if you're confident the replacement ZIP is compatible with this module.
+
+  If `null`, the default ZIP is used.
+
+  See [cirrus-geo releases](https://github.com/cirrus-geo/cirrus-geo/releases) for more information.
   DESCRIPTION
   type        = string
   nullable    = true
   default     = null
 }
 
-variable "cirrus_process_sqs_timeout" {
-  description = "Cirrus Process SQS Visibility Timeout"
-  type        = number
-  default     = 180
-}
-
-variable "cirrus_process_sqs_max_receive_count" {
-  description = "Cirrus Process SQS Max Receive Count"
-  type        = number
-  default     = 5
-}
-
-variable "cirrus_timestream_magnetic_store_retention_period_in_days" {
-  description = "Cirrus Timestream duration for which data must be stored in the magnetic store"
-  type        = number
-  default     = 93
-}
-
-variable "cirrus_timestream_memory_store_retention_period_in_hours" {
-  description = "Cirrus Timestream duration for which data must be stored in the memory store"
-  type        = number
-  default     = 24
-}
-
 variable "cirrus_data_bucket" {
-  description = "Cirrus data bucket"
+  description = <<-DESCRIPTION
+  (Optional) S3 bucket for storing cirrus outputs. If provided, the bucket is presumed to have already been created outside of this module and that you have the necessary permissions in place to allow access for resources created by this module.
+
+  If `null` or `""`, the bucket will be created and tracked by this module instead.
+  DESCRIPTION
   type        = string
+  nullable    = false
+  default     = ""
 }
 
 variable "cirrus_payload_bucket" {
-  description = "Cirrus payload bucket"
-  type        = string
-}
+  description = <<-DESCRIPTION
+  (Optional) S3 bucket for storing cirrus payloads. If provided, the bucket is presumed to have already been created outside of this module and that you have the necessary permissions in place to allow access for resources created by this module.
 
-variable "cirrus_log_level" {
-  description = "Cirrus log level (DEBUG, INFO, WARNING, ERROR)"
+  If `null` or `""`, the bucket will be created and tracked by this module instead.
+  DESCRIPTION
   type        = string
-  default     = "INFO"
+  nullable    = false
+  default     = ""
 }
 
 variable "cirrus_api_rest_type" {
-  description = "Cirrus API Gateway type"
+  description = <<-DESCRIPTION
+  (Optional) Cirrus API Gateway type.
+
+  Must be one of: `EDGE`, `REGIONAL`, or `PRIVATE`.
+  DESCRIPTION
   type        = string
+  nullable    = false
   default     = "EDGE"
+
+  validation {
+    condition     = contains(["EDGE", "REGIONAL", "PRIVATE"], var.cirrus_api_rest_type)
+    error_message = "Cirrus API rest type must be one of: EDGE, REGIONAL, or PRIVATE."
+  }
 }
 
 variable "cirrus_private_api_additional_security_group_ids" {
   description = <<-DESCRIPTION
-  Optional list of security group IDs that'll be applied to the VPC interface
-  endpoints of a PRIVATE-type cirrus API Gateway. These security groups are in
-  addition to the security groups that allow traffic from the private subnet
-  CIDR blocks. Only applicable when `var.cirrus_api_rest_type == PRIVATE`.
+  (Optional) List of security group IDs that'll be applied to the VPC interface endpoints of a PRIVATE-type cirrus API Gateway.
+
+  These security groups are in addition to the security groups that allow traffic from the `var.vpc_subnet_ids` CIDR ranges.
+
+  Only applicable when `var.cirrus_api_rest_type` is `PRIVATE`.
   DESCRIPTION
   type        = list(string)
+  nullable    = true
   default     = null
 }
 
+variable "cirrus_log_level" {
+  description = <<-DESCRIPTION
+  (Optional) Cirrus log level. Passed to each of the cirrus lambda functions as the `CIRRUS_LOG_LEVEL` environment variable.
+
+  Must be one of: `DEBUG`, `INFO`, `WARNING`, or `ERROR`.
+  DESCRIPTION
+  type        = string
+  nullable    = false
+  default     = "INFO"
+
+  validation {
+    condition     = contains(["DEBUG", "INFO", "WARNING", "ERROR"], var.cirrus_log_level)
+    error_message = "Cirrus log level must be one of: DEBUG, INFO, WARNING, or ERROR."
+  }
+}
+
 variable "cirrus_api_lambda_timeout" {
-  description = "Cirrus API lambda timeout (sec)"
+  description = <<-DESCRIPTION
+  (Optional) Cirrus `api` lambda timeout (seconds).
+  DESCRIPTION
   type        = number
+  nullable    = false
   default     = 10
 }
 
 variable "cirrus_api_lambda_memory" {
-  description = "Cirrus API lambda memory (MB)"
+  description = <<-DESCRIPTION
+  (Optional) Cirrus `api` lambda memory (MB).
+  DESCRIPTION
   type        = number
+  nullable    = false
   default     = 128
 }
 
 variable "cirrus_process_lambda_timeout" {
-  description = "Cirrus process lambda timeout (sec)"
+  description = <<-DESCRIPTION
+  (Optional) Cirrus `process` lambda timeout (seconds).
+  DESCRIPTION
   type        = number
+  nullable    = false
   default     = 10
 }
 
 variable "cirrus_process_lambda_memory" {
-  description = "Cirrus process lambda memory (MB)"
+  description = <<-DESCRIPTION
+  (Optional) Cirrus `process` lambda memory (MB).
+  DESCRIPTION
   type        = number
+  nullable    = false
   default     = 128
 }
 
 variable "cirrus_process_lambda_reserved_concurrency" {
-  description = "Cirrus process reserved concurrency"
+  description = <<-DESCRIPTION
+  (Optional) Cirrus `process` lambda reserved concurrent executions.
+  See [lambda concurrency AWS documentation](https://docs.aws.amazon.com/lambda/latest/dg/lambda-concurrency.html).
+  DESCRIPTION
   type        = number
+  nullable    = false
   default     = 16
 }
 
-variable "cirrus_update_state_lambda_timeout" {
-  description = "Cirrus update-state lambda timeout (sec)"
+variable "cirrus_process_sqs_timeout" {
+  description = <<-DESCRIPTION
+  (Optional) Cirrus `process` SQS queue visibility timeout (seconds). This should exceed `var.cirrus_process_lambda_timeout` to ensure messages are not re-enqueued prior to `process` lambda completion.
+  DESCRIPTION
   type        = number
+  nullable    = false
+  default     = 180
+}
+
+variable "cirrus_process_sqs_max_receive_count" {
+  description = <<-DESCRIPTION
+  (Optional) Cirrus `process` SQS queue max receive count. Used in the redrive policy to set a message's maximum attempts before being moved to the `process`'s dead-letter queue.
+  DESCRIPTION
+  type        = number
+  nullable    = false
+  default     = 5
+}
+
+variable "cirrus_update_state_lambda_timeout" {
+  description = <<-DESCRIPTION
+  (Optional) Cirrus `update-state` lambda timeout (seconds).
+  DESCRIPTION
+  type        = number
+  nullable    = false
   default     = 15
 }
 
 variable "cirrus_update_state_lambda_memory" {
-  description = "Cirrus update-state lambda memory (MB)"
+  description = <<-DESCRIPTION
+  (Optional) Cirrus `update-state` lambda memory (MB).
+  DESCRIPTION
   type        = number
+  nullable    = false
   default     = 128
 }
 
 variable "cirrus_pre_batch_lambda_timeout" {
-  description = "Cirrus pre-batch lambda timeout (sec)"
+  description = <<-DESCRIPTION
+  (Optional) Cirrus `pre-batch` lambda timeout (seconds).
+  DESCRIPTION
   type        = number
+  nullable    = false
   default     = 15
 }
 
 variable "cirrus_pre_batch_lambda_memory" {
-  description = "Cirrus pre-batch lambda memory (MB)"
+  description = <<-DESCRIPTION
+  (Optional) Cirrus `pre-batch` lambda memory (MB).
+  DESCRIPTION
   type        = number
+  nullable    = false
   default     = 128
 }
 
 variable "cirrus_post_batch_lambda_timeout" {
-  description = "Cirrus post-batch lambda timeout (sec)"
+  description = <<-DESCRIPTION
+  (Optional) Cirrus `post-batch` lambda timeout (seconds).
+  DESCRIPTION
   type        = number
+  nullable    = false
   default     = 15
 }
 
 variable "cirrus_post_batch_lambda_memory" {
-  description = "Cirrus post-batch lambda memory (MB)"
+  description = <<-DESCRIPTION
+  (Optional) Cirrus `post-batch` lambda memory (MB).
+  DESCRIPTION
   type        = number
+  nullable    = false
   default     = 128
 }
 
-variable "vpc_id" {
-  description = "FilmDrop VPC ID"
-  type        = string
+variable "cirrus_timestream_magnetic_store_retention_period_in_days" {
+  description = <<-DESCRIPTION
+  (Optional) Duration for which cirrus state events must be stored in the Timestream database table's magnetic store (days).
+  DESCRIPTION
+  type        = number
+  nullable    = false
+  default     = 93
 }
 
-variable "vpc_subnet_ids" {
-  description = "List of subnet ids in the FilmDrop vpc"
-  type        = list(string)
-}
-
-variable "vpc_security_group_ids" {
-  description = "List of security groups in the FilmDrop vpc"
-  type        = list(string)
-}
-
-variable "warning_sns_topic_arn" {
-  description = "String with FilmDrop Warning SNS topic ARN"
-  type        = string
-}
-
-variable "critical_sns_topic_arn" {
-  description = "String with FilmDrop Critical SNS topic ARN"
-  type        = string
+variable "cirrus_timestream_memory_store_retention_period_in_hours" {
+  description = <<-DESCRIPTION
+  (Optional) Duration for which cirrus state events must be stored in the Timestream database table's memory store (hours).
+  DESCRIPTION
+  type        = number
+  nullable    = false
+  default     = 24
 }
 
 variable "deploy_alarms" {
+  description = <<-DESCRIPTION
+  (Optional) Whether CloudWatch alarms should be deployed.
+  DESCRIPTION
   type        = bool
+  nullable    = false
   default     = true
-  description = "Deploy Cirrus Alarms stack"
+}
+
+variable "warning_sns_topic_arn" {
+  description = <<-DESCRIPTION
+  (Optional) SNS topic to be used by all cirrus `warning` alarms.
+
+  Must be set if `var.deploy_alarms` is `true`. Has no effect if `var.deploy_alarms` is `false`.
+  DESCRIPTION
+  type        = string
+  nullable    = true
+  default     = null
+}
+
+variable "critical_sns_topic_arn" {
+  description = <<-DESCRIPTION
+  (Optional) SNS topic to be used by all cirrus `critical` alarms.
+
+  Must be set if `var.deploy_alarms` is `true`. Has no effect if `var.deploy_alarms` is `false`.
+  DESCRIPTION
+  type        = string
+  nullable    = true
+  default     = null
 }
 
 variable "cirrus_cli_iam_role_trust_principal" {
@@ -202,37 +303,51 @@ variable "cirrus_cli_iam_role_trust_principal" {
 }
 
 variable "custom_cloudwatch_warning_alarms_map" {
-  description = "Map with custom CloudWatch Warning Alarms"
+  description = <<-DESCRIPTION
+  (Optional) Map of custom CloudWatch `warning` alarms to be created.
+
+  See the [custom_warning_alarms](#module_custom_warning_alarms) module.
+  DESCRIPTION
   type        = map(any)
+  nullable    = false
   default     = {}
 }
 
 variable "custom_cloudwatch_critical_alarms_map" {
-  description = "Map with custom CloudWatch Critical Alarms"
+  description = <<-DESCRIPTION
+  (Optional) Map of custom CloudWatch `critical` alarms to be created.
+
+  See the [custom_critical_alarms](#module_custom_critical_alarms) module.
+  DESCRIPTION
   type        = map(any)
+  nullable    = false
   default     = {}
 }
 
 variable "cirrus_task_batch_compute_definitions_dir" {
   description = <<-DESCRIPTION
-  (Optional) Filepath to a directory containing task batch compute definition
-  subdirectories. Path is relative to this Terraform deployment's root module.
-  The directory's expected subdirectory structure is:
+  (Optional) Filepath to a directory containing task batch compute definition subdirectories. Path is relative to this Terraform deployment's root module.
+
+  The specified directory's expected structure is:
   ```
+  your-task-batch-compute-dir/
     example-compute-1/
       definition.yaml
       README.md (optional)
     example-compute-2/
       definition.yaml
       README.md (optional)
+
     ... more task-batch-compute subdirs ...
   ```
 
-  Where each definition.yaml is a YAML representation of the task-batch-compute
-  module's "batch_compute_config" HCL object. See that module's inputs.tf for
-  valid object attributes.
+  Where each `definition.yaml` is a YAML representation of the `task-batch-compute` module's `batch_compute_config` input HCL variable. See that module's [inputs.tf](task-batch-compute/inputs.tf) for valid object attributes.
 
-  If null, no task-batch-compute resources will be created.
+  This module will glob for all `definition.yaml` files that are *exactly* one subdirectory deep in the specified directory. The enclosing subdirectory's name should match the task batch compute `name`.
+
+  If `null`, no task batch compute resources will be created.
+
+  TODO - CVG - link to examples
   DESCRIPTION
   type        = string
   nullable    = true
@@ -241,42 +356,42 @@ variable "cirrus_task_batch_compute_definitions_dir" {
 
 variable "cirrus_task_batch_compute_definitions_variables" {
   description = <<-DESCRIPTION
-  (Optional) Map of maps to strings used when templating task batch compute YAML
-  definitions prior to their conversion to HCL. Intended for abstracting any
-  environment-specific values away from the task batch compute definition. One
-  such example would be restricting the maximum vCPU size of a batch compute
-  environment in a dev environment.
+  (Optional) Map of maps to strings used when templating task batch compute YAML definitions prior to their conversion to HCL. Intended for abstracting any environment-specific values away from the task batch compute definition. One such example would be restricting the maximum `vCPU` size of a batch compute environment in a `dev` environment.
 
-  If you do not require any environment-specific values, you do not need to use
-  this.
+  If you do not require any environment-specific values, you do not need to use this.
 
-  The expected (but not explicitly required) structure of this map is to group
-  template variables by their task batch compute name:
-  ```hcl
-    {
-      example-task-batch-compute-1 = {
-        max_vcpus      = 10
-        instance_types = ["t2.micro"]
-      }
-      example-task-batch-compute-2 = {
-        max_vcpus = 40
-      }
-      ... other task-batch-compute maps ...
+  The suggested (but not required) structure of this map is to group template variables by their task batch compute `name`:
+  ```
+  {
+    example-compute-1 = {
+      max_vcpus      = 10
+      instance_types = ["t2.micro"]
     }
+    example-compute-2 = {
+      max_vcpus = 40
+    }
+
+    ... more task-batch-compute maps ...
+  }
   ```
 
-  Your task batch compute YAML definitions would leverage this templating by
-  using an attribute lookup in an interpolation sequence $\{...} like so (remove
-  the "\"):
-  ```yaml
-    name: example-task-batch-compute-1
-    batch_compute_environment:
-      compute_resources:
-        type: EC2
-        max_vcpus: $\{example-task-batch-compute-1.max_vcpus}           # remove the \
-        instance_types: $\{example-task-batch-compute-1.instance_types} # remove the \
-    ... any other config ...
+  Your task batch compute YAML definitions would leverage this templating by using an attribute lookup in an interpolation sequence (`$${...}`) like so:
   ```
+  name: example-compute-1
+  batch_compute_environment:
+    compute_resources:
+      type: EC2
+      max_vcpus: \$${example-compute-1.max_vcpus}
+      instance_types: \$${example-compute-1.instance_types}
+
+  ... any other config ...
+  ```
+
+  Each interpolation sequence's lookup value must have an associated entry in this map. If not, Terraform will raise a runtime error.
+
+  If `null` or `{}`, templating will technically still occur but nothing will be interpolated (provided your definition is also absent of interpolation sequences).
+
+  TODO - CVG - link to examples
   DESCRIPTION
   type        = map(map(string))
   nullable    = false
@@ -285,24 +400,23 @@ variable "cirrus_task_batch_compute_definitions_variables" {
 
 variable "cirrus_task_definitions_dir" {
   description = <<-DESCRIPTION
-  (Optional) Filepath to directory containing task definition subdirectories.
-  Path is relative to this Terraform deployment's root module. The directory's
-  expected subdirectory structure is:
+  (Optional) Filepath to directory containing task definition subdirectories. Path is relative to this Terraform deployment's root module.
+
+  The specified directory's expected structure is:
   ```
-    example-task-1/
-      definition.yaml
-      README.md (optional)
-    example-task-2/
-      definition.yaml
-      README.md (optional)
-    ... more task subdirs ...
+  example-task-1/
+    definition.yaml
+    README.md (optional)
+  example-task-2/
+    definition.yaml
+    README.md (optional)
+
+  ... more task subdirs ...
   ```
 
-  Where each definition.yaml is a YAML representation of the task module's
-  "task_config" HCL object. See that module's inputs.tf for valid object
-  attributes.
+  Where each `definition.yaml` is a YAML representation of the `task` module's `task_config` input HCL variable. See that module's [inputs.tf](task/inputs.tf) for valid object attributes.
 
-  If null, no task resources will be created.
+  If `null`, no task resources will be created.
   DESCRIPTION
   type        = string
   nullable    = true
@@ -311,44 +425,47 @@ variable "cirrus_task_definitions_dir" {
 
 variable "cirrus_task_definitions_variables" {
   description = <<-DESCRIPTION
-  (Optional) Map of maps to strings used when templating task YAML definitions
-  prior to their conversion to HCL. Intended for abstracting environment-
-  specific values away from the task definition.
+  (Optional) Map of maps to strings used when templating task YAML definitions prior to their conversion to HCL. Intended for abstracting environment-specific values away from the task definition. One such example of this would be targeting different ECR image tags in a `dev` and `prod` environment.
 
-  The suggested (but not explicitly required) structure of this map is to group
-  template variables by their task name:
-  ```hcl
-    {
-      example-task-1 = {
-        image_tag = "v1.0"
-      }
-      example-task-2 = {
-        image_tag          = "v1.3"
-        source_data_bucket = "dev-source-data-bucket-name"
-      }
-      ... other task maps ...
+  The suggested (but not required) structure of this map is to group template variables by their task name:
+  ```
+  {
+    example-task-1 = {
+      image_tag = "v1.0"
     }
+    example-task-2 = {
+      image_tag   = "v1.3"
+      data_bucket = "dev-bucket-name"
+    }
+
+    ... more task maps ...
+  }
   ```
 
-  Your task YAML definitions would leverage this templating by using an
-  attribute lookup in an interpolation sequence $\{...} like so (remove
-  the "\"):
-  ```yaml
-    name: example-task-2
-    common_role_statements:
-      - sid: ReadSomeBucketThatChangesForEachEnvironment
-        effect: Allow
-        actions:
-          - s3:ListBucket
-          - s3:GetObject
-          - s3:GetBucketLocation
-        resources:
-          - arn:aws:s3:::$\{example-task-2.source_data_bucket}   # remove the \
-          - arn:aws:s3:::$\{example-task-2.source_data_bucket}/* # remove the \
-    lambda:
-      ecr_image_uri: <full ECR image URI>:$\{example-task-2.image_tag} # remove the \
-      ... any other config ...
+  Your task YAML definitions would leverage this templating by using an attribute lookup in an interpolation sequence (`$${...}`) like so:
   ```
+  name: example-task-2
+  common_role_statements:
+    - sid: ReadSomeBucketThatChangesForEachEnvironment
+      effect: Allow
+      actions:
+        - s3:ListBucket
+        - s3:GetObject
+        - s3:GetBucketLocation
+      resources:
+        - arn:aws:s3:::\$${example-task-2.data_bucket}
+        - arn:aws:s3:::\$${example-task-2.data_bucket}/*
+  lambda:
+    ecr_image_uri: 123456789012.dkr.ecr.us-west-2.amazonaws.com/foo:\$${example-task-2.image_tag}
+
+  ... any other config ...
+  ```
+
+  Each interpolation sequence's lookup value must have an associated entry in this map. If not, Terraform will raise a runtime error.
+
+  If `null` or `{}`, templating will technically still occur but nothing will be interpolated (provided your definition is also absent of interpolation sequences).
+
+  TODO - CVG - link to examples
   DESCRIPTION
   type        = map(map(string))
   nullable    = false
@@ -357,26 +474,25 @@ variable "cirrus_task_definitions_variables" {
 
 variable "cirrus_workflow_definitions_dir" {
   description = <<-DESCRIPTION
-  (Optional) Filepath to directory containing workflow definition
-  subdirectories. Path is relative to this Terraform deployment's root module.
+  (Optional) Filepath to directory containing workflow definition subdirectories. Path is relative to this Terraform deployment's root module.
+
   The directory's expected subdirectory structure is:
   ```
-    example-workflow-1/
-      definition.yaml
-      state-machine.json
-      README.md (optional)
-    example-workflow-2/
-      definition.yaml
-      state-machine.json
-      README.md (optional)
-    ... more workflow subdirs ...
+  example-workflow-1/
+    definition.yaml
+    state-machine.json
+    README.md (optional)
+  example-workflow-2/
+    definition.yaml
+    state-machine.json
+    README.md (optional)
+
+  ... more workflow subdirs ...
   ```
 
-  Where each definition.yaml is a YAML representation of the workflow module's
-  "workflow_config" HCL object. See that module's inputs.tf for valid object
-  attributes.
+  Where each `definition.yaml` is a YAML representation of the `workflow` module's `workflow_config` input HCL variable. See that module's [inputs.tf](workflow/inputs.tf) for valid object attributes and also what a `state-machine.json` should look like.
 
-  If null, no workflow resources will be created.
+  If `null`, no workflow resources will be created.
   DESCRIPTION
   type        = string
   nullable    = true
@@ -385,62 +501,62 @@ variable "cirrus_workflow_definitions_dir" {
 
 variable "cirrus_workflow_definitions_variables" {
   description = <<-DESCRIPTION
-  (Optional) Map of maps to strings used when templating workflow YAML
-  definitions prior to their conversion to HCL and state machine JSONs prior to
-  state machine creation. Intended for abstracting environment-specific values
-  away from the workflow definition and state machine JSON. This is only needed
-  if your workflow's state machine will be using AWS services/resources that are
-  unrelated to Cirrus tasks. One such example would be the callback task
-  functionality provided by "arn:aws:states:::sqs:sendMessage.waitForTaskToken"
-  state machine resources.
+  (Optional) Map of maps to strings used when templating workflow YAML definitions prior to their conversion to HCL and state machine JSONs prior to state machine creation. Intended for abstracting environment-specific values away from the workflow definition and state machine JSON.
 
-  If your state machine does not invoke any non-cirrus task resources, you do
-  not need to use this.
+  This is only needed if your workflow's state machine will be using AWS services/resources that are unrelated to the cirrus tasks created by this module. One such example would be a workflow that leverages the callback task functionality provided by an `arn:aws:states:::sqs:sendMessage.waitForTaskToken` state machine resource.
 
-  The suggested (but not explicitly required) structure of this map is to group
-  template variables by their workflow name:
-  ```hcl
-    {
-      example-workflow-1 = {
-        callback_sqs_queue_arn = "dev-some-sqs-queue-arn"
-        callback_sqs_queue_url = "https://..."
-      }
-      example-workflow-2 = {
-        non_task_resource_arn = "dev-some-resource-arn"
-        ...
-      }
-      ... other workflow maps ...
+  If your state machine does not invoke any non-cirrus task resources, you do not need to use this.
+
+  The suggested (but not required) structure of this map is to group template variables by their workflow name:
+  ```
+  {
+    example-workflow-1 = {
+      callback_queue_arn = "dev-queue-arn"
+      callback_queue_url = "https://..."
     }
-  ```
-
-  Your workflow YAML definitions would leverage this templating by using an
-  attribute lookup in an interpolation sequence $\{...} like so (remove "\"):
-  ```yaml
-    name: example-workflow-1
-    common_role_statements:
-      - sid: AllowWaitForTaskTokenWithQueueThatChangesByEnvironment
-        effect: Allow
-        actions:
-          - sqs:SendMessage
-        resources:
-          - arn:aws:s3:::$\{example-workflow-1.callback_sqs_queue_arn} # remove the \
-  ```
-
-  And part of your workflow state machine JSON would look something like this:
-  ```json
-    {
-      "Type": "Task",
-      "Resource": "arn:aws:states:::sqs:sendMessage.waitForTaskToken",
-      "Parameters": {
-          "QueueUrl": "$\{example-workflow-1.callback_sqs_queue_url}", # remove the \
-          "MessageBody": {
-              "Message": "Hello from Step Functions!",
-              "TaskToken.$": "$$.Task.Token"
-          }
-      },
-      "Next": "NEXT_STATE"
+    example-workflow-2 = {
+      non_task_resource_arn = "dev-resource-arn"
     }
+
+    ... more workflow maps ...
+  }
   ```
+
+  Your workflow YAML definitions would leverage this templating by using an attribute lookup in an interpolation sequence (`$${...}`) like so:
+  ```
+  name: example-workflow-1
+  common_role_statements:
+    - sid: AllowSendToCallbackQueue
+      effect: Allow
+      actions:
+        - sqs:SendMessage
+      resources:
+        - arn:aws:s3:::\$${example-workflow-1.callback_queue_arn}
+
+  ... any other config ...
+  ```
+
+  And a `State` within your workflow state machine JSON would look something like this:
+  ```
+  {
+    "Type": "Task",
+    "Resource": "arn:aws:states:::sqs:sendMessage.waitForTaskToken",
+    "Parameters": {
+        "QueueUrl": "\$${example-workflow-1.callback_queue_url}",
+        "MessageBody": {
+            "Message": "Hello from Step Functions!",
+            "TaskToken.$": "$$.Task.Token"
+        }
+    },
+    "Next": "SOME_NEXT_STATE"
+  }
+  ```
+
+  Each interpolation sequence's lookup value must have an associated entry in this map. If not, Terraform will raise a runtime error.
+
+  If `null` or `{}`, templating will technically still occur but nothing will be interpolated (provided your definition is also absent of interpolation sequences).
+
+  TODO - CVG - link to examples
   DESCRIPTION
   type        = map(map(string))
   nullable    = false

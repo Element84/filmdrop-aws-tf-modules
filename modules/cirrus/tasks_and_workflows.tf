@@ -69,6 +69,7 @@ module "typed_definitions" {
   cirrus_workflows          = local.cirrus_workflow_definitions
 }
 
+# Creates 0..many sets of Batch-related resources for cirrus batch compute
 module "task_batch_compute" {
   source = "./task-batch-compute"
   for_each = {
@@ -82,6 +83,7 @@ module "task_batch_compute" {
   batch_compute_config   = each.value
 }
 
+# Creates 0..many sets of Batch and/or Lambda resources for cirrus tasks
 module "task" {
   source = "./task"
   for_each = {
@@ -99,6 +101,7 @@ module "task" {
   task_config               = each.value
 }
 
+# Creates 0..many sets of AWS State Machine resources for cirrus workflows
 module "workflow" {
   source = "./workflow"
   for_each = {
