@@ -5,22 +5,20 @@ locals {
 resource "aws_iam_role" "cirrus_instance_cli_management_role" {
   count = local.create_cli_role ? 1 : 0
 
-  name_prefix        = "${var.resource_prefix}-cli-role-"
-  description        = "Role for cirrus cli management tool to assume"
-  assume_role_policy = <<-EOF
-  {
-    "Version": "2012-10-17",
-    "Statement": [
+  name_prefix = "${var.resource_prefix}-cli-role-"
+  description = "Role for cirrus cli management tool to assume"
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
       {
-        "Action": "sts:AssumeRole",
-        "Principal": {
-          "AWS": ${var.cirrus_cli_iam_role_trust_principal}
+        Action = "sts:AssumeRole",
+        Effect = "Allow"
+        Principal = {
+          AWS = var.cirrus_cli_iam_role_trust_principal
         },
-        "Effect": "Allow"
       }
     ]
-  }
-  EOF
+  })
 }
 
 data "aws_iam_policy_document" "cirrus_instance_cli_management_policy" {
@@ -32,7 +30,7 @@ data "aws_iam_policy_document" "cirrus_instance_cli_management_policy" {
     ]
 
     resources = [
-      module.base.cirrus_payload_bucket
+      "arn::aws:s3:::${module.base.cirrus_payload_bucket}"
     ]
   }
 
