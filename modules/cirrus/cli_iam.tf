@@ -26,7 +26,8 @@ data "aws_iam_policy_document" "cirrus_instance_cli_management_policy" {
 
   statement {
     actions = [
-      "s3:PutObject"
+      "s3:PutObject",
+      "s3.GetObject"
     ]
 
     resources = [
@@ -54,6 +55,35 @@ data "aws_iam_policy_document" "cirrus_instance_cli_management_policy" {
     ]
     resources = [
       module.base.cirrus_process_sqs_queue_arn
+    ]
+  }
+
+  statement {
+    actions = [
+      "lambda:InvokeFunction",
+      "lambda:ListFunctions"
+    ]
+    resources = [
+      "arn:aws:lambda:${local.current_region}:${local.current_account}:function:${var.resource_prefix}*"
+    ]
+  }
+
+  statement {
+    actions = [
+      "ssm:GetParameter",
+      "ssm:GetParametersByPath"
+    ]
+    resources = [
+      "arn:aws:ssm:${local.current_region}:${local.current_account}:parameter/*"
+    ]
+  }
+
+  statement {
+    actions = [
+      "states:DescribeExecution"
+    ]
+    resources = [
+      "arn:aws:states:${local.current_region}:${local.current_account}:stateMachine:${var.resource_prefix}*"
     ]
   }
 }
