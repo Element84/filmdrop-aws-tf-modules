@@ -30,7 +30,7 @@ data "aws_iam_policy_document" "cirrus_instance_cli_management_policy" {
     ]
 
     resources = [
-      "arn::aws:s3:::${module.base.cirrus_payload_bucket}/*"
+      "arn:aws:s3:::${module.base.cirrus_payload_bucket}/*"
     ]
   }
 
