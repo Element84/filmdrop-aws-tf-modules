@@ -48,4 +48,3 @@ batch_compute_environment:
     # effort to implement it, so using spot is not without risk.
     type: FARGATE
     max_vcpus: 4
-  

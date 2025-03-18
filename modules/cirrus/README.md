@@ -71,8 +71,8 @@ the templating process.
 
 | Name | Source | Description |
 |------|--------|-------------|
-| <a name="module_custom_warning_alarms"></a> [custom_warning_alarms](#module_custom_warning_alarms) | `../base_infra/alerts` |  |
 | <a name="module_base"></a> [base](#module_base) | `./base` |  |
+| <a name="module_custom_warning_alarms"></a> [custom_warning_alarms](#module_custom_warning_alarms) | `../base_infra/alerts` |  |
 | <a name="module_builtin_functions"></a> [builtin_functions](#module_builtin_functions) | `./builtin-functions` |  |
 | <a name="module_custom_critical_alarms"></a> [custom_critical_alarms](#module_custom_critical_alarms) | `../base_infra/alerts` |  |
 | <a name="module_typed_definitions"></a> [typed_definitions](#module_typed_definitions) | `./typed-definitions` |  |
