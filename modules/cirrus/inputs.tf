@@ -296,8 +296,13 @@ variable "critical_sns_topic_arn" {
 }
 
 variable "cirrus_cli_iam_role_trust_principal" {
-  description = "List of principle IAMs that can assume cirrus instance CLI IAM management role"
+  description = <<-DESCRIPTION
+  (Optional) List of IAM principal ARNs that can assume the cirrus CLI IAM management role.
+
+  If `null`, the role will not be created.
+  DESCRIPTION
   type        = list(string)
+  nullable    = true
   default     = null
 }
 
