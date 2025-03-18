@@ -4,108 +4,60 @@ variable "resource_prefix" {
   nullable    = false
 }
 
-variable "cirrus_payload_bucket" {
-  description = "Cirrus payload bucket"
-  type        = string
-}
-
 variable "vpc_subnet_ids" {
-  description = "List of subnet ids in the FilmDrop vpc"
+  description = "List of subnet ids in the target VPC that cirrus task resources should be connected to."
   type        = list(string)
+  nullable    = false
 }
 
 variable "vpc_security_group_ids" {
-  description = "List of security groups in the FilmDrop vpc"
+  description = "List of security groups in the target VPC that cirrus task resources should use."
   type        = list(string)
-}
-
-variable "warning_sns_topic_arn" {
-  description = "String with FilmDrop Warning SNS topic ARN"
-  type        = string
-}
-
-variable "critical_sns_topic_arn" {
-  description = "String with FilmDrop Critical SNS topic ARN"
-  type        = string
-}
-
-variable "cirrus_task_batch_compute" {
-  description = <<-DESCRIPTION
-  (optional, map[object]) A map of the 'task_batch_compute' module outputs.
-  These are used to link Batch Cirrus tasks with a target compute resource set.
-  This should be set in the parent module and not by user input.
-  DESCRIPTION
-
-  type = map(object({
-    batch = object({
-      compute_environment_arn        = string
-      compute_environment_is_fargate = bool
-      ecs_task_execution_role_arn    = string
-      job_queue_arn                  = string
-      job_queue_is_fair_share        = string
-    })
-  }))
-
-  # Value only required if the task has a Batch configuration
-  nullable = true
-
-  # Cross-variable validation is not available at this time; instead, a runtime
-  # error will be raised if the user attempts to deploy a Batch task without
-  # defining any Cirrus compute resources.
-  # TODO - CVG - Terraform v1.9+ adds cross-variable validation. Need to update.
+  nullable    = false
 }
 
 variable "task_config" {
   # NOTE: type changes here require changes in the typed-definitions module, too
   description = <<-DESCRIPTION
-    (required, object) Defines a single Cirrus Task. This Task may be used by
-    zero..many Cirrus Workflows (see 'workflow' module). A Task may have Lambda
-    config, Batch config, or both.
-    Contents:
-      - name: (required, string) Identifier for the Cirrus Task. Must be unique
-        across all Cirrus Tasks. Valid characters are: [A-Za-z0-9-]
+  Defines a single cirrus task. This task may be used by zero..many cirrus workflows (see `workflow` module). A task may have a lambda config, a batch config, or both.
 
-      - common_role_statements: (optional, list[object]) List of IAM statements
-        to be applied to both the Lambda function and the Batch Job. This object
-        is used to create an 'aws_iam_policy_document' data source. Refer to the
-        documentation for more information on the available arguments in an IAM
-        statement block:
-        https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_policy_document
+  `name`: Identifier for the cirrus task. Must be unique across all cirrus tasks. Valid characters are: `[A-Za-z0-9-]`.
 
-      - lambda: (optional, object) Used to create a Lambda function and all its
-        ancillary resources. Many of the available arguments map directly to the
-        ones in the 'aws_lambda_function' resource. Refer to the documentation
-        for more information on those arguments:
-        https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/lambda_function
-        Contents:
-          - filename: (optional, str): Path to the local Lambda ZIP. The path
-            must be relative to the ROOT module of the Terraform deployment.
-          - vpc_enabled: (optional, bool) Whether the Lambda should be deployed
-            within the FilmDrop VPC.
-          - role_statements: (optional, list[object]) List of IAM statements to
-            be applied to the Lambda execution role. Similar arguments to the
-            'common_role_statements' variable above.
-          - alarms: (optional, list[object]): List of CloudWatch alarm configs
-            that will be created to monitor the resulting Lambda function.
-          - ... subset of common 'aws_lambda_function' arguments ...
+  `common_role_statements`: List of IAM statements to be applied to both the lambda function and the batch job IAM role. This object is used to create a `aws_iam_policy_document` terraform data source. Refer to that data source's [documentation](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_policy_document) for more information on the available arguments.
 
-      - batch: (optional, object) Used to create a Batch Job Definition and all
-        ancillary resources. Many of the available arguments map directly to the
-        ones in the 'aws_batch_job_definition' resource. Refer to the
-        documentation for more information on those arguments:
-        https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/batch_job_definition
-        Contents:
-          - task_batch_compute_name: (required, string) The name of a batch
-            compute resource set created by the 'task_batch_compute' module.
-            This determines where invocations of this Job definition will run.
-          - role_statements: (optional, list[object]) List of IAM statements to
-            be applied to the Batch Job / ECS Task execution role. Similar
-            arguments to the 'common_role_statements' variable above.
-          - ... subset of common 'aws_batch_job_definition' arguments ...
+  `lambda`: Used to create a task lambda function and its ancillary resources. Many of the available arguments map directly to the ones in the `aws_lambda_function` terraform resource. Refer to that resource's [documentation](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/lambda_function) for more information on the available arguments. Object contents:
+  ```
+  -- `lambda.vpc_enabled`: Whether the lambda should be deployed within the specified `var.vpc_subnet_ids` and use `var.vpc_security_group_ids`.
+
+  -- `lambda.role_statements`: List of IAM statements to be applied to the lambda execution role in addition to any specified in `var.task_config.common_role_statements`.
+
+  -- `lambda.alarms`: List of CloudWatch alarm configs that will be created to monitor the cirrus task lambda function.
+
+  -- ... other common [aws_lambda_function](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/lambda_function#argument-reference) arguments ...
+  ```
+
+  `batch`: Used to create a task batch job definition and its ancillary resources. Many of the available arguments map directly to the ones in the `aws_batch_job_definition` resource. Refer to that resource's [documentation](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/batch_job_definition) for more information on the available arguments. Object contents:
+  ```
+  -- `batch.task_batch_compute_name`: The name of a batch compute resource set created by the `task_batch_compute` module. This determines where invocations of this task's job definition will run.
+
+  -- `batch.container_properties`: JSON string used for registering the batch job. See the [RegisterJobDefinition AWS documentation](https://docs.aws.amazon.com/batch/latest/APIReference/API_RegisterJobDefinition.html) for valid key/values.
+
+  -- `batch.retry_strategy`: Configures how failed batch jobs should be retried, if at all.
+
+  -- `batch.parameters`: Parameter substitution placeholders that can be overridden at batch job submission time. For typical cirrus batch tasks, the values `url` and `url_out` should be set to any non-empty string value here.
+
+  -- `batch.role_statements`: List of IAM statements to be applied to the batch job execution role in addition to any specified in `var.task_config.common_role_statements`.
+
+  -- `batch.scheduling priority`: Determines the priority of these batch jobs in a job queue with a fair share scheduling policy. If the associated compute environment's queue does not use a fair share policy, this should not be set.
+
+  -- `batch.timeout_seconds`: Maximum duration these batch jobs should be allowed to run before being terminated by AWS.
+  ```
+  #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   DESCRIPTION
 
   type = object({
     name = string
+
     common_role_statements = optional(list(object({
       sid           = string
       effect        = string
@@ -127,6 +79,7 @@ variable "task_config" {
         identifiers = list(string)
       }))
     })))
+
     lambda = optional(object({
       description   = optional(string)
       ecr_image_uri = optional(string)
@@ -178,6 +131,7 @@ variable "task_config" {
         evaluation_periods  = optional(number, 5)
       })))
     }))
+
     batch = optional(object({
       task_batch_compute_name = string
       container_properties    = string
@@ -215,7 +169,10 @@ variable "task_config" {
       scheduling_priority = optional(number)
       timeout_seconds     = optional(number)
     }))
+    #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   })
+  # The `~~~~` comment above is to ensure the markdown table column generated
+  # by terraform-docs is wide enough for the object schema to be readable.
 
   # Value must be provided else this module serves no purpose
   nullable = false
@@ -240,4 +197,60 @@ variable "task_config" {
       during every deploy. Use a filler value instead.
     ERROR
   }
+}
+
+variable "cirrus_task_batch_compute" {
+  description = <<-DESCRIPTION
+  (Optional) A map of `task_batch_compute` module outputs keyed by their resource set's `name`. These are used to link any batch cirrus tasks with a target compute resource set.
+  DESCRIPTION
+
+  type = map(object({
+    batch = object({
+      compute_environment_arn        = string
+      compute_environment_is_fargate = bool
+      ecs_task_execution_role_arn    = string
+      job_queue_arn                  = string
+      job_queue_is_fair_share        = string
+    })
+  }))
+
+  # Value only required if the task has a Batch configuration
+  nullable = true
+  default  = null
+
+  # Cross-variable validation is not available at this time; instead, a runtime
+  # error will be raised if the user attempts to deploy a Batch task without
+  # defining any Cirrus compute resources.
+  # TODO - CVG - Terraform v1.9+ adds cross-variable validation. Need to update.
+}
+
+variable "cirrus_payload_bucket" {
+  description = <<-DESCRIPTION
+  (Optional) S3 bucket for storing cirrus payloads. Required if any cirrus batch tasks are defined as their job's IAM role will automatically be granted read/write permissions on this bucket to facilitate the necessary `pre-batch -> batch job -> post-batch` flow used by state machines.
+  DESCRIPTION
+  type        = string
+  nullable    = true
+  default     = null
+}
+
+variable "warning_sns_topic_arn" {
+  description = <<-DESCRIPTION
+  (Optional) SNS topic to be used by all cirrus lambda task `warning` alarms. This is primarily used by the `pre-batch` and `post-batch` lambda tasks that are managed by the parent `cirrus` module.
+
+  If any non-critical cirrus lambda task alarms are configured via `var.task_config.lambda.alarms`, they will use this SNS topic for their alarm action.
+  DESCRIPTION
+  type        = string
+  nullable    = true
+  default     = null
+}
+
+variable "critical_sns_topic_arn" {
+  description = <<-DESCRIPTION
+  (Optional) SNS topic to be used by all cirrus lambda task `critical` alarms. This is primarily used by the `pre-batch` and `post-batch` lambda tasks that are managed by the parent `cirrus` module.
+
+  If any critical cirrus lambda task alarms are configured via `var.task_config.lambda.alarms`, they will use this SNS topic for their alarm action.
+  DESCRIPTION
+  type        = string
+  nullable    = true
+  default     = null
 }

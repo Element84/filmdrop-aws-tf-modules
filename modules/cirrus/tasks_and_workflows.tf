@@ -1,6 +1,6 @@
 locals {
-  # These variables may be used in task definition templates for convenience.
-  builtin_task_definitions_variables = {
+  # These variables may be used in definition templates for convenience.
+  builtin_definitions_variables = {
     CIRRUS_DATA_BUCKET = var.cirrus_data_bucket
   }
 
@@ -20,19 +20,19 @@ locals {
   cirrus_task_batch_compute_definitions = (
     var.cirrus_task_batch_compute_definitions_dir != null ? [
       for tbc_yaml in fileset(path.root, "${var.cirrus_task_batch_compute_definitions_dir}/**/definition.yaml") :
-      yamldecode(templatefile(tbc_yaml, var.cirrus_task_batch_compute_definitions_variables))
+      yamldecode(templatefile(tbc_yaml, merge(var.cirrus_task_batch_compute_definitions_variables, local.builtin_definitions_variables)))
     ] : null
   )
   cirrus_task_definitions = (
     var.cirrus_task_definitions_dir != null ? [
       for task_yaml in fileset(path.root, "${var.cirrus_task_definitions_dir}/**/definition.yaml") :
-      yamldecode(templatefile(task_yaml, merge(var.cirrus_task_definitions_variables, local.builtin_task_definitions_variables)))
+      yamldecode(templatefile(task_yaml, merge(var.cirrus_task_definitions_variables, local.builtin_definitions_variables)))
     ] : null
   )
   cirrus_workflow_definitions = (
     var.cirrus_workflow_definitions_dir != null ? [
       for workflow_yaml in fileset(path.root, "${var.cirrus_workflow_definitions_dir}/**/definition.yaml") :
-      yamldecode(templatefile(workflow_yaml, var.cirrus_workflow_definitions_variables))
+      yamldecode(templatefile(workflow_yaml, merge(var.cirrus_workflow_definitions_variables, local.builtin_definitions_variables)))
     ] : null
   )
 
@@ -109,8 +109,11 @@ module "workflow" {
     workflow.name => workflow
   }
 
-  resource_prefix                = var.resource_prefix
-  cirrus_tasks                   = module.task
-  workflow_config                = each.value
-  workflow_definitions_variables = var.cirrus_workflow_definitions_variables
+  resource_prefix = var.resource_prefix
+  cirrus_tasks    = module.task
+  workflow_config = each.value
+  workflow_definitions_variables = merge(
+    var.cirrus_workflow_definitions_variables,
+    local.builtin_definitions_variables
+  )
 }

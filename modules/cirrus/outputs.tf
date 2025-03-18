@@ -72,7 +72,7 @@ output "cirrus_payload_bucket" {
 
 output "cirrus_workflow_state_machine_arns" {
   description = <<-DESCRIPTION
-  Map of Cirrus Workflow names to their State Machine ARN.
+  Map of cirrus workflow names to their AWS state machine ARN.
   DESCRIPTION
 
   value = {
@@ -83,7 +83,7 @@ output "cirrus_workflow_state_machine_arns" {
 
 output "cirrus_workflow_state_machine_role_arns" {
   description = <<-DESCRIPTION
-  Map of Cirrus Workflow names to their State Machine's IAM role ARN.
+  Map of cirrus workflow names to their AWS state machine's IAM role ARN.
   DESCRIPTION
 
   value = {

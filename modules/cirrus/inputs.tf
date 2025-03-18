@@ -51,7 +51,7 @@ variable "vpc_security_group_ids" {
 
 variable "cirrus_lambda_zip_filepath" {
   description = <<-DESCRIPTION
-  (Optional) filepath to a cirrus lambda dist ZIP. The filepath is relative to the root module of this Terraform deployment.  Used to override the ZIP that's included with this module; only set if you're confident the replacement ZIP is compatible with this module.
+  (Optional) Filepath to a cirrus lambda dist ZIP. The filepath is relative to the root module of this Terraform deployment. Used to override the ZIP that's included with this module; only set if you're confident the replacement ZIP is compatible with this module.
 
   If `null`, the default ZIP is used.
 
@@ -167,8 +167,7 @@ variable "cirrus_process_lambda_memory" {
 
 variable "cirrus_process_lambda_reserved_concurrency" {
   description = <<-DESCRIPTION
-  (Optional) Cirrus `process` lambda reserved concurrent executions.
-  See [lambda concurrency AWS documentation](https://docs.aws.amazon.com/lambda/latest/dg/lambda-concurrency.html).
+  (Optional) Cirrus `process` lambda reserved concurrent executions. See [lambda concurrency AWS documentation](https://docs.aws.amazon.com/lambda/latest/dg/lambda-concurrency.html).
   DESCRIPTION
   type        = number
   nullable    = false
@@ -304,9 +303,7 @@ variable "cirrus_cli_iam_role_trust_principal" {
 
 variable "custom_cloudwatch_warning_alarms_map" {
   description = <<-DESCRIPTION
-  (Optional) Map of custom CloudWatch `warning` alarms to be created.
-
-  See the [custom_warning_alarms](#module_custom_warning_alarms) module.
+  (Optional) Map of custom CloudWatch `warning` alarms to be created. See the [custom_warning_alarms](#modules) module.
   DESCRIPTION
   type        = map(any)
   nullable    = false
@@ -315,9 +312,7 @@ variable "custom_cloudwatch_warning_alarms_map" {
 
 variable "custom_cloudwatch_critical_alarms_map" {
   description = <<-DESCRIPTION
-  (Optional) Map of custom CloudWatch `critical` alarms to be created.
-
-  See the [custom_critical_alarms](#module_custom_critical_alarms) module.
+  (Optional) Map of custom CloudWatch `critical` alarms to be created. See the [custom_critical_alarms](#modules) module.
   DESCRIPTION
   type        = map(any)
   nullable    = false
@@ -341,13 +336,11 @@ variable "cirrus_task_batch_compute_definitions_dir" {
     ... more task-batch-compute subdirs ...
   ```
 
-  Where each `definition.yaml` is a YAML representation of the `task-batch-compute` module's `batch_compute_config` input HCL variable. See that module's [inputs.tf](task-batch-compute/inputs.tf) for valid object attributes.
+  Where each `definition.yaml` is a YAML representation of the `task-batch-compute` module's `batch_compute_config` input HCL variable. See that module's [inputs](./task-batch-compute/README.md#input_batch_compute_config) for valid `batch_compute_config` object attributes.
 
   This module will glob for all `definition.yaml` files that are *exactly* one subdirectory deep in the specified directory. The enclosing subdirectory's name should match the task batch compute `name`.
 
   If `null`, no task batch compute resources will be created.
-
-  TODO - CVG - link to examples
   DESCRIPTION
   type        = string
   nullable    = true
@@ -389,9 +382,9 @@ variable "cirrus_task_batch_compute_definitions_variables" {
 
   Each interpolation sequence's lookup value must have an associated entry in this map. If not, Terraform will raise a runtime error.
 
-  If `null` or `{}`, templating will technically still occur but nothing will be interpolated (provided your definition is also absent of interpolation sequences).
+  Since the Cirrus data bucket will always be different for each environment, there is a predefined variable `CIRRUS_DATA_BUCKET` that can be used to automatically reference that bucket name in your task batch compute definition YAML. You don't need to add an entry to this variable for this.
 
-  TODO - CVG - link to examples
+  If `null` or `{}`, templating will technically still occur but nothing will be interpolated (provided your definition is also absent of interpolation sequences).
   DESCRIPTION
   type        = map(map(string))
   nullable    = false
@@ -414,7 +407,7 @@ variable "cirrus_task_definitions_dir" {
   ... more task subdirs ...
   ```
 
-  Where each `definition.yaml` is a YAML representation of the `task` module's `task_config` input HCL variable. See that module's [inputs.tf](task/inputs.tf) for valid object attributes.
+  Where each `definition.yaml` is a YAML representation of the `task` module's `task_config` input HCL variable. See that module's [inputs](./task/README.md#input_task_config) for valid `task_config` object attributes.
 
   If `null`, no task resources will be created.
   DESCRIPTION
@@ -463,9 +456,9 @@ variable "cirrus_task_definitions_variables" {
 
   Each interpolation sequence's lookup value must have an associated entry in this map. If not, Terraform will raise a runtime error.
 
-  If `null` or `{}`, templating will technically still occur but nothing will be interpolated (provided your definition is also absent of interpolation sequences).
+  Since the Cirrus data bucket will always be different for each environment, there is a predefined variable `CIRRUS_DATA_BUCKET` that can be used to automatically reference that bucket name in your task definition YAML. You don't need to add an entry to this variable for this.
 
-  TODO - CVG - link to examples
+  If `null` or `{}`, templating will technically still occur but nothing will be interpolated (provided your definition is also absent of interpolation sequences).
   DESCRIPTION
   type        = map(map(string))
   nullable    = false
@@ -490,7 +483,7 @@ variable "cirrus_workflow_definitions_dir" {
   ... more workflow subdirs ...
   ```
 
-  Where each `definition.yaml` is a YAML representation of the `workflow` module's `workflow_config` input HCL variable. See that module's [inputs.tf](workflow/inputs.tf) for valid object attributes and also what a `state-machine.json` should look like.
+  Where each `definition.yaml` is a YAML representation of the `workflow` module's `workflow_config` input HCL variable. See that module's [inputs](./workflow/README.md#input_workflow_config) for valid `workflow_config` object attributes and also what a `state-machine.json` should look like.
 
   If `null`, no workflow resources will be created.
   DESCRIPTION
@@ -554,9 +547,10 @@ variable "cirrus_workflow_definitions_variables" {
 
   Each interpolation sequence's lookup value must have an associated entry in this map. If not, Terraform will raise a runtime error.
 
-  If `null` or `{}`, templating will technically still occur but nothing will be interpolated (provided your definition is also absent of interpolation sequences).
+  Since the Cirrus data bucket will always be different for each environment, there is a predefined variable `CIRRUS_DATA_BUCKET` that can be used to automatically reference that bucket name in your workflow definition YAML and state machine JSON. You don't need to add an entry to this variable for this.
 
-  TODO - CVG - link to examples
+  If `null` or `{}`, templating will technically still occur but nothing will be interpolated (provided your definition is also absent of interpolation sequences).
+  #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   DESCRIPTION
   type        = map(map(string))
   nullable    = false
