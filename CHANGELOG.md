@@ -9,14 +9,21 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Added
 
-- Direct invocations of the cirrus module can now specify a custom resource prefix
+- Documentation for the `cirrus` module and its `task-batch-compute`, `task`, and `workflow` submodules
+- Direct invocations of the `cirrus` module can now specify a custom resource prefix
 - A list of additional security groups can now be added to the VPCes for PRIVATE-type stac-server and/or cirrus API gateways
+- Cirrus workflows can now have custom permissions applied to the state machine's execution IAM role
+- Cirrus workflows can now invoke any AWS service that provides a state machine integration
+- The cirrus `task-batch-compute` submodule now supports parameterization of its definition YAMLs through templating
+- The cirrus `workflow` submodule now supports parameterization of its definition YAMLs and state machine JSONs through templating
 
 ### Changed
 
 - Renamed all instances of `cirrus_prefix` to `resource_prefix` as a preliminary step for adopting the latter as an input variable across all modules
 
 ### Fixed
+
+- Cirrus workflows no longer require at least one cirrus task reference
 
 ### Removed
 
