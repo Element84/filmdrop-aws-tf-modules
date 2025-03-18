@@ -1,0 +1,56 @@
+formatter: "markdown"
+
+sections:
+  hide:
+    - resources
+    - data-sources
+
+sort:
+  enabled: false
+
+output:
+  file: "README.md"
+  mode: "inject"
+  template: |-
+    <!-- BEGIN_TF_DOCS -->
+    {{ .Content }}
+    <!-- END_TF_DOCS -->
+
+content: |-
+  {{ .Requirements }}
+
+  {{ .Providers }}
+
+  ## Modules
+
+  {{- $yamlModules := dict "task" true "task_batch_compute" true "workflow" true }}
+
+  ### YAML Definition Modules
+
+  The following modules are different from a typical module in that their inputs
+  are stored in template YAML files that this `cirrus` module will render and
+  then decode into HCL before passing them as inputs to each submodule. See the
+  [Inputs](#inputs) section below for more information on this module's role in
+  the templating process.
+
+  | Name | Source | Description |
+  |------|--------|-------------|
+  {{- range $_, $module := .Module.ModuleCalls }}
+  {{- if index $yamlModules $module.Name }}
+  | <a name="module_{{ .Name }}"></a> [{{ .Name }}](#module_{{ .Name }}) | `{{ .Source }}` | {{ .Description }} |
+  {{- end }}
+  {{- end }}
+
+  ### Other Modules
+
+  | Name | Source | Description |
+  |------|--------|-------------|
+  {{- range $_, $module := .Module.ModuleCalls }}
+  {{- if not (index $yamlModules $module.Name) }}
+  | <a name="module_{{ .Name }}"></a> [{{ .Name }}](#module_{{ .Name }}) | `{{ .Source }}` | {{ .Description }} |
+  {{- end }}
+  {{- end }}
+
+  {{ .Inputs }}
+
+  {{ .Outputs }}
