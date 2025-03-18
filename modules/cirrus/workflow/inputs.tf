@@ -41,7 +41,6 @@ variable "workflow_config" {
   `role_statements`: List of IAM statements to be applied to the workflow's IAM role. Note that this role can already submit batch jobs and invoke lambda functions that are referenced in the state machine JSON, so you do not need to specify those permissions and may omit this setting if these default permissions are acceptable. If you will be invoking any additional AWS services, however, you must allow the necessary actions through a role statement.  This object is used to create an `aws_iam_policy_document` data source.  Refer to the [documentation](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_policy_document) This object is used to create a `aws_iam_policy_document` terraform data source. Refer to that data source's [documentation](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_policy_document) for more information on the available arguments.
 
   IMPORTANT - IAM permissions work both ways; you may need to ensure the target AWS resource grants the generated workflow IAM role the necessary permissions (such as an SQS policy that allows the `sqs:SendMessage` action). This module will output the workflow role's ARN after the first successful deployment. If you delete and re-create the workflow for any reason, you will need to update any downstream permissions, too, even if the workflow role's name/ARN is the same due to how [IAM identifiers work](https://docs.aws.amazon.com/IAM/latest/UserGuide/reference_identifiers.html#identifiers-unique-ids).
-  #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   DESCRIPTION
   type = object({
     name = string
@@ -69,7 +68,7 @@ variable "workflow_config" {
         identifiers = list(string)
       }))
     })))
-    #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   })
   # The `~~~~` comment above is to ensure the markdown table column generated
   # by terraform-docs is wide enough for the object schema to be readable.

@@ -454,7 +454,7 @@ variable "cirrus_task_definitions_variables" {
         - arn:aws:s3:::\$${example-task-2.data_bucket}
         - arn:aws:s3:::\$${example-task-2.data_bucket}/*
   lambda:
-    ecr_image_uri: 123456789012.dkr.ecr.us-west-2.amazonaws.com/foo:\$${example-task-2.image_tag}
+    ecr_image_uri: your-ECR-URI:\$${example-task-2.image_tag}
 
   ... any other config ...
   ```
@@ -555,7 +555,6 @@ variable "cirrus_workflow_definitions_variables" {
   Since the Cirrus data bucket will always be different for each environment, there is a predefined variable `CIRRUS_DATA_BUCKET` that can be used to automatically reference that bucket name in your workflow definition YAML and state machine JSON. You don't need to add an entry to this variable for this.
 
   If `null` or `{}`, templating will technically still occur but nothing will be interpolated (provided your definition is also absent of interpolation sequences).
-  #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   DESCRIPTION
   type        = map(map(string))
   nullable    = false

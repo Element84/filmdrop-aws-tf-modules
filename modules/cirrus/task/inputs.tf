@@ -26,32 +26,19 @@ variable "task_config" {
   `common_role_statements`: List of IAM statements to be applied to both the lambda function and the batch job IAM role. This object is used to create a `aws_iam_policy_document` terraform data source. Refer to that data source's [documentation](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_policy_document) for more information on the available arguments.
 
   `lambda`: Used to create a task lambda function and its ancillary resources. Many of the available arguments map directly to the ones in the `aws_lambda_function` terraform resource. Refer to that resource's [documentation](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/lambda_function) for more information on the available arguments. Object contents:
-  ```
-  -- `lambda.vpc_enabled`: Whether the lambda should be deployed within the specified `var.vpc_subnet_ids` and use `var.vpc_security_group_ids`.
-
-  -- `lambda.role_statements`: List of IAM statements to be applied to the lambda execution role in addition to any specified in `var.task_config.common_role_statements`.
-
-  -- `lambda.alarms`: List of CloudWatch alarm configs that will be created to monitor the cirrus task lambda function.
-
-  -- ... other common [aws_lambda_function](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/lambda_function#argument-reference) arguments ...
-  ```
+  - `lambda.vpc_enabled`: Whether the lambda should be deployed within the specified `var.vpc_subnet_ids` and use `var.vpc_security_group_ids`.
+  - `lambda.role_statements`: List of IAM statements to be applied to the lambda execution role in addition to any specified in `var.task_config.common_role_statements`.
+  - `lambda.alarms`: List of CloudWatch alarm configs that will be created to monitor the cirrus task lambda function.
+  - ... other common [aws_lambda_function](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/lambda_function#argument-reference) arguments ...
 
   `batch`: Used to create a task batch job definition and its ancillary resources. Many of the available arguments map directly to the ones in the `aws_batch_job_definition` resource. Refer to that resource's [documentation](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/batch_job_definition) for more information on the available arguments. Object contents:
-  ```
-  -- `batch.task_batch_compute_name`: The name of a batch compute resource set created by the `task_batch_compute` module. This determines where invocations of this task's job definition will run.
-
-  -- `batch.container_properties`: JSON string used for registering the batch job. See the [RegisterJobDefinition AWS documentation](https://docs.aws.amazon.com/batch/latest/APIReference/API_RegisterJobDefinition.html) for valid key/values.
-
-  -- `batch.retry_strategy`: Configures how failed batch jobs should be retried, if at all.
-
-  -- `batch.parameters`: Parameter substitution placeholders that can be overridden at batch job submission time. For typical cirrus batch tasks, the values `url` and `url_out` should be set to any non-empty string value here.
-
-  -- `batch.role_statements`: List of IAM statements to be applied to the batch job execution role in addition to any specified in `var.task_config.common_role_statements`.
-
-  -- `batch.scheduling priority`: Determines the priority of these batch jobs in a job queue with a fair share scheduling policy. If the associated compute environment's queue does not use a fair share policy, this should not be set.
-
-  -- `batch.timeout_seconds`: Maximum duration these batch jobs should be allowed to run before being terminated by AWS.
-  ```
+  - `batch.task_batch_compute_name`: The name of a batch compute resource set created by the `task_batch_compute` module. This determines where invocations of this task's job definition will run.
+  - `batch.container_properties`: JSON string used for registering the batch job. See the [RegisterJobDefinition AWS documentation](https://docs.aws.amazon.com/batch/latest/APIReference/API_RegisterJobDefinition.html) for valid key/values.
+  - `batch.retry_strategy`: Configures how failed batch jobs should be retried, if at all.
+  - `batch.parameters`: Parameter substitution placeholders that can be overridden at batch job submission time. For typical cirrus batch tasks, the values `url` and `url_out` should be set to any non-empty string value here.
+  - `batch.role_statements`: List of IAM statements to be applied to the batch job execution role in addition to any specified in `var.task_config.common_role_statements`.
+  - `batch.scheduling priority`: Determines the priority of these batch jobs in a job queue with a fair share scheduling policy. If the associated compute environment's queue does not use a fair share policy, this should not be set.
+  - `batch.timeout_seconds`: Maximum duration these batch jobs should be allowed to run before being terminated by AWS.
   #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   DESCRIPTION
 
