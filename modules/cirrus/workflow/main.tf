@@ -7,13 +7,15 @@ locals {
   current_region  = data.aws_region.current.name
 
   # Create the workflow's state machine JSON.
-  # Use the Cirrus task output mapping for interpolation.
-  # Decode the rendered JSON to strip newlines then encode to minify.
+  # Use the Cirrus task output map, user-defined template variable map, and
+  # builtin template variable map for interpolation. Decode the rendered JSON to
+  # strip newlines then encode to minify.
   workflow_state_machine_json = jsonencode(jsondecode(templatefile(
     "${path.root}/${var.workflow_config.state_machine_filepath}",
     merge(
       { tasks = var.cirrus_tasks },
-      var.workflow_definitions_variables
+      var.workflow_definitions_variables,
+      var.builtin_workflow_definitions_variables
     )
   )))
 

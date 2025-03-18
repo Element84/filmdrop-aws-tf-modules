@@ -112,8 +112,8 @@ module "workflow" {
   resource_prefix = var.resource_prefix
   cirrus_tasks    = module.task
   workflow_config = each.value
-  workflow_definitions_variables = merge(
-    var.cirrus_workflow_definitions_variables,
-    local.builtin_definitions_variables
-  )
+
+  # Pass user-defined and builtin variables for state machine JSON templating
+  workflow_definitions_variables         = var.cirrus_workflow_definitions_variables
+  builtin_workflow_definitions_variables = local.builtin_definitions_variables
 }

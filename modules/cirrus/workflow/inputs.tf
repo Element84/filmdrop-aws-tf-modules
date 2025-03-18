@@ -154,3 +154,14 @@ variable "workflow_definitions_variables" {
     ERROR
   }
 }
+
+variable "builtin_workflow_definitions_variables" {
+  description = <<-DESCRIPTION
+  (Optional) Similar to `var.workflow_definitions_variables` but for passing predefined builtin variables, such as `CIRRUS_DATA_BUCKET`, that are set in the `cirrus` module. These are used for templating the workflow state machine JSON.
+
+  This can't be merged with the user-defined `var.workflow_definitions_variables` in the `cirrus` module and passed as a single variable because the two maps may have differing structures/types, which terraform does not allow.
+  DESCRIPTION
+  type        = map(string)
+  nullable    = false
+  default     = {}
+}
