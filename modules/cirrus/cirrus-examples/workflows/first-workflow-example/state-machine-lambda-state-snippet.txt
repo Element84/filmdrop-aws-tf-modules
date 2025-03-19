@@ -1,0 +1,29 @@
+"TASK-NAME-PLACEHOLDER": {
+  "Type": "Task",
+  "Resource": "${tasks.TASK-NAME-PLACEHOLDER.lambda.function_arn}",
+  "Retry": [
+    {
+      "ErrorEquals": [
+        "Lambda.TooManyRequestsException",
+        "Lambda.Unknown"
+      ],
+      "IntervalSeconds": 10,
+      "MaxDelaySeconds": 86400,
+      "BackoffRate": 2.0,
+      "MaxAttempts": 20,
+      "JitterStrategy": "FULL"
+    }
+  ],
+  "Catch": [
+    {
+      "ErrorEquals": ["States.ALL"],
+      "ResultPath": "$.error",
+      "Next": "failure"
+    }
+  ],
+
+  ### CHOOSE ONE ###
+  "Next": "NEXT-STATE-PLACEHOLDER"
+  "End": true
+  ##################
+}

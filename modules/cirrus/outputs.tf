@@ -71,9 +71,23 @@ output "cirrus_payload_bucket" {
 }
 
 output "cirrus_workflow_state_machine_arns" {
-  description = "Map of Cirrus Workflow names to their State Machine ARN"
+  description = <<-DESCRIPTION
+  Map of cirrus workflow names to their AWS state machine ARN.
+  DESCRIPTION
+
   value = {
     for workflow_name, workflow_output in module.workflow :
     workflow_name => workflow_output.state_machine_arn
+  }
+}
+
+output "cirrus_workflow_state_machine_role_arns" {
+  description = <<-DESCRIPTION
+  Map of cirrus workflow names to their AWS state machine's IAM role ARN.
+  DESCRIPTION
+
+  value = {
+    for workflow_name, workflow_output in module.workflow :
+    workflow_name => workflow_output.state_machine_role_arn
   }
 }

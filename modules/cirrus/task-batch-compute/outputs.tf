@@ -1,4 +1,8 @@
 output "batch" {
+  description = <<-DESCRIPTION
+  Output ARNs and attributes for the resulting cirrus task batch compute resources.
+  DESCRIPTION
+
   value = {
     compute_environment_arn = coalesce(
       one(data.aws_batch_compute_environment.task_batch[*].arn),

@@ -1,0 +1,139 @@
+{
+  "Comment": "This is an example workflow that calls a cirrus task and uses an SQS' state machine integration",
+  "StartAt": "first-task-example",
+  "States": {
+    "first-task-example": {
+      "Comment": "Executes the first-task-example cirrus batch task",
+      "Type": "Parallel",
+      "Branches": [
+        {
+          "StartAt": "first-task-example-pre-batch",
+          "States": {
+            "first-task-example-pre-batch": {
+              "Next": "first-task-example-batch",
+              "Resource": "${tasks.pre-batch.lambda.function_arn}",
+              "Retry": [
+                {
+                  "BackoffRate": 2,
+                  "ErrorEquals": [
+                    "Lambda.TooManyRequestsException",
+                    "Lambda.Unknown"
+                  ],
+                  "IntervalSeconds": 10,
+                  "JitterStrategy": "FULL",
+                  "MaxAttempts": 20,
+                  "MaxDelaySeconds": 86400
+                }
+              ],
+              "Type": "Task"
+            },
+            "first-task-example-batch": {
+              "Catch": [
+                {
+                  "ErrorEquals": [
+                    "States.ALL"
+                  ],
+                  "Next": "first-task-example-post-batch",
+                  "ResultPath": "$.error"
+                }
+              ],
+              "Next": "first-task-example-post-batch",
+              "Parameters": {
+                "JobDefinition": "${tasks.first-task-example.batch.job_definition_arn}",
+                "JobName": "first-task-example",
+                "JobQueue": "${tasks.first-task-example.batch.job_queue_arn}",
+                "Parameters": {
+                  "url.$": "$.url",
+                  "url_out.$": "$.url_out"
+                }
+              },
+              "Resource": "arn:aws:states:::batch:submitJob.sync",
+              "Retry": [
+                {
+                  "BackoffRate": 2,
+                  "ErrorEquals": [
+                    "Batch.AWSBatchException"
+                  ],
+                  "IntervalSeconds": 600,
+                  "JitterStrategy": "FULL",
+                  "MaxAttempts": 20,
+                  "MaxDelaySeconds": 86400
+                }
+              ],
+              "Type": "Task"
+            },
+            "first-task-example-post-batch": {
+              "End": true,
+              "Resource": "${tasks.post-batch.lambda.function_arn}",
+              "Retry": [
+                {
+                  "BackoffRate": 2,
+                  "ErrorEquals": [
+                    "Lambda.TooManyRequestsException",
+                    "Lambda.Unknown"
+                  ],
+                  "IntervalSeconds": 10,
+                  "JitterStrategy": "FULL",
+                  "MaxAttempts": 20,
+                  "MaxDelaySeconds": 86400
+                }
+              ],
+              "Type": "Task"
+            }
+          }
+        }
+      ],
+      "Catch": [
+        {
+          "ErrorEquals": [
+            "States.ALL"
+          ],
+          "Next": "failure",
+          "ResultPath": "$.error"
+        }
+      ],
+      "Retry": [
+        {
+          "BackoffRate": 2,
+          "ErrorEquals": [
+            "States.ALL"
+          ],
+          "IntervalSeconds": 1200,
+          "JitterStrategy": "FULL",
+          "MaxAttempts": 3,
+          "MaxDelaySeconds": 86400
+        }
+      ],
+      "OutputPath": "$[0]",
+      "Next": "send-callback-token-to-sqs"
+    },
+    "send-callback-token-to-sqs": {
+      "Comment": "Sends callback token to SQS and awaits the response before continuing to the next state",
+      "Type": "Task",
+      "Resource": "arn:aws:states:::sqs:sendMessage.waitForTaskToken",
+      "Parameters": {
+        "QueueUrl": "${first-workflow-example.callback_queue_url}",
+        "MessageBody": {
+          "Payload.$": "$",
+          "TaskToken.$": "$$.Task.Token"
+        }
+      },
+      "Catch": [
+        {
+          "ErrorEquals": [
+            "States.ALL"
+          ],
+          "Next": "failure",
+          "ResultPath": "$.error"
+        }
+      ],
+      "Next": "callback"
+    },
+    "callback": {
+      "Type": "Succeed"
+    },
+    "failure": {
+      "Type": "Fail"
+    }
+  }
+}
