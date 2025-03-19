@@ -75,7 +75,8 @@ data "aws_iam_policy_document" "cirrus_instance_cli_management_policy" {
       "ssm:GetParametersByPath"
     ]
     resources = [
-      "arn:aws:ssm:${local.current_region}:${local.current_account}:parameter/*"
+      "arn:aws:ssm:${local.current_region}:${local.current_account}:parameter/cirrus/deployments/*",
+      "arn:aws:ssm:${local.current_region}:${local.current_account}:parameter/deployment/*"
     ]
   }
 
