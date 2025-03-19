@@ -59,7 +59,6 @@ data "aws_iam_policy_document" "cirrus_instance_cli_management_policy" {
       module.base.cirrus_process_sqs_queue_arn
     ]
   }
-
   statement {
     actions = [
       "lambda:InvokeFunction",
