@@ -571,8 +571,8 @@ each variable with the proper resource's ARN at terraform runtime.
 State machine definitions often contain some level of boilerplate, especially
 for `State` objects. As such, some example snippets for cirrus task states are
 provided:
-  - [Cirrus lambda task state snippet](./cirrus-examples/workflows/example/state-machine-lambda-state-snippet.txt)
-  - [Cirrus batch task state snippet](./cirrus-examples/workflows/example/state-machine-batch-state-snippet.txt)
+  - [Cirrus lambda task state snippet](./cirrus-examples/workflows/first-workflow-example/state-machine-lambda-state-snippet.txt)
+  - [Cirrus batch task state snippet](./cirrus-examples/workflows/first-workflow-example/state-machine-batch-state-snippet.txt)
 
 Whenever you need to create a `State` object in your state machine JSON, you can
 use these snippets by doing the following:
@@ -593,8 +593,8 @@ this is explained [here in the cirrus-geo documentation](https://cirrus-geo.gith
 
 Ignore the `Minimal example` on that page; see one or both of the following for
 updated examples:
-  - [Example workflow state machine](./cirrus-examples/workflows/example/state-machine.json)
-  - [Cirrus batch task state snippet](./cirrus-examples/workflows/example/state-machine-batch-state-snippet.txt)
+  - [Example workflow state machine](./cirrus-examples/workflows/first-workflow-example/state-machine.json)
+  - [Cirrus batch task state snippet](./cirrus-examples/workflows/first-workflow-example/state-machine-batch-state-snippet.txt)
 
 Note the usage of `pre-batch` and `post-batch` lambdas that wrap each batch task
 state; these two lambdas are automatically created if you have defined at least
