@@ -1,0 +1,54 @@
+# IMPORTANT -------------------------------------------------------------------
+# This file is a sample definition for a cirrus workflow using common settings.
+# See the cirrus workflow module's `workflow_config` object for input argument 
+# descriptions.
+#
+# As you continue to develop Cirrus workflows, you may find it easier to use an
+# existing "real" workflow as a starting point rather than this one. That's
+# fine, just ensure you only take what you need and are not just copy/pasting
+# config between tasks without understanding the settings within.
+#
+# You maybe won't need every setting defined here, so don't hesitate to remove
+# anything that isn't applicable to your specific task. That includes the helper
+# comment lines/sections such as these.
+#
+# Be sure to update any placeholder values and always add comments as needed to
+# assist future maintainers of this workflow.
+# -----------------------------------------------------------------------------
+# As a best practice, do not use `workflow`, `cirrus`, `stac`, or `task` in the
+# name unless they mean something other than "this is a workflow for cirrus
+# STAC tasks". Nothing breaks if you ignore this advice. This example uses
+# `workflow` in the name for clarity since it doesn't actually do anything.
+name: first-workflow-example
+
+# A workflow will always have an associated state machine JSON. You should keep
+# this file next to this definition YAML. The filepath here is relative to the
+# ROOT of your terraform deployment.
+state_machine_filepath: cirrus-examples/workflows/first-workflow-example/state-machine.json
+
+# A workflow can invoke any AWS service with a state machine integration:
+# https://docs.aws.amazon.com/step-functions/latest/dg/integrate-services.html
+# You will, however, need to allow the workflow's IAM role the necessary
+# permissions to interact with the target service's API. You can do this through
+# the `role_statements` list here.
+#
+# Note that workflow IAM roles are granted the necessary permissions for
+# invoking any lambda functions or batch jobs referenced in your state machine
+# JSON (both from cirrus tasks and not); if your state machine only references
+# these types of resources, you do not need to configure `role_statements` here.
+#
+# If the target service's resource ARNs will change by environment, use an
+# interpolation sequence and update the `workflow_definitions_variables` input
+# map in each environment-specific input variable file to include the referenced
+# lookup value. You must use an interpolation sequence in place of the target
+# resource arn/url/whatever in the state machine JSON, too, to ensure both the
+# IAM role and the state machine are targeting the same resource. You must then
+# ensure the target resource allows your workflow IAM role's ARN the necessary
+# permissions in response; this must be managed outside of the cirrus module.
+role_statements:
+  - sid: SendCallbackTokenToQueueThatsDifferentForEachEnvironment
+    effect: Allow
+    actions:
+      - sqs:SendMessage
+    resources:
+      - ${first-workflow-example.callback_queue_arn}

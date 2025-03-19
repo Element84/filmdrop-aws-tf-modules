@@ -1,6 +1,6 @@
 locals {
-  # These variables may be used in task definition templates for convenience.
-  builtin_task_definitions_variables = {
+  # These variables may be used in definition templates for convenience.
+  builtin_definitions_variables = {
     CIRRUS_DATA_BUCKET = var.cirrus_data_bucket
   }
 
@@ -10,8 +10,9 @@ locals {
   # config and promotes readability by enabling each item to be split into its
   # own file without environment-specific redundancy.
   #
-  # Task YAML definitions are templated prior to HCL conversion to allow setting
-  # any environment-specific values, including builtin variables defined above.
+  # The YAML definitions are templated prior to HCL conversion to allow setting
+  # environment-specific values. Task YAML definitions may include the builtin
+  # variables above.
   #
   # Ternary defaults must be 'null' rather than an empty list since Terraform is
   # unable to implicitly typecast the complex config objects into a single type,
@@ -19,19 +20,19 @@ locals {
   cirrus_task_batch_compute_definitions = (
     var.cirrus_task_batch_compute_definitions_dir != null ? [
       for tbc_yaml in fileset(path.root, "${var.cirrus_task_batch_compute_definitions_dir}/**/definition.yaml") :
-      yamldecode(file(tbc_yaml))
+      yamldecode(templatefile(tbc_yaml, merge(var.cirrus_task_batch_compute_definitions_variables, local.builtin_definitions_variables)))
     ] : null
   )
   cirrus_task_definitions = (
     var.cirrus_task_definitions_dir != null ? [
       for task_yaml in fileset(path.root, "${var.cirrus_task_definitions_dir}/**/definition.yaml") :
-      yamldecode(templatefile(task_yaml, merge(var.cirrus_task_definitions_variables, local.builtin_task_definitions_variables)))
+      yamldecode(templatefile(task_yaml, merge(var.cirrus_task_definitions_variables, local.builtin_definitions_variables)))
     ] : null
   )
   cirrus_workflow_definitions = (
     var.cirrus_workflow_definitions_dir != null ? [
       for workflow_yaml in fileset(path.root, "${var.cirrus_workflow_definitions_dir}/**/definition.yaml") :
-      yamldecode(file(workflow_yaml))
+      yamldecode(templatefile(workflow_yaml, merge(var.cirrus_workflow_definitions_variables, local.builtin_definitions_variables)))
     ] : null
   )
 
@@ -68,6 +69,7 @@ module "typed_definitions" {
   cirrus_workflows          = local.cirrus_workflow_definitions
 }
 
+# Creates 0..many sets of Batch-related resources for cirrus batch compute
 module "task_batch_compute" {
   source = "./task-batch-compute"
   for_each = {
@@ -81,6 +83,7 @@ module "task_batch_compute" {
   batch_compute_config   = each.value
 }
 
+# Creates 0..many sets of Batch and/or Lambda resources for cirrus tasks
 module "task" {
   source = "./task"
   for_each = {
@@ -98,6 +101,7 @@ module "task" {
   task_config               = each.value
 }
 
+# Creates 0..many sets of AWS State Machine resources for cirrus workflows
 module "workflow" {
   source = "./workflow"
   for_each = {
@@ -108,4 +112,8 @@ module "workflow" {
   resource_prefix = var.resource_prefix
   cirrus_tasks    = module.task
   workflow_config = each.value
+
+  # Pass user-defined and builtin variables for state machine JSON templating
+  workflow_definitions_variables         = var.cirrus_workflow_definitions_variables
+  builtin_workflow_definitions_variables = local.builtin_definitions_variables
 }

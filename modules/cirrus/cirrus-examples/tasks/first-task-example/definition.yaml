@@ -1,0 +1,126 @@
+# IMPORTANT -------------------------------------------------------------------
+# This file is a sample definition for a Lambda and Batch Cirrus Task using
+# common settings. The arguments below are not exhaustive; see the cirrus task
+# module's `task_config` object for the full argument list.
+#
+# As you continue to develop Cirrus tasks, you may find it easier to use an
+# existing "real" task as a starting point rather than this one. That's fine,
+# just ensure you only take what you need and are not just copy/pasting config
+# between tasks without understanding the settings within.
+#
+# You likely won't need every setting defined here, so don't hesitate to remove
+# anything that isn't applicable to your specific task. That includes the helper
+# comment lines/sections such as these.
+#
+# Be sure to update any placeholder values and always add comments as needed to
+# assist future maintainers of this task.
+# -----------------------------------------------------------------------------
+# As a best practice, do not use 'lambda', 'batch', 'cirrus', 'stac', or 'task'
+# in your name unless they mean something other than "this is a Lambda|Batch
+# Cirrus STAC task". Nothing breaks if you ignore this advice. This example uses
+# `task` in the name for clarity since it doesn't actually do anything.
+name: first-task-example
+common_role_statements:
+  # Maybe your task needs some supporting data from an S3 bucket that doesn't
+  # change based on your deployment environment (dev/stage/prod)?
+  - sid: ReadSomeBucketThatsTheSameForAllEnvironments
+    effect: Allow
+    actions:
+      - s3:ListBucket
+      - s3:GetObject
+      - s3:GetBucketLocation
+    resources:
+      - arn:aws:s3:::example-bucket
+      - arn:aws:s3:::example-bucket/*
+  # Maybe your task needs some supporting data from an S3 bucket that differs
+  # depending on your environment (dev/stage/prod)? Use an interpolation
+  # sequence for the bucket name and update the `task_definitions_variables`
+  # input map in each environment-specific input variable file to include the
+  # referenced lookup value.
+  - sid: ReadSomeBucketThatsDifferentForEachEnvironment
+    effect: Allow
+    actions:
+      - s3:ListBucket
+      - s3:GetObject
+      - s3:GetBucketLocation
+    resources:
+      - arn:aws:s3:::${first-task-example.data_bucket}
+      - arn:aws:s3:::${first-task-example.data_bucket}/*
+  # Maybe your task writes assets to the Cirrus data bucket? This is common.
+  # Note that CIRRUS_DATA_BUCKET is a special variable that you do not need to
+  # provide a literal value for; it is automatically replaced with the Cirrus
+  # data bucket's name (NOT the ARN) for your target deployment environment at
+  # runtime.
+  - sid: WriteCirrusDataBucket
+    effect: Allow
+    actions:
+      - s3:PutObject
+    resources:
+      - arn:aws:s3:::${CIRRUS_DATA_BUCKET}/*
+  # Any other permissions needed? Place them here and preface with a comment.
+  # Always follow the principle of least privilege; only add what you need.
+  # ...
+
+# Choose a run type - lambda, batch, or both - and delete the one you don't use.
+# Avoid using both unless you're absolutely sure it's beneficial.
+
+# Config for a lambda Cirrus task:
+lambda:
+  description: Cirrus task that does something
+  # Your Lambda is likely image based. Add the full ECR image URI here with a
+  # interpolation sequence that'll be used to set the tag with environment-
+  # specific values (e.g., maybe dev would use 'unstable'). ZIP-based Lambdas
+  # from S3 or the local filesystem are supported instead of images, too.
+  ecr_image_uri: <your-full-ECR-image-URI>:${first-task-example.image_tag}
+  # Deploy within the FilmDrop VPC unless you have an explicit reason not to
+  vpc_enabled: true
+  # Consider your code's specific resource requirements when setting a timeout
+  # and memory values. Only use what you need.
+  ephemeral_storage_mb: 1024
+  timeout_seconds: 900
+  memory_mb: 128
+  # Maybe your Lambda needs environment variables? If these change by
+  # environment, use an interpolation sequence instead of a literal value.
+  env_vars:
+    SOME_VARIABLE_YOUR_CODE_NEEDS: some-value
+
+# Config for a Batch job Cirrus task:
+batch:
+  # This determines in which compute environment your Cirrus task will run.
+  # It should map to an existing task-batch-compute definition's `name`.
+  task_batch_compute_name: example-batch-compute
+  # Parameters for 'url' and 'url_out' must always be set for Batch tasks whose
+  # code implements the STAC task CLI interface as it allows the command line
+  # string defined in 'container_properties' below to be populated with values
+  # at runtime - your workflow will submit a job with 'url' and 'url_out' to the
+  # specific values needed for managing the Cirrus Process Payload in a Batch
+  # task. The value used here doesn't matter; 'filler' is only used because an
+  # empty string results in Terraform reporting repeated state drift.
+  parameters:
+    url: filler
+    url_out: filler
+  # This is a multi-line JSON string that defines your Batch Job container. See:
+  # https://docs.aws.amazon.com/batch/latest/APIReference/API_RegisterJobDefinition.html
+  # This configuration will depend upon your compute needs and the type of Batch
+  # compute environment you'll be deploying to. Due to the deeply nested nature
+  # of this complex JSON object, the `task` module maintains the JSON string
+  # interface that the underlying `aws_batch_job_definition` terraform resource
+  # uses. Note that interpolation sequences still work here.
+  container_properties: >-
+    {
+      "command": ["run", "Ref::url", "--output", "Ref::url_out"],
+      "image": "<your-full-ECR-image-URI>:${first-task-example.image_tag}",
+      "ephemeralStorage": {
+        "sizeInGiB": 1
+      },
+      "resourceRequirements": [
+        {"type": "VCPU", "value": "2"},
+        {"type": "MEMORY", "value": "10240"}
+      ],
+      "environment": [
+        {
+          "name": "SOME_VARIABLE_YOUR_CODE_NEEDS",
+          "value": "some-value"
+        } 
+      ]
+    }
