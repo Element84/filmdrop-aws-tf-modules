@@ -27,8 +27,8 @@ data "aws_iam_policy_document" "cirrus_instance_cli_management_policy" {
   statement {
     actions = [
       "s3:PutObject",
-      "s3.GetObject",
-      "s3.ListBucket"
+      "s3:GetObject",
+      "s3:ListBucket"
     ]
 
     resources = [
@@ -66,17 +66,6 @@ data "aws_iam_policy_document" "cirrus_instance_cli_management_policy" {
     ]
     resources = [
       "arn:aws:lambda:${local.current_region}:${local.current_account}:function:${var.resource_prefix}-*"
-    ]
-  }
-
-  statement {
-    actions = [
-      "ssm:GetParameter",
-      "ssm:GetParametersByPath"
-    ]
-    resources = [
-      "arn:aws:ssm:${local.current_region}:${local.current_account}:parameter/cirrus/deployments/*",
-      "arn:aws:ssm:${local.current_region}:${local.current_account}:parameter/deployment/*"
     ]
   }
 
