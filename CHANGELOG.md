@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Cirrus workflows can now invoke any AWS service that provides a state machine integration
 - The cirrus `task-batch-compute` submodule now supports parameterization of its definition YAMLs through templating
 - The cirrus `workflow` submodule now supports parameterization of its definition YAMLs and state machine JSONs through templating
+- The `stac-server` API's `STAC_VERSION` environment variable can now be specified via input variable `stac_version`
 
 ### Changed
 

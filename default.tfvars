@@ -22,6 +22,7 @@ sns_critical_subscriptions_map = {}
 stac_server_inputs = {
   app_name                                    = "stac_server"
   version                                     = "v3.8.0"
+  stac_version                                = "1.0.0"
   api_rest_type                               = "EDGE"
   deploy_cloudfront                           = true
   web_acl_id                                  = ""

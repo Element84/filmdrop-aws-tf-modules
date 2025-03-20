@@ -19,6 +19,7 @@ resource "aws_lambda_function" "stac_server_api" {
       STAC_ID                 = var.stac_id
       STAC_TITLE              = var.stac_title
       STAC_DESCRIPTION        = var.stac_description
+      STAC_VERSION            = var.stac_version
       LOG_LEVEL               = var.log_level
       REQUEST_LOGGING_ENABLED = var.request_logging_enabled
       STAC_DOCS_URL           = var.stac_docs_url
