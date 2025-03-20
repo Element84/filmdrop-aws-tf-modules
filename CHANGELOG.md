@@ -9,6 +9,16 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Added
 
+### Changed
+
+### Fixed
+
+### Removed
+
+## [2.37.0] - 2025-03-20
+
+### Added
+
 - Documentation for the `cirrus` module and its `task-batch-compute`, `task`, and `workflow` submodules
 - Direct invocations of the `cirrus` module can now specify a custom resource prefix
 - A list of additional security groups can now be added to the VPCes for PRIVATE-type stac-server and/or cirrus API gateways
@@ -17,6 +27,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - The cirrus `task-batch-compute` submodule now supports parameterization of its definition YAMLs through templating
 - The cirrus `workflow` submodule now supports parameterization of its definition YAMLs and state machine JSONs through templating
 - The `stac-server` API's `STAC_VERSION` environment variable can now be specified via input variable `stac_version`
+- Cirrus deployment parameter store and optional assumable management role intended for the cirrus CLI tool
 
 ### Changed
 
