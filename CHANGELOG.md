@@ -15,6 +15,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Removed
 
+## [2.38.0] - 2025-03-20
+
+### Added
+
+- Adding capability to change the Stac-Server OpenSearch availability_zone_count via input parameter
+
 ## [2.37.0] - 2025-03-20
 
 ### Added
