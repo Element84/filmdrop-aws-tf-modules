@@ -597,9 +597,9 @@ updated examples:
   - [Cirrus batch task state snippet](./cirrus-examples/workflows/first-workflow-example/state-machine-batch-state-snippet.txt)
 
 Note the usage of `pre-batch` and `post-batch` lambdas that wrap each batch task
-state; these two lambdas are automatically created if you have defined at least
-one batch-style cirrus task. You will need to reference their task outputs in
-the state machine JSON but do not need to define the tasks themselves.
+state; **these two lambdas are automatically created for you**. You will need to
+reference their task outputs in the state machine JSON but do not need to define
+the tasks themselves.
 
 #### Workflow Best Practices
 

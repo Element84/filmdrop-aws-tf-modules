@@ -24,6 +24,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Fixed
 
 - Cirrus workflows no longer require at least one cirrus task reference
+- Cirrus `pre-batch` and `post-batch` lambdas now work correctly with a payload bucket managed by `cirrus`'s `base` module
 
 ### Removed
 

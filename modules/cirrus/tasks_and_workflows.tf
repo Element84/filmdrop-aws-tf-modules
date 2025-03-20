@@ -1,7 +1,7 @@
 locals {
   # These variables may be used in definition templates for convenience.
   builtin_definitions_variables = {
-    CIRRUS_DATA_BUCKET = var.cirrus_data_bucket
+    CIRRUS_DATA_BUCKET = module.base.cirrus_data_bucket
   }
 
   # Construct Cirrus task-batch-compute, task, and workflow definitions.
@@ -36,25 +36,19 @@ locals {
     ] : null
   )
 
-  # Check if at least one task has a Batch configuration
-  has_batch_task = (
-    local.cirrus_task_definitions != null ? anytrue([
-      for task in local.cirrus_task_definitions :
-      try(task.batch, null) != null
-    ]) : false
-  )
-
-  # Construct the full list of cirrus task configurations:
-  # - User defined tasks are always created
-  # - If at least one Batch-style task was configured, pre-batch and post-batch
-  #   tasks will be injected into the list of desired Cirrus tasks
-  merged_cirrus_task_definitions = (
-    local.cirrus_task_definitions != null ? concat(
-      local.cirrus_task_definitions,
-      local.has_batch_task ? local.pre_batch_post_batch_task_configs : []
-      # ... any future builtin tasks could be added here ...
-    ) : null
-  )
+  # These builtin tasks are created outside of the cirrus task module.
+  # This map is constructed to replicate the cirrus task module output such that
+  # they can be referenced in a state machine JSON like any user-defined task.
+  cirrus_builtin_tasks = {
+    pre-batch = {
+      lambda = { function_arn = module.builtin_functions.pre_batch_lambda_function_arn }
+      batch  = {}
+    }
+    post-batch = {
+      lambda = { function_arn = module.builtin_functions.post_batch_lambda_function_arn }
+      batch  = {}
+    }
+  }
 }
 
 module "typed_definitions" {
@@ -65,7 +59,7 @@ module "typed_definitions" {
   # module call simply typecasts the input definitions and outputs the results.
   # See that module's README for more information.
   cirrus_task_batch_compute = local.cirrus_task_batch_compute_definitions
-  cirrus_tasks              = local.merged_cirrus_task_definitions
+  cirrus_tasks              = local.cirrus_task_definitions
   cirrus_workflows          = local.cirrus_workflow_definitions
 }
 
@@ -92,7 +86,7 @@ module "task" {
   }
 
   resource_prefix           = var.resource_prefix
-  cirrus_payload_bucket     = var.cirrus_payload_bucket
+  cirrus_payload_bucket     = module.base.cirrus_payload_bucket
   vpc_subnet_ids            = var.vpc_subnet_ids
   vpc_security_group_ids    = var.vpc_security_group_ids
   warning_sns_topic_arn     = var.warning_sns_topic_arn
@@ -110,8 +104,11 @@ module "workflow" {
   }
 
   resource_prefix = var.resource_prefix
-  cirrus_tasks    = module.task
   workflow_config = each.value
+  cirrus_tasks = merge(
+    module.task,
+    local.cirrus_builtin_tasks
+  )
 
   # Pass user-defined and builtin variables for state machine JSON templating
   workflow_definitions_variables         = var.cirrus_workflow_definitions_variables
