@@ -7,11 +7,16 @@ locals {
   current_region  = data.aws_region.current.name
 
   # Create the workflow's state machine JSON.
-  # Use the Cirrus task output mapping for interpolation.
-  # Decode the rendered JSON to strip newlines then encode to minify.
+  # Use the Cirrus task output map, user-defined template variable map, and
+  # builtin template variable map for interpolation. Decode the rendered JSON to
+  # strip newlines then encode to minify.
   workflow_state_machine_json = jsonencode(jsondecode(templatefile(
     "${path.root}/${var.workflow_config.state_machine_filepath}",
-    var.cirrus_tasks
+    merge(
+      { tasks = var.cirrus_tasks },
+      var.workflow_definitions_variables,
+      var.builtin_workflow_definitions_variables
+    )
   )))
 
   # Gather any referenced Lambda Function ARNs.
@@ -43,6 +48,11 @@ locals {
   # Submit/Invoke permissions only necessary if Batch/Lambda resources are used
   create_batch_policy  = (length(local.workflow_tasks_batch_resources) != 0)
   create_lambda_policy = (length(local.workflow_tasks_lambda_functions) != 0)
+
+  # Only create an additional policy if role statements were provided
+  create_additional_policy = (
+    length(coalesce(var.workflow_config.role_statements, [])) > 0
+  )
 }
 
 
@@ -76,12 +86,17 @@ data "aws_iam_policy_document" "workflow_machine_assume_role" {
 }
 
 resource "aws_iam_role" "workflow_machine" {
-  name_prefix        = "${var.cirrus_prefix}-workflow-role-"
+  name_prefix        = "${var.resource_prefix}-workflow-role-"
   description        = "State Machine execution role for Cirrus Workflow '${var.workflow_config.name}'"
   assume_role_policy = data.aws_iam_policy_document.workflow_machine_assume_role.json
 }
+# ==============================================================================
 
-data "aws_iam_policy_document" "workflow_machine_events" {
+
+# WORKFLOW STATE MACHINE IAM ROLE -- EVENTS, BATCH, AND LAMBDA PERMISSIONS
+# ------------------------------------------------------------------------------
+data "aws_iam_policy_document" "workflow_machine_basic_services" {
+
   statement {
     # Allow the state machine to push state transition events
     sid       = "AllowWorkflowToCreateStateTransitionEvents"
@@ -89,19 +104,6 @@ data "aws_iam_policy_document" "workflow_machine_events" {
     actions   = ["events:PutEvents"]
     resources = ["*"]
   }
-}
-
-resource "aws_iam_role_policy" "workflow_machine_events" {
-  name_prefix = "${var.cirrus_prefix}-workflow-role-event-creation-"
-  role        = aws_iam_role.workflow_machine.name
-  policy      = data.aws_iam_policy_document.workflow_machine_events.json
-}
-# ==============================================================================
-
-
-# WORKFLOW STATE MACHINE IAM ROLE -- BATCH AND LAMBDA PERMISSIONS
-# ------------------------------------------------------------------------------
-data "aws_iam_policy_document" "workflow_machine_task_lambda_and_batch" {
 
   # Allow the state machine to invoke any referenced task Lambdas
   dynamic "statement" {
@@ -169,10 +171,92 @@ data "aws_iam_policy_document" "workflow_machine_task_lambda_and_batch" {
   }
 }
 
-resource "aws_iam_role_policy" "workflow_machine_task_lambda_and_batch" {
-  name_prefix = "${var.cirrus_prefix}-workflow-role-task-policy-"
+resource "aws_iam_role_policy" "workflow_machine_basic_services" {
+  name_prefix = "${var.resource_prefix}-workflow-role-basic-services-policy-"
   role        = aws_iam_role.workflow_machine.name
-  policy      = data.aws_iam_policy_document.workflow_machine_task_lambda_and_batch.json
+  policy      = data.aws_iam_policy_document.workflow_machine_basic_services.json
+}
+# ==============================================================================
+
+
+# WORKFLOW STATE MACHINE IAM ROLE -- ADDITIONAL SERVICE PERMISSIONS
+# ------------------------------------------------------------------------------
+# Optionally creates an inline policy based on user input variables
+# ------------------------------------------------------------------------------
+data "aws_iam_policy_document" "workflow_machine_additional_services" {
+  count = local.create_additional_policy ? 1 : 0
+
+  # Generate a statement block for each object in the input variable.
+  # They are all added to this single policy document.
+  dynamic "statement" {
+    for_each = {
+      for statement in var.workflow_config.role_statements :
+      statement.sid => statement
+    }
+
+    content {
+      # Required values
+      sid       = statement.value.sid
+      effect    = statement.value.effect
+      actions   = statement.value.actions
+      resources = statement.value.resources
+
+      # Optional values
+      not_actions   = try(statement.value.not_actions, null)
+      not_resources = try(statement.value.not_resources, null)
+
+      # Optional value stored as a configuration block.
+      # A single instance is created only if 'condition' was provided.
+      dynamic "condition" {
+        for_each = (
+          try(statement.value.condition, null) != null
+        ) ? [statement.value.condition] : []
+
+        content {
+          # If 'condition' was provided, it must contain these values
+          test     = condition.value.test
+          values   = condition.value.values
+          variable = condition.value.variable
+        }
+      }
+
+      # Optional value stored as a configuration block.
+      # A single instance is created only if 'principals' was provided.
+      dynamic "principals" {
+        for_each = (
+          try(statement.value.principals, null) != null
+        ) ? [statement.value.principals] : []
+
+        content {
+          # If 'principals' was provided, it must contain these values
+          identifiers = principals.value.identifiers
+          type        = principals.value.type
+        }
+      }
+
+      # Optional value stored as a configuration block.
+      # A single instance is created only if 'not_principals' was provided.
+      dynamic "not_principals" {
+        for_each = (
+          try(statement.value.not_principals, null) != null
+        ) ? [statement.value.not_principals] : []
+
+        content {
+          # If 'not_principals' was provided, it must contain these values
+          identifiers = not_principals.value.identifiers
+          type        = not_principals.value.type
+        }
+      }
+    }
+  }
+}
+
+resource "aws_iam_role_policy" "workflow_machine_additional_services" {
+  count = local.create_additional_policy ? 1 : 0
+
+  name_prefix = "${var.resource_prefix}-workflow-role-addtl-services-policy-"
+  role        = aws_iam_role.workflow_machine.name
+  policy      = data.aws_iam_policy_document.workflow_machine_additional_services[0].json
 }
 # ==============================================================================
 
@@ -180,7 +264,7 @@ resource "aws_iam_role_policy" "workflow_machine_task_lambda_and_batch" {
 # WORKFLOW STATE MACHINE
 # ------------------------------------------------------------------------------
 resource "aws_sfn_state_machine" "workflow" {
-  name       = "${var.cirrus_prefix}-${var.workflow_config.name}"
+  name       = "${var.resource_prefix}-${var.workflow_config.name}"
   definition = local.workflow_state_machine_json
   publish    = true
   role_arn   = aws_iam_role.workflow_machine.arn

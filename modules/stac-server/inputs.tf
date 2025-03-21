@@ -4,6 +4,15 @@ variable "stac_id" {
   default     = "stac-server"
 }
 
+variable "stac_version" {
+  description = <<-DESCRIPTION
+  (Optional) STAC version string. Maps to stac-server's `STAC_VERSION` environment variable.
+  DESCRIPTION
+  type        = string
+  nullable    = false
+  default     = "1.0.0"
+}
+
 variable "stac_title" {
   description = "STAC title"
   type        = string
@@ -167,6 +176,17 @@ variable "api_rest_type" {
   description = "STAC API Gateway type"
   type        = string
   default     = "EDGE"
+}
+
+variable "private_api_additional_security_group_ids" {
+  description = <<-DESCRIPTION
+  Optional list of security group IDs that'll be applied to the VPC interface
+  endpoints of a PRIVATE-type stac-server API Gateway. These security groups are
+  in addition to the security groups that allow traffic from the private subnet
+  CIDR blocks. Only applicable when `var.api_rest_type == PRIVATE`.
+  DESCRIPTION
+  type        = list(string)
+  default     = null
 }
 
 variable "opensearch_version" {

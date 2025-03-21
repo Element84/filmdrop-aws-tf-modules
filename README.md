@@ -27,6 +27,11 @@ This repository contains the packaging of FilmDrop terraform modules.
 
 Check out the [changelog](CHANGELOG.md).
 
+## Module Documentation
+
+The following modules contain READMEs that may serve as a useful reference when configuring a FilmDrop deployment:
+- [cirrus](./modules/cirrus/README.md)
+
 ## `flop` CLI
 
 `flop` is a bash script for creating and interacting with FilmDrop test

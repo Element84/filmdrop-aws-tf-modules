@@ -53,3 +53,11 @@ output "stac_server_name_prefix" {
 output "stac_server_lambda_iam_role_arn" {
   value = aws_iam_role.stac_api_lambda_role.arn
 }
+
+output "stac_server_ingest_sns_topic_arn" {
+  value = aws_sns_topic.stac_server_ingest_sns_topic.arn
+}
+
+output "stac_server_post_ingest_sns_topic_arn" {
+  value = aws_sns_topic.stac_server_post_ingest_sns_topic.arn
+}

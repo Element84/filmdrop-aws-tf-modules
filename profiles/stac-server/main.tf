@@ -6,6 +6,7 @@ module "stac-server" {
   vpc_subnet_ids                              = var.private_subnet_ids
   vpc_security_group_ids                      = [var.security_group_id]
   stac_api_stage                              = var.environment
+  stac_version                                = var.stac_server_inputs.stac_version
   enable_transactions_extension               = var.stac_server_inputs.enable_transactions_extension
   collection_to_index_mappings                = var.stac_server_inputs.collection_to_index_mappings
   opensearch_version                          = var.stac_server_inputs.opensearch_version
@@ -15,9 +16,11 @@ module "stac-server" {
   opensearch_cluster_dedicated_master_type    = var.stac_server_inputs.opensearch_cluster_dedicated_master_type
   opensearch_cluster_dedicated_master_count   = var.stac_server_inputs.opensearch_cluster_dedicated_master_count
   opensearch_ebs_volume_size                  = var.stac_server_inputs.opensearch_ebs_volume_size
+  opensearch_cluster_availability_zone_count  = var.stac_server_inputs.opensearch_cluster_availability_zone_count
   ingest_sns_topic_arns                       = var.stac_server_inputs.ingest_sns_topic_arns
   additional_ingest_sqs_senders_arns          = var.stac_server_inputs.additional_ingest_sqs_senders_arns
   api_rest_type                               = var.stac_server_inputs.api_rest_type
+  private_api_additional_security_group_ids   = var.stac_server_inputs.private_api_additional_security_group_ids
   api_lambda                                  = var.stac_server_inputs.api_lambda
   ingest_lambda                               = var.stac_server_inputs.ingest_lambda
   pre_hook_lambda                             = var.stac_server_inputs.pre_hook_lambda

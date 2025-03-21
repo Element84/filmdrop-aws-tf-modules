@@ -9,12 +9,13 @@ module "builtin_functions" {
   vpc_id                                           = var.vpc_id
   vpc_subnet_ids                                   = var.vpc_subnet_ids
   vpc_security_group_ids                           = var.vpc_security_group_ids
-  cirrus_prefix                                    = local.cirrus_prefix
+  resource_prefix                                  = var.resource_prefix
   cirrus_log_level                                 = var.cirrus_log_level
   cirrus_data_bucket                               = module.base.cirrus_data_bucket
   cirrus_payload_bucket                            = module.base.cirrus_payload_bucket
   cirrus_lambda_zip_filepath                       = local.cirrus_lambda_zip_filepath
   cirrus_api_rest_type                             = var.cirrus_api_rest_type
+  cirrus_private_api_additional_security_group_ids = var.cirrus_private_api_additional_security_group_ids
   cirrus_api_lambda_timeout                        = var.cirrus_api_lambda_timeout
   cirrus_api_lambda_memory                         = var.cirrus_api_lambda_memory
   cirrus_process_lambda_timeout                    = var.cirrus_process_lambda_timeout
@@ -22,6 +23,10 @@ module "builtin_functions" {
   cirrus_process_lambda_reserved_concurrency       = var.cirrus_process_lambda_reserved_concurrency
   cirrus_update_state_lambda_timeout               = var.cirrus_update_state_lambda_timeout
   cirrus_update_state_lambda_memory                = var.cirrus_update_state_lambda_memory
+  cirrus_pre_batch_lambda_timeout                  = var.cirrus_pre_batch_lambda_timeout
+  cirrus_pre_batch_lambda_memory                   = var.cirrus_pre_batch_lambda_memory
+  cirrus_post_batch_lambda_timeout                 = var.cirrus_post_batch_lambda_timeout
+  cirrus_post_batch_lambda_memory                  = var.cirrus_post_batch_lambda_memory
   cirrus_state_dynamodb_table_name                 = module.base.cirrus_state_dynamodb_table_name
   cirrus_state_dynamodb_table_arn                  = module.base.cirrus_state_dynamodb_table_arn
   cirrus_state_event_timestreamwrite_database_name = module.base.cirrus_state_event_timestreamwrite_database_name

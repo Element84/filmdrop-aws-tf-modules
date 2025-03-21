@@ -1,6 +1,9 @@
 module "cirrus" {
   source = "../../modules/cirrus"
 
+  # Namespace all cirrus resources via prefix
+  resource_prefix = lower(replace("fd-${var.project_name}-${var.environment}-cirrus", "_", "-"))
+
   project_name                                              = var.project_name
   environment                                               = var.environment
   vpc_id                                                    = var.vpc_id
@@ -15,6 +18,7 @@ module "cirrus" {
   cirrus_payload_bucket                                     = var.cirrus_inputs.payload_bucket
   cirrus_log_level                                          = var.cirrus_inputs.log_level
   cirrus_api_rest_type                                      = var.cirrus_inputs.api_rest_type
+  cirrus_private_api_additional_security_group_ids          = var.cirrus_inputs.private_api_additional_security_group_ids
   cirrus_api_lambda_timeout                                 = var.cirrus_inputs.api_lambda.timeout
   cirrus_api_lambda_memory                                  = var.cirrus_inputs.api_lambda.memory
   cirrus_process_lambda_timeout                             = var.cirrus_inputs.process_lambda.timeout
@@ -30,7 +34,9 @@ module "cirrus" {
   critical_sns_topic_arn                                    = var.critical_sns_topic_arn
   deploy_alarms                                             = var.cirrus_inputs.deploy_alarms
   cirrus_task_batch_compute_definitions_dir                 = var.cirrus_inputs.task_batch_compute_definitions_dir
+  cirrus_task_batch_compute_definitions_variables           = var.cirrus_inputs.task_batch_compute_definitions_variables
   cirrus_task_definitions_dir                               = var.cirrus_inputs.task_definitions_dir
   cirrus_task_definitions_variables                         = var.cirrus_inputs.task_definitions_variables
   cirrus_workflow_definitions_dir                           = var.cirrus_inputs.workflow_definitions_dir
+  cirrus_workflow_definitions_variables                     = var.cirrus_inputs.workflow_definitions_variables
 }

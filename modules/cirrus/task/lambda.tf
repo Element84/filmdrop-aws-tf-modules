@@ -21,7 +21,7 @@ locals {
   # Create the Lambda function name.
   # This is needed by the Lambda execution role prior to function creation, so a
   # resource reference cannot be used.
-  task_lambda_function_name = "${var.cirrus_prefix}-${var.task_config.name}"
+  task_lambda_function_name = "${var.resource_prefix}-${var.task_config.name}"
 
   # Lambdas running within the VPC will require additional permissions
   deploy_lambda_in_vpc = (
@@ -63,7 +63,7 @@ data "aws_iam_policy_document" "task_lambda_assume_role" {
 resource "aws_iam_role" "task_lambda" {
   count = local.create_lambda ? 1 : 0
 
-  name_prefix        = "${var.cirrus_prefix}-task-role-"
+  name_prefix        = "${var.resource_prefix}-task-role-"
   description        = "Lambda execution role for Cirrus Task '${var.task_config.name}'"
   assume_role_policy = data.aws_iam_policy_document.task_lambda_assume_role[0].json
 }
@@ -171,7 +171,7 @@ data "aws_iam_policy_document" "task_lambda_role_additional" {
 resource "aws_iam_role_policy" "task_lambda_role_additional" {
   count = local.create_additional_lambda_policy ? 1 : 0
 
-  name_prefix = "${var.cirrus_prefix}-task-role-additional-policy-"
+  name_prefix = "${var.resource_prefix}-task-role-additional-policy-"
   role        = aws_iam_role.task_lambda[0].name
   policy      = data.aws_iam_policy_document.task_lambda_role_additional[0].json
 }
@@ -274,7 +274,7 @@ resource "aws_cloudwatch_metric_alarm" "task_lambda" {
 
   alarm_name = format(
     "%s-%s-%s-%s-alarm",
-    "${var.cirrus_prefix}-${var.task_config.name}-task-lambda",
+    "${var.resource_prefix}-${var.task_config.name}-task-lambda",
     lower(each.value.metric_name),
     lower(each.value.statistic),
     each.value.critical ? "critical" : "warning"
@@ -282,7 +282,7 @@ resource "aws_cloudwatch_metric_alarm" "task_lambda" {
 
   alarm_description = format(
     "%s %s %s %s Alarm",
-    "${var.cirrus_prefix}-${var.task_config.name} Task Lambda",
+    "${var.resource_prefix}-${var.task_config.name} Task Lambda",
     "${each.value.metric_name} ${each.value.statistic}",
     "${each.value.comparison_operator} ${each.value.threshold}",
     each.value.critical ? "Critical" : "Warning"

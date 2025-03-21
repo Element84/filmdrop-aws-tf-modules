@@ -41,6 +41,7 @@ variable "stac_server_inputs" {
   type = object({
     app_name                                    = string
     version                                     = string
+    stac_version                                = optional(string)
     deploy_cloudfront                           = bool
     web_acl_id                                  = string
     domain_alias                                = string
@@ -53,6 +54,7 @@ variable "stac_server_inputs" {
     opensearch_cluster_dedicated_master_type    = string
     opensearch_cluster_dedicated_master_count   = number
     opensearch_ebs_volume_size                  = number
+    opensearch_cluster_availability_zone_count  = number
     ingest_sns_topic_arns                       = list(string)
     additional_ingest_sqs_senders_arns          = list(string)
     cors_origin                                 = string
@@ -61,6 +63,7 @@ variable "stac_server_inputs" {
     cors_headers                                = string
     authorized_s3_arns                          = list(string)
     api_rest_type                               = string
+    private_api_additional_security_group_ids   = optional(list(string))
     api_lambda = optional(object({
       handler         = optional(string)
       memory_mb       = optional(number)
@@ -109,6 +112,7 @@ variable "stac_server_inputs" {
   default = {
     app_name                                    = "stac_server"
     version                                     = "v3.10.0"
+    stac_version                                = "1.0.0"
     deploy_cloudfront                           = true
     web_acl_id                                  = ""
     domain_alias                                = ""
@@ -121,6 +125,7 @@ variable "stac_server_inputs" {
     opensearch_cluster_dedicated_master_type    = "t3.small.search"
     opensearch_cluster_dedicated_master_count   = 3
     opensearch_ebs_volume_size                  = 35
+    opensearch_cluster_availability_zone_count  = 3
     ingest_sns_topic_arns                       = []
     additional_ingest_sqs_senders_arns          = []
     cors_origin                                 = "*"
@@ -129,6 +134,7 @@ variable "stac_server_inputs" {
     cors_headers                                = ""
     authorized_s3_arns                          = []
     api_rest_type                               = "EDGE"
+    private_api_additional_security_group_ids   = null
     api_lambda                                  = null
     ingest_lambda                               = null
     pre_hook_lambda                             = null

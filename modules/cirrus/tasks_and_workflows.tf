@@ -1,7 +1,7 @@
 locals {
-  # These variables may be used in task definition templates for convenience.
-  builtin_task_definitions_variables = {
-    CIRRUS_DATA_BUCKET = var.cirrus_data_bucket
+  # These variables may be used in definition templates for convenience.
+  builtin_definitions_variables = {
+    CIRRUS_DATA_BUCKET = module.base.cirrus_data_bucket
   }
 
   # Construct Cirrus task-batch-compute, task, and workflow definitions.
@@ -10,8 +10,9 @@ locals {
   # config and promotes readability by enabling each item to be split into its
   # own file without environment-specific redundancy.
   #
-  # Task YAML definitions are templated prior to HCL conversion to allow setting
-  # any environment-specific values, including builtin variables defined above.
+  # The YAML definitions are templated prior to HCL conversion to allow setting
+  # environment-specific values. Task YAML definitions may include the builtin
+  # variables above.
   #
   # Ternary defaults must be 'null' rather than an empty list since Terraform is
   # unable to implicitly typecast the complex config objects into a single type,
@@ -19,41 +20,35 @@ locals {
   cirrus_task_batch_compute_definitions = (
     var.cirrus_task_batch_compute_definitions_dir != null ? [
       for tbc_yaml in fileset(path.root, "${var.cirrus_task_batch_compute_definitions_dir}/**/definition.yaml") :
-      yamldecode(file(tbc_yaml))
+      yamldecode(templatefile(tbc_yaml, merge(var.cirrus_task_batch_compute_definitions_variables, local.builtin_definitions_variables)))
     ] : null
   )
   cirrus_task_definitions = (
     var.cirrus_task_definitions_dir != null ? [
       for task_yaml in fileset(path.root, "${var.cirrus_task_definitions_dir}/**/definition.yaml") :
-      yamldecode(templatefile(task_yaml, merge(var.cirrus_task_definitions_variables, local.builtin_task_definitions_variables)))
+      yamldecode(templatefile(task_yaml, merge(var.cirrus_task_definitions_variables, local.builtin_definitions_variables)))
     ] : null
   )
   cirrus_workflow_definitions = (
     var.cirrus_workflow_definitions_dir != null ? [
       for workflow_yaml in fileset(path.root, "${var.cirrus_workflow_definitions_dir}/**/definition.yaml") :
-      yamldecode(file(workflow_yaml))
+      yamldecode(templatefile(workflow_yaml, merge(var.cirrus_workflow_definitions_variables, local.builtin_definitions_variables)))
     ] : null
   )
 
-  # Check if at least one task has a Batch configuration
-  has_batch_task = (
-    local.cirrus_task_definitions != null ? anytrue([
-      for task in local.cirrus_task_definitions :
-      try(task.batch, null) != null
-    ]) : false
-  )
-
-  # Construct the full list of cirrus task configurations:
-  # - User defined tasks are always created
-  # - If at least one Batch-style task was configured, pre-batch and post-batch
-  #   tasks will be injected into the list of desired Cirrus tasks
-  merged_cirrus_task_definitions = (
-    local.cirrus_task_definitions != null ? concat(
-      local.cirrus_task_definitions,
-      local.has_batch_task ? local.pre_batch_post_batch_task_configs : []
-      # ... any future builtin tasks could be added here ...
-    ) : null
-  )
+  # These builtin tasks are created outside of the cirrus task module.
+  # This map is constructed to replicate the cirrus task module output such that
+  # they can be referenced in a state machine JSON like any user-defined task.
+  cirrus_builtin_tasks = {
+    pre-batch = {
+      lambda = { function_arn = module.builtin_functions.pre_batch_lambda_function_arn }
+      batch  = {}
+    }
+    post-batch = {
+      lambda = { function_arn = module.builtin_functions.post_batch_lambda_function_arn }
+      batch  = {}
+    }
+  }
 }
 
 module "typed_definitions" {
@@ -64,10 +59,11 @@ module "typed_definitions" {
   # module call simply typecasts the input definitions and outputs the results.
   # See that module's README for more information.
   cirrus_task_batch_compute = local.cirrus_task_batch_compute_definitions
-  cirrus_tasks              = local.merged_cirrus_task_definitions
+  cirrus_tasks              = local.cirrus_task_definitions
   cirrus_workflows          = local.cirrus_workflow_definitions
 }
 
+# Creates 0..many sets of Batch-related resources for cirrus batch compute
 module "task_batch_compute" {
   source = "./task-batch-compute"
   for_each = {
@@ -75,12 +71,13 @@ module "task_batch_compute" {
     compute.name => compute
   }
 
-  cirrus_prefix          = local.cirrus_prefix
+  resource_prefix        = var.resource_prefix
   vpc_subnet_ids         = var.vpc_subnet_ids
   vpc_security_group_ids = var.vpc_security_group_ids
   batch_compute_config   = each.value
 }
 
+# Creates 0..many sets of Batch and/or Lambda resources for cirrus tasks
 module "task" {
   source = "./task"
   for_each = {
@@ -88,8 +85,8 @@ module "task" {
     task.name => task
   }
 
-  cirrus_prefix             = local.cirrus_prefix
-  cirrus_payload_bucket     = var.cirrus_payload_bucket
+  resource_prefix           = var.resource_prefix
+  cirrus_payload_bucket     = module.base.cirrus_payload_bucket
   vpc_subnet_ids            = var.vpc_subnet_ids
   vpc_security_group_ids    = var.vpc_security_group_ids
   warning_sns_topic_arn     = var.warning_sns_topic_arn
@@ -98,6 +95,7 @@ module "task" {
   task_config               = each.value
 }
 
+# Creates 0..many sets of AWS State Machine resources for cirrus workflows
 module "workflow" {
   source = "./workflow"
   for_each = {
@@ -105,7 +103,14 @@ module "workflow" {
     workflow.name => workflow
   }
 
-  cirrus_prefix   = local.cirrus_prefix
-  cirrus_tasks    = module.task
+  resource_prefix = var.resource_prefix
   workflow_config = each.value
+  cirrus_tasks = merge(
+    module.task,
+    local.cirrus_builtin_tasks
+  )
+
+  # Pass user-defined and builtin variables for state machine JSON templating
+  workflow_definitions_variables         = var.cirrus_workflow_definitions_variables
+  builtin_workflow_definitions_variables = local.builtin_definitions_variables
 }

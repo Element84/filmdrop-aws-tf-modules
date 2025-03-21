@@ -20,6 +20,7 @@ sns_critical_subscriptions_map = {}
 stac_server_inputs = {
   app_name                                    = "stac_server"
   version                                     = "v3.10.0"
+  stac_version                                = "1.0.0"
   deploy_cloudfront                           = false
   api_rest_type                               = "EDGE"
   web_acl_id                                  = ""
@@ -33,6 +34,7 @@ stac_server_inputs = {
   opensearch_cluster_dedicated_master_type    = "t3.small.search"
   opensearch_cluster_dedicated_master_count   = 3
   opensearch_ebs_volume_size                  = 35
+  opensearch_cluster_availability_zone_count  = 3
   ingest_sns_topic_arns                       = []
   additional_ingest_sqs_senders_arns          = []
   cors_origin                                 = "*"
@@ -40,6 +42,7 @@ stac_server_inputs = {
   cors_methods                                = ""
   cors_headers                                = ""
   authorized_s3_arns                          = []
+  private_api_additional_security_group_ids   = null
   api_lambda                                  = null
   ingest_lambda                               = null
   pre_hook_lambda                             = null
@@ -117,8 +120,8 @@ analytics_inputs = {
   }
 
   eks = {
-    cluster_version    = "1.29"
-    autoscaler_version = "v1.29.0"
+    cluster_version    = "1.32"
+    autoscaler_version = "v1.32.0"
   }
 }
 
@@ -152,11 +155,12 @@ console_ui_inputs = {
 }
 
 cirrus_inputs = {
-  data_bucket    = "" # If left blank the deployment will create the data bucket
-  payload_bucket = "" # If left blank the deployment will create the payload bucket
-  log_level      = "DEBUG"
-  deploy_alarms  = true
-  api_rest_type  = "EDGE"
+  data_bucket                               = "" # If left blank the deployment will create the data bucket
+  payload_bucket                            = "" # If left blank the deployment will create the payload bucket
+  log_level                                 = "DEBUG"
+  deploy_alarms                             = true
+  api_rest_type                             = "EDGE"
+  private_api_additional_security_group_ids = null
   custom_alarms = {
     warning  = {}
     critical = {}
@@ -190,10 +194,12 @@ cirrus_inputs = {
     timeout = 15
     memory  = 128
   }
-  task_batch_compute_definitions_dir = null
-  task_definitions_dir               = null
-  task_definitions_variables         = null
-  workflow_definitions_dir           = null
+  task_batch_compute_definitions_dir       = null
+  task_batch_compute_definitions_variables = null
+  task_definitions_dir                     = null
+  task_definitions_variables               = null
+  workflow_definitions_dir                 = null
+  workflow_definitions_variables           = null
 }
 
 cirrus_dashboard_inputs = {

@@ -143,8 +143,19 @@ output "cirrus_payload_bucket" {
 }
 
 output "cirrus_workflow_state_machine_arns" {
-  description = "Map of Cirrus Workflow names to their State Machine ARN"
-  value       = var.deploy_cirrus ? module.cirrus[0].cirrus_workflow_state_machine_arns : tomap({})
+  description = <<-DESCRIPTION
+  Map of Cirrus Workflow names to their State Machine ARN.
+  DESCRIPTION
+
+  value = var.deploy_cirrus ? module.cirrus[0].cirrus_workflow_state_machine_arns : tomap({})
+}
+
+output "cirrus_workflow_state_machine_role_arns" {
+  description = <<-DESCRIPTION
+  Map of Cirrus Workflow names to their State Machine's IAM role ARN.
+  DESCRIPTION
+
+  value = var.deploy_cirrus ? module.cirrus[0].cirrus_workflow_state_machine_role_arns : tomap({})
 }
 
 output "warning_sns_topic_arn" {
@@ -153,4 +164,16 @@ output "warning_sns_topic_arn" {
 
 output "critical_sns_topic_arn" {
   value = module.base_infra.critical_sns_topic_arn
+}
+
+output "stac_server_ingest_sns_topic_arn" {
+  value = var.deploy_stac_server ? module.stac-server[0].stac_server_ingest_sns_topic_arn : ""
+}
+
+output "stac_server_post_ingest_sns_topic_arn" {
+  value = var.deploy_stac_server ? module.stac-server[0].stac_server_post_ingest_sns_topic_arn : ""
+}
+
+output "stac_server_lambda_iam_role_arn" {
+  value = var.deploy_stac_server ? module.stac-server[0].stac_server_lambda_iam_role_arn : ""
 }

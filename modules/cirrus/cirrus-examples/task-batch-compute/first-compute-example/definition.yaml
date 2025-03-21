@@ -1,0 +1,50 @@
+# IMPORTANT -------------------------------------------------------------------
+# This file is a sample definition for a task-batch-compute resource set using
+# common settings. The arguments below are not exhaustive; see the cirrus
+# task-batch-compute module's `batch_compute_config` for the full argument list.
+#
+# As you continue to develop cirrus tasks, you may find it easier to use an
+# existing "real" task-batch-compute definition as a starting point rather than
+# this one. That's fine, just ensure you only take what you need and are not
+# just copy/pasting config between tasks without understanding the settings
+# within.
+#
+# You maybe won't need every setting defined here, so don't hesitate to remove
+# anything that isn't applicable to your specific task. That includes the helper
+# comment lines/sections such as these.
+#
+# Be sure to update any placeholder values and always add comments as needed to
+# assist future maintainers of this task-batch-compute.
+# -----------------------------------------------------------------------------
+# As a best practice, do not use 'cirrus', 'stac', or 'task' in your name unless
+# they mean something other than "this is compute for a cirrus STAC task".
+# Nothing breaks if you ignore this advice.
+name: first-compute-example
+
+batch_compute_environment:
+  # The `compute_resources` configuration options are complex:
+  # https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/batch_compute_environment#compute_resources
+  #
+  # Generally speaking, most of the defaults (or null values) used for the
+  # optional configuration options (both from the terraform resource and what
+  # the `task-batch-compute` module implicitly sets based on your other inputs)
+  # are sufficient for common use cases. If you're unsure what your requirements
+  # are, start with just the required settings and work from there, using the
+  # task-batch-compute module's README.md for guidance.
+  #
+  # If the subset of exposed options proves insufficient for your requirements,
+  # you should create a custom batch compute environment outside of this module
+  # and replace the `batch_compute_environment` config object with the
+  # `batch_compute_environment_existing` config object instead; note that this
+  # is an advanced use case.
+  compute_resources:
+    # All four possible `type`s are supported by the task-batch-compute module.
+    # `FARGATE` is the simplest; `EC2` offers more control but requires more
+    # configuration. `SPOT` and `FARGATE_SPOT` are similar to their non-spot
+    # counterparts but are cheaper. With spot instances, however, you will need
+    # to ensure your task is equipped to gracefully handle abrupt terminations
+    # and potential reattempts due to spot instance reclamations; this is
+    # typically not the case for STAC tasks unless you've explicitly made an
+    # effort to implement it, so using spot is not without risk.
+    type: FARGATE
+    max_vcpus: 4

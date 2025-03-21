@@ -78,6 +78,7 @@ variable "stac_server_inputs" {
   type = object({
     app_name                                    = string
     version                                     = string
+    stac_version                                = optional(string)
     deploy_cloudfront                           = bool
     web_acl_id                                  = string
     domain_alias                                = string
@@ -90,6 +91,7 @@ variable "stac_server_inputs" {
     opensearch_cluster_dedicated_master_type    = string
     opensearch_cluster_dedicated_master_count   = number
     opensearch_ebs_volume_size                  = number
+    opensearch_cluster_availability_zone_count  = number
     ingest_sns_topic_arns                       = list(string)
     additional_ingest_sqs_senders_arns          = list(string)
     cors_origin                                 = string
@@ -98,6 +100,7 @@ variable "stac_server_inputs" {
     cors_headers                                = string
     authorized_s3_arns                          = list(string)
     api_rest_type                               = string
+    private_api_additional_security_group_ids   = optional(list(string))
     api_lambda = optional(object({
       handler         = optional(string)
       memory_mb       = optional(number)
@@ -146,6 +149,7 @@ variable "stac_server_inputs" {
   default = {
     app_name                                    = "stac_server"
     version                                     = "v3.10.0"
+    stac_version                                = "1.0.0"
     deploy_cloudfront                           = true
     web_acl_id                                  = ""
     domain_alias                                = ""
@@ -158,6 +162,7 @@ variable "stac_server_inputs" {
     opensearch_cluster_dedicated_master_type    = "t3.small.search"
     opensearch_cluster_dedicated_master_count   = 3
     opensearch_ebs_volume_size                  = 35
+    opensearch_cluster_availability_zone_count  = 3
     ingest_sns_topic_arns                       = []
     additional_ingest_sqs_senders_arns          = []
     cors_origin                                 = ""
@@ -166,6 +171,7 @@ variable "stac_server_inputs" {
     cors_headers                                = ""
     authorized_s3_arns                          = []
     api_rest_type                               = "EDGE"
+    private_api_additional_security_group_ids   = null
     api_lambda                                  = null
     ingest_lambda                               = null
     pre_hook_lambda                             = null
@@ -297,8 +303,8 @@ variable "analytics_inputs" {
       cleanup_schedule_expressions       = []
     }
     eks = {
-      cluster_version    = "1.29"
-      autoscaler_version = "v1.29.0"
+      cluster_version    = "1.32"
+      autoscaler_version = "v1.32.0"
     }
   }
 }
@@ -364,11 +370,12 @@ variable "console_ui_inputs" {
 variable "cirrus_inputs" {
   description = "Inputs for FilmDrop Cirrus deployment."
   type = object({
-    data_bucket    = string
-    payload_bucket = string
-    log_level      = string
-    api_rest_type  = string
-    deploy_alarms  = bool
+    data_bucket                               = string
+    payload_bucket                            = string
+    log_level                                 = string
+    api_rest_type                             = string
+    private_api_additional_security_group_ids = optional(list(string))
+    deploy_alarms                             = bool
     custom_alarms = object({
       warning  = map(any)
       critical = map(any)
@@ -403,17 +410,19 @@ variable "cirrus_inputs" {
       timeout = number
       memory  = number
     })
-    task_batch_compute_definitions_dir = optional(string)
-    task_definitions_dir               = optional(string)
-    task_definitions_variables         = optional(map(map(string)))
-    workflow_definitions_dir           = optional(string)
+    task_batch_compute_definitions_dir  = optional(string)
+    task_definitions_dir                = optional(string)
+    task_definitions_variables          = optional(map(map(string)))
+    workflow_definitions_dir            = optional(string)
+    cirrus_cli_iam_role_trust_principal = optional(list(string))
   })
   default = {
-    data_bucket    = "cirrus-data-bucket-name"
-    payload_bucket = "cirrus-payload-bucket-name"
-    log_level      = "INFO"
-    api_rest_type  = "EDGE"
-    deploy_alarms  = true
+    data_bucket                               = "cirrus-data-bucket-name"
+    payload_bucket                            = "cirrus-payload-bucket-name"
+    log_level                                 = "INFO"
+    api_rest_type                             = "EDGE"
+    private_api_additional_security_group_ids = null
+    deploy_alarms                             = true
     custom_alarms = {
       warning  = {}
       critical = {}
@@ -448,10 +457,13 @@ variable "cirrus_inputs" {
       timeout = 15
       memory  = 128
     }
-    task_batch_compute_definitions_dir = null
-    task_definitions_dir               = null
-    task_definitions_variables         = null
-    workflow_definitions_dir           = null
+    task_batch_compute_definitions_dir       = null
+    task_batch_compute_definitions_variables = null
+    task_definitions_dir                     = null
+    task_definitions_variables               = null
+    workflow_definitions_dir                 = null
+    workflow_definitions_variables           = null
+    cirrus_cli_iam_role_trust_principal      = null
   }
 }
 

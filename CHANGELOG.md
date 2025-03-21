@@ -21,6 +21,60 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Removed
 
+## [2.39.0] - 2025-03-21
+
+### Added
+
+- Exposing stac_server_ingest_sns_topic_arn via outputs
+- Exposed stac_server_lambda_iam_role_arn via outputs
+
+## [2.38.0] - 2025-03-20
+
+### Added
+
+- Adding capability to change the Stac-Server OpenSearch availability_zone_count via input parameter
+
+## [2.37.0] - 2025-03-20
+
+### Added
+
+- Documentation for the `cirrus` module and its `task-batch-compute`, `task`, and `workflow` submodules
+- Direct invocations of the `cirrus` module can now specify a custom resource prefix
+- A list of additional security groups can now be added to the VPCes for PRIVATE-type stac-server and/or cirrus API gateways
+- Cirrus workflows can now have custom permissions applied to the state machine's execution IAM role
+- Cirrus workflows can now invoke any AWS service that provides a state machine integration
+- The cirrus `task-batch-compute` submodule now supports parameterization of its definition YAMLs through templating
+- The cirrus `workflow` submodule now supports parameterization of its definition YAMLs and state machine JSONs through templating
+- The `stac-server` API's `STAC_VERSION` environment variable can now be specified via input variable `stac_version`
+- Cirrus deployment parameter store and optional assumable management role intended for the cirrus CLI tool
+
+### Changed
+
+- Renamed all instances of `cirrus_prefix` to `resource_prefix` as a preliminary step for adopting the latter as an input variable across all modules
+
+### Fixed
+
+- Cirrus workflows no longer require at least one cirrus task reference
+- Cirrus `pre-batch` and `post-batch` lambdas now work correctly with a payload bucket managed by `cirrus`'s `base` module
+
+### Removed
+
+## [2.36.0] - 2025-03-10
+
+### Changed
+
+- Updated FilmDrop Analytics eks kubernetes version to 1.32 and autoscaler version to 1.32.0
+
+### Removed
+
+- Removed classical WAF support as it is being deprecated by AWS in favor of the newer AWS WAFv2
+
+## [2.35.0] - 2025-03-05
+
+### Removed
+
+- Removed max terraform required version constraints
+
 ## [2.34.0] - 2025-02-24
 
 ### Fixed
