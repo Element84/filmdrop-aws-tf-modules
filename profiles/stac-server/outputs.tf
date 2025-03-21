@@ -17,3 +17,11 @@ output "stac_ingest_queue_arn" {
 output "stac_ingest_queue_url" {
   value = module.stac-server.stac_server_ingest_queue_url
 }
+
+output "stac_server_ingest_sns_topic_arn" {
+  value = module.stac-server.stac_server_ingest_sns_topic_arn
+}
+
+output "stac_server_post_ingest_sns_topic_arn" {
+  value = module.stac-server.stac_server_post_ingest_sns_topic_arn
+}

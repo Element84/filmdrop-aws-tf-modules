@@ -15,6 +15,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Removed
 
+## [2.39.0] - 2025-03-21
+
+### Added
+
+- Exposing stac_server_ingest_sns_topic_arn via outputs
+
 ## [2.38.0] - 2025-03-20
 
 ### Added
