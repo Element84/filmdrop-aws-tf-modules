@@ -165,3 +165,11 @@ output "warning_sns_topic_arn" {
 output "critical_sns_topic_arn" {
   value = module.base_infra.critical_sns_topic_arn
 }
+
+output "stac_server_ingest_sns_topic_arn" {
+  value = var.deploy_stac_server ? module.stac-server[0].stac_server_ingest_sns_topic_arn : ""
+}
+
+output "stac_server_post_ingest_sns_topic_arn" {
+  value = var.deploy_stac_server ? module.stac-server[0].stac_server_post_ingest_sns_topic_arn : ""
+}
