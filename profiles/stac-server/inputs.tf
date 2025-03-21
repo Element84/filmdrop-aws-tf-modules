@@ -53,8 +53,8 @@ variable "stac_server_inputs" {
     opensearch_cluster_dedicated_master_enabled = bool
     opensearch_cluster_dedicated_master_type    = string
     opensearch_cluster_dedicated_master_count   = number
-    opensearch_ebs_volume_size                  = number
     opensearch_cluster_availability_zone_count  = number
+    opensearch_ebs_volume_size                  = number
     ingest_sns_topic_arns                       = list(string)
     additional_ingest_sqs_senders_arns          = list(string)
     cors_origin                                 = string
@@ -124,8 +124,8 @@ variable "stac_server_inputs" {
     opensearch_cluster_dedicated_master_enabled = true
     opensearch_cluster_dedicated_master_type    = "t3.small.search"
     opensearch_cluster_dedicated_master_count   = 3
-    opensearch_ebs_volume_size                  = 35
     opensearch_cluster_availability_zone_count  = 3
+    opensearch_ebs_volume_size                  = 35
     ingest_sns_topic_arns                       = []
     additional_ingest_sqs_senders_arns          = []
     cors_origin                                 = "*"

@@ -15,8 +15,8 @@ module "stac-server" {
   opensearch_cluster_dedicated_master_enabled = var.stac_server_inputs.opensearch_cluster_dedicated_master_enabled
   opensearch_cluster_dedicated_master_type    = var.stac_server_inputs.opensearch_cluster_dedicated_master_type
   opensearch_cluster_dedicated_master_count   = var.stac_server_inputs.opensearch_cluster_dedicated_master_count
-  opensearch_ebs_volume_size                  = var.stac_server_inputs.opensearch_ebs_volume_size
   opensearch_cluster_availability_zone_count  = var.stac_server_inputs.opensearch_cluster_availability_zone_count
+  opensearch_ebs_volume_size                  = var.stac_server_inputs.opensearch_ebs_volume_size
   ingest_sns_topic_arns                       = var.stac_server_inputs.ingest_sns_topic_arns
   additional_ingest_sqs_senders_arns          = var.stac_server_inputs.additional_ingest_sqs_senders_arns
   api_rest_type                               = var.stac_server_inputs.api_rest_type
