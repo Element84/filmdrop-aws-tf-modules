@@ -41,7 +41,6 @@ variable "stac_server_inputs" {
   type = object({
     app_name                                    = string
     version                                     = string
-    stac_version                                = optional(string)
     deploy_cloudfront                           = bool
     web_acl_id                                  = string
     domain_alias                                = string
@@ -111,7 +110,6 @@ variable "stac_server_inputs" {
   default = {
     app_name                                    = "stac_server"
     version                                     = "v3.8.0"
-    stac_version                                = "1.0.0"
     deploy_cloudfront                           = true
     web_acl_id                                  = ""
     domain_alias                                = ""
