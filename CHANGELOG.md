@@ -9,7 +9,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Added
 
+- Added configuration `stac_server_inputs.opensearch_version`
+
 ### Changed
+
+- Updated default OpenSearch version to 2.17, from 2.13
+- Updated default stac-server version to v3.10.0, from v3.8.0
+- Updated default stac-server Lambda runtime to Node 20, from 18
 
 ### Fixed
 
