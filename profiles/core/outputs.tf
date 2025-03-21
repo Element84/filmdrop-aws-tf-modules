@@ -70,6 +70,14 @@ output "stac_ingest_queue_url" {
   value = var.deploy_stac_server ? module.stac-server[0].stac_ingest_queue_url : ""
 }
 
+output "stac_ingest_topic_arn" {
+  value = var.deploy_stac_server ? module.stac-server[0].stac_ingest_topic_arn : ""
+}
+
+output "stac_ingest_topic_url" {
+  value = var.deploy_stac_server ? module.stac-server[0].stac_ingest_topic_url : ""
+}
+
 output "cirrus_publish_sns_topic_arn" {
   value = var.deploy_cirrus ? module.cirrus[0].cirrus_publish_sns_topic_arn : ""
 }

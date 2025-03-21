@@ -46,6 +46,14 @@ output "stac_server_ingest_queue_url" {
   value = aws_sqs_queue.stac_server_ingest_sqs_queue.url
 }
 
+output "stac_server_ingest_topic_arn" {
+  value = aws_sqs_queue.stac_server_ingest_sns_topic.arn
+}
+
+output "stac_server_ingest_topic_url" {
+  value = aws_sqs_queue.stac_server_ingest_sns_topic.url
+}
+
 output "stac_server_name_prefix" {
   value = "${local.name_prefix}-stac-server"
 }
