@@ -20,6 +20,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Added
 
 - Exposing stac_server_ingest_sns_topic_arn via outputs
+- Exposed stac_server_lambda_iam_role_arn via outputs
 
 ## [2.38.0] - 2025-03-20
 

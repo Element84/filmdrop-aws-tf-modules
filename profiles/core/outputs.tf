@@ -173,3 +173,7 @@ output "stac_server_ingest_sns_topic_arn" {
 output "stac_server_post_ingest_sns_topic_arn" {
   value = var.deploy_stac_server ? module.stac-server[0].stac_server_post_ingest_sns_topic_arn : ""
 }
+
+output "stac_server_lambda_iam_role_arn" {
+  value = var.deploy_stac_server ? module.stac-server[0].stac_server_lambda_iam_role_arn : ""
+}
