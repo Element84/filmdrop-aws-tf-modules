@@ -46,7 +46,7 @@ variable "stac_server_inputs" {
     domain_alias                                = string
     enable_transactions_extension               = bool
     collection_to_index_mappings                = string
-    opensearch_version                          = string
+    opensearch_version                          = optional(string)
     opensearch_cluster_instance_type            = string
     opensearch_cluster_instance_count           = number
     opensearch_cluster_dedicated_master_enabled = bool
