@@ -84,14 +84,14 @@ variable "api_lambda" {
 
   type = object({
     zip_filepath    = optional(string)
-    runtime         = optional(string, "nodejs18.x")
+    runtime         = optional(string, "nodejs20.x")
     handler         = optional(string, "index.handler")
     memory_mb       = optional(number, 1024)
     timeout_seconds = optional(number, 30)
   })
   default = {
     zip_filepath    = null
-    runtime         = "nodejs18.x"
+    runtime         = "nodejs20.x"
     handler         = "index.handler"
     memory_mb       = 1024
     timeout_seconds = 30
@@ -113,14 +113,14 @@ variable "ingest_lambda" {
 
   type = object({
     zip_filepath    = optional(string)
-    runtime         = optional(string, "nodejs18.x")
+    runtime         = optional(string, "nodejs20.x")
     handler         = optional(string, "index.handler")
     memory_mb       = optional(number, 512)
     timeout_seconds = optional(number, 60)
   })
   default = {
     zip_filepath    = null
-    runtime         = "nodejs18.x"
+    runtime         = "nodejs20.x"
     handler         = "index.handler"
     memory_mb       = 512
     timeout_seconds = 60
@@ -142,14 +142,14 @@ variable "pre_hook_lambda" {
 
   type = object({
     zip_filepath    = optional(string)
-    runtime         = optional(string, "nodejs18.x")
+    runtime         = optional(string, "nodejs20.x")
     handler         = optional(string, "index.handler")
     memory_mb       = optional(number, 128)
     timeout_seconds = optional(number, 25)
   })
   default = {
     zip_filepath    = null
-    runtime         = "nodejs18.x"
+    runtime         = "nodejs20.x"
     handler         = "index.handler"
     memory_mb       = 128
     timeout_seconds = 25
@@ -183,7 +183,7 @@ variable "private_api_additional_security_group_ids" {
 variable "opensearch_version" {
   description = "OpenSearch version for OpenSearch Domain"
   type        = string
-  default     = "OpenSearch_2.13"
+  default     = "OpenSearch_2.17"
 }
 
 variable "opensearch_cluster_instance_type" {
