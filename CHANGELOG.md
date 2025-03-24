@@ -19,6 +19,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Fixed
 
+- Corrected resource string for `cirrus` API lambda function role to access
+  `StateDB` indexes.
+
 ### Removed
 
 - `stac_version` is no longer supported for configuration
