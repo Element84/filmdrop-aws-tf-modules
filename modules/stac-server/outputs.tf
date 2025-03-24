@@ -61,3 +61,7 @@ output "stac_server_ingest_sns_topic_arn" {
 output "stac_server_post_ingest_sns_topic_arn" {
   value = aws_sns_topic.stac_server_post_ingest_sns_topic.arn
 }
+
+output "stac_server_api_gateway_id" {
+  value = aws_api_gateway_rest_api.stac_server_api_gateway.id
+}
