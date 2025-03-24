@@ -177,3 +177,7 @@ output "stac_server_post_ingest_sns_topic_arn" {
 output "stac_server_lambda_iam_role_arn" {
   value = module.filmdrop.stac_server_lambda_iam_role_arn
 }
+
+output "stac_server_api_gateway_id" {
+  value = module.filmdrop.stac_server_api_gateway_id
+}
