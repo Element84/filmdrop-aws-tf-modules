@@ -4,15 +4,6 @@ variable "stac_id" {
   default     = "stac-server"
 }
 
-variable "stac_version" {
-  description = <<-DESCRIPTION
-  (Optional) STAC version string. Maps to stac-server's `STAC_VERSION` environment variable.
-  DESCRIPTION
-  type        = string
-  nullable    = false
-  default     = "1.0.0"
-}
-
 variable "stac_title" {
   description = "STAC title"
   type        = string
