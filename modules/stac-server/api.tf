@@ -154,7 +154,7 @@ resource "aws_api_gateway_method" "stac_server_api_gateway_root_method" {
   rest_api_id   = aws_api_gateway_rest_api.stac_server_api_gateway.id
   resource_id   = aws_api_gateway_rest_api.stac_server_api_gateway.root_resource_id
   http_method   = "ANY"
-  authorization = "NONE"
+  authorization = var.api_method_authorization_type
 }
 
 resource "aws_api_gateway_integration" "stac_server_api_gateway_root_method_integration" {
@@ -176,14 +176,14 @@ resource "aws_api_gateway_method" "stac_server_api_gateway_proxy_resource_method
   rest_api_id   = aws_api_gateway_rest_api.stac_server_api_gateway.id
   resource_id   = aws_api_gateway_resource.stac_server_api_gateway_proxy_resource.id
   http_method   = "ANY"
-  authorization = "NONE"
+  authorization = var.api_method_authorization_type
 }
 
 resource "aws_api_gateway_method" "stac_root_options_method" {
   rest_api_id   = aws_api_gateway_rest_api.stac_server_api_gateway.id
   resource_id   = aws_api_gateway_rest_api.stac_server_api_gateway.root_resource_id
   http_method   = "OPTIONS"
-  authorization = "NONE"
+  authorization = var.api_method_authorization_type
 }
 resource "aws_api_gateway_method_response" "stac_root_options_200" {
   rest_api_id = aws_api_gateway_rest_api.stac_server_api_gateway.id
@@ -221,7 +221,7 @@ resource "aws_api_gateway_method" "stac_options_method" {
   rest_api_id   = aws_api_gateway_rest_api.stac_server_api_gateway.id
   resource_id   = aws_api_gateway_resource.stac_server_api_gateway_proxy_resource.id
   http_method   = "OPTIONS"
-  authorization = "NONE"
+  authorization = var.api_method_authorization_type
 }
 resource "aws_api_gateway_method_response" "stac_options_200" {
   rest_api_id = aws_api_gateway_rest_api.stac_server_api_gateway.id
