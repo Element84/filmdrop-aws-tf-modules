@@ -56,7 +56,7 @@ resource "aws_iam_policy" "cirrus_process_lambda_policy" {
       ],
       "Resource": [
         "${var.cirrus_state_dynamodb_table_arn}",
-        "${var.cirrus_state_dynamodb_table_arn}/index.*"
+        "${var.cirrus_state_dynamodb_table_arn}/index/*"
       ]
     },
     {
