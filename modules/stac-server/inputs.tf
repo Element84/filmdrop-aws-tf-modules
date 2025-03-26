@@ -169,6 +169,17 @@ variable "api_rest_type" {
   default     = "EDGE"
 }
 
+variable "api_method_authorization_type" {
+  description = "STAC API Gateway method authorization type"
+  type        = string
+  default     = "NONE"
+
+  validation {
+    condition     = contains(["NONE", "CUSTOM", "AWS_IAM", "COGNITO_USER_POOLS"], var.api_method_authorization_type)
+    error_message = "STAC API method authorization type must be one of: NONE, CUSTOM, AWS_IAM, or COGNITO_USER_POOLS."
+  }
+}
+
 variable "private_api_additional_security_group_ids" {
   description = <<-DESCRIPTION
   Optional list of security group IDs that'll be applied to the VPC interface

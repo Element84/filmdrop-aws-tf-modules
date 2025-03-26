@@ -62,6 +62,7 @@ variable "stac_server_inputs" {
     cors_headers                                = string
     authorized_s3_arns                          = list(string)
     api_rest_type                               = string
+    api_method_authorization_type               = optional(string)
     private_api_additional_security_group_ids   = optional(list(string))
     api_lambda = optional(object({
       handler         = optional(string)
@@ -132,6 +133,7 @@ variable "stac_server_inputs" {
     cors_headers                                = ""
     authorized_s3_arns                          = []
     api_rest_type                               = "EDGE"
+    api_method_authorization_type               = "NONE"
     private_api_additional_security_group_ids   = null
     api_lambda                                  = null
     ingest_lambda                               = null
