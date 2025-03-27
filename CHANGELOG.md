@@ -9,16 +9,23 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Added
 
-- Added input to allow configuration of stac-server api gateway method authorization type
-
 ### Changed
+
+### Fixed
+
+### Removed
+
+## [2.41.0] - 2025-03-27
+
+### Added
+
+- Added input to allow configuration of stac-server api gateway method authorization type
 
 ### Fixed
 
 - Corrected resource string for `update-state` and `process` lambda function
   roles to access `StateDB` indexes.
 
-### Removed
 
 ## [2.40.0] - 2025-03-24
 
