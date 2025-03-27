@@ -23,6 +23,7 @@ stac_server_inputs = {
   app_name                                    = "stac_server"
   version                                     = "v3.10.0"
   api_rest_type                               = "EDGE"
+  api_method_authorization_type               = "NONE"
   deploy_cloudfront                           = true
   web_acl_id                                  = ""
   domain_alias                                = ""

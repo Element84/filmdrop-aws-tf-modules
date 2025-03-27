@@ -22,6 +22,7 @@ stac_server_inputs = {
   version                                     = "v3.10.0"
   deploy_cloudfront                           = false
   api_rest_type                               = "EDGE"
+  api_method_authorization_type               = "NONE"
   web_acl_id                                  = ""
   domain_alias                                = ""
   enable_transactions_extension               = false
