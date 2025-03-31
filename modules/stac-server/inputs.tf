@@ -2,18 +2,21 @@ variable "stac_id" {
   description = "STAC identifier"
   type        = string
   default     = "stac-server"
+  nullable    = false
 }
 
 variable "stac_title" {
   description = "STAC title"
   type        = string
   default     = "STAC API"
+  nullable    = false
 }
 
 variable "stac_description" {
   description = "STAC description"
   type        = string
   default     = "A STAC API using stac-server"
+  nullable    = false
 }
 
 variable "log_level" {
