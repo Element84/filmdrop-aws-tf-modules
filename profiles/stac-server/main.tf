@@ -6,6 +6,9 @@ module "stac-server" {
   vpc_subnet_ids                              = var.private_subnet_ids
   vpc_security_group_ids                      = [var.security_group_id]
   stac_api_stage                              = var.environment
+  stac_id                                     = var.stac_server_inputs.stac_id
+  stac_title                                  = var.stac_server_inputs.stac_title
+  stac_description                            = var.stac_server_inputs.stac_description
   enable_transactions_extension               = var.stac_server_inputs.enable_transactions_extension
   collection_to_index_mappings                = var.stac_server_inputs.collection_to_index_mappings
   opensearch_version                          = var.stac_server_inputs.opensearch_version
