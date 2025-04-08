@@ -49,6 +49,12 @@ variable "enable_transactions_extension" {
   default     = false
 }
 
+variable "enable_collections_authx" {
+  description = "Enable Collections Authx"
+  type        = string
+  default     = true
+}
+
 variable "stac_api_stage" {
   description = "STAC API stage"
   type        = string

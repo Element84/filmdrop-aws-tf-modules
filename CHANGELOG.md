@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Added
 
-- Added inputs to configure stac_id, stac_title, and stac_description
+- Added inputs to configure stac_id, stac_title, stac_description, and enable_collections_authx
 
 ### Changed
 

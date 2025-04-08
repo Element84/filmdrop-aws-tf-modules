@@ -31,6 +31,7 @@ stac_server_inputs = {
   web_acl_id                                  = ""
   domain_alias                                = ""
   enable_transactions_extension               = false
+  enable_collections_authx                    = false
   collection_to_index_mappings                = ""
   opensearch_version                          = "OpenSearch_2.17"
   opensearch_cluster_instance_type            = "t3.small.search"
