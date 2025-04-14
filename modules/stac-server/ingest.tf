@@ -4,7 +4,7 @@ locals {
   non_role_arns = concat(
     [aws_sns_topic.stac_server_ingest_sns_topic.arn],
     var.ingest_sns_topic_arns, [
-      for item in var.additional_ingest_sqs_senders_arns : item if !contains(role_arns, item)
+      for item in var.additional_ingest_sqs_senders_arns : item if !contains(local.role_arns, item)
   ])
 }
 
@@ -82,9 +82,8 @@ resource "aws_sqs_queue_policy" "stac_server_ingest_sqs_queue_policy" {
 }
 
 data "aws_iam_policy_document" "stac_server_ingest_sqs_policy" {
-  count = local.is_private_endpoint ? 1 : 0
 
-  # SNS + everything else allowables statement block
+  # handle SNS + non-assumed roles
   statement {
     effect = "Allow"
 
@@ -107,7 +106,7 @@ data "aws_iam_policy_document" "stac_server_ingest_sqs_policy" {
     }
   }
 
-  # ROLE assumptions statement block
+  # handle STS role assumption
   statement {
     effect = "Allow"
 
