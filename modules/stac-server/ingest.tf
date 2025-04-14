@@ -1,3 +1,10 @@
+locals {
+  values = concat([aws_sns_topic.stac_server_ingest_sns_topic.arn], var.ingest_sns_topic_arns, var.additional_ingest_sqs_senders_arns)
+
+  role_arns = [for item in local.values : item if length(regex("role", item)) > 0]
+  sns_arns  = [for item in local.values : item if !contains(role_arns, item)]
+}
+
 resource "aws_lambda_function" "stac_server_ingest" {
   filename                       = local.resolved_ingest_lambda_zip_filepath
   function_name                  = "${local.name_prefix}-stac-server-ingest"
@@ -72,27 +79,50 @@ resource "aws_sqs_queue_policy" "stac_server_ingest_sqs_queue_policy" {
 }
 
 data "aws_iam_policy_document" "stac_server_ingest_sqs_policy" {
+  count = local.is_private_endpoint ? 1 : 0
+
+  # SNS allowables statement block
   statement {
     effect = "Allow"
 
     principals {
       type        = "AWS"
-      identifiers = ["*"]
+      identifiers = ["sns.amazonaws.com"]
     }
 
     actions = [
       "sqs:SendMessage"
     ]
 
-    resources = [
-      aws_sqs_queue.stac_server_ingest_sqs_queue.arn,
-    ]
+    resources = [aws_sqs_queue.stac_server_ingest_sqs_queue.arn]
 
     condition {
       test     = "ArnEquals"
       variable = "aws:SourceArn"
 
-      values = concat([aws_sns_topic.stac_server_ingest_sns_topic.arn], var.ingest_sns_topic_arns, var.additional_ingest_sqs_senders_arns)
+      values = local.sns_arns
+    }
+  }
+
+  # ROLE assumptions statement block
+  statement {
+    effect = "Allow"
+
+    principals {
+      type        = "AWS"
+      identifiers = ["a"]
+
+    }
+    actions = [
+      "sqs:SendMessage"
+    ]
+    resources = [aws_sqs_queue.stac_server_ingest_sqs_queue.arn]
+
+    condition {
+      test     = "StringEquals"
+      variable = "aws.SourceArn"
+
+      values = local.role_arns
     }
   }
 }
