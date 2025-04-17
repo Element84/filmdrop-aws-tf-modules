@@ -1,3 +1,13 @@
+locals {
+  role_arns = [for item in var.additional_ingest_sqs_senders_arns : item if regexall("^arn:[a-z-]+:iam::\\d{12}:role", item) > 0]
+
+  non_role_arns = concat(
+    [aws_sns_topic.stac_server_ingest_sns_topic.arn],
+    var.ingest_sns_topic_arns,
+    [for item in var.additional_ingest_sqs_senders_arns : item if !contains(local.role_arns, item)]
+  )
+}
+
 resource "aws_lambda_function" "stac_server_ingest" {
   filename                       = local.resolved_ingest_lambda_zip_filepath
   function_name                  = "${local.name_prefix}-stac-server-ingest"
@@ -72,6 +82,8 @@ resource "aws_sqs_queue_policy" "stac_server_ingest_sqs_queue_policy" {
 }
 
 data "aws_iam_policy_document" "stac_server_ingest_sqs_policy" {
+
+  # handle SNS + non-assumed roles
   statement {
     effect = "Allow"
 
@@ -84,15 +96,31 @@ data "aws_iam_policy_document" "stac_server_ingest_sqs_policy" {
       "sqs:SendMessage"
     ]
 
-    resources = [
-      aws_sqs_queue.stac_server_ingest_sqs_queue.arn,
-    ]
+    resources = [aws_sqs_queue.stac_server_ingest_sqs_queue.arn]
 
     condition {
       test     = "ArnEquals"
       variable = "aws:SourceArn"
 
-      values = concat([aws_sns_topic.stac_server_ingest_sns_topic.arn], var.ingest_sns_topic_arns, var.additional_ingest_sqs_senders_arns)
+      values = local.non_role_arns
+    }
+  }
+
+  # handle roles - both directly used or assumed by STS
+  dynamic "statement" {
+    for_each = local.role_arns
+    content {
+      effect = "Allow"
+
+      principals {
+        type        = "AWS"
+        identifiers = [each.value]
+
+      }
+      actions = [
+        "sqs:SendMessage"
+      ]
+      resources = [aws_sqs_queue.stac_server_ingest_sqs_queue.arn]
     }
   }
 }
