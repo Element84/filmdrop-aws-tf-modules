@@ -106,7 +106,7 @@ data "aws_iam_policy_document" "stac_server_ingest_sqs_policy" {
     }
   }
 
-  # handle roles - both direct used or assumed by STS
+  # handle roles - both directly used or assumed by STS
   dynamic "statement" {
     for_each = local.role_arns
     content {
