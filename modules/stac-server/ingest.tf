@@ -1,11 +1,11 @@
 locals {
-  role_arns = [for item in var.additional_ingest_sqs_senders_arns : item if length(regex("role", item)) > 0]
+  role_arns = [for item in var.additional_ingest_sqs_senders_arns : item if regexall("^arn:[a-z-]+:iam::\\d{12}:role", item) > 0]
 
   non_role_arns = concat(
     [aws_sns_topic.stac_server_ingest_sns_topic.arn],
-    var.ingest_sns_topic_arns, [
-      for item in var.additional_ingest_sqs_senders_arns : item if !contains(local.role_arns, item)
-  ])
+    var.ingest_sns_topic_arns,
+    [for item in var.additional_ingest_sqs_senders_arns : item if !contains(local.role_arns, item)]
+  )
 }
 
 resource "aws_lambda_function" "stac_server_ingest" {
@@ -106,19 +106,22 @@ data "aws_iam_policy_document" "stac_server_ingest_sqs_policy" {
     }
   }
 
-  # handle STS role assumption
-  statement {
-    effect = "Allow"
+  # handle roles - both direct used or assumed by STS
+  dynamic "statement" {
+    for_each = local.role_arns
+    content {
+      effect = "Allow"
 
-    principals {
-      type        = "AWS"
-      identifiers = [local.role_arns]
+      principals {
+        type        = "AWS"
+        identifiers = [each.value]
 
+      }
+      actions = [
+        "sqs:SendMessage"
+      ]
+      resources = [aws_sqs_queue.stac_server_ingest_sqs_queue.arn]
     }
-    actions = [
-      "sqs:SendMessage"
-    ]
-    resources = [aws_sqs_queue.stac_server_ingest_sqs_queue.arn]
   }
 }
 
