@@ -83,7 +83,7 @@ resource "aws_sqs_queue_policy" "stac_server_ingest_sqs_queue_policy" {
 
 data "aws_iam_policy_document" "stac_server_ingest_sqs_policy" {
 
-  # handle SNS + non-assumed roles
+  # SNS + non-roles
   statement {
     effect = "Allow"
 
@@ -92,34 +92,28 @@ data "aws_iam_policy_document" "stac_server_ingest_sqs_policy" {
       identifiers = ["*"]
     }
 
-    actions = [
-      "sqs:SendMessage"
-    ]
-
+    actions   = ["sqs:SendMessage"]
     resources = [aws_sqs_queue.stac_server_ingest_sqs_queue.arn]
 
     condition {
       test     = "ArnEquals"
       variable = "aws:SourceArn"
-
-      values = local.non_role_arns
+      values   = local.non_role_arns
     }
   }
 
   # handle roles - both directly used or assumed by STS
   dynamic "statement" {
-    for_each = local.role_arns
+    for_each = length(local.role_arns) > 0 ? [1] : []
     content {
       effect = "Allow"
 
       principals {
         type        = "AWS"
-        identifiers = [each.value]
-
+        identifiers = local.role_arns
       }
-      actions = [
-        "sqs:SendMessage"
-      ]
+
+      actions   = ["sqs:SendMessage"]
       resources = [aws_sqs_queue.stac_server_ingest_sqs_queue.arn]
     }
   }
