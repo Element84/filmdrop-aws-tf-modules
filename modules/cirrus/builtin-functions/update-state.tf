@@ -57,13 +57,6 @@ resource "aws_iam_policy" "cirrus_update_state_lambda_policy" {
     {
       "Effect": "Allow",
       "Action": [
-        "states:GetExecutionHistory"
-      ],
-      "Resource": "arn:aws:states:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:stateMachine:${var.resource_prefix}-*"
-    },
-    {
-      "Effect": "Allow",
-      "Action": [
         "sqs:SendMessage"
       ],
       "Resource": "${var.cirrus_process_sqs_queue_arn}"
