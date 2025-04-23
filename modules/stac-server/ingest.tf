@@ -1,5 +1,5 @@
 locals {
-  role_arns = [for item in var.additional_ingest_sqs_senders_arns : item if regexall("^arn:[a-z-]+:iam::\\d{12}:role", item) > 0]
+  role_arns = [for item in var.additional_ingest_sqs_senders_arns : item if length(regexall("^arn:[a-z-]+:iam::\\d{12}:role", item)) > 0]
 
   non_role_arns = concat(
     [aws_sns_topic.stac_server_ingest_sns_topic.arn],
