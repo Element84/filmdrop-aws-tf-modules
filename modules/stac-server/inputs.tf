@@ -52,7 +52,13 @@ variable "enable_transactions_extension" {
 variable "enable_collections_authx" {
   description = "Enable Collections Authx"
   type        = string
-  default     = true
+  default     = false
+}
+
+variable "enable_ingest_action_truncate" {
+  description = "Enable Ingest Action Truncate"
+  type        = string
+  default     = false
 }
 
 variable "stac_api_stage" {
