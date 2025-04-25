@@ -29,6 +29,7 @@ resource "aws_lambda_function" "stac_server_api" {
       )
       ENABLE_TRANSACTIONS_EXTENSION = var.enable_transactions_extension
       ENABLE_COLLECTIONS_AUTHX      = var.enable_collections_authx
+      ENABLE_INGEST_ACTION_TRUNCATE = var.enable_ingest_action_truncate
       STAC_API_ROOTPATH = (
         var.stac_api_rootpath != null
         ? var.stac_api_rootpath
