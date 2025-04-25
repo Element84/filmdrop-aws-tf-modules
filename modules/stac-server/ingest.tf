@@ -53,6 +53,10 @@ resource "aws_sns_topic" "stac_server_post_ingest_sns_topic" {
   name = "${local.name_prefix}-stac-server-post-ingest"
 }
 
+resource "aws_sns_topic" "stac_server_cloudwatch_alarm_sns_topic" {
+  name = "${local.name_prefix}-stac-server-alarms"
+}
+
 resource "aws_sns_topic_subscription" "stac_server_ingest_sqs_subscription" {
   count     = length(concat([aws_sns_topic.stac_server_ingest_sns_topic.arn], var.ingest_sns_topic_arns))
   topic_arn = element(concat([aws_sns_topic.stac_server_ingest_sns_topic.arn], var.ingest_sns_topic_arns), count.index)
@@ -129,4 +133,21 @@ resource "aws_lambda_permission" "stac_server_ingest_sqs_lambda_permission" {
   function_name = aws_lambda_function.stac_server_ingest.function_name
   principal     = "sqs.amazonaws.com"
   source_arn    = aws_sqs_queue.stac_server_ingest_sqs_queue.arn
+}
+
+resource "aws_cloudwatch_metric_alarm" "stac_server_dlq_cloudwatch_alarm" {
+  count                     = var.deploy_alarms ? 1 : 0
+  alarm_name                = "WARNING: ${local.name_prefix}-stac-server SQS DLQ Warning Alarm"
+  evaluation_periods        = 3
+  period                    = 60
+  threshold                 = var.dead_letter_queue_alarm_threshold
+  comparison_operator       = "GreaterThanOrEqualToThreshold"
+  metric_name               = "ApproximateNumberOfMessagesVisible"
+  namespace                 = "AWS/SQS"
+  statistic                 = "Sum"
+  treat_missing_data        = "notBreaching"
+  actions_enabled           = "${local.name_prefix}-stac-server-ingest-dlq DQL Warning Alarm"
+  alarm_actions             = [aws_sns_topic.stac_server_cloudwatch_alarm_sns_topic]
+  ok_actions                = [anw_sns_topic.stac_server_cloudwatch_alarm_sns_topic]
+  insufficient_data_actions = []
 }
