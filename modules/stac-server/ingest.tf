@@ -136,18 +136,22 @@ resource "aws_lambda_permission" "stac_server_ingest_sqs_lambda_permission" {
 }
 
 resource "aws_cloudwatch_metric_alarm" "stac_server_dlq_cloudwatch_alarm" {
-  count                     = var.deploy_alarms ? 1 : 0
-  alarm_name                = "WARNING: ${local.name_prefix}-stac-server SQS DLQ Warning Alarm"
-  evaluation_periods        = 3
-  period                    = 60
-  threshold                 = var.dead_letter_queue_alarm_threshold
-  comparison_operator       = "GreaterThanOrEqualToThreshold"
-  metric_name               = "ApproximateNumberOfMessagesVisible"
-  namespace                 = "AWS/SQS"
-  statistic                 = "Sum"
-  treat_missing_data        = "notBreaching"
-  actions_enabled           = "${local.name_prefix}-stac-server-ingest-dlq DQL Warning Alarm"
-  alarm_actions             = [aws_sns_topic.stac_server_cloudwatch_alarm_sns_topic]
-  ok_actions                = [anw_sns_topic.stac_server_cloudwatch_alarm_sns_topic]
+  count               = var.deploy_alarms ? 1 : 0
+  alarm_name          = "WARNING: ${local.name_prefix}-stac-server SQS DLQ Warning Alarm"
+  evaluation_periods  = 3
+  period              = 60
+  threshold           = var.dead_letter_queue_alarm_threshold
+  comparison_operator = "GreaterThanOrEqualToThreshold"
+  metric_name         = "ApproximateNumberOfMessagesVisible"
+  namespace           = "AWS/SQS"
+  statistic           = "Sum"
+  treat_missing_data  = "notBreaching"
+  actions_enabled     = "${local.name_prefix}-stac-server-ingest-dlq DQL Warning Alarm"
+  # alarm_actions             = [aws_sns_topic.stac_server_cloudwatch_alarm_sns_topic]
+  # ok_actions                = [anw_sns_topic.stac_server_cloudwatch_alarm_sns_topic]
   insufficient_data_actions = []
+
+  dimensions = {
+    QueueName = aws_sqs_queue.stac_server_ingest_dead_letter_sqs_queue
+  }
 }
