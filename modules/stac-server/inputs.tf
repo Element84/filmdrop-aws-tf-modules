@@ -457,7 +457,7 @@ variable "deploy_alarms" {
 variable "dead_letter_queue_warning_alarm_threshold" {
   description = "Number of messages in dead letter queue in a minute to trigger an alarm"
   type        = number
-  default     = 1
+  default     = 2
 }
 
 variable "dead_letter_queue_critical_alarm_threshold" {
