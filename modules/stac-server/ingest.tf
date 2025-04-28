@@ -135,7 +135,7 @@ resource "aws_lambda_permission" "stac_server_ingest_sqs_lambda_permission" {
   source_arn    = aws_sqs_queue.stac_server_ingest_sqs_queue.arn
 }
 
-resource "aws_cloudwatch_metric_alarm" "stac_server_dlq_cloudwatch_alarm" {
+resource "aws_cloudwatch_metric_alarm" "stac_server_dlq_cloudwatch_alarm_warning" {
   count               = var.deploy_alarms ? 1 : 0
   alarm_name          = "WARNING: ${local.name_prefix}-stac-server SQS DLQ Warning Alarm"
   evaluation_periods  = 2
@@ -157,7 +157,7 @@ resource "aws_cloudwatch_metric_alarm" "stac_server_dlq_cloudwatch_alarm" {
 }
 
 
-resource "aws_cloudwatch_metric_alarm" "stac_server_dlq_cloudwatch_alarm" {
+resource "aws_cloudwatch_metric_alarm" "stac_server_dlq_cloudwatch_alarm_critical" {
   count               = var.deploy_alarms ? 1 : 0
   alarm_name          = "CRITICAL: ${local.name_prefix}-stac-server SQS DLQ Critical Alarm"
   evaluation_periods  = 5
