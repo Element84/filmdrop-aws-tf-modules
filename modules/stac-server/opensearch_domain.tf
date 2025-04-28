@@ -332,8 +332,10 @@ resource "aws_cloudwatch_metric_alarm" "stac_server_opensearch_cloudwatch_alarm_
   namespace           = "AWS/ES"
   period              = 60
   metric_name         = "ClusterStatus.red"
-  # alarm_actions             = [var.warning_sns_topic_arn]
-  # ok_actions                = [var.warning_sns_topic_arn]
+  alarm_description   = "${local.name_prefix}-stac-server OpenSearch Cluster CRITICAL Alarm"
+  # alarm_actions             = [var.critical_sns_topic_arn]
+  # ok_actions                = [var.critical_sns_topic_arn]
+  insufficient_data_actions = []
 
   dimensions = {
     cluster = aws_opensearch_domain.stac_server_opensearch_domain
@@ -351,8 +353,10 @@ resource "aws_cloudwatch_metric_alarm" "stac_server_opensearch_cloudwatch_alarm_
   namespace           = "AWS/ES"
   period              = 60
   metric_name         = "ClusterStatus.yellow"
+  alarm_description   = "${local.name_prefix}-stac-server OpenSearch Cluster WARNING Alarm"
   # alarm_actions             = [var.warning_sns_topic_arn]
   # ok_actions                = [var.warning_sns_topic_arn]
+  insufficient_data_actions = []
 
   dimensions = {
     cluster = aws_opensearch_domain.stac_server_opensearch_domain

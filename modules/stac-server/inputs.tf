@@ -454,8 +454,24 @@ variable "deploy_alarms" {
   description = "Deploy stac-server Alarms stack"
 }
 
-variable "dead_letter_queue_alarm_threshold" {
+variable "dead_letter_queue_warning_alarm_threshold" {
   description = "Number of messages in dead letter queue in a minute to trigger an alarm"
   type        = number
   default     = 1
 }
+
+variable "dead_letter_queue_critical_alarm_threshold" {
+  description = "Number of messages in dead letter queue in a minute to trigger an alarm"
+  type        = number
+  default     = 10
+}
+
+# variable "critical_sns_topic_arn" {
+#   description = "The CRITICAL warnings SNS topic ARN for alarms"
+#   type = string
+# }
+
+# variable "warning_sns_topic_arn" {
+#   description = "String with FilmDrop Warning SNS topic ARN"
+#   type        = string
+# }
