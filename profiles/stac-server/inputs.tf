@@ -49,6 +49,7 @@ variable "stac_server_inputs" {
     domain_alias                                = string
     enable_transactions_extension               = bool
     enable_collections_authx                    = bool
+    enable_ingest_action_truncate               = bool
     collection_to_index_mappings                = string
     opensearch_version                          = optional(string)
     opensearch_cluster_instance_type            = string
@@ -124,6 +125,7 @@ variable "stac_server_inputs" {
     domain_alias                                = ""
     enable_transactions_extension               = false
     enable_collections_authx                    = false
+    enable_ingest_action_truncate               = false
     collection_to_index_mappings                = ""
     opensearch_version                          = "OpenSearch_2.17"
     opensearch_cluster_instance_type            = "t3.small.search"

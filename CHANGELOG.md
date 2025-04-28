@@ -9,9 +9,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Added
 
+- Input to configure stac-server with ENABLE_INGEST_ACTION_TRUNCATE
+
 ### Changed
 
 ### Fixed
+
+- The variable `enable_collections_authx` defaulted to true, should have defaulted to false.
 
 ### Removed
 
@@ -19,7 +23,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Added
 
-- Added inputs to configure stac_id, stac_title, stac_description, and enable_collections_authx
+- Added inputs to configure stac-server with stac_id, stac_title, stac_description, and enable_collections_authx
 
 ## [2.41.0] - 2025-03-27
 
