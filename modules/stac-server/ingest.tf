@@ -136,19 +136,18 @@ resource "aws_lambda_permission" "stac_server_ingest_sqs_lambda_permission" {
 }
 
 resource "aws_cloudwatch_metric_alarm" "stac_server_dlq_cloudwatch_alarm_warning" {
-  count               = var.deploy_alarms ? 1 : 0
-  alarm_name          = "WARNING: ${local.name_prefix}-stac-server SQS DLQ Warning Alarm"
-  evaluation_periods  = 2
-  period              = 60
-  threshold           = var.dead_letter_queue_warning_alarm_threshold
-  comparison_operator = "GreaterThanOrEqualToThreshold"
-  metric_name         = "ApproximateNumberOfMessagesVisible"
-  namespace           = "AWS/SQS"
-  statistic           = "Sum"
-  treat_missing_data  = "notBreaching"
-  actions_enabled     = "${local.name_prefix}-stac-server-ingest-dlq DQL Warning Alarm"
-  # alarm_actions             = [aws_sns_topic.stac_server_cloudwatch_alarm_sns_topic]
-  # ok_actions                = [anw_sns_topic.stac_server_cloudwatch_alarm_sns_topic]
+  alarm_name                = "WARNING: ${local.name_prefix}-stac-server SQS DLQ Warning Alarm"
+  evaluation_periods        = 2
+  period                    = 60
+  threshold                 = var.dead_letter_queue_warning_alarm_threshold
+  comparison_operator       = "GreaterThanOrEqualToThreshold"
+  metric_name               = "ApproximateNumberOfMessagesVisible"
+  namespace                 = "AWS/SQS"
+  statistic                 = "Sum"
+  treat_missing_data        = "notBreaching"
+  actions_enabled           = "${local.name_prefix}-stac-server-ingest-dlq DQL Warning Alarm"
+  alarm_actions             = [var.warning_sns_topic_arn]
+  ok_actions                = [var.warning_sns_topic_arn]
   insufficient_data_actions = []
 
   dimensions = {
@@ -158,19 +157,18 @@ resource "aws_cloudwatch_metric_alarm" "stac_server_dlq_cloudwatch_alarm_warning
 
 
 resource "aws_cloudwatch_metric_alarm" "stac_server_dlq_cloudwatch_alarm_critical" {
-  count               = var.deploy_alarms ? 1 : 0
-  alarm_name          = "CRITICAL: ${local.name_prefix}-stac-server SQS DLQ Critical Alarm"
-  evaluation_periods  = 5
-  period              = 60
-  threshold           = var.dead_letter_queue_critical_alarm_threshold
-  comparison_operator = "GreaterThanOrEqualToThreshold"
-  metric_name         = "ApproximateNumberOfMessagesVisible"
-  namespace           = "AWS/SQS"
-  statistic           = "Sum"
-  treat_missing_data  = "notBreaching"
-  actions_enabled     = "${local.name_prefix}-stac-server-ingest-dlq DQL Critical Alarm"
-  # alarm_actions             = [aws_sns_topic.stac_server_cloudwatch_alarm_sns_topic]
-  # ok_actions                = [anw_sns_topic.stac_server_cloudwatch_alarm_sns_topic]
+  alarm_name                = "CRITICAL: ${local.name_prefix}-stac-server SQS DLQ Critical Alarm"
+  evaluation_periods        = 5
+  period                    = 60
+  threshold                 = var.dead_letter_queue_critical_alarm_threshold
+  comparison_operator       = "GreaterThanOrEqualToThreshold"
+  metric_name               = "ApproximateNumberOfMessagesVisible"
+  namespace                 = "AWS/SQS"
+  statistic                 = "Sum"
+  treat_missing_data        = "notBreaching"
+  actions_enabled           = "${local.name_prefix}-stac-server-ingest-dlq DQL Critical Alarm"
+  alarm_actions             = [var.critical_sns_topic_arn]
+  ok_actions                = [var.critical_sns_topic_arn]
   insufficient_data_actions = []
 
   dimensions = {

@@ -448,12 +448,6 @@ variable "cors_headers" {
   default     = ""
 }
 
-variable "deploy_alarms" {
-  type        = bool
-  default     = true
-  description = "Deploy stac-server Alarms stack"
-}
-
 variable "dead_letter_queue_warning_alarm_threshold" {
   description = "Number of messages in dead letter queue in a minute to trigger an alarm"
   type        = number
@@ -466,12 +460,12 @@ variable "dead_letter_queue_critical_alarm_threshold" {
   default     = 10
 }
 
-# variable "critical_sns_topic_arn" {
-#   description = "The CRITICAL warnings SNS topic ARN for alarms"
-#   type = string
-# }
+variable "warning_sns_topic_arn" {
+  description = "SNS topic to be used by all stac-server `warning` alarms."
+  type        = string
+}
 
-# variable "warning_sns_topic_arn" {
-#   description = "String with FilmDrop Warning SNS topic ARN"
-#   type        = string
-# }
+variable "critical_sns_topic_arn" {
+  description = "SNS topic to be used by all stac-server `critical` alarms"
+  type        = string
+}
