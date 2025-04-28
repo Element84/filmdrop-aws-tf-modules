@@ -1,3 +1,13 @@
+locals {
+  role_arns = [for item in var.additional_ingest_sqs_senders_arns : item if length(regexall("^arn:[a-z-]+:iam::\\d{12}:role", item)) > 0]
+
+  non_role_arns = concat(
+    [aws_sns_topic.stac_server_ingest_sns_topic.arn],
+    var.ingest_sns_topic_arns,
+    [for item in var.additional_ingest_sqs_senders_arns : item if !contains(local.role_arns, item)]
+  )
+}
+
 resource "aws_lambda_function" "stac_server_ingest" {
   filename                       = local.resolved_ingest_lambda_zip_filepath
   function_name                  = "${local.name_prefix}-stac-server-ingest"
@@ -72,6 +82,8 @@ resource "aws_sqs_queue_policy" "stac_server_ingest_sqs_queue_policy" {
 }
 
 data "aws_iam_policy_document" "stac_server_ingest_sqs_policy" {
+
+  # SNS + non-roles
   statement {
     effect = "Allow"
 
@@ -80,19 +92,29 @@ data "aws_iam_policy_document" "stac_server_ingest_sqs_policy" {
       identifiers = ["*"]
     }
 
-    actions = [
-      "sqs:SendMessage"
-    ]
-
-    resources = [
-      aws_sqs_queue.stac_server_ingest_sqs_queue.arn,
-    ]
+    actions   = ["sqs:SendMessage"]
+    resources = [aws_sqs_queue.stac_server_ingest_sqs_queue.arn]
 
     condition {
       test     = "ArnEquals"
       variable = "aws:SourceArn"
+      values   = local.non_role_arns
+    }
+  }
 
-      values = concat([aws_sns_topic.stac_server_ingest_sns_topic.arn], var.ingest_sns_topic_arns, var.additional_ingest_sqs_senders_arns)
+  # handle roles - both directly used or assumed by STS
+  dynamic "statement" {
+    for_each = length(local.role_arns) > 0 ? [1] : []
+    content {
+      effect = "Allow"
+
+      principals {
+        type        = "AWS"
+        identifiers = local.role_arns
+      }
+
+      actions   = ["sqs:SendMessage"]
+      resources = [aws_sqs_queue.stac_server_ingest_sqs_queue.arn]
     }
   }
 }

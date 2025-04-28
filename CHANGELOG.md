@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Added
 
+- Input to configure stac-server with ENABLE_INGEST_ACTION_TRUNCATE
+
 ### Changed
 
 - removing step functon permission from `update-state` IAM policy due to change in how 
@@ -16,13 +18,15 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Fixed
 
+- The variable `enable_collections_authx` defaulted to true, should have defaulted to false.
+
 ### Removed
 
 ## [2.42.0] - 2025-04-08
 
 ### Added
 
-- Added inputs to configure stac_id, stac_title, stac_description, and enable_collections_authx
+- Added inputs to configure stac-server with stac_id, stac_title, stac_description, and enable_collections_authx
 
 ## [2.41.0] - 2025-03-27
 

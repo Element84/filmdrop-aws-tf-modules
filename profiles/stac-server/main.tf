@@ -11,6 +11,7 @@ module "stac-server" {
   stac_description                            = var.stac_server_inputs.stac_description
   enable_transactions_extension               = var.stac_server_inputs.enable_transactions_extension
   enable_collections_authx                    = var.stac_server_inputs.enable_collections_authx
+  enable_ingest_action_truncate               = var.stac_server_inputs.enable_ingest_action_truncate
   collection_to_index_mappings                = var.stac_server_inputs.collection_to_index_mappings
   opensearch_version                          = var.stac_server_inputs.opensearch_version
   opensearch_cluster_instance_type            = var.stac_server_inputs.opensearch_cluster_instance_type
