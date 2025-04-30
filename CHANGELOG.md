@@ -10,6 +10,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Added
 
 - Input to configure stac-server with ENABLE_INGEST_ACTION_TRUNCATE
+- OpenSearch cluster warning + critical alarms
+- `stac-server` dead letter queue warning + critical alarms
 
 ### Changed
 
