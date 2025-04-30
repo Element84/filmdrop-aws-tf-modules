@@ -322,6 +322,7 @@ resource "aws_lambda_invocation" "stac_server_opensearch_domain_ingest_create_in
 }
 
 resource "aws_cloudwatch_metric_alarm" "warning_stac_server_opensearch_alarm" {
+  count                     = var.deploy_stac_server_opensearch_serverless ? 0 : 1
   alarm_name                = "WARNING: ${local.name_prefix}-stac-server-opensearch-cluster YELLOW count > 0"
   evaluation_periods        = 1
   comparison_operator       = "GreaterThanOrEqualToThreshold"
@@ -337,11 +338,12 @@ resource "aws_cloudwatch_metric_alarm" "warning_stac_server_opensearch_alarm" {
   insufficient_data_actions = []
 
   dimensions = {
-    cluster = aws_opensearch_domain.stac_server_opensearch_domain.arn
+    cluster = aws_opensearch_domain.stac_server_opensearch_domain[0].arn
   }
 }
 
 resource "aws_cloudwatch_metric_alarm" "critical_stac_server_opensearch_alarm" {
+  count                     = var.deploy_stac_server_opensearch_serverless ? 0 : 1
   alarm_name                = "CRITICAL: ${local.name_prefix}-stac-server-opensearch-cluster RED count > 0"
   evaluation_periods        = 1
   comparison_operator       = "GreaterThanOrEqualToThreshold"
@@ -357,6 +359,6 @@ resource "aws_cloudwatch_metric_alarm" "critical_stac_server_opensearch_alarm" {
   insufficient_data_actions = []
 
   dimensions = {
-    cluster = aws_opensearch_domain.stac_server_opensearch_domain.arn
+    cluster = aws_opensearch_domain.stac_server_opensearch_domain[0].arn
   }
 }
