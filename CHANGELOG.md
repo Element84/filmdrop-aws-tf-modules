@@ -9,6 +9,16 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Added
 
+### Changed
+
+### Fixed
+
+### Removed
+
+## [2.43.0] - 2025-04-30
+
+### Added
+
 - Input to configure stac-server with ENABLE_INGEST_ACTION_TRUNCATE
 
 ### Changed
