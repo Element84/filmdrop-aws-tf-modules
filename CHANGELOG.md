@@ -13,6 +13,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Changed
 
+- removing step function permission from `update-state` IAM policy due to change in how 
+  `update-state` lambda gets errors in cirrus v1.0.0 release
+
 ### Fixed
 
 - The variable `enable_collections_authx` defaulted to true, should have defaulted to false.
