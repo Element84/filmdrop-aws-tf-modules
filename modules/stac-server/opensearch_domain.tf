@@ -321,7 +321,7 @@ resource "aws_lambda_invocation" "stac_server_opensearch_domain_ingest_create_in
   ]
 }
 
-resource "aws_cloudwatch_metric_alarm" "warning_stac_server_opensearch_alarm" {
+resource "aws_cloudwatch_metric_alarm" "warning_stac_server_opensearch_custer_alarm" {
   count                     = var.deploy_stac_server_opensearch_serverless ? 0 : 1
   alarm_name                = "WARNING: ${local.name_prefix}-stac-server-opensearch-cluster YELLOW count > 0"
   evaluation_periods        = 1
@@ -342,7 +342,7 @@ resource "aws_cloudwatch_metric_alarm" "warning_stac_server_opensearch_alarm" {
   }
 }
 
-resource "aws_cloudwatch_metric_alarm" "critical_stac_server_opensearch_alarm" {
+resource "aws_cloudwatch_metric_alarm" "critical_stac_server_opensearch_cluster_alarm" {
   count                     = var.deploy_stac_server_opensearch_serverless ? 0 : 1
   alarm_name                = "CRITICAL: ${local.name_prefix}-stac-server-opensearch-cluster RED count > 0"
   evaluation_periods        = 1
@@ -353,7 +353,7 @@ resource "aws_cloudwatch_metric_alarm" "critical_stac_server_opensearch_alarm" {
   namespace                 = "AWS/ES"
   period                    = 60
   metric_name               = "ClusterStatus.red"
-  alarm_description         = "CRITICAL: One or more ${local.name_prefix}-stac-server OpenSearch Cluster nodes are in a RED state"
+  alarm_description         = "CRITICAL: 1 or more ${local.name_prefix}-stac-server OpenSearch Cluster nodes are in a RED state"
   alarm_actions             = [var.critical_sns_topic_arn]
   ok_actions                = [var.critical_sns_topic_arn]
   insufficient_data_actions = []

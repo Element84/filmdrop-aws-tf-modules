@@ -133,7 +133,7 @@ resource "aws_lambda_permission" "stac_server_ingest_sqs_lambda_permission" {
 
 resource "aws_cloudwatch_metric_alarm" "warning_stac_server_dlq_alarm" {
   alarm_name                = "WARNING: ${local.name_prefix}-stac-server-dead-letter SQS DLQ Warning Alarm"
-  alarm_description         = "WARNING: 2 or more messages are persisting in the ${local.name_prefix}-stac-server SQS dead letter queue"
+  alarm_description         = "WARNING: ${var.dead_letter_queue_warning_alarm_threshold} or more messages are persisting in the ${local.name_prefix}-stac-server SQS dead letter queue"
   evaluation_periods        = 2
   period                    = 60
   threshold                 = var.dead_letter_queue_warning_alarm_threshold
@@ -153,7 +153,7 @@ resource "aws_cloudwatch_metric_alarm" "warning_stac_server_dlq_alarm" {
 
 resource "aws_cloudwatch_metric_alarm" "critical_stac_server_dlq_alarm" {
   alarm_name                = "CRITICAL: ${local.name_prefix}-stac-server-dead-letter SQS DLQ Critical Alarm"
-  alarm_description         = "CRITICAL: 10 or more messages are persisting in the ${local.name_prefix}-stac-server SQS dead letter queue"
+  alarm_description         = "CRITICAL: ${var.dead_letter_queue_critical_alarm_threshold} or more messages are persisting in the ${local.name_prefix}-stac-server SQS dead letter queue"
   evaluation_periods        = 5
   period                    = 60
   threshold                 = var.dead_letter_queue_critical_alarm_threshold
