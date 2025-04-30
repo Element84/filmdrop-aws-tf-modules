@@ -9,11 +9,24 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Added
 
+### Changed
+
+### Fixed
+
+### Removed
+
+## [2.43.0] - 2025-04-30
+
+### Added
+
 - Input to configure stac-server with ENABLE_INGEST_ACTION_TRUNCATE
 - OpenSearch cluster warning + critical alarms
 - `stac-server` dead letter queue warning + critical alarms
 
 ### Changed
+
+- removing step function permission from `update-state` IAM policy due to change in how 
+  `update-state` lambda gets errors in cirrus v1.0.0 release
 
 ### Fixed
 
