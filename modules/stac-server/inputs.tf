@@ -449,13 +449,13 @@ variable "cors_headers" {
 }
 
 variable "dead_letter_queue_warning_alarm_threshold" {
-  description = "Number of messages in dead letter queue in a minute to trigger an alarm"
+  description = "Message count threshold trigger for dead letter queue for warning alarm"
   type        = number
   default     = 2
 }
 
 variable "dead_letter_queue_critical_alarm_threshold" {
-  description = "Number of messages in dead letter queue in a minute to trigger an alarm"
+  description = "Message count threshold trigger for dead letter queue for critical alarm"
   type        = number
   default     = 10
 }
