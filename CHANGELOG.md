@@ -13,7 +13,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Changed
 
-- removing step functon permission from `update-state` IAM policy due to change in how 
+- removing step function permission from `update-state` IAM policy due to change in how 
   `update-state` lambda gets errors in cirrus v1.0.0 release
 
 ### Fixed
