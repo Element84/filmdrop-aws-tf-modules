@@ -32,7 +32,7 @@ resource "aws_lambda_function" "stac_server_ingest" {
       CORS_CREDENTIALS                 = var.cors_credentials
       CORS_METHODS                     = var.cors_methods
       CORS_HEADERS                     = var.cors_headers
-      ENABLE_INGEST_ACTION_TRUNCATE = var.enable_ingest_action_truncate
+      ENABLE_INGEST_ACTION_TRUNCATE    = var.enable_ingest_action_truncate
     }
   }
 
