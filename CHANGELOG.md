@@ -13,6 +13,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Fixed
 
+- stac_server: set ENABLE_INGEST_ACTION_TRUNCATE on the ingest lambda rather than the api lambda
+
 ### Removed
 
 ## [2.43.0] - 2025-04-30
