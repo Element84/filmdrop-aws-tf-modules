@@ -219,3 +219,13 @@ variable "fd_web_acl_id" {
   type        = string
   default     = ""
 }
+
+variable "warning_sns_topic_arn" {
+  description = "SNS topic to be used by all stac-server `warning` alarms."
+  type        = string
+}
+
+variable "critical_sns_topic_arn" {
+  description = "SNS topic to be used by all stac-server `critical` alarms"
+  type        = string
+}
