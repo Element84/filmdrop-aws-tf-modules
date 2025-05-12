@@ -9,15 +9,23 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Added
 
-- Added outputs for Console UI and Cirrus Dashboard S3 Bucket names
-
 ### Changed
 
 ### Fixed
 
-- stac_server: set ENABLE_INGEST_ACTION_TRUNCATE on the ingest lambda rather than the api lambda
-
 ### Removed
+
+## [2.45.0] - 2025-05-12
+
+### Added
+
+- Added outputs for Console UI and Cirrus Dashboard S3 Bucket names
+
+## [2.44.0] - 2025-05-07
+
+### Fixed
+
+- stac_server: set ENABLE_INGEST_ACTION_TRUNCATE on the ingest lambda rather than the api lambda
 
 ## [2.43.0] - 2025-04-30
 
