@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Added
 
+- Added outputs for Console UI and Cirrus Dashboard S3 Bucket names
+
 ### Changed
 
 ### Fixed
