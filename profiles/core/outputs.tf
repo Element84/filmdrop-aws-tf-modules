@@ -182,3 +182,11 @@ output "stac_server_lambda_iam_role_arn" {
 output "stac_server_api_gateway_id" {
   value = var.deploy_stac_server ? module.stac-server[0].stac_server_api_gateway_id : ""
 }
+
+output "console_ui_bucket_name" {
+  value = var.deploy_console_ui ? module.console-ui[0].console_ui_bucket_name : ""
+}
+
+output "cirrus_dashboard_bucket_name" {
+  value = var.deploy_cirrus_dashboard ? module.cirrus-dashboard[0].cirrus_dashboard_bucket_name : ""
+}
