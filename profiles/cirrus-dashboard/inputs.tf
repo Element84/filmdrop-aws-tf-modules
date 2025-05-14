@@ -34,9 +34,14 @@ variable "security_group_id" {
 variable "cirrus_dashboard_inputs" {
   description = "Inputs for cirrus dashboard FilmDrop deployment."
   type = object({
-    app_name             = string
-    domain_alias         = string
-    deploy_cloudfront    = bool
+    app_name          = string
+    domain_alias      = string
+    deploy_cloudfront = bool
+    custom_content_bucket = list(object({
+      create_content_website              = bool
+      content_website_bucket_name         = string
+      content_bucket_regional_domain_name = string
+    }))
     web_acl_id           = string
     version              = string
     cirrus_api_endpoint  = string
@@ -59,9 +64,14 @@ variable "cirrus_dashboard_inputs" {
     })
   })
   default = {
-    app_name             = "dashboard"
-    domain_alias         = ""
-    deploy_cloudfront    = true
+    app_name          = "dashboard"
+    domain_alias      = ""
+    deploy_cloudfront = true
+    custom_content_bucket = {
+      create_content_website              = true
+      content_website_bucket_name         = ""
+      content_bucket_regional_domain_name = ""
+    }
     web_acl_id           = ""
     version              = "v0.5.1"
     cirrus_api_endpoint  = ""

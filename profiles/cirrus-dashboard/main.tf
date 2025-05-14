@@ -6,7 +6,7 @@ module "cirrus-dashboard" {
   vpc_security_group_ids       = [var.security_group_id]
   cirrus_api_endpoint          = var.cirrus_dashboard_inputs.cirrus_api_endpoint
   metrics_api_endpoint         = var.cirrus_dashboard_inputs.metrics_api_endpoint
-  cirrus_dashboard_bucket_name = var.cirrus_dashboard_inputs.deploy_cloudfront ? module.cloudfront_s3_website[0].content_bucket_name : module.content_website[0].content_bucket
+  cirrus_dashboard_bucket_name = var.cirrus_dashboard_inputs.custom_content_bucket.create_content_website == false ? var.cirrus_dashboard_inputs.custom_content_bucket.content_website_bucket_name : var.cirrus_dashboard_inputs.deploy_cloudfront ? module.cloudfront_s3_website[0].content_bucket_name : module.content_website[0].content_bucket
   cirrus_dashboard_release_tag = var.cirrus_dashboard_inputs.version
 }
 
@@ -21,6 +21,7 @@ module "cloudfront_s3_website" {
 
   zone_id                      = var.domain_zone
   domain_alias                 = var.cirrus_dashboard_inputs.domain_alias
+  domain_name                  = var.cirrus_dashboard_inputs.custom_content_bucket.create_content_website == false ? var.cirrus_dashboard_inputs.custom_content_bucket.content_bucket_regional_domain_name : ""
   application_name             = var.cirrus_dashboard_inputs.app_name
   custom_error_response        = var.cirrus_dashboard_inputs.custom_error_response
   project_name                 = var.project_name
@@ -41,7 +42,7 @@ module "cloudfront_s3_website" {
 }
 
 module "content_website" {
-  count  = var.cirrus_dashboard_inputs.deploy_cloudfront == false ? 1 : 0
+  count  = var.cirrus_dashboard_inputs.custom_content_bucket.create_content_website == true && var.cirrus_dashboard_inputs.deploy_cloudfront == false ? 1 : 0
   source = "../../modules/cloudfront/content"
 
   origin_id = local.origin_id_prefix

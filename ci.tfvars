@@ -131,9 +131,14 @@ analytics_inputs = {
 }
 
 console_ui_inputs = {
-  app_name                = "console"
-  domain_alias            = ""
-  deploy_cloudfront       = false
+  app_name          = "console"
+  domain_alias      = ""
+  deploy_cloudfront = false
+  custom_content_bucket = {
+    create_content_website              = true
+    content_website_bucket_name         = ""
+    content_bucket_regional_domain_name = ""
+  }
   web_acl_id              = ""
   version                 = "v5.3.0"
   filmdrop_ui_config_file = "./profiles/console-ui/default-config/config.dev.json"
@@ -211,8 +216,13 @@ cirrus_dashboard_inputs = {
   app_name          = "dashboard"
   domain_alias      = ""
   deploy_cloudfront = false
-  web_acl_id        = ""
-  version           = "v0.5.1"
+  custom_content_bucket = {
+    create_content_website              = true
+    content_website_bucket_name         = ""
+    content_bucket_regional_domain_name = ""
+  }
+  web_acl_id = ""
+  version    = "v0.5.1"
   custom_error_response = [
     {
       error_caching_min_ttl = "10"

@@ -15,6 +15,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Removed
 
+## [2.46.0] - 2025-05-14
+
+### Added
+
+- Added capability to pass a custom S3 bucket for Console UI and Cirrus Dashboard S3
+
 ## [2.45.0] - 2025-05-12
 
 ### Added
