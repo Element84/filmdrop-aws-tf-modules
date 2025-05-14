@@ -37,11 +37,11 @@ variable "console_ui_inputs" {
     app_name          = string
     domain_alias      = string
     deploy_cloudfront = bool
-    custom_content_bucket = list(object({
+    custom_content_bucket = object({
       create_content_website              = bool
       content_website_bucket_name         = string
       content_bucket_regional_domain_name = string
-    }))
+    })
     web_acl_id = string
     custom_error_response = list(object({
       error_caching_min_ttl = string
