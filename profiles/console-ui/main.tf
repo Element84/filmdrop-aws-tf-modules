@@ -6,7 +6,7 @@ module "console-ui" {
   vpc_security_group_ids = [var.security_group_id]
 
   filmdrop_ui_release_tag = var.console_ui_inputs.version
-  console_ui_bucket_name  = var.console_ui_inputs.deploy_cloudfront ? module.cloudfront_s3_website[0].content_bucket_name : module.content_website[0].content_bucket
+  console_ui_bucket_name  = var.console_ui_inputs.deploy_s3_bucket == false ? var.console_ui_inputs.external_content_bucket.external_content_website_bucket_name : var.console_ui_inputs.deploy_cloudfront ? module.cloudfront_s3_website[0].content_bucket_name : module.content_website[0].content_bucket
 
   filmdrop_ui_config    = filebase64(var.console_ui_inputs.filmdrop_ui_config_file)
   filmdrop_ui_logo_file = var.console_ui_inputs.filmdrop_ui_logo_file
@@ -23,6 +23,7 @@ module "cloudfront_s3_website" {
 
   zone_id                      = var.domain_zone
   domain_alias                 = var.console_ui_inputs.domain_alias
+  domain_name                  = var.console_ui_inputs.deploy_s3_bucket == false ? var.console_ui_inputs.external_content_bucket.external_content_bucket_regional_domain_name : ""
   application_name             = var.console_ui_inputs.app_name
   custom_error_response        = var.console_ui_inputs.custom_error_response
   project_name                 = var.project_name
@@ -43,7 +44,7 @@ module "cloudfront_s3_website" {
 }
 
 module "content_website" {
-  count  = var.console_ui_inputs.deploy_cloudfront == false ? 1 : 0
+  count  = var.console_ui_inputs.deploy_s3_bucket == true && var.console_ui_inputs.deploy_cloudfront == false ? 1 : 0
   source = "../../modules/cloudfront/content"
 
   origin_id = local.origin_id_prefix

@@ -325,7 +325,12 @@ variable "console_ui_inputs" {
     app_name          = string
     domain_alias      = string
     deploy_cloudfront = bool
-    web_acl_id        = string
+    deploy_s3_bucket  = optional(bool)
+    external_content_bucket = optional(object({
+      external_content_website_bucket_name         = optional(string)
+      external_content_bucket_regional_domain_name = optional(string)
+    }))
+    web_acl_id = string
     custom_error_response = list(object({
       error_caching_min_ttl = string
       error_code            = string
@@ -351,7 +356,12 @@ variable "console_ui_inputs" {
     app_name          = "console"
     domain_alias      = ""
     deploy_cloudfront = true
-    web_acl_id        = ""
+    deploy_s3_bucket  = true
+    external_content_bucket = {
+      external_content_website_bucket_name         = ""
+      external_content_bucket_regional_domain_name = ""
+    }
+    web_acl_id = ""
     custom_error_response = [
       {
         error_caching_min_ttl = "10"
@@ -361,8 +371,8 @@ variable "console_ui_inputs" {
       }
     ]
     version                 = "v5.3.0"
-    filmdrop_ui_config_file = "../console-ui/default-config/config.dev.json"
-    filmdrop_ui_logo_file   = "../console-ui/default-config/logo.png"
+    filmdrop_ui_config_file = "./default-config/config.dev.json"
+    filmdrop_ui_logo_file   = "./default-config/logo.png"
     filmdrop_ui_logo        = "bm9uZQo=" # Base64: 'none'
     auth_function = {
       cf_function_name             = ""
@@ -482,9 +492,14 @@ variable "cirrus_inputs" {
 variable "cirrus_dashboard_inputs" {
   description = "Inputs for cirrus dashboard FilmDrop deployment."
   type = object({
-    app_name             = string
-    domain_alias         = string
-    deploy_cloudfront    = bool
+    app_name          = string
+    domain_alias      = string
+    deploy_cloudfront = bool
+    deploy_s3_bucket  = optional(bool)
+    external_content_bucket = optional(object({
+      external_content_website_bucket_name         = optional(string)
+      external_content_bucket_regional_domain_name = optional(string)
+    }))
     web_acl_id           = string
     version              = string
     cirrus_api_endpoint  = string
@@ -507,9 +522,14 @@ variable "cirrus_dashboard_inputs" {
     })
   })
   default = {
-    app_name             = "dashboard"
-    domain_alias         = ""
-    deploy_cloudfront    = true
+    app_name          = "dashboard"
+    domain_alias      = ""
+    deploy_cloudfront = true
+    deploy_s3_bucket  = true
+    external_content_bucket = {
+      external_content_website_bucket_name         = ""
+      external_content_bucket_regional_domain_name = ""
+    }
     web_acl_id           = ""
     version              = "v0.5.1"
     cirrus_api_endpoint  = ""
