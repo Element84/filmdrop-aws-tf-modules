@@ -37,10 +37,10 @@ variable "cirrus_dashboard_inputs" {
     app_name          = string
     domain_alias      = string
     deploy_cloudfront = bool
-    custom_content_bucket = object({
-      create_content_website              = bool
-      content_website_bucket_name         = string
-      content_bucket_regional_domain_name = string
+    external_content_bucket = object({
+      deploy_s3_bucket                             = bool
+      external_content_website_bucket_name         = string
+      external_content_bucket_regional_domain_name = string
     })
     web_acl_id           = string
     version              = string
@@ -67,10 +67,10 @@ variable "cirrus_dashboard_inputs" {
     app_name          = "dashboard"
     domain_alias      = ""
     deploy_cloudfront = true
-    custom_content_bucket = {
-      create_content_website              = true
-      content_website_bucket_name         = ""
-      content_bucket_regional_domain_name = ""
+    external_content_bucket = {
+      deploy_s3_bucket                             = true
+      external_content_website_bucket_name         = ""
+      external_content_bucket_regional_domain_name = ""
     }
     web_acl_id           = ""
     version              = "v0.5.1"
