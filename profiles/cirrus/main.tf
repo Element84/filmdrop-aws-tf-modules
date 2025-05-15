@@ -2,7 +2,7 @@ module "cirrus" {
   source = "../../modules/cirrus"
 
   # Namespace all cirrus resources via prefix
-  resource_prefix = lower(replace("fd-${var.project_name}-${var.environment}-cirrus", "_", "-"))
+  resource_prefix = lower(replace("fd-${local.cirrus_env}-cirrus", "_", "-"))
 
   project_name                                              = var.project_name
   environment                                               = var.environment
@@ -39,4 +39,8 @@ module "cirrus" {
   cirrus_task_definitions_variables                         = var.cirrus_inputs.task_definitions_variables
   cirrus_workflow_definitions_dir                           = var.cirrus_inputs.workflow_definitions_dir
   cirrus_workflow_definitions_variables                     = var.cirrus_inputs.workflow_definitions_variables
+}
+
+locals {
+  cirrus_env = lower(substr("${var.project_name}-${var.environment}", 0, 12))
 }
