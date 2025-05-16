@@ -7,5 +7,5 @@ output "titiler_mosaic_api_gateway_endpoint" {
 }
 
 output "titiler_mosaic_wafv2_web_acl_arn" {
-  value = var.is_private_endpoint ? "" : aws_wafv2_web_acl.titiler-mosaic-wafv2-web-acl.arn
+  value = var.is_private_endpoint ? "" : aws_wafv2_web_acl.titiler-mosaic-wafv2-web-acl[0].arn
 }
