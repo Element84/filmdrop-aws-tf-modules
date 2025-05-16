@@ -77,15 +77,18 @@ stac_server_inputs = {
 }
 
 titiler_inputs = {
-  app_name                       = "titiler"
-  domain_alias                   = ""
-  deploy_cloudfront              = false
-  version                        = "v0.14.0-1.0.5"
-  authorized_s3_arns             = []
-  mosaic_titiler_waf_allowed_url = "test.filmdrop.io"
-  mosaic_titiler_host_header     = ""
-  mosaic_tile_timeout            = 30
-  web_acl_id                     = ""
+  app_name                                  = "titiler"
+  domain_alias                              = ""
+  deploy_cloudfront                         = false
+  version                                   = "v0.14.0-1.0.5"
+  authorized_s3_arns                        = []
+  mosaic_titiler_waf_allowed_url            = "test.filmdrop.io"
+  mosaic_titiler_host_header                = ""
+  mosaic_tile_timeout                       = 30
+  web_acl_id                                = ""
+  is_private_endpoint                       = false
+  api_method_authorization_type             = "NONE"
+  private_api_additional_security_group_ids = null
   auth_function = {
     cf_function_name             = ""
     cf_function_runtime          = "cloudfront-js-2.0"
