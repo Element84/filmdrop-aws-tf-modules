@@ -127,18 +127,18 @@ resource "aws_api_gateway_method" "titiler_api_gateway_proxy_resource_method" {
   authorization = var.api_method_authorization_type
 }
 
-resource "aws_api_gateway_method" "stac_root_options_method" {
+resource "aws_api_gateway_method" "titiler_root_options_method" {
   count         = var.is_private_endpoint ? 1 : 0
   rest_api_id   = aws_api_gateway_rest_api.titiler_api_gateway[0].id
   resource_id   = aws_api_gateway_rest_api.titiler_api_gateway[0].root_resource_id
   http_method   = "OPTIONS"
   authorization = var.api_method_authorization_type
 }
-resource "aws_api_gateway_method_response" "stac_root_options_200" {
+resource "aws_api_gateway_method_response" "titiler_root_options_200" {
   count       = var.is_private_endpoint ? 1 : 0
   rest_api_id = aws_api_gateway_rest_api.titiler_api_gateway[0].id
   resource_id = aws_api_gateway_rest_api.titiler_api_gateway[0].root_resource_id
-  http_method = aws_api_gateway_method.stac_root_options_method[0].http_method
+  http_method = aws_api_gateway_method.titiler_root_options_method[0].http_method
   status_code = "200"
 
   response_parameters = {
@@ -148,20 +148,20 @@ resource "aws_api_gateway_method_response" "stac_root_options_200" {
   }
 }
 
-resource "aws_api_gateway_integration" "stac_root_options_integration" {
+resource "aws_api_gateway_integration" "titiler_root_options_integration" {
   count       = var.is_private_endpoint ? 1 : 0
   rest_api_id = aws_api_gateway_rest_api.titiler_api_gateway[0].id
   resource_id = aws_api_gateway_rest_api.titiler_api_gateway[0].root_resource_id
-  http_method = aws_api_gateway_method.stac_root_options_method[0].http_method
+  http_method = aws_api_gateway_method.titiler_root_options_method[0].http_method
   type        = "MOCK"
 }
 
-resource "aws_api_gateway_integration_response" "stac_root_options_integration_response" {
+resource "aws_api_gateway_integration_response" "titiler_root_options_integration_response" {
   count       = var.is_private_endpoint ? 1 : 0
   rest_api_id = aws_api_gateway_rest_api.titiler_api_gateway[0].id
   resource_id = aws_api_gateway_rest_api.titiler_api_gateway[0].root_resource_id
-  http_method = aws_api_gateway_method.stac_root_options_method[0].http_method
-  status_code = aws_api_gateway_method_response.stac_root_options_200[0].status_code
+  http_method = aws_api_gateway_method.titiler_root_options_method[0].http_method
+  status_code = aws_api_gateway_method_response.titiler_root_options_200[0].status_code
   response_parameters = {
     "method.response.header.Access-Control-Allow-Headers" = "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'",
     "method.response.header.Access-Control-Allow-Methods" = "'GET,OPTIONS,POST,PUT'",
@@ -169,18 +169,18 @@ resource "aws_api_gateway_integration_response" "stac_root_options_integration_r
   }
 }
 
-resource "aws_api_gateway_method" "stac_options_method" {
+resource "aws_api_gateway_method" "titiler_options_method" {
   count         = var.is_private_endpoint ? 1 : 0
   rest_api_id   = aws_api_gateway_rest_api.titiler_api_gateway[0].id
   resource_id   = aws_api_gateway_resource.titiler_api_gateway_proxy_resource[0].id
   http_method   = "OPTIONS"
   authorization = var.api_method_authorization_type
 }
-resource "aws_api_gateway_method_response" "stac_options_200" {
+resource "aws_api_gateway_method_response" "titiler_options_200" {
   count       = var.is_private_endpoint ? 1 : 0
   rest_api_id = aws_api_gateway_rest_api.titiler_api_gateway[0].id
   resource_id = aws_api_gateway_resource.titiler_api_gateway_proxy_resource[0].id
-  http_method = aws_api_gateway_method.stac_options_method[0].http_method
+  http_method = aws_api_gateway_method.titiler_options_method[0].http_method
   status_code = "200"
 
   response_parameters = {
@@ -190,20 +190,20 @@ resource "aws_api_gateway_method_response" "stac_options_200" {
   }
 }
 
-resource "aws_api_gateway_integration" "stac_options_integration" {
+resource "aws_api_gateway_integration" "titiler_options_integration" {
   count       = var.is_private_endpoint ? 1 : 0
   rest_api_id = aws_api_gateway_rest_api.titiler_api_gateway[0].id
   resource_id = aws_api_gateway_resource.titiler_api_gateway_proxy_resource[0].id
-  http_method = aws_api_gateway_method.stac_options_method[0].http_method
+  http_method = aws_api_gateway_method.titiler_options_method[0].http_method
   type        = "MOCK"
 }
 
-resource "aws_api_gateway_integration_response" "stac_options_integration_response" {
+resource "aws_api_gateway_integration_response" "titiler_options_integration_response" {
   count       = var.is_private_endpoint ? 1 : 0
   rest_api_id = aws_api_gateway_rest_api.titiler_api_gateway[0].id
   resource_id = aws_api_gateway_resource.titiler_api_gateway_proxy_resource[0].id
-  http_method = aws_api_gateway_method.stac_options_method[0].http_method
-  status_code = aws_api_gateway_method_response.stac_options_200[0].status_code
+  http_method = aws_api_gateway_method.titiler_options_method[0].http_method
+  status_code = aws_api_gateway_method_response.titiler_options_200[0].status_code
   response_parameters = {
     "method.response.header.Access-Control-Allow-Headers" = "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'",
     "method.response.header.Access-Control-Allow-Methods" = "'GET,OPTIONS,POST,PUT'",
@@ -261,7 +261,7 @@ resource "null_resource" "enable_access_logs" {
 export AWS_DEFAULT_REGION=${data.aws_region.current.name}
 export AWS_REGION=${data.aws_region.current.name}
 
-echo "Update Access Logging on FilmDrop Stac Server API."
+echo "Update Access Logging on FilmDrop TiTiler API."
 aws apigateway update-stage --rest-api-id ${aws_api_gateway_deployment.titiler_api_gateway[0].rest_api_id} --stage-name ${aws_api_gateway_deployment.titiler_api_gateway[0].stage_name} --patch-operations "[{\"op\": \"replace\",\"path\": \"/accessLogSettings/destinationArn\",\"value\": \"${aws_cloudwatch_log_group.titiler_api_gateway_logs_group[0].arn}\"},{\"op\": \"replace\",\"path\": \"/accessLogSettings/format\",\"value\": \"${local.access_log_format}\"}]"
 
 EOF
