@@ -90,6 +90,7 @@ titiler_inputs = {
   web_acl_id                                = ""
   is_private_endpoint                       = false
   api_method_authorization_type             = "NONE"
+  private_certificate_arn                   = ""
   private_api_additional_security_group_ids = null
   auth_function = {
     cf_function_name             = ""

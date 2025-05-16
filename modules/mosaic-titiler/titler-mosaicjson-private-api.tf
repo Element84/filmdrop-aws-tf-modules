@@ -278,12 +278,44 @@ resource "aws_lambda_permission" "titiler_api_gateway_lambda_permission_root_res
   source_arn = "arn:aws:execute-api:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:${aws_api_gateway_rest_api.titiler_api_gateway[0].id}/*/*"
 }
 
-resource "aws_lambda_permission" "titiler_api_gateway_lambda_permission_proxy_resource" {
-  count         = var.is_private_endpoint ? 1 : 0
-  statement_id  = "AllowExecutionFromAPIGatewayProxyResource"
-  action        = "lambda:InvokeFunction"
-  function_name = aws_lambda_function.titiler-mosaic-lambda.arn
-  principal     = "apigateway.amazonaws.com"
+resource "aws_api_gateway_domain_name" "titiler_api_gateway_domain_name" {
+  count           = var.is_private_endpoint == true && var.domain_alias != "" && var.private_certificate_arn != "" ? 1 : 0
+  certificate_arn = var.private_certificate_arn
+  domain_name     = var.domain_alias
 
-  source_arn = "arn:aws:execute-api:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:${aws_api_gateway_rest_api.titiler_api_gateway[0].id}/*/*${aws_api_gateway_resource.titiler_api_gateway_proxy_resource[0].path}"
+  endpoint_configuration {
+    types = ["PRIVATE"]
+  }
+
+  policy = <<EOF
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Principal": "*",
+      "Action": "execute-api:Invoke",
+      "Resource": "arn:aws:execute-api:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:/domainnames/*"
+    },
+    {
+      "Effect": "Deny",
+      "Principal": "*",
+      "Action": "execute-api:Invoke",
+      "Resource": "arn:aws:execute-api:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:/domainnames/*",
+      "Condition": {
+        "StringNotEquals": {
+          "aws:SourceVpce": "${aws_vpc_endpoint.titiler_api_gateway_private[0].id}"
+        }
+      }
+    }
+  ]
+}
+EOF
+}
+
+resource "aws_api_gateway_domain_name_access_association" "titiler_api_gateway_domain_name_access_association" {
+  count                          = var.is_private_endpoint == true && var.domain_alias != "" && var.private_certificate_arn != "" ? 1 : 0
+  access_association_source      = aws_vpc_endpoint.titiler_api_gateway_private[0].id
+  access_association_source_type = "VPCE"
+  domain_name_arn                = aws_api_gateway_domain_name.titiler_api_gateway_domain_name[0].domain_name_arn
 }
