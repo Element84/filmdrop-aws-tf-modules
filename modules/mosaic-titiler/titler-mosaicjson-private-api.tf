@@ -317,5 +317,5 @@ resource "aws_api_gateway_domain_name_access_association" "titiler_api_gateway_d
   count                          = var.is_private_endpoint == true && var.domain_alias != "" && var.private_certificate_arn != "" ? 1 : 0
   access_association_source      = aws_vpc_endpoint.titiler_api_gateway_private[0].id
   access_association_source_type = "VPCE"
-  domain_name_arn                = aws_api_gateway_domain_name.titiler_api_gateway_domain_name[0].domain_name_arn
+  domain_name_arn                = aws_api_gateway_domain_name.titiler_api_gateway_domain_name[0].arn
 }
