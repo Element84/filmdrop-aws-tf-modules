@@ -441,7 +441,7 @@ resource "aws_api_gateway_domain_name_access_association" "cirrus_api_gateway_do
 
 resource "aws_api_gateway_base_path_mapping" "cirrus_api_gateway_domain_mapping" {
   count       = local.is_private_endpoint == true && var.domain_alias != "" && var.private_certificate_arn != "" ? 1 : 0
-  domain_name = aws_api_gateway_domain_name.cirrus_api_gateway_domain_name[0].domain_name_id
+  domain_name = var.domain_alias
   api_id      = aws_api_gateway_rest_api.cirrus_api_gateway.id
   stage_name  = var.cirrus_api_stage
 }
