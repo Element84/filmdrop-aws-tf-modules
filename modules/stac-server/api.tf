@@ -371,7 +371,7 @@ resource "aws_api_gateway_domain_name_access_association" "titiler_api_gateway_d
 
 resource "aws_api_gateway_base_path_mapping" "stac_server_api_gateway_domain_mapping" {
   count       = local.is_private_endpoint == true && var.domain_alias != "" && var.private_certificate_arn != "" ? 1 : 0
-  domain_name = aws_api_gateway_domain_name.stac_server_api_gateway_domain_name[0].id
+  domain_name = aws_api_gateway_domain_name.stac_server_api_gateway_domain_name[0].domain_name_id
   api_id      = aws_api_gateway_rest_api.stac_server_api_gateway.id
   stage_name  = var.stac_api_stage
 }
