@@ -106,6 +106,7 @@ variable "stac_server_inputs" {
     api_rest_type                               = string
     api_method_authorization_type               = optional(string)
     private_api_additional_security_group_ids   = optional(list(string))
+    private_certificate_arn                     = optional(string)
     api_lambda = optional(object({
       handler         = optional(string)
       memory_mb       = optional(number)
@@ -185,6 +186,7 @@ variable "stac_server_inputs" {
     api_lambda                                  = null
     ingest_lambda                               = null
     pre_hook_lambda                             = null
+    private_certificate_arn                     = ""
     auth_function = {
       cf_function_name             = ""
       cf_function_runtime          = "cloudfront-js-2.0"
@@ -214,15 +216,19 @@ variable "stac_server_inputs" {
 variable "titiler_inputs" {
   description = "Inputs for titiler FilmDrop deployment."
   type = object({
-    app_name                       = string
-    domain_alias                   = string
-    deploy_cloudfront              = bool
-    version                        = string
-    authorized_s3_arns             = list(string)
-    mosaic_titiler_waf_allowed_url = string
-    mosaic_titiler_host_header     = string
-    mosaic_tile_timeout            = number
-    web_acl_id                     = string
+    app_name                                  = string
+    domain_alias                              = string
+    deploy_cloudfront                         = bool
+    version                                   = string
+    authorized_s3_arns                        = list(string)
+    mosaic_titiler_waf_allowed_url            = string
+    mosaic_titiler_host_header                = string
+    mosaic_tile_timeout                       = number
+    web_acl_id                                = string
+    is_private_endpoint                       = optional(bool)
+    api_method_authorization_type             = optional(string)
+    private_certificate_arn                   = optional(string)
+    private_api_additional_security_group_ids = optional(list(string))
     auth_function = object({
       cf_function_name             = string
       cf_function_runtime          = string
@@ -235,15 +241,19 @@ variable "titiler_inputs" {
     })
   })
   default = {
-    app_name                       = "titiler"
-    domain_alias                   = ""
-    deploy_cloudfront              = true
-    version                        = "v0.14.0-1.0.5"
-    authorized_s3_arns             = []
-    mosaic_titiler_waf_allowed_url = ""
-    mosaic_titiler_host_header     = ""
-    mosaic_tile_timeout            = 30
-    web_acl_id                     = ""
+    app_name                                  = "titiler"
+    domain_alias                              = ""
+    deploy_cloudfront                         = true
+    version                                   = "v0.14.0-1.0.5"
+    authorized_s3_arns                        = []
+    mosaic_titiler_waf_allowed_url            = ""
+    mosaic_titiler_host_header                = ""
+    mosaic_tile_timeout                       = 30
+    web_acl_id                                = ""
+    is_private_endpoint                       = false
+    api_method_authorization_type             = "NONE"
+    private_certificate_arn                   = ""
+    private_api_additional_security_group_ids = null
     auth_function = {
       cf_function_name             = ""
       cf_function_runtime          = "cloudfront-js-2.0"
@@ -388,7 +398,7 @@ variable "console_ui_inputs" {
 }
 
 variable "cirrus_inputs" {
-  description = "Inputs for FilmDrop Cirrus deployment."
+  description = "Inputs for FilmDrop Cirrus deployment"
   type = object({
     data_bucket                               = string
     payload_bucket                            = string
@@ -396,6 +406,8 @@ variable "cirrus_inputs" {
     api_rest_type                             = string
     private_api_additional_security_group_ids = optional(list(string))
     deploy_alarms                             = bool
+    private_certificate_arn                   = optional(string)
+    domain_alias                              = optional(string)
     custom_alarms = object({
       warning  = map(any)
       critical = map(any)
@@ -445,6 +457,8 @@ variable "cirrus_inputs" {
     api_rest_type                             = "EDGE"
     private_api_additional_security_group_ids = null
     deploy_alarms                             = true
+    private_certificate_arn                   = ""
+    domain_alias                              = ""
     custom_alarms = {
       warning  = {}
       critical = {}

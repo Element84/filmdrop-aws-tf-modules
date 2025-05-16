@@ -11,11 +11,20 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Changed
 
-- Enforced character limit on cirrus `resource_prefix`
-
 ### Fixed
 
 ### Removed
+
+## [2.47.0] - 2025-05-16
+
+### Added
+
+- Support for PRIVATE-type TiTiler API Gateways
+- Added Custom Domain Name support for TiTiler, Stac and Cirrus Private API Gateways
+
+### Changed
+
+- Enforced character limit on cirrus `resource_prefix`
 
 ## [2.46.0] - 2025-05-15
 

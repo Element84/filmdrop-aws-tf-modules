@@ -40,6 +40,8 @@ variable "cirrus_inputs" {
     api_rest_type                             = string
     private_api_additional_security_group_ids = optional(list(string))
     deploy_alarms                             = bool
+    private_certificate_arn                   = optional(string)
+    domain_alias                              = optional(string)
     custom_alarms = object({
       warning  = map(any)
       critical = map(any)
@@ -89,6 +91,8 @@ variable "cirrus_inputs" {
     api_rest_type                             = "EDGE"
     private_api_additional_security_group_ids = null
     deploy_alarms                             = true
+    private_certificate_arn                   = ""
+    domain_alias                              = ""
     custom_alarms = {
       warning  = {}
       critical = {}

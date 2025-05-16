@@ -69,6 +69,7 @@ variable "stac_server_inputs" {
     api_rest_type                               = string
     api_method_authorization_type               = optional(string)
     private_api_additional_security_group_ids   = optional(list(string))
+    private_certificate_arn                     = optional(string)
     api_lambda = optional(object({
       handler         = optional(string)
       memory_mb       = optional(number)
@@ -148,6 +149,7 @@ variable "stac_server_inputs" {
     api_lambda                                  = null
     ingest_lambda                               = null
     pre_hook_lambda                             = null
+    private_certificate_arn                     = ""
     auth_function = {
       cf_function_name             = ""
       cf_function_runtime          = "cloudfront-js-2.0"

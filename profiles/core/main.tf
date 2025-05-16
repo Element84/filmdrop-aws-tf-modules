@@ -75,6 +75,7 @@ module "titiler" {
   domain_zone            = var.domain_zone
   private_subnet_ids     = module.base_infra.private_subnet_ids
   security_group_id      = module.base_infra.security_group_id
+  vpc_id                 = module.base_infra.vpc_id
 }
 
 module "analytics" {

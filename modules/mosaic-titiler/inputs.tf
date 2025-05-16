@@ -148,3 +148,55 @@ variable "mosaic_tile_timeout" {
   type        = number
   default     = 30
 }
+
+variable "titiler_api_stage_description" {
+  description = "TiTiler API stage description"
+  type        = string
+  default     = ""
+}
+
+variable "vpc_id" {
+  description = "FilmDrop VPC ID"
+  type        = string
+  default     = ""
+}
+
+variable "private_api_additional_security_group_ids" {
+  description = <<-DESCRIPTION
+  Optional list of security group IDs that'll be applied to the VPC interface
+  endpoints of a PRIVATE-type TiTiler API Gateway. These security groups are
+  in addition to the security groups that allow traffic from the private subnet
+  CIDR blocks. Only applicable when `var.is_private_endpoint == true`.
+  DESCRIPTION
+  type        = list(string)
+  default     = null
+}
+
+variable "api_method_authorization_type" {
+  description = "STAC API Gateway method authorization type"
+  type        = string
+  default     = "NONE"
+
+  validation {
+    condition     = contains(["NONE", "CUSTOM", "AWS_IAM", "COGNITO_USER_POOLS"], var.api_method_authorization_type)
+    error_message = "STAC API method authorization type must be one of: NONE, CUSTOM, AWS_IAM, or COGNITO_USER_POOLS."
+  }
+}
+
+variable "is_private_endpoint" {
+  description = "Determines if TiTiler is a Private or Public endpoint"
+  type        = bool
+  default     = false
+}
+
+variable "domain_alias" {
+  description = "Custom domain alias for private API Gateway endpoint"
+  type        = string
+  default     = ""
+}
+
+variable "private_certificate_arn" {
+  description = "Private Certificate ARN for custom domain alias of private API Gateway endpoint"
+  type        = string
+  default     = ""
+}

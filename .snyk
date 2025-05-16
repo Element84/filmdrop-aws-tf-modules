@@ -22,6 +22,9 @@ ignore:
     - './profiles/core/../cirrus/../../modules/cirrus/builtin-functions/api.tf > *':
         reason: Open API - no auth required
         created: 2024-09-12T14:35:23.783Z
+    - './profiles/core/../titiler/../../modules/mosaic-titiler/titler-mosaicjson-private-api.tf > *':
+        reason: Open API - no auth required
+        created: 2025-05-16T14:35:23.783Z
   SNYK-CC-00185:
     - './profiles/core/../titiler/../../modules/mosaic-titiler/titler-mosaicjson.tf > *':
         reason: Open API - no auth required
