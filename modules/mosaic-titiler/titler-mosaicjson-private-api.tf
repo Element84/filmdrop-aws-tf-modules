@@ -319,3 +319,10 @@ resource "aws_api_gateway_domain_name_access_association" "titiler_api_gateway_d
   access_association_source_type = "VPCE"
   domain_name_arn                = aws_api_gateway_domain_name.titiler_api_gateway_domain_name[0].arn
 }
+
+resource "aws_api_gateway_base_path_mapping" "titiler_api_gateway_domain_mapping" {
+  count       = var.is_private_endpoint == true && var.domain_alias != "" && var.private_certificate_arn != "" ? 1 : 0
+  domain_name = aws_api_gateway_domain_name.titiler_api_gateway_domain_name[0].id
+  api_id      = aws_api_gateway_rest_api.titiler_api_gateway[0].id
+  stage_name  = var.environment
+}

@@ -447,3 +447,15 @@ variable "cors_headers" {
   type        = string
   default     = ""
 }
+
+variable "domain_alias" {
+  description = "Custom domain alias for private API Gateway endpoint"
+  type        = string
+  default     = ""
+}
+
+variable "private_certificate_arn" {
+  description = "Private Certificate ARN for custom domain alias of private API Gateway endpoint"
+  type        = string
+  default     = ""
+}

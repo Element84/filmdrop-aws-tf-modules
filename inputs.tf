@@ -106,6 +106,7 @@ variable "stac_server_inputs" {
     api_rest_type                               = string
     api_method_authorization_type               = optional(string)
     private_api_additional_security_group_ids   = optional(list(string))
+    private_certificate_arn                     = optional(string)
     api_lambda = optional(object({
       handler         = optional(string)
       memory_mb       = optional(number)
@@ -185,6 +186,7 @@ variable "stac_server_inputs" {
     api_lambda                                  = null
     ingest_lambda                               = null
     pre_hook_lambda                             = null
+    private_certificate_arn                     = ""
     auth_function = {
       cf_function_name             = ""
       cf_function_runtime          = "cloudfront-js-2.0"
@@ -396,7 +398,7 @@ variable "console_ui_inputs" {
 }
 
 variable "cirrus_inputs" {
-  description = "Inputs for FilmDrop Cirrus deployment."
+  description = "Inputs for FilmDrop Cirrus deployment"
   type = object({
     data_bucket                               = string
     payload_bucket                            = string
@@ -404,6 +406,8 @@ variable "cirrus_inputs" {
     api_rest_type                             = string
     private_api_additional_security_group_ids = optional(list(string))
     deploy_alarms                             = bool
+    private_certificate_arn                   = optional(string)
+    domain_alias                              = optional(string)
     custom_alarms = object({
       warning  = map(any)
       critical = map(any)
@@ -438,11 +442,13 @@ variable "cirrus_inputs" {
       timeout = number
       memory  = number
     })
-    task_batch_compute_definitions_dir  = optional(string)
-    task_definitions_dir                = optional(string)
-    task_definitions_variables          = optional(map(map(string)))
-    workflow_definitions_dir            = optional(string)
-    cirrus_cli_iam_role_trust_principal = optional(list(string))
+    task_batch_compute_definitions_dir       = optional(string)
+    task_batch_compute_definitions_variables = optional(map(map(string)))
+    task_definitions_dir                     = optional(string)
+    task_definitions_variables               = optional(map(map(string)))
+    workflow_definitions_dir                 = optional(string)
+    workflow_definitions_variables           = optional(map(map(string)))
+    cirrus_cli_iam_role_trust_principal      = optional(list(string))
   })
   default = {
     data_bucket                               = "cirrus-data-bucket-name"
@@ -451,6 +457,8 @@ variable "cirrus_inputs" {
     api_rest_type                             = "EDGE"
     private_api_additional_security_group_ids = null
     deploy_alarms                             = true
+    private_certificate_arn                   = ""
+    domain_alias                              = ""
     custom_alarms = {
       warning  = {}
       critical = {}
