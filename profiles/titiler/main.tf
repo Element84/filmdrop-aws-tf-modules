@@ -17,7 +17,7 @@ module "titiler" {
   vpc_security_group_ids                    = [var.security_group_id]
   private_api_additional_security_group_ids = var.titiler_inputs.private_api_additional_security_group_ids
   api_method_authorization_type             = var.titiler_inputs.api_method_authorization_type
-  is_private_endpoint                       = var.titiler_inputs.api_method_authorization_type
+  is_private_endpoint                       = var.titiler_inputs.is_private_endpoint
 }
 
 module "cloudfront_api_gateway_endpoint" {
