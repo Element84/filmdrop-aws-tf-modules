@@ -468,6 +468,7 @@ variable "warning_sns_topic_arn" {
 variable "critical_sns_topic_arn" {
   description = "SNS topic to be used by all stac-server `critical` alarms"
   type        = string
+}
 
 variable "domain_alias" {
   description = "Custom domain alias for private API Gateway endpoint"
