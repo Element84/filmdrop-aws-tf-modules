@@ -40,4 +40,6 @@ module "builtin_functions" {
   warning_sns_topic_arn                            = var.warning_sns_topic_arn
   critical_sns_topic_arn                           = var.critical_sns_topic_arn
   deploy_alarms                                    = var.deploy_alarms
+  domain_alias                                     = var.domain_alias
+  private_certificate_arn                          = var.private_certificate_arn
 }

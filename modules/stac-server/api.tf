@@ -29,7 +29,6 @@ resource "aws_lambda_function" "stac_server_api" {
       )
       ENABLE_TRANSACTIONS_EXTENSION = var.enable_transactions_extension
       ENABLE_COLLECTIONS_AUTHX      = var.enable_collections_authx
-      ENABLE_INGEST_ACTION_TRUNCATE = var.enable_ingest_action_truncate
       STAC_API_ROOTPATH = (
         var.stac_api_rootpath != null
         ? var.stac_api_rootpath
@@ -326,4 +325,54 @@ resource "aws_lambda_permission" "stac_server_api_gateway_lambda_permission_prox
   principal     = "apigateway.amazonaws.com"
 
   source_arn = "arn:aws:execute-api:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:${aws_api_gateway_rest_api.stac_server_api_gateway.id}/*/*${aws_api_gateway_resource.stac_server_api_gateway_proxy_resource.path}"
+}
+
+resource "aws_api_gateway_domain_name" "stac_server_api_gateway_domain_name" {
+  count           = local.is_private_endpoint == true && var.domain_alias != "" && var.private_certificate_arn != "" ? 1 : 0
+  certificate_arn = var.private_certificate_arn
+  domain_name     = var.domain_alias
+
+  endpoint_configuration {
+    types = ["PRIVATE"]
+  }
+
+  policy = <<EOF
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Principal": "*",
+      "Action": "execute-api:Invoke",
+      "Resource": "arn:aws:execute-api:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:/domainnames/*"
+    },
+    {
+      "Effect": "Deny",
+      "Principal": "*",
+      "Action": "execute-api:Invoke",
+      "Resource": "arn:aws:execute-api:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:/domainnames/*",
+      "Condition": {
+        "StringNotEquals": {
+          "aws:SourceVpce": "${aws_vpc_endpoint.stac_server_api_gateway_private[0].id}"
+        }
+      }
+    }
+  ]
+}
+EOF
+}
+
+resource "aws_api_gateway_domain_name_access_association" "titiler_api_gateway_domain_name_access_association" {
+  count                          = local.is_private_endpoint == true && var.domain_alias != "" && var.private_certificate_arn != "" ? 1 : 0
+  access_association_source      = aws_vpc_endpoint.stac_server_api_gateway_private[0].id
+  access_association_source_type = "VPCE"
+  domain_name_arn                = aws_api_gateway_domain_name.stac_server_api_gateway_domain_name[0].arn
+}
+
+resource "aws_api_gateway_base_path_mapping" "stac_server_api_gateway_domain_mapping" {
+  count          = local.is_private_endpoint == true && var.domain_alias != "" && var.private_certificate_arn != "" ? 1 : 0
+  domain_name    = aws_api_gateway_domain_name.stac_server_api_gateway_domain_name[0].domain_name
+  domain_name_id = aws_api_gateway_domain_name.stac_server_api_gateway_domain_name[0].domain_name_id
+  api_id         = aws_api_gateway_rest_api.stac_server_api_gateway.id
+  stage_name     = aws_api_gateway_deployment.stac_server_api_gateway.stage_name
 }

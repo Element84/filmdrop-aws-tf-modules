@@ -90,20 +90,23 @@ resource "aws_lambda_function" "titiler-mosaic-lambda" {
 }
 
 resource "aws_apigatewayv2_api" "titiler-mosaic-api-gateway" {
+  count         = var.is_private_endpoint ? 0 : 1
   name          = "${var.project_name}-${var.environment}-titiler-mosaic"
   protocol_type = "HTTP"
   target        = aws_lambda_function.titiler-mosaic-lambda.arn
 }
 
 resource "aws_lambda_permission" "titiler-mosaic-api-gateway_permission" {
+  count         = var.is_private_endpoint ? 0 : 1
   action        = "lambda:InvokeFunction"
   function_name = aws_lambda_function.titiler-mosaic-lambda.arn
   principal     = "apigateway.amazonaws.com"
-  source_arn    = "${aws_apigatewayv2_api.titiler-mosaic-api-gateway.execution_arn}/*/*"
+  source_arn    = "${aws_apigatewayv2_api.titiler-mosaic-api-gateway[0].execution_arn}/*/*"
 }
 
 resource "aws_apigatewayv2_integration" "titiler-mosaic-api-gateway_integration" {
-  api_id                 = aws_apigatewayv2_api.titiler-mosaic-api-gateway.id
+  count                  = var.is_private_endpoint ? 0 : 1
+  api_id                 = aws_apigatewayv2_api.titiler-mosaic-api-gateway[0].id
   integration_type       = "AWS_PROXY"
   integration_uri        = aws_lambda_function.titiler-mosaic-lambda.invoke_arn
   payload_format_version = "2.0"
@@ -132,6 +135,7 @@ resource "aws_dynamodb_table" "titiler-mosaic-dynamodb-table" {
 }
 
 resource "aws_wafv2_web_acl" "titiler-mosaic-wafv2-web-acl" {
+  count       = var.is_private_endpoint ? 0 : 1
   name        = "${var.project_name}-${var.environment}-mosaic"
   description = "WAF rules for ${var.project_name}-${var.environment} mosaic titiler"
   scope       = "CLOUDFRONT"

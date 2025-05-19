@@ -33,6 +33,8 @@ module "stac-server" {
   authorized_s3_arns                          = var.stac_server_inputs.authorized_s3_arns
   deploy_stac_server_opensearch_serverless    = var.deploy_stac_server_opensearch_serverless
   deploy_stac_server_outside_vpc              = var.deploy_stac_server_outside_vpc
+  private_certificate_arn                     = var.stac_server_inputs.private_certificate_arn
+  domain_alias                                = var.stac_server_inputs.domain_alias
 
   # CloudFront or a custom domain implies the rootpath is simply "/"
   stac_api_rootpath = var.stac_server_inputs.deploy_cloudfront || var.stac_server_inputs.domain_alias != "" ? "" : "/${var.environment}"

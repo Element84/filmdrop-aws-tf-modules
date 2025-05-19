@@ -37,7 +37,12 @@ variable "console_ui_inputs" {
     app_name          = string
     domain_alias      = string
     deploy_cloudfront = bool
-    web_acl_id        = string
+    deploy_s3_bucket  = optional(bool)
+    external_content_bucket = optional(object({
+      external_content_website_bucket_name         = optional(string)
+      external_content_bucket_regional_domain_name = optional(string)
+    }))
+    web_acl_id = string
     custom_error_response = list(object({
       error_caching_min_ttl = string
       error_code            = string
@@ -63,7 +68,12 @@ variable "console_ui_inputs" {
     app_name          = "console"
     domain_alias      = ""
     deploy_cloudfront = true
-    web_acl_id        = ""
+    deploy_s3_bucket  = true
+    external_content_bucket = {
+      external_content_website_bucket_name         = ""
+      external_content_bucket_regional_domain_name = ""
+    }
+    web_acl_id = ""
     custom_error_response = [
       {
         error_caching_min_ttl = "10"

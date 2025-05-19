@@ -181,3 +181,11 @@ output "stac_server_lambda_iam_role_arn" {
 output "stac_server_api_gateway_id" {
   value = module.filmdrop.stac_server_api_gateway_id
 }
+
+output "console_ui_bucket_name" {
+  value = module.filmdrop.console_ui_bucket_name
+}
+
+output "cirrus_dashboard_bucket_name" {
+  value = module.filmdrop.cirrus_dashboard_bucket_name
+}

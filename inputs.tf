@@ -106,6 +106,7 @@ variable "stac_server_inputs" {
     api_rest_type                               = string
     api_method_authorization_type               = optional(string)
     private_api_additional_security_group_ids   = optional(list(string))
+    private_certificate_arn                     = optional(string)
     api_lambda = optional(object({
       handler         = optional(string)
       memory_mb       = optional(number)
@@ -185,6 +186,7 @@ variable "stac_server_inputs" {
     api_lambda                                  = null
     ingest_lambda                               = null
     pre_hook_lambda                             = null
+    private_certificate_arn                     = ""
     auth_function = {
       cf_function_name             = ""
       cf_function_runtime          = "cloudfront-js-2.0"
@@ -214,15 +216,19 @@ variable "stac_server_inputs" {
 variable "titiler_inputs" {
   description = "Inputs for titiler FilmDrop deployment."
   type = object({
-    app_name                       = string
-    domain_alias                   = string
-    deploy_cloudfront              = bool
-    version                        = string
-    authorized_s3_arns             = list(string)
-    mosaic_titiler_waf_allowed_url = string
-    mosaic_titiler_host_header     = string
-    mosaic_tile_timeout            = number
-    web_acl_id                     = string
+    app_name                                  = string
+    domain_alias                              = string
+    deploy_cloudfront                         = bool
+    version                                   = string
+    authorized_s3_arns                        = list(string)
+    mosaic_titiler_waf_allowed_url            = string
+    mosaic_titiler_host_header                = string
+    mosaic_tile_timeout                       = number
+    web_acl_id                                = string
+    is_private_endpoint                       = optional(bool)
+    api_method_authorization_type             = optional(string)
+    private_certificate_arn                   = optional(string)
+    private_api_additional_security_group_ids = optional(list(string))
     auth_function = object({
       cf_function_name             = string
       cf_function_runtime          = string
@@ -235,15 +241,19 @@ variable "titiler_inputs" {
     })
   })
   default = {
-    app_name                       = "titiler"
-    domain_alias                   = ""
-    deploy_cloudfront              = true
-    version                        = "v0.14.0-1.0.5"
-    authorized_s3_arns             = []
-    mosaic_titiler_waf_allowed_url = ""
-    mosaic_titiler_host_header     = ""
-    mosaic_tile_timeout            = 30
-    web_acl_id                     = ""
+    app_name                                  = "titiler"
+    domain_alias                              = ""
+    deploy_cloudfront                         = true
+    version                                   = "v0.14.0-1.0.5"
+    authorized_s3_arns                        = []
+    mosaic_titiler_waf_allowed_url            = ""
+    mosaic_titiler_host_header                = ""
+    mosaic_tile_timeout                       = 30
+    web_acl_id                                = ""
+    is_private_endpoint                       = false
+    api_method_authorization_type             = "NONE"
+    private_certificate_arn                   = ""
+    private_api_additional_security_group_ids = null
     auth_function = {
       cf_function_name             = ""
       cf_function_runtime          = "cloudfront-js-2.0"
@@ -325,7 +335,12 @@ variable "console_ui_inputs" {
     app_name          = string
     domain_alias      = string
     deploy_cloudfront = bool
-    web_acl_id        = string
+    deploy_s3_bucket  = optional(bool)
+    external_content_bucket = optional(object({
+      external_content_website_bucket_name         = optional(string)
+      external_content_bucket_regional_domain_name = optional(string)
+    }))
+    web_acl_id = string
     custom_error_response = list(object({
       error_caching_min_ttl = string
       error_code            = string
@@ -351,7 +366,12 @@ variable "console_ui_inputs" {
     app_name          = "console"
     domain_alias      = ""
     deploy_cloudfront = true
-    web_acl_id        = ""
+    deploy_s3_bucket  = true
+    external_content_bucket = {
+      external_content_website_bucket_name         = ""
+      external_content_bucket_regional_domain_name = ""
+    }
+    web_acl_id = ""
     custom_error_response = [
       {
         error_caching_min_ttl = "10"
@@ -361,8 +381,8 @@ variable "console_ui_inputs" {
       }
     ]
     version                 = "v5.3.0"
-    filmdrop_ui_config_file = "./profiles/console-ui/default-config/config.dev.json"
-    filmdrop_ui_logo_file   = "./profiles/console-ui/default-config/logo.png"
+    filmdrop_ui_config_file = "./default-config/config.dev.json"
+    filmdrop_ui_logo_file   = "./default-config/logo.png"
     filmdrop_ui_logo        = "bm9uZQo=" # Base64: 'none'
     auth_function = {
       cf_function_name             = ""
@@ -378,7 +398,7 @@ variable "console_ui_inputs" {
 }
 
 variable "cirrus_inputs" {
-  description = "Inputs for FilmDrop Cirrus deployment."
+  description = "Inputs for FilmDrop Cirrus deployment"
   type = object({
     data_bucket                               = string
     payload_bucket                            = string
@@ -386,6 +406,8 @@ variable "cirrus_inputs" {
     api_rest_type                             = string
     private_api_additional_security_group_ids = optional(list(string))
     deploy_alarms                             = bool
+    private_certificate_arn                   = optional(string)
+    domain_alias                              = optional(string)
     custom_alarms = object({
       warning  = map(any)
       critical = map(any)
@@ -420,11 +442,13 @@ variable "cirrus_inputs" {
       timeout = number
       memory  = number
     })
-    task_batch_compute_definitions_dir  = optional(string)
-    task_definitions_dir                = optional(string)
-    task_definitions_variables          = optional(map(map(string)))
-    workflow_definitions_dir            = optional(string)
-    cirrus_cli_iam_role_trust_principal = optional(list(string))
+    task_batch_compute_definitions_dir       = optional(string)
+    task_batch_compute_definitions_variables = optional(map(map(string)))
+    task_definitions_dir                     = optional(string)
+    task_definitions_variables               = optional(map(map(string)))
+    workflow_definitions_dir                 = optional(string)
+    workflow_definitions_variables           = optional(map(map(string)))
+    cirrus_cli_iam_role_trust_principal      = optional(list(string))
   })
   default = {
     data_bucket                               = "cirrus-data-bucket-name"
@@ -433,6 +457,8 @@ variable "cirrus_inputs" {
     api_rest_type                             = "EDGE"
     private_api_additional_security_group_ids = null
     deploy_alarms                             = true
+    private_certificate_arn                   = ""
+    domain_alias                              = ""
     custom_alarms = {
       warning  = {}
       critical = {}
@@ -480,9 +506,14 @@ variable "cirrus_inputs" {
 variable "cirrus_dashboard_inputs" {
   description = "Inputs for cirrus dashboard FilmDrop deployment."
   type = object({
-    app_name             = string
-    domain_alias         = string
-    deploy_cloudfront    = bool
+    app_name          = string
+    domain_alias      = string
+    deploy_cloudfront = bool
+    deploy_s3_bucket  = optional(bool)
+    external_content_bucket = optional(object({
+      external_content_website_bucket_name         = optional(string)
+      external_content_bucket_regional_domain_name = optional(string)
+    }))
     web_acl_id           = string
     version              = string
     cirrus_api_endpoint  = string
@@ -505,9 +536,14 @@ variable "cirrus_dashboard_inputs" {
     })
   })
   default = {
-    app_name             = "dashboard"
-    domain_alias         = ""
-    deploy_cloudfront    = true
+    app_name          = "dashboard"
+    domain_alias      = ""
+    deploy_cloudfront = true
+    deploy_s3_bucket  = true
+    external_content_bucket = {
+      external_content_website_bucket_name         = ""
+      external_content_bucket_regional_domain_name = ""
+    }
     web_acl_id           = ""
     version              = "v0.5.1"
     cirrus_api_endpoint  = ""

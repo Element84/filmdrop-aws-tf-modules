@@ -5,15 +5,21 @@ module "titiler" {
     aws.east = aws.east
   }
 
-  project_name                   = var.project_name
-  environment                    = var.environment
-  titiler_mosaicjson_release_tag = var.titiler_inputs.version
-  authorized_s3_arns             = var.titiler_inputs.authorized_s3_arns
-  waf_allowed_url                = var.titiler_inputs.mosaic_titiler_waf_allowed_url == "" ? var.stac_url : var.titiler_inputs.mosaic_titiler_waf_allowed_url
-  request_host_header_override   = var.titiler_inputs.mosaic_titiler_host_header
-  mosaic_tile_timeout            = var.titiler_inputs.mosaic_tile_timeout
-  vpc_subnet_ids                 = var.private_subnet_ids
-  vpc_security_group_ids         = [var.security_group_id]
+  project_name                              = var.project_name
+  environment                               = var.environment
+  titiler_mosaicjson_release_tag            = var.titiler_inputs.version
+  authorized_s3_arns                        = var.titiler_inputs.authorized_s3_arns
+  waf_allowed_url                           = var.titiler_inputs.is_private_endpoint ? "" : var.titiler_inputs.mosaic_titiler_waf_allowed_url == "" ? var.stac_url : var.titiler_inputs.mosaic_titiler_waf_allowed_url
+  request_host_header_override              = var.titiler_inputs.is_private_endpoint ? "" : var.titiler_inputs.mosaic_titiler_host_header
+  mosaic_tile_timeout                       = var.titiler_inputs.mosaic_tile_timeout
+  vpc_id                                    = var.vpc_id
+  vpc_subnet_ids                            = var.private_subnet_ids
+  vpc_security_group_ids                    = [var.security_group_id]
+  private_api_additional_security_group_ids = var.titiler_inputs.private_api_additional_security_group_ids
+  api_method_authorization_type             = var.titiler_inputs.api_method_authorization_type
+  is_private_endpoint                       = var.titiler_inputs.is_private_endpoint
+  domain_alias                              = var.titiler_inputs.domain_alias
+  private_certificate_arn                   = var.titiler_inputs.private_certificate_arn
 }
 
 module "cloudfront_api_gateway_endpoint" {

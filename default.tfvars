@@ -53,6 +53,7 @@ stac_server_inputs = {
   api_lambda                                  = null
   ingest_lambda                               = null
   pre_hook_lambda                             = null
+  private_certificate_arn                     = ""
   auth_function = {
     cf_function_name             = ""
     cf_function_runtime          = "cloudfront-js-2.0"
@@ -79,15 +80,19 @@ stac_server_inputs = {
 }
 
 titiler_inputs = {
-  app_name                       = "titiler"
-  domain_alias                   = ""
-  deploy_cloudfront              = true
-  version                        = "v0.14.0-1.0.5"
-  authorized_s3_arns             = []
-  mosaic_titiler_waf_allowed_url = "test.filmdrop.io"
-  mosaic_titiler_host_header     = ""
-  mosaic_tile_timeout            = 30
-  web_acl_id                     = ""
+  app_name                                  = "titiler"
+  domain_alias                              = ""
+  deploy_cloudfront                         = true
+  version                                   = "v0.14.0-1.0.5"
+  authorized_s3_arns                        = []
+  mosaic_titiler_waf_allowed_url            = "test.filmdrop.io"
+  mosaic_titiler_host_header                = ""
+  mosaic_tile_timeout                       = 30
+  web_acl_id                                = ""
+  is_private_endpoint                       = false
+  api_method_authorization_type             = "NONE"
+  private_certificate_arn                   = ""
+  private_api_additional_security_group_ids = null
   auth_function = {
     cf_function_name             = ""
     cf_function_runtime          = "cloudfront-js-2.0"
@@ -133,9 +138,14 @@ analytics_inputs = {
 }
 
 console_ui_inputs = {
-  app_name                = "console"
-  domain_alias            = ""
-  deploy_cloudfront       = true
+  app_name          = "console"
+  domain_alias      = ""
+  deploy_cloudfront = true
+  deploy_s3_bucket  = true
+  external_content_bucket = {
+    external_content_website_bucket_name         = ""
+    external_content_bucket_regional_domain_name = ""
+  }
   web_acl_id              = ""
   version                 = "v5.3.0"
   filmdrop_ui_config_file = "./profiles/console-ui/default-config/config.dev.json"
@@ -170,6 +180,8 @@ cirrus_inputs = {
   deploy_alarms                             = true
   api_rest_type                             = "EDGE"
   private_api_additional_security_group_ids = null
+  private_certificate_arn                   = ""
+  domain_alias                              = ""
   custom_alarms = {
     warning  = {}
     critical = {}
@@ -212,9 +224,14 @@ cirrus_inputs = {
 }
 
 cirrus_dashboard_inputs = {
-  app_name             = "dashboard"
-  domain_alias         = ""
-  deploy_cloudfront    = true
+  app_name          = "dashboard"
+  domain_alias      = ""
+  deploy_cloudfront = true
+  deploy_s3_bucket  = true
+  external_content_bucket = {
+    external_content_website_bucket_name         = ""
+    external_content_bucket_regional_domain_name = ""
+  }
   web_acl_id           = ""
   version              = "v0.5.1"
   cirrus_api_endpoint  = ""
