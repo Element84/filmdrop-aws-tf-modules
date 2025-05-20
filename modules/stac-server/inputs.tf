@@ -448,6 +448,12 @@ variable "cors_headers" {
   default     = ""
 }
 
+variable "deploy_alarms" {
+  type        = bool
+  default     = true
+  description = "Deploy stac-server dead letter queue alarm stack"
+}
+
 variable "dead_letter_queue_warning_alarm_threshold" {
   description = "Message count threshold trigger for dead letter queue for warning alarm"
   type        = number

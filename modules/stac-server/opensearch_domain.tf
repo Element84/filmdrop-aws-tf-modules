@@ -355,7 +355,7 @@ resource "aws_cloudwatch_metric_alarm" "critical_stac_server_opensearch_cluster_
   metric_name               = "ClusterStatus.red"
   alarm_description         = "CRITICAL: 1 or more ${local.name_prefix}-stac-server OpenSearch Cluster nodes are in a RED state"
   alarm_actions             = [var.critical_sns_topic_arn]
-  ok_actions                = [var.critical_sns_topic_arn]
+  ok_actions                = [var.warning_sns_topic_arn]
   insufficient_data_actions = []
 
   dimensions = {

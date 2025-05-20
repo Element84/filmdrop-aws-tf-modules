@@ -45,6 +45,7 @@ variable "stac_server_inputs" {
     stac_title                                  = optional(string)
     stac_description                            = optional(string)
     deploy_cloudfront                           = bool
+    deploy_alarms                               = bool
     web_acl_id                                  = string
     domain_alias                                = string
     enable_transactions_extension               = bool
@@ -124,6 +125,7 @@ variable "stac_server_inputs" {
     deploy_cloudfront                           = true
     web_acl_id                                  = ""
     domain_alias                                = ""
+    deploy_alarms                               = true
     enable_transactions_extension               = false
     enable_collections_authx                    = false
     enable_ingest_action_truncate               = false
