@@ -381,8 +381,8 @@ variable "console_ui_inputs" {
       }
     ]
     version                 = "v5.3.0"
-    filmdrop_ui_config_file = "./default-config/config.dev.json"
-    filmdrop_ui_logo_file   = "./default-config/logo.png"
+    filmdrop_ui_config_file = "./profiles/console-ui/default-config/config.dev.json"
+    filmdrop_ui_logo_file   = "./profiles/console-ui/default-config/logo.png"
     filmdrop_ui_logo        = "bm9uZQo=" # Base64: 'none'
     auth_function = {
       cf_function_name             = ""
