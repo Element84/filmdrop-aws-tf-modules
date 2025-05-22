@@ -82,6 +82,7 @@ variable "stac_server_inputs" {
     stac_title                                  = optional(string)
     stac_description                            = optional(string)
     deploy_cloudfront                           = bool
+    deploy_alarms                               = bool
     web_acl_id                                  = string
     domain_alias                                = string
     enable_transactions_extension               = bool
@@ -159,6 +160,7 @@ variable "stac_server_inputs" {
     stac_title                                  = "STAC API"
     stac_description                            = "A STAC API using stac-server"
     deploy_cloudfront                           = true
+    deploy_alarms                               = true
     web_acl_id                                  = ""
     domain_alias                                = ""
     enable_transactions_extension               = false
