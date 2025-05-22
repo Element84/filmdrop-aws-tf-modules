@@ -15,6 +15,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Removed
 
+## [2.48.0] - 2025-05-21
+
+### Fixed
+
+- Reverting unintended `filmdrop_ui_config_file` and `filmdrop_ui_logo_file` default value changes from the inputs.tf
+
 ## [2.47.0] - 2025-05-16
 
 ### Added
