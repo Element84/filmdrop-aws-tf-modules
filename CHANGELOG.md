@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Added
 
+- Created outputs for the stac-server ingest and api lambda functions including their name and arn.
+
 ### Changed
 
 ### Fixed
