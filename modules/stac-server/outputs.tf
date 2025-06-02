@@ -65,3 +65,19 @@ output "stac_server_post_ingest_sns_topic_arn" {
 output "stac_server_api_gateway_id" {
   value = aws_api_gateway_rest_api.stac_server_api_gateway.id
 }
+
+output "stac_server_ingest_lambda_name" {
+  value = aws_lambda_function.stac_server_ingest.function_name
+}
+
+output "stac_server_ingest_lambda_arn" {
+  value = aws_lambda_function.stac_server_ingest.arn
+}
+
+output "stac_server_api_lambda_name" {
+  value = aws_lambda_function.stac_server_api.function_name
+}
+
+output "stac_server_api_lambda_arn" {
+  value = aws_lambda_function.stac_server_api.arn
+}

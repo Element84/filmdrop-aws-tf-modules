@@ -33,3 +33,19 @@ output "stac_server_lambda_iam_role_arn" {
 output "stac_server_api_gateway_id" {
   value = module.stac-server.stac_server_api_gateway_id
 }
+
+output "stac_server_ingest_lambda_name" {
+  value = module.stac-server.stac_server_ingest_lambda_name
+}
+
+output "stac_server_ingest_lambda_arn" {
+  value = module.stac-server.stac_server_ingest_lambda_arn
+}
+
+output "stac_server_api_lambda_name" {
+  value = module.stac-server.stac_server_api_lambda_name
+}
+
+output "stac_server_api_lambda_arn" {
+  value = module.stac-server.stac_server_api_lambda_arn
+}

@@ -183,6 +183,23 @@ output "stac_server_api_gateway_id" {
   value = var.deploy_stac_server ? module.stac-server[0].stac_server_api_gateway_id : ""
 }
 
+output "stac_server_ingest_lambda_name" {
+  value = var.deploy_stac_server ? module.stac-server[0].stac_server_ingest_lambda_name : ""
+}
+
+output "stac_server_ingest_lambda_arn" {
+  value = var.deploy_stac_server ? module.stac-server[0].stac_server_ingest_lambda_arn : ""
+}
+
+output "stac_server_api_lambda_name" {
+  value = var.deploy_stac_server ? module.stac-server[0].stac_server_api_lambda_name : ""
+}
+
+output "stac_server_api_lambda_arn" {
+  value = var.deploy_stac_server ? module.stac-server[0].stac_server_api_lambda_arn : ""
+}
+
+
 output "console_ui_bucket_name" {
   value = var.deploy_console_ui ? module.console-ui[0].console_ui_bucket_name : ""
 }
