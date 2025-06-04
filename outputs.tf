@@ -182,6 +182,23 @@ output "stac_server_api_gateway_id" {
   value = module.filmdrop.stac_server_api_gateway_id
 }
 
+output "stac_server_ingest_lambda_name" {
+  value = module.filmdrop.stac_server_ingest_lambda_name
+}
+
+output "stac_server_ingest_lambda_arn" {
+  value = module.filmdrop.stac_server_ingest_lambda_arn
+}
+
+output "stac_server_api_lambda_name" {
+  value = module.filmdrop.stac_server_api_lambda_name
+}
+
+output "stac_server_api_lambda_arn" {
+  value = module.filmdrop.stac_server_api_lambda_arn
+}
+
+
 output "console_ui_bucket_name" {
   value = module.filmdrop.console_ui_bucket_name
 }
