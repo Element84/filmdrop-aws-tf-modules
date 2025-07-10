@@ -15,6 +15,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Removed
 
+## [UNRELEASED] - 2025-07-10
+
+### Changed
+
+- Updated Pangeo base image for Daskhub from 2022 to 2025 with dependency locking.
+
 ## [2.49.0] - 2025-06-04
 
 ### Added
@@ -64,7 +70,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Changed
 
-- removing step function permission from `update-state` IAM policy due to change in how 
+- removing step function permission from `update-state` IAM policy due to change in how
   `update-state` lambda gets errors in cirrus v1.0.0 release
 
 ### Fixed

@@ -159,7 +159,7 @@ aws cloudformation wait stack-delete-complete --stack-name eksctl-${self.trigger
 aws cloudformation delete-stack --stack-name eksctl-${self.triggers.filmdrop_analytics_cluster_name}-cluster
 aws cloudformation wait stack-delete-complete --stack-name eksctl-${self.triggers.filmdrop_analytics_cluster_name}-cluster
 JUPYTERHUB_LB_DNS=`aws ssm get-parameter --name ${self.triggers.domain_param_name} --region us-east-1 | jq -r '.Parameter.Value'`
-JUPYTERHUB_LB_ID=`cut -d'-' -f1 <<<"$JUPYTERHUB_LB_DNS"`
+JUPYTERHUB_LB_ID=`echo "$JUPYTERHUB_LB_DNS" | cut -d'-' -f1`
 aws elb delete-load-balancer --load-balancer-name $JUPYTERHUB_LB_ID
 EOF
   }
