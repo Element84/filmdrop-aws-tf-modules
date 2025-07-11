@@ -131,3 +131,45 @@ resource "aws_lambda_permission" "stac_server_ingest_sqs_lambda_permission" {
   principal     = "sqs.amazonaws.com"
   source_arn    = aws_sqs_queue.stac_server_ingest_sqs_queue.arn
 }
+
+resource "aws_cloudwatch_metric_alarm" "warning_stac_server_dlq_alarm" {
+  count                     = var.deploy_alarms ? 1 : 0
+  alarm_name                = "WARNING: ${local.name_prefix}-stac-server-dlq SQS DLQ Warning Alarm"
+  alarm_description         = "WARNING: ${var.dead_letter_queue_warning_alarm_threshold} or more messages are persisting in the ${local.name_prefix}-stac-server SQS dead letter queue"
+  evaluation_periods        = 2
+  period                    = 60
+  threshold                 = var.dead_letter_queue_warning_alarm_threshold
+  comparison_operator       = "GreaterThanOrEqualToThreshold"
+  metric_name               = "ApproximateNumberOfMessagesVisible"
+  namespace                 = "AWS/SQS"
+  statistic                 = "Average"
+  treat_missing_data        = "notBreaching"
+  alarm_actions             = [var.warning_sns_topic_arn]
+  ok_actions                = [var.warning_sns_topic_arn]
+  insufficient_data_actions = []
+
+  dimensions = {
+    QueueName = aws_sqs_queue.stac_server_ingest_dead_letter_sqs_queue.name
+  }
+}
+
+resource "aws_cloudwatch_metric_alarm" "critical_stac_server_dlq_alarm" {
+  count                     = var.deploy_alarms ? 1 : 0
+  alarm_name                = "CRITICAL: ${local.name_prefix}-stac-server-dlq SQS DLQ Critical Alarm"
+  alarm_description         = "CRITICAL: ${var.dead_letter_queue_critical_alarm_threshold} or more messages are persisting in the ${local.name_prefix}-stac-server SQS dead letter queue"
+  evaluation_periods        = 5
+  period                    = 60
+  threshold                 = var.dead_letter_queue_critical_alarm_threshold
+  comparison_operator       = "GreaterThanOrEqualToThreshold"
+  metric_name               = "ApproximateNumberOfMessagesVisible"
+  namespace                 = "AWS/SQS"
+  statistic                 = "Average"
+  treat_missing_data        = "notBreaching"
+  alarm_actions             = [var.critical_sns_topic_arn]
+  ok_actions                = [var.warning_sns_topic_arn]
+  insufficient_data_actions = []
+
+  dimensions = {
+    QueueName = aws_sqs_queue.stac_server_ingest_dead_letter_sqs_queue.name
+  }
+}
