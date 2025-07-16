@@ -61,6 +61,18 @@ variable "enable_ingest_action_truncate" {
   default     = false
 }
 
+variable "enable_response_compression" {
+  description = "Enable compression on responses"
+  type        = string
+  default     = true
+}
+
+variable "items_max_limit" {
+  description = "The maximum limit for the number of items returned in a page"
+  type        = number
+  default     = null
+}
+
 variable "stac_api_stage" {
   description = "STAC API stage"
   type        = string

@@ -17,9 +17,16 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [UNRELEASED] - 2025-07-10
 
+### Added
+
+- Added inputs for ENABLE_RESPONSE_COMPRESSION to stac-server
+- Added inputs for ITEMS_MAX_LIMIT to stac-server
+
 ### Changed
 
 - Updated Pangeo base image for Daskhub from 2022 to 2025 with dependency locking.
+- Upgraded default stac-server to 4.3.0
+- Upgraded default opensearch to 2.19
 
 ## [2.49.0] - 2025-06-04
 

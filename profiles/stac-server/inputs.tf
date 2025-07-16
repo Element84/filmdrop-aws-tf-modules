@@ -50,6 +50,8 @@ variable "stac_server_inputs" {
     enable_transactions_extension               = bool
     enable_collections_authx                    = bool
     enable_ingest_action_truncate               = bool
+    enable_response_compression                 = bool
+    items_max_limit                             = optional(number)
     collection_to_index_mappings                = string
     opensearch_version                          = optional(string)
     opensearch_cluster_instance_type            = string
@@ -117,7 +119,7 @@ variable "stac_server_inputs" {
   })
   default = {
     app_name                                    = "stac_server"
-    version                                     = "v3.10.0"
+    version                                     = "v4.3.0"
     stac_id                                     = "stac-server"
     stac_title                                  = "STAC API"
     stac_description                            = "A STAC API using stac-server"
@@ -127,8 +129,10 @@ variable "stac_server_inputs" {
     enable_transactions_extension               = false
     enable_collections_authx                    = false
     enable_ingest_action_truncate               = false
+    enable_response_compression                 = true
+    items_max_limit                             = null
     collection_to_index_mappings                = ""
-    opensearch_version                          = "OpenSearch_2.17"
+    opensearch_version                          = "OpenSearch_2.19"
     opensearch_cluster_instance_type            = "t3.small.search"
     opensearch_cluster_instance_count           = 3
     opensearch_cluster_dedicated_master_enabled = true

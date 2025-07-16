@@ -33,6 +33,8 @@ resource "aws_lambda_function" "stac_server_ingest" {
       CORS_METHODS                     = var.cors_methods
       CORS_HEADERS                     = var.cors_headers
       ENABLE_INGEST_ACTION_TRUNCATE    = var.enable_ingest_action_truncate
+      ENABLE_RESPONSE_COMPRESSION      = var.enable_response_compression
+      ITEMS_MAX_LIMIT                  = var.items_max_limit
     }
   }
 

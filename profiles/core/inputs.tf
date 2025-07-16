@@ -87,6 +87,8 @@ variable "stac_server_inputs" {
     enable_transactions_extension               = bool
     enable_collections_authx                    = bool
     enable_ingest_action_truncate               = bool
+    enable_response_compression                 = bool
+    items_max_limit                             = optional(number)
     collection_to_index_mappings                = string
     opensearch_version                          = optional(string)
     opensearch_cluster_instance_type            = string
@@ -164,6 +166,8 @@ variable "stac_server_inputs" {
     enable_transactions_extension               = false
     enable_collections_authx                    = false
     enable_ingest_action_truncate               = false
+    enable_response_compression                 = true
+    items_max_limit                             = null
     collection_to_index_mappings                = ""
     opensearch_version                          = "OpenSearch_2.17"
     opensearch_cluster_instance_type            = "t3.small.search"
