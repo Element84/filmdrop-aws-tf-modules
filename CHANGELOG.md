@@ -21,6 +21,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 - Updated Pangeo base image for Daskhub from 2022 to 2025 with dependency locking.
 
+### Added
+
+- stac-server configurations for items_max_limit and enable_response_compression
+
 ## [2.49.0] - 2025-06-04
 
 ### Added

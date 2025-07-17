@@ -27,7 +27,7 @@ variable "log_level" {
 
 variable "request_logging_enabled" {
   description = "Log all requests to the server"
-  type        = string
+  type        = bool
   default     = true
 }
 
@@ -45,14 +45,26 @@ variable "opensearch_host" {
 
 variable "enable_transactions_extension" {
   description = "Enable Transactions Extension"
-  type        = string
+  type        = bool
   default     = false
 }
 
 variable "enable_collections_authx" {
   description = "Enable Collections Authx"
-  type        = string
+  type        = bool
   default     = false
+}
+
+variable "enable_response_compression" {
+  description = "Enable Response Compression"
+  type        = bool
+  default     = false
+}
+
+variable "items_max_limit" {
+  description = "Items Max Limit"
+  type        = number
+  default     = 100
 }
 
 variable "enable_ingest_action_truncate" {

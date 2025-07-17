@@ -49,6 +49,8 @@ variable "stac_server_inputs" {
     domain_alias                                = string
     enable_transactions_extension               = bool
     enable_collections_authx                    = bool
+    enable_response_compression                 = bool
+    items_max_limit                             = number
     enable_ingest_action_truncate               = bool
     collection_to_index_mappings                = string
     opensearch_version                          = optional(string)
@@ -126,6 +128,8 @@ variable "stac_server_inputs" {
     domain_alias                                = ""
     enable_transactions_extension               = false
     enable_collections_authx                    = false
+    enable_response_compression                 = true
+    items_max_limit                             = 100
     enable_ingest_action_truncate               = false
     collection_to_index_mappings                = ""
     opensearch_version                          = "OpenSearch_2.17"
