@@ -15,11 +15,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Removed
 
-## [UNRELEASED] - 2025-07-10
+## [2.50.0] - 2025-07-17
 
 ### Changed
 
-- Updated Pangeo base image for Daskhub from 2022 to 2025 with dependency locking.
+- Updated Pangeo base image for Daskhub from 2022 to 2025 with dependency locking
 
 ### Added
 
@@ -29,7 +29,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Added
 
-- Outputs for the stac-server ingest and api lambda functions including their name and arn.
+- Outputs for the stac-server ingest and api lambda functions including their name and arn
 
 ## [2.48.0] - 2025-05-21
 
