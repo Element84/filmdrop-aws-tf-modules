@@ -47,8 +47,9 @@ variable "cirrus_inputs" {
       critical = map(any)
     })
     process = object({
-      sqs_timeout           = number
-      sqs_max_receive_count = number
+      sqs_timeout                      = number
+      sqs_max_receive_count            = number
+      sqs_cross_account_sender_arns    = optional(list(string))
     })
     state = object({
       timestream_magnetic_store_retention_period_in_days = number
@@ -98,8 +99,9 @@ variable "cirrus_inputs" {
       critical = {}
     }
     process = {
-      sqs_timeout           = 180
-      sqs_max_receive_count = 5
+      sqs_timeout                      = 180
+      sqs_max_receive_count            = 5
+      sqs_cross_account_sender_arns    = []
     }
     state = {
       timestream_magnetic_store_retention_period_in_days = 93

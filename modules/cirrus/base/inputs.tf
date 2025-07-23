@@ -16,6 +16,13 @@ variable "cirrus_process_sqs_max_receive_count" {
   default     = 5
 }
 
+variable "cirrus_process_sqs_cross_account_sender_arns" {
+  description = "List of AWS principal ARNs from external accounts that should be allowed to send messages to the cirrus process SQS queue"
+  type        = list(string)
+  nullable    = false
+  default     = []
+}
+
 variable "cirrus_timestream_magnetic_store_retention_period_in_days" {
   description = "Cirrus Timestream duration for which data must be stored in the magnetic store"
   type        = number
