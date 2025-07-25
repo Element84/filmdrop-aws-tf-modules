@@ -561,6 +561,13 @@ variable "cirrus_workflow_definitions_variables" {
   default     = {}
 }
 
+variable "cirrus_process_sqs_cross_account_sender_arns" {
+  description = "List of AWS principal ARNs from external accounts that should be allowed to send messages to the cirrus process SQS queue"
+  type        = list(string)
+  nullable    = false
+  default     = []
+}
+
 variable "domain_alias" {
   description = "Custom domain alias for private API Gateway endpoint"
   type        = string

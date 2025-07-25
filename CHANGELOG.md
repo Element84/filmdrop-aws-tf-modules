@@ -15,6 +15,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Removed
 
+## [2025-07-25]
+
+### Added
+
+-  Support for External AWS accounts Publish to Cirrus Proccess Queue.
+
 ## [2.50.0] - 2025-07-17
 
 ### Changed

@@ -39,6 +39,7 @@ module "cirrus" {
   cirrus_task_definitions_variables                         = var.cirrus_inputs.task_definitions_variables
   cirrus_workflow_definitions_dir                           = var.cirrus_inputs.workflow_definitions_dir
   cirrus_workflow_definitions_variables                     = var.cirrus_inputs.workflow_definitions_variables
+  cirrus_process_sqs_cross_account_sender_arns              = var.cirrus_inputs.process.sqs_cross_account_sender_arns
   private_certificate_arn                                   = var.cirrus_inputs.private_certificate_arn
   domain_alias                                              = var.cirrus_inputs.domain_alias
 }
