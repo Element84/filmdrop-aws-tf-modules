@@ -158,6 +158,33 @@ output "cirrus_workflow_state_machine_role_arns" {
   value = var.deploy_cirrus ? module.cirrus[0].cirrus_workflow_state_machine_role_arns : tomap({})
 }
 
+output "cirrus_task_batch_compute_template_variables" {
+  description = <<-DESCRIPTION
+  Map of Cirrus task batch compute names to their resolved template variables (static and SSM combined).
+  This shows the final variable values that were used during YAML templating.
+  DESCRIPTION
+
+  value = var.deploy_cirrus ? module.cirrus[0].cirrus_task_batch_compute_template_variables : tomap({})
+}
+
+output "cirrus_task_template_variables" {
+  description = <<-DESCRIPTION
+  Map of Cirrus task names to their resolved template variables (static and SSM combined).
+  This shows the final variable values that were used during YAML templating.
+  DESCRIPTION
+
+  value = var.deploy_cirrus ? module.cirrus[0].cirrus_task_template_variables : tomap({})
+}
+
+output "cirrus_workflow_template_variables" {
+  description = <<-DESCRIPTION
+  Map of Cirrus workflow names to their resolved template variables (static and SSM combined).
+  This shows the final variable values that were used during YAML templating.
+  DESCRIPTION
+
+  value = var.deploy_cirrus ? module.cirrus[0].cirrus_workflow_template_variables : tomap({})
+}
+
 output "warning_sns_topic_arn" {
   value = module.base_infra.warning_sns_topic_arn
 }

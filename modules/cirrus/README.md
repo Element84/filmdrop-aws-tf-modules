@@ -71,9 +71,9 @@ the templating process.
 
 | Name | Source | Description |
 |------|--------|-------------|
+| <a name="module_custom_warning_alarms"></a> [custom_warning_alarms](#module_custom_warning_alarms) | `../base_infra/alerts` |  |
 | <a name="module_base"></a> [base](#module_base) | `./base` |  |
 | <a name="module_builtin_functions"></a> [builtin_functions](#module_builtin_functions) | `./builtin-functions` |  |
-| <a name="module_custom_warning_alarms"></a> [custom_warning_alarms](#module_custom_warning_alarms) | `../base_infra/alerts` |  |
 | <a name="module_custom_critical_alarms"></a> [custom_critical_alarms](#module_custom_critical_alarms) | `../base_infra/alerts` |  |
 | <a name="module_typed_definitions"></a> [typed_definitions](#module_typed_definitions) | `./typed-definitions` |  |
 
@@ -151,6 +151,9 @@ the templating process.
 | <a name="output_cirrus_payload_bucket"></a> [cirrus\_payload\_bucket](#output\_cirrus\_payload\_bucket) | n/a |
 | <a name="output_cirrus_workflow_state_machine_arns"></a> [cirrus\_workflow\_state\_machine\_arns](#output\_cirrus\_workflow\_state\_machine\_arns) | Map of cirrus workflow names to their AWS state machine ARN. |
 | <a name="output_cirrus_workflow_state_machine_role_arns"></a> [cirrus\_workflow\_state\_machine\_role\_arns](#output\_cirrus\_workflow\_state\_machine\_role\_arns) | Map of cirrus workflow names to their AWS state machine's IAM role ARN. |
+| <a name="output_cirrus_task_batch_compute_template_variables"></a> [cirrus\_task\_batch\_compute\_template\_variables](#output\_cirrus\_task\_batch\_compute\_template\_variables) | Map of task batch compute names to their resolved template variables (static and SSM combined).<br/>This shows the final variable values that were used during YAML templating. |
+| <a name="output_cirrus_task_template_variables"></a> [cirrus\_task\_template\_variables](#output\_cirrus\_task\_template\_variables) | Map of task names to their resolved template variables (static and SSM combined).<br/>This shows the final variable values that were used during YAML templating. |
+| <a name="output_cirrus_workflow_template_variables"></a> [cirrus\_workflow\_template\_variables](#output\_cirrus\_workflow\_template\_variables) | Map of workflow names to their resolved template variables (static and SSM combined).<br/>This shows the final variable values that were used during YAML templating. |
 <!-- END_TF_DOCS -->
 
 
