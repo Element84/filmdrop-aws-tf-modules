@@ -9,13 +9,17 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Added
 
-- Support for Cirrus template variables sourced from SSM parameters
-
 ### Changed
 
 ### Fixed
 
 ### Removed
+
+## [2.52.0] - 2025-08-01
+
+### Added
+
+- Support for Cirrus template variables sourced from SSM parameters
 
 ## [2.51.0] - 2025-07-25
 
