@@ -91,3 +91,30 @@ output "cirrus_workflow_state_machine_role_arns" {
     workflow_name => workflow_output.state_machine_role_arn
   }
 }
+
+output "cirrus_task_batch_compute_template_variables" {
+  description = <<-DESCRIPTION
+  Map of task batch compute names to their resolved template variables (static and SSM combined).
+  This shows the final variable values that were used during YAML templating.
+  DESCRIPTION
+
+  value = merge(local.all_task_batch_compute_defs_vars, local.builtin_definitions_variables)
+}
+
+output "cirrus_task_template_variables" {
+  description = <<-DESCRIPTION
+  Map of task names to their resolved template variables (static and SSM combined).
+  This shows the final variable values that were used during YAML templating.
+  DESCRIPTION
+
+  value = merge(local.all_task_defs_vars, local.builtin_definitions_variables)
+}
+
+output "cirrus_workflow_template_variables" {
+  description = <<-DESCRIPTION
+  Map of workflow names to their resolved template variables (static and SSM combined).
+  This shows the final variable values that were used during YAML templating.
+  DESCRIPTION
+
+  value = merge(local.all_workflow_defs_vars, local.builtin_definitions_variables)
+}

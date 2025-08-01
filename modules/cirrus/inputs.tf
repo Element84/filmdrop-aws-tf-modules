@@ -396,6 +396,27 @@ variable "cirrus_task_batch_compute_definitions_variables" {
   default     = {}
 }
 
+variable "cirrus_task_batch_compute_definitions_variables_ssm" {
+  description = <<-DESCRIPTION
+  (Optional) Map of maps to SSM parameter paths used when templating task batch compute YAML definitions prior to their conversion to HCL. This variable works identically to `cirrus_task_batch_compute_definitions_variables` but sources values from AWS Systems Manager Parameter Store instead of static configuration.
+
+  Works identically to `cirrus_task_definitions_variables_ssm` but applies to task batch compute YAML definitions instead of task definitions. See that variable's documentation for detailed usage examples and best practices.
+
+  Example structure:
+  ```
+  {
+    my-compute-env = {
+      instance_type = "/cirrus/task-batch-compute/my-compute-env/preferred-instance-type"
+      max_vcpus     = "/cirrus/task-batch-compute/my-compute-env/max-vcpus-limit"
+    }
+  }
+  ```
+  DESCRIPTION
+  type        = map(map(string))
+  nullable    = false
+  default     = {}
+}
+
 variable "cirrus_task_definitions_dir" {
   description = <<-DESCRIPTION
   (Optional) Filepath to directory containing task definition subdirectories. Path is relative to this Terraform deployment's root module.
@@ -464,6 +485,54 @@ variable "cirrus_task_definitions_variables" {
   Since the Cirrus data bucket will always be different for each environment, there is a predefined variable `CIRRUS_DATA_BUCKET` that can be used to automatically reference that bucket name in your task definition YAML. You don't need to add an entry to this variable for this.
 
   If `null` or `{}`, templating will technically still occur but nothing will be interpolated (provided your definition is also absent of interpolation sequences).
+  DESCRIPTION
+  type        = map(map(string))
+  nullable    = false
+  default     = {}
+}
+
+variable "cirrus_task_definitions_variables_ssm" {
+  description = <<-DESCRIPTION
+  (Optional) Map of maps to SSM parameter paths used when templating task YAML definitions prior to their conversion to HCL. This variable works identically to `cirrus_task_definitions_variables` but sources values from AWS Systems Manager Parameter Store instead of static configuration.
+
+  **Important**: the targeted SSM parameter must be a simple `String` type. Do **not** use this for passing sensitive information - that is not the intended purpose of this. Values will be stored in plaintext in the state file and visible in Terraform output.
+
+  This is particularly useful for values that change frequently or are managed by CI/CD pipelines, such as container image tags that are updated by application build processes. However, you should prefer static configuration over SSM parameters, if possible, for simplicity.
+
+  The parameter path is arbitrary. It just needs to exist in the same account as this deployment.
+
+  The suggested (but not required) structure of this map is to group SSM parameter mappings by their task name:
+  ```
+  {
+    example-task-1 = {
+      image_tag = "/cirrus/tasks/example-task-1/latest-image-tag"
+    }
+    example-task-2 = {
+      image_tag = "/cirrus/tasks/example-task-2/latest-image-tag"
+    }
+
+    ... more task maps ...
+  }
+  ```
+
+  Your task YAML definitions would leverage this templating using the same attribute lookup syntax as static variables:
+  ```
+  name: example-task-2
+  lambda:
+    ecr_image_uri: your-ECR-URI:\$${example-task-2.image_tag}
+  batch:
+    ...
+
+  ... any other config ...
+  ```
+
+  SSM parameter values are resolved at Terraform plan time, so the current parameter values will be visible in the plan output. If both `cirrus_task_definitions_variables` and this variable contain the same task/key combination, the SSM value takes precedence. Avoid using duplicate static and SSM variable keys, though, for better readability.
+
+  The SSM parameters must exist before running Terraform, or the plan/apply will fail. Consider bootstrapping required parameters as part of your application deployment process.
+
+  These parameters *could* be managed elsewhere within the same Terraform deployment that manages this `cirrus` module; however, you will need to do a targeted first-time deploy of those resources before this module will work with them.
+
+  If `null` or `{}`, no SSM parameters will be queried and templating will rely solely on static variables.
   DESCRIPTION
   type        = map(map(string))
   nullable    = false
@@ -555,6 +624,30 @@ variable "cirrus_workflow_definitions_variables" {
   Since the Cirrus data bucket will always be different for each environment, there is a predefined variable `CIRRUS_DATA_BUCKET` that can be used to automatically reference that bucket name in your workflow definition YAML and state machine JSON. You don't need to add an entry to this variable for this.
 
   If `null` or `{}`, templating will technically still occur but nothing will be interpolated (provided your definition is also absent of interpolation sequences).
+  DESCRIPTION
+  type        = map(map(string))
+  nullable    = false
+  default     = {}
+}
+
+variable "cirrus_workflow_definitions_variables_ssm" {
+  description = <<-DESCRIPTION
+  (Optional) Map of maps to SSM parameter paths used when templating workflow YAML definitions prior to their conversion to HCL. This variable works identically to `cirrus_workflow_definitions_variables` but sources values from AWS Systems Manager Parameter Store instead of static configuration.
+
+  Works identically to `cirrus_task_definitions_variables_ssm` but applies to workflow YAML definitions and state machine JSONs. See that variable's documentation for detailed usage examples and best practices.
+
+  Example structure:
+  ```
+  {
+    example-workflow-1 = {
+      callback_queue_arn = "/cirrus/workflows/example-workflow-1/callback-queue-arn"
+      callback_queue_url = "/cirrus/workflows/example-workflow-1/callback-queue-url"
+    }
+    example-workflow-2 = {
+      external_api_endpoint = "/cirrus/shared/external-api-endpoint"
+    }
+  }
+  ```
   DESCRIPTION
   type        = map(map(string))
   nullable    = false
