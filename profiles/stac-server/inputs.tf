@@ -45,6 +45,7 @@ variable "stac_server_inputs" {
     stac_title                                  = optional(string)
     stac_description                            = optional(string)
     deploy_cloudfront                           = bool
+    deploy_alarms                               = bool
     web_acl_id                                  = string
     domain_alias                                = string
     enable_transactions_extension               = bool
@@ -126,6 +127,7 @@ variable "stac_server_inputs" {
     deploy_cloudfront                           = true
     web_acl_id                                  = ""
     domain_alias                                = ""
+    deploy_alarms                               = true
     enable_transactions_extension               = false
     enable_collections_authx                    = false
     enable_response_compression                 = true
@@ -224,4 +226,14 @@ variable "fd_web_acl_id" {
   description = "The id of the FilmDrop WAF resource."
   type        = string
   default     = ""
+}
+
+variable "warning_sns_topic_arn" {
+  description = "SNS topic to be used by all stac-server `warning` alarms."
+  type        = string
+}
+
+variable "critical_sns_topic_arn" {
+  description = "SNS topic to be used by all stac-server `critical` alarms"
+  type        = string
 }
