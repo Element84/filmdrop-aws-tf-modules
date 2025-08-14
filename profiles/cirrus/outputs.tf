@@ -78,20 +78,20 @@ output "cirrus_workflow_state_machine_arns" {
   value = module.cirrus.cirrus_workflow_state_machine_arns
 }
 
-output "cirrus_task_role_arns" {
-  description = <<-DESCRIPTION
-  Map of cirrus task names to their IAM role ARN.
-  DESCRIPTION
-
-  value = module.cirrus.cirrus_task_role_arns
-}
-
 output "cirrus_workflow_state_machine_role_arns" {
   description = <<-DESCRIPTION
   Map of Cirrus Workflow names to their State Machine's IAM role ARN.
   DESCRIPTION
 
   value = module.cirrus.cirrus_workflow_state_machine_role_arns
+}
+
+output "cirrus_task_role_arns" {
+  description = <<-DESCRIPTION
+  Map of cirrus task names to their IAM role ARN.
+  DESCRIPTION
+
+  value = module.cirrus.cirrus_task_role_arns
 }
 
 output "cirrus_task_batch_compute_template_variables" {
