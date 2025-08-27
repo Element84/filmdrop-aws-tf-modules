@@ -49,13 +49,11 @@ variable "vpc_security_group_ids" {
   nullable    = false
 }
 
-variable "cirrus_lambda_zip_filepath" {
+variable "cirrus_lambda_version" {
   description = <<-DESCRIPTION
-  (Optional) Filepath to a cirrus lambda dist ZIP. The filepath is relative to the root module of this Terraform deployment. Used to override the ZIP that's included with this module; only set if you're confident the replacement ZIP is compatible with this module.
+  (Optional) Version of Cirrus lambda to deploy.
 
-  If `null`, the default ZIP is used.
-
-  See [cirrus-geo releases](https://github.com/cirrus-geo/cirrus-geo/releases) for more information.
+  If `null`, defaults to the Cirrus version associated with this FilmDrop release.
   DESCRIPTION
   type        = string
   nullable    = true

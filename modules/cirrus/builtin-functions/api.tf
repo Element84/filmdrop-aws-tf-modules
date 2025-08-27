@@ -94,17 +94,16 @@ resource "aws_iam_role_policy_attachment" "cirrus_api_lambda_role_policy_attachm
 }
 
 resource "aws_lambda_function" "cirrus_api" {
-  filename         = var.cirrus_lambda_zip_filepath
-  function_name    = "${var.resource_prefix}-api"
-  description      = "Cirrus API Lambda"
-  role             = aws_iam_role.cirrus_api_lambda_role.arn
-  handler          = "api.lambda_handler"
-  source_code_hash = filebase64sha256(var.cirrus_lambda_zip_filepath)
-  runtime          = "python3.12"
-  timeout          = var.cirrus_api_lambda_timeout
-  memory_size      = var.cirrus_api_lambda_memory
-  publish          = true
-  architectures    = ["arm64"]
+  filename      = local.cirrus_lambda_filename
+  function_name = "${var.resource_prefix}-api"
+  description   = "Cirrus API Lambda"
+  role          = aws_iam_role.cirrus_api_lambda_role.arn
+  handler       = "api.lambda_handler"
+  runtime       = "python3.12"
+  timeout       = var.cirrus_api_lambda_timeout
+  memory_size   = var.cirrus_api_lambda_memory
+  publish       = true
+  architectures = ["arm64"]
 
   environment {
     variables = {
@@ -120,6 +119,10 @@ resource "aws_lambda_function" "cirrus_api" {
     security_group_ids = var.vpc_security_group_ids
     subnet_ids         = var.vpc_subnet_ids
   }
+
+  depends_on = [
+    null_resource.get_cirrus_lambda
+  ]
 }
 
 resource "aws_security_group" "cirrus_api_gateway_private_vpce" {

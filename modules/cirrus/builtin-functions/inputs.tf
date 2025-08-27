@@ -20,13 +20,15 @@ variable "cirrus_payload_bucket" {
   type        = string
 }
 
-variable "cirrus_lambda_zip_filepath" {
+variable "cirrus_lambda_version" {
   description = <<-DESCRIPTION
-  (Optional) Filepath to a Cirrus Lambda Dist ZIP relative to the root module of
-  this Terraform deployment.
+  (Optional) Version of Cirrus lambda to deploy.
+
+  Defaults to the Cirrus version associated with this FilmDrop release.
   DESCRIPTION
   type        = string
   nullable    = false
+  default     = "1.0.2"
 }
 
 variable "cirrus_api_lambda_timeout" {

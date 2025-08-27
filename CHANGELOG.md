@@ -15,6 +15,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Changed
 
+- Download specified version of Cirrus lambda zip from GitHub during deployment
+
 ### Fixed
 
 ### Removed

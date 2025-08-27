@@ -13,7 +13,7 @@ module "builtin_functions" {
   cirrus_log_level                                 = var.cirrus_log_level
   cirrus_data_bucket                               = module.base.cirrus_data_bucket
   cirrus_payload_bucket                            = module.base.cirrus_payload_bucket
-  cirrus_lambda_zip_filepath                       = local.cirrus_lambda_zip_filepath
+  cirrus_lambda_version                            = var.cirrus_lambda_version
   cirrus_api_rest_type                             = var.cirrus_api_rest_type
   cirrus_private_api_additional_security_group_ids = var.cirrus_private_api_additional_security_group_ids
   cirrus_api_lambda_timeout                        = var.cirrus_api_lambda_timeout
