@@ -62,6 +62,10 @@ output "cirrus_instance_profile_arn" {
   value = module.base.cirrus_instance_profile_arn
 }
 
+output "cirrus_lambda_version" {
+  value = module.builtin_functions.cirrus_lambda_version
+}
+
 output "cirrus_data_bucket" {
   value = module.base.cirrus_data_bucket
 }
