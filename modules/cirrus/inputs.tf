@@ -387,7 +387,7 @@ variable "cirrus_task_batch_compute_definitions_variables" {
 
   Each interpolation sequence's lookup value must have an associated entry in this map. If not, Terraform will raise a runtime error.
 
-  Since the Cirrus data bucket will always be different for each environment, there is a predefined variable `CIRRUS_DATA_BUCKET` that can be used to automatically reference that bucket name in your task batch compute definition YAML. You don't need to add an entry to this variable for this.
+  Since the Cirrus data and payload buckets will always be different for each environment, there are two predefined variables `CIRRUS_DATA_BUCKET` and `CIRRUS_PAYLOAD_BUCKET` that can be used to automatically reference these bucket names in your task batch compute definition YAML. You don't need to add entries to this variable for these.
 
   If `null` or `{}`, templating will technically still occur but nothing will be interpolated (provided your definition is also absent of interpolation sequences).
   DESCRIPTION
@@ -482,7 +482,7 @@ variable "cirrus_task_definitions_variables" {
 
   Each interpolation sequence's lookup value must have an associated entry in this map. If not, Terraform will raise a runtime error.
 
-  Since the Cirrus data bucket will always be different for each environment, there is a predefined variable `CIRRUS_DATA_BUCKET` that can be used to automatically reference that bucket name in your task definition YAML. You don't need to add an entry to this variable for this.
+  Since the Cirrus data and payload buckets will always be different for each environment, there are two predefined variables `CIRRUS_DATA_BUCKET` and `CIRRUS_PAYLOAD_BUCKET` that can be used to automatically reference these bucket names in your task definition YAML. You don't need to add entries to this variable for these.
 
   If `null` or `{}`, templating will technically still occur but nothing will be interpolated (provided your definition is also absent of interpolation sequences).
   DESCRIPTION
@@ -621,7 +621,7 @@ variable "cirrus_workflow_definitions_variables" {
 
   Each interpolation sequence's lookup value must have an associated entry in this map. If not, Terraform will raise a runtime error.
 
-  Since the Cirrus data bucket will always be different for each environment, there is a predefined variable `CIRRUS_DATA_BUCKET` that can be used to automatically reference that bucket name in your workflow definition YAML and state machine JSON. You don't need to add an entry to this variable for this.
+  Since the Cirrus data and payload buckets will always be different for each environment, there are two predefined variables `CIRRUS_DATA_BUCKET` and `CIRRUS_PAYLOAD_BUCKET` that can be used to automatically reference these bucket names in your workflow definition YAML and state machine JSON. You don't need to add entries to this variable for these.
 
   If `null` or `{}`, templating will technically still occur but nothing will be interpolated (provided your definition is also absent of interpolation sequences).
   DESCRIPTION
