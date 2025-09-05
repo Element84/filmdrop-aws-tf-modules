@@ -93,7 +93,7 @@ resource "aws_iam_role" "workflow_machine" {
 # ==============================================================================
 
 
-# WORKFLOW STATE MACHINE IAM ROLE -- EVENTS, BATCH, AND LAMBDA PERMISSIONS
+# WORKFLOW STATE MACHINE IAM ROLE -- EVENTS AND BATCH PERMISSIONS
 # ------------------------------------------------------------------------------
 data "aws_iam_policy_document" "workflow_machine_basic_services" {
 
@@ -103,18 +103,6 @@ data "aws_iam_policy_document" "workflow_machine_basic_services" {
     effect    = "Allow"
     actions   = ["events:PutEvents"]
     resources = ["*"]
-  }
-
-  # Allow the state machine to invoke any referenced task Lambdas
-  dynamic "statement" {
-    for_each = local.create_lambda_policy ? [1] : []
-
-    content {
-      sid       = "AllowWorkflowToInvokeTaskLambdaFunctions"
-      effect    = "Allow"
-      actions   = ["lambda:InvokeFunction"]
-      resources = local.workflow_tasks_lambda_functions
-    }
   }
 
   # Batch only has partial support for resource-level permissions. See:
@@ -140,20 +128,6 @@ data "aws_iam_policy_document" "workflow_machine_basic_services" {
     }
   }
 
-  # Restrict Job submissions to the specified Job Definitions and Job Queues.
-  # Those resources are determined by the user's template variables, so this
-  # statement is nothing more than a simple guardrail against user error.
-  dynamic "statement" {
-    for_each = local.create_batch_policy ? [1] : []
-
-    content {
-      sid       = "AllowWorkflowToSubmitTaskBatchJobs"
-      effect    = "Allow"
-      actions   = ["batch:SubmitJob"]
-      resources = local.workflow_tasks_batch_resources
-    }
-  }
-
   # Allow the state machine to monitor any Batch Jobs via the managed AWS rule
   dynamic "statement" {
     for_each = local.create_batch_policy ? [1] : []
@@ -175,6 +149,51 @@ resource "aws_iam_role_policy" "workflow_machine_basic_services" {
   name_prefix = "${var.resource_prefix}-workflow-role-basic-services-policy-"
   role        = aws_iam_role.workflow_machine.name
   policy      = data.aws_iam_policy_document.workflow_machine_basic_services.json
+}
+
+# WORKFLOW STATE MACHINE IAM ROLE -- EVENTS, BATCH, AND LAMBDA PERMISSIONS
+# ------------------------------------------------------------------------------
+data "aws_iam_policy_document" "workflow_machine_basic_services_task_related" {
+
+  statement {
+    # Allow the state machine to push state transition events
+    sid       = "AllowWorkflowToCreateStateTransitionEvents"
+    effect    = "Allow"
+    actions   = ["events:PutEvents"]
+    resources = ["*"]
+  }
+
+  # Allow the state machine to invoke any referenced task Lambdas
+  dynamic "statement" {
+    for_each = local.create_lambda_policy ? [1] : []
+
+    content {
+      sid       = "AllowWorkflowToInvokeTaskLambdaFunctions"
+      effect    = "Allow"
+      actions   = ["lambda:InvokeFunction"]
+      resources = local.workflow_tasks_lambda_functions
+    }
+  }
+
+  # Restrict Job submissions to the specified Job Definitions and Job Queues.
+  # Those resources are determined by the user's template variables, so this
+  # statement is nothing more than a simple guardrail against user error.
+  dynamic "statement" {
+    for_each = local.create_batch_policy ? [1] : []
+
+    content {
+      sid       = "AllowWorkflowToSubmitTaskBatchJobs"
+      effect    = "Allow"
+      actions   = ["batch:SubmitJob"]
+      resources = local.workflow_tasks_batch_resources
+    }
+  }
+}
+
+resource "aws_iam_role_policy" "workflow_machine_basic_services_task_related" {
+  name_prefix = "${var.resource_prefix}-workflow-role-basic-services-task-related-policy-"
+  role        = aws_iam_role.workflow_machine.name
+  policy      = data.aws_iam_policy_document.workflow_machine_basic_services_task_related.json
 }
 # ==============================================================================
 
