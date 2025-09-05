@@ -134,6 +134,10 @@ output "cirrus_instance_profile_arn" {
   value = module.filmdrop.cirrus_instance_profile_arn
 }
 
+output "cirrus_lambda_version" {
+  value = module.filmdrop.cirrus_lambda_version
+}
+
 output "cirrus_data_bucket" {
   value = module.filmdrop.cirrus_data_bucket
 }

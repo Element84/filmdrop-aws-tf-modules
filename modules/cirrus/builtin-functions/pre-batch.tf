@@ -92,17 +92,16 @@ resource "aws_iam_role_policy" "cirrus_pre_batch_lambda_role_main" {
 # LAMBDA FUNCTION
 # ------------------------------------------------------------------------------
 resource "aws_lambda_function" "cirrus_pre_batch" {
-  function_name    = "${var.resource_prefix}-pre-batch"
-  description      = "Lambda function for Cirrus builtin Task 'pre-batch'"
-  role             = aws_iam_role.cirrus_pre_batch_lambda.arn
-  architectures    = ["arm64"]
-  runtime          = "python3.12"
-  filename         = var.cirrus_lambda_zip_filepath
-  source_code_hash = filebase64sha256(var.cirrus_lambda_zip_filepath)
-  handler          = "pre_batch.lambda_handler"
-  timeout          = var.cirrus_pre_batch_lambda_timeout
-  memory_size      = var.cirrus_pre_batch_lambda_memory
-  publish          = true
+  function_name = "${var.resource_prefix}-pre-batch"
+  description   = "Lambda function for Cirrus builtin Task 'pre-batch'"
+  role          = aws_iam_role.cirrus_pre_batch_lambda.arn
+  architectures = ["arm64"]
+  runtime       = "python3.12"
+  filename      = local.cirrus_lambda_filename
+  handler       = "pre_batch.lambda_handler"
+  timeout       = var.cirrus_pre_batch_lambda_timeout
+  memory_size   = var.cirrus_pre_batch_lambda_memory
+  publish       = true
 
   environment {
     variables = {
@@ -119,7 +118,8 @@ resource "aws_lambda_function" "cirrus_pre_batch" {
   # Dependent on all IAM policies being created/attached to the role first
   depends_on = [
     aws_iam_role_policy_attachment.cirrus_pre_batch_lambda_vpc_access,
-    aws_iam_role_policy.cirrus_pre_batch_lambda_role_main
+    aws_iam_role_policy.cirrus_pre_batch_lambda_role_main,
+    null_resource.get_cirrus_lambda
   ]
 }
 # ==============================================================================

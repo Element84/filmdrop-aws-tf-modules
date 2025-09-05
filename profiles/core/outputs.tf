@@ -134,6 +134,10 @@ output "cirrus_instance_profile_arn" {
   value = var.deploy_cirrus ? module.cirrus[0].cirrus_instance_profile_arn : ""
 }
 
+output "cirrus_lambda_version" {
+  value = var.deploy_cirrus ? module.cirrus[0].cirrus_lambda_version : ""
+}
+
 output "cirrus_data_bucket" {
   value = var.deploy_cirrus ? module.cirrus[0].cirrus_data_bucket : ""
 }
