@@ -9,6 +9,16 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Added
 
+### Changed
+
+### Fixed
+
+### Removed
+
+## [2.53.0] - 2025-09-05
+
+### Added
+
 - Added to TF outputs mapping of Cirrus lambda/batch tasks to IAM role arns
 - Added CIRRUS_PAYLOAD_BUCKET as builtin template variable
 - Added CIRRUS_DATA_BUCKET to parameter store
@@ -16,10 +26,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Changed
 
 - Download specified version of Cirrus lambda zip from GitHub during deployment
-
-### Fixed
-
-### Removed
 
 ## [2.52.0] - 2025-08-01
 
