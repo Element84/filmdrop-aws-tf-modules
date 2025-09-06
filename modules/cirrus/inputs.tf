@@ -51,9 +51,11 @@ variable "vpc_security_group_ids" {
 
 variable "cirrus_lambda_version" {
   description = <<-DESCRIPTION
-  (Optional) Version of Cirrus lambda to deploy.
+  (Optional) Version of Cirrus lambda to deploy. Please ensure the Cirrus version you set is compatible with this module.
 
   If `null`, defaults to the Cirrus version associated with this FilmDrop release.
+
+  See [cirrus-geo releases](https://github.com/cirrus-geo/cirrus-geo/releases) for more information.
   DESCRIPTION
   type        = string
   nullable    = true
