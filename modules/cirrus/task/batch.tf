@@ -25,6 +25,46 @@ locals {
 }
 
 
+# TASK BATCH JOB -- RESOLVING ECR IMAGE TAG TO DIGEST
+# ------------------------------------------------------------------------------
+# Batch job definitions can source images from ECR.
+# To support mutable tags, the following will optionally retrieve the latest
+# digest for the targeted image tag in order to force a new batch job definition
+# revision during the next deployment. Terraform will not check for a tag's
+# targeted digest otherwise.
+# ------------------------------------------------------------------------------
+locals {
+  # Convert the container properties JSON string to an HCL object
+  batch_container_properties = (
+    local.create_batch_job
+    ? jsondecode(var.task_config.batch.container_properties)
+    : null
+  )
+
+  # Determine if the image is ECR-based and capture details via regex groups
+  batch_ecr_image_details = try(regex(
+    local.ecr_image_regex,
+    local.batch_container_properties.image
+  ), null)
+
+  # Determine if we need to get the latest digest for the given tag
+  batch_resolve_ecr_tag_to_digest = (
+    local.batch_ecr_image_details != null
+    && try(var.task_config.batch.resolve_ecr_tag_to_digest, false) == true
+  )
+}
+
+# Data source to get the latest image digest for batch ECR images
+data "aws_ecr_image" "batch_task_image" {
+  count = local.batch_resolve_ecr_tag_to_digest ? 1 : 0
+
+  repository_name = local.batch_ecr_image_details.repository
+  image_tag       = local.batch_ecr_image_details.tag
+  registry_id     = local.batch_ecr_image_details.account_id
+}
+# ==============================================================================
+
+
 # TASK BATCH JOB / ECS TASK IAM ROLE -- BASIC SETUP
 # ------------------------------------------------------------------------------
 # Creates the role used by the Batch-managed ECS Task.
@@ -192,22 +232,44 @@ resource "aws_iam_role_policy" "task_batch_role_additional" {
 
 # TASK BATCH JOB DEFINITION
 # ------------------------------------------------------------------------------
+locals {
+  # Create the container properties JSON.
+  # This decodes the user's input JSON string, merges the resulting HCL object
+  # with the role ARNs managed by Terraform, optionally the latest digest for an
+  # ECR image, and then encodes it all back to a JSON string for resource usage.
+  batch_container_properties_updated = (
+    local.create_batch_job
+    ? jsonencode(merge(
+      {
+        executionRoleArn = local.batch_compute_config.ecs_task_execution_role_arn
+        jobRoleArn       = aws_iam_role.task_batch[0].arn
+      },
+      merge(
+        local.batch_container_properties,
+        # Optionally replace image URI with latest tag & digest-based URI
+        local.batch_resolve_ecr_tag_to_digest
+        ? {
+          image = format(
+            "%s/%s:%s@%s",
+            local.batch_ecr_image_details.registry,
+            local.batch_ecr_image_details.repository,
+            local.batch_ecr_image_details.tag,
+            data.aws_ecr_image.batch_task_image[0].image_digest
+          )
+        }
+        : {}
+      )
+    ))
+    : null
+  )
+}
+
 resource "aws_batch_job_definition" "task" {
   count = local.create_batch_job ? 1 : 0
 
   name = "${var.resource_prefix}-${var.task_config.name}"
 
-  # Create the container properties JSON.
-  # This decodes the user's input JSON string, merges the resulting HCL object
-  # with the role ARNs managed by Terraform, then encodes it back to a JSON str.
-  container_properties = jsonencode(merge(
-    {
-      executionRoleArn = local.batch_compute_config.ecs_task_execution_role_arn
-      jobRoleArn       = aws_iam_role.task_batch[0].arn
-    },
-    jsondecode(var.task_config.batch.container_properties)
-  ))
-
+  container_properties       = local.batch_container_properties_updated
   deregister_on_new_revision = true
   propagate_tags             = true
   type                       = "container"

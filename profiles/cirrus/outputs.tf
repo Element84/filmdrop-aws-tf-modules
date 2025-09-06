@@ -98,6 +98,14 @@ output "cirrus_task_role_arns" {
   value = module.cirrus.cirrus_task_role_arns
 }
 
+output "cirrus_task_resolved_ecr_image_digests" {
+  description = <<-DESCRIPTION
+  Map of cirrus task names to their resolved ECR image digests (if `resolve_ecr_tag_to_digest` was set for the task + task type).
+  DESCRIPTION
+
+  value = module.cirrus.cirrus_task_resolved_ecr_image_digests
+}
+
 output "cirrus_task_batch_compute_template_variables" {
   description = <<-DESCRIPTION
   Map of task batch compute names to their resolved template variables (static and SSM combined).

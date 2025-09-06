@@ -170,6 +170,14 @@ output "cirrus_task_role_arns" {
   value = var.deploy_cirrus ? module.cirrus[0].cirrus_task_role_arns : tomap({})
 }
 
+output "cirrus_task_resolved_ecr_image_digests" {
+  description = <<-DESCRIPTION
+  Map of cirrus task names to their resolved ECR image digests (if `resolve_ecr_tag_to_digest` was set for the task + task type).
+  DESCRIPTION
+
+  value = var.deploy_cirrus ? module.cirrus[0].cirrus_task_resolved_ecr_image_digests : tomap({})
+}
+
 output "cirrus_task_batch_compute_template_variables" {
   description = <<-DESCRIPTION
   Map of Cirrus task batch compute names to their resolved template variables (static and SSM combined).
