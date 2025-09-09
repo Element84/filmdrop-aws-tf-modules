@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Added
 
+- Added inputs to configure stac-server with enable_collections_authx (stac-server>=v4.4.0)
+
 ### Changed
 
 - Moved Cirrus task related permissions into separate IAM policy

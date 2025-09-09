@@ -86,6 +86,7 @@ variable "stac_server_inputs" {
     domain_alias                                = string
     enable_transactions_extension               = bool
     enable_collections_authx                    = bool
+    enable_filter_authx                         = bool
     enable_response_compression                 = bool
     items_max_limit                             = number
     enable_ingest_action_truncate               = bool
@@ -165,6 +166,7 @@ variable "stac_server_inputs" {
     domain_alias                                = ""
     enable_transactions_extension               = false
     enable_collections_authx                    = false
+    enable_filter_authx                         = false
     enable_response_compression                 = true
     items_max_limit                             = 100
     enable_ingest_action_truncate               = false
