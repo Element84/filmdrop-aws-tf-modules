@@ -29,6 +29,7 @@ resource "aws_lambda_function" "stac_server_api" {
       )
       ENABLE_TRANSACTIONS_EXTENSION = var.enable_transactions_extension
       ENABLE_COLLECTIONS_AUTHX      = var.enable_collections_authx
+      ENABLE_FILTER_AUTHX           = var.enable_filter_authx
       ITEMS_MAX_LIMIT               = var.items_max_limit
       ENABLE_RESPONSE_COMPRESSION   = var.enable_response_compression
       STAC_API_ROOTPATH = (

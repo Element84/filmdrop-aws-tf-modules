@@ -55,6 +55,13 @@ variable "enable_collections_authx" {
   default     = false
 }
 
+variable "enable_filter_authx" {
+  description = "Enable Filter Authx"
+  type        = bool
+  default     = false
+}
+
+
 variable "enable_response_compression" {
   description = "Enable Response Compression"
   type        = bool

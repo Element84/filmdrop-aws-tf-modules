@@ -30,6 +30,7 @@ stac_server_inputs = {
   domain_alias                                = ""
   enable_transactions_extension               = false
   enable_collections_authx                    = false
+  enable_filter_authx                         = false
   enable_response_compression                 = true
   items_max_limit                             = 100
   enable_ingest_action_truncate               = false

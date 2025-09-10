@@ -11,6 +11,7 @@ module "stac-server" {
   stac_description                            = var.stac_server_inputs.stac_description
   enable_transactions_extension               = var.stac_server_inputs.enable_transactions_extension
   enable_collections_authx                    = var.stac_server_inputs.enable_collections_authx
+  enable_filter_authx                         = var.stac_server_inputs.enable_filter_authx
   enable_response_compression                 = var.stac_server_inputs.enable_response_compression
   items_max_limit                             = var.stac_server_inputs.items_max_limit
   enable_ingest_action_truncate               = var.stac_server_inputs.enable_ingest_action_truncate
