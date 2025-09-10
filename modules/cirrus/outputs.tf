@@ -104,8 +104,22 @@ output "cirrus_task_role_arns" {
   value = {
     for task_name, task_output in module.task :
     task_name => {
-      "lambda" = task_output.lambda.role_arn
-      "batch"  = task_output.batch.role_arn
+      lambda = task_output.lambda.role_arn
+      batch  = task_output.batch.role_arn
+    }
+  }
+}
+
+output "cirrus_task_resolved_ecr_image_digests" {
+  description = <<-DESCRIPTION
+  Map of cirrus task names to their resolved ECR image digests (if `resolve_ecr_tag_to_digest` was set for the task + task type).
+  DESCRIPTION
+
+  value = {
+    for task_name, task_output in module.task :
+    task_name => {
+      lambda = task_output.lambda.resolved_ecr_image_digest
+      batch  = task_output.batch.resolved_ecr_image_digest
     }
   }
 }

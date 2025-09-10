@@ -31,6 +31,40 @@ locals {
 }
 
 
+# TASK LAMBDA -- RESOLVING ECR IMAGE TAG TO DIGEST
+# ------------------------------------------------------------------------------
+# Image-based lambdas must source images from ECR.
+# To support mutable tags, the following will optionally retrieve the latest
+# digest for the targeted image tag in order to force a lambda function update
+# during the next deployment.  Terraform will not check for a tag's targeted
+# digest otherwise.
+# ------------------------------------------------------------------------------
+locals {
+  # Determine if the image is ECR-based and capture details via regex groups
+  lambda_ecr_image_details = (
+    local.create_lambda
+    && try(var.task_config.lambda.ecr_image_uri, null) != null
+    ? try(regex(local.ecr_image_regex, var.task_config.lambda.ecr_image_uri), null)
+    : null
+  )
+
+  # Determine if we need to get the latest digest for the given tag
+  lambda_resolve_ecr_tag_to_digest = (
+    local.lambda_ecr_image_details != null
+    && try(var.task_config.lambda.resolve_ecr_tag_to_digest, false) == true
+  )
+}
+
+data "aws_ecr_image" "lambda_task_image" {
+  count = local.lambda_resolve_ecr_tag_to_digest ? 1 : 0
+
+  repository_name = local.lambda_ecr_image_details.repository
+  image_tag       = local.lambda_ecr_image_details.tag
+  registry_id     = local.lambda_ecr_image_details.account_id
+}
+# ==============================================================================
+
+
 # TASK LAMBDA IAM ROLE -- BASIC SETUP
 # ------------------------------------------------------------------------------
 data "aws_iam_policy_document" "task_lambda_assume_role" {
@@ -205,9 +239,14 @@ resource "aws_lambda_function" "task" {
     ? "${path.root}/${var.task_config.lambda.filename}"
     : null
   )
+
+  # Trigger function updates whenever the source updates.
+  # This could be a file update or a newer ECR image hash for a given tag.
   source_code_hash = (
     var.task_config.lambda.filename != null
     ? filebase64sha256("${path.root}/${var.task_config.lambda.filename}")
+    : local.lambda_resolve_ecr_tag_to_digest
+    ? base64sha256(data.aws_ecr_image.lambda_task_image[0].image_digest)
     : null
   )
 

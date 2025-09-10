@@ -147,10 +147,13 @@ the templating process.
 | <a name="output_cirrus_instance_role_arn"></a> [cirrus\_instance\_role\_arn](#output\_cirrus\_instance\_role\_arn) | n/a |
 | <a name="output_cirrus_instance_profile_name"></a> [cirrus\_instance\_profile\_name](#output\_cirrus\_instance\_profile\_name) | n/a |
 | <a name="output_cirrus_instance_profile_arn"></a> [cirrus\_instance\_profile\_arn](#output\_cirrus\_instance\_profile\_arn) | n/a |
+| <a name="output_cirrus_lambda_version"></a> [cirrus\_lambda\_version](#output\_cirrus\_lambda\_version) | n/a |
 | <a name="output_cirrus_data_bucket"></a> [cirrus\_data\_bucket](#output\_cirrus\_data\_bucket) | n/a |
 | <a name="output_cirrus_payload_bucket"></a> [cirrus\_payload\_bucket](#output\_cirrus\_payload\_bucket) | n/a |
 | <a name="output_cirrus_workflow_state_machine_arns"></a> [cirrus\_workflow\_state\_machine\_arns](#output\_cirrus\_workflow\_state\_machine\_arns) | Map of cirrus workflow names to their AWS state machine ARN. |
 | <a name="output_cirrus_workflow_state_machine_role_arns"></a> [cirrus\_workflow\_state\_machine\_role\_arns](#output\_cirrus\_workflow\_state\_machine\_role\_arns) | Map of cirrus workflow names to their AWS state machine's IAM role ARN. |
+| <a name="output_cirrus_task_role_arns"></a> [cirrus\_task\_role\_arns](#output\_cirrus\_task\_role\_arns) | Map of cirrus task names to their IAM role ARN. |
+| <a name="output_cirrus_task_resolved_ecr_image_digests"></a> [cirrus\_task\_resolved\_ecr\_image\_digests](#output\_cirrus\_task\_resolved\_ecr\_image\_digests) | Map of cirrus task names to their resolved ECR image digests (if `resolve_ecr_tag_to_digest` was set for the task + task type). |
 | <a name="output_cirrus_task_batch_compute_template_variables"></a> [cirrus\_task\_batch\_compute\_template\_variables](#output\_cirrus\_task\_batch\_compute\_template\_variables) | Map of task batch compute names to their resolved template variables (static and SSM combined).<br/>This shows the final variable values that were used during YAML templating. |
 | <a name="output_cirrus_task_template_variables"></a> [cirrus\_task\_template\_variables](#output\_cirrus\_task\_template\_variables) | Map of task names to their resolved template variables (static and SSM combined).<br/>This shows the final variable values that were used during YAML templating. |
 | <a name="output_cirrus_workflow_template_variables"></a> [cirrus\_workflow\_template\_variables](#output\_cirrus\_workflow\_template\_variables) | Map of workflow names to their resolved template variables (static and SSM combined).<br/>This shows the final variable values that were used during YAML templating. |

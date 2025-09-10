@@ -126,9 +126,10 @@ variable "cirrus_tasks" {
       }))
     })))
     lambda = optional(object({
-      description   = optional(string)
-      ecr_image_uri = optional(string)
-      filename      = optional(string)
+      description               = optional(string)
+      ecr_image_uri             = optional(string)
+      resolve_ecr_tag_to_digest = optional(bool)
+      filename                  = optional(string)
       image_config = optional(object({
         command           = optional(list(string))
         entry_point       = optional(list(string))
@@ -176,8 +177,9 @@ variable "cirrus_tasks" {
       })))
     }))
     batch = optional(object({
-      task_batch_compute_name = string
-      container_properties    = string
+      task_batch_compute_name   = string
+      container_properties      = string
+      resolve_ecr_tag_to_digest = optional(bool)
       retry_strategy = optional(object({
         attempts = number
         evaluate_on_exit = optional(list(object({

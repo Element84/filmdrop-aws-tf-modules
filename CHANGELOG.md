@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Added
 
 - Added inputs to configure stac-server with enable_collections_authx (stac-server>=v4.4.0)
+- Added support for cirrus tasks with mutable tags
 
 ### Changed
 
