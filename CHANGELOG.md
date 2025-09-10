@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Added
 
+- Added support for cirrus tasks with mutable tags
+
 ### Changed
 
 - Moved Cirrus task related permissions into separate IAM policy

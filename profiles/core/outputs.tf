@@ -151,7 +151,7 @@ output "cirrus_workflow_state_machine_arns" {
   Map of Cirrus Workflow names to their State Machine ARN.
   DESCRIPTION
 
-  value = var.deploy_cirrus ? module.cirrus[0].cirrus_workflow_state_machine_arns : tomap({})
+  value = var.deploy_cirrus ? module.cirrus[0].cirrus_workflow_state_machine_arns : null
 }
 
 output "cirrus_workflow_state_machine_role_arns" {
@@ -159,7 +159,7 @@ output "cirrus_workflow_state_machine_role_arns" {
   Map of Cirrus Workflow names to their State Machine's IAM role ARN.
   DESCRIPTION
 
-  value = var.deploy_cirrus ? module.cirrus[0].cirrus_workflow_state_machine_role_arns : tomap({})
+  value = var.deploy_cirrus ? module.cirrus[0].cirrus_workflow_state_machine_role_arns : null
 }
 
 output "cirrus_task_role_arns" {
@@ -167,7 +167,15 @@ output "cirrus_task_role_arns" {
   Map of cirrus task names to their IAM role ARN.
   DESCRIPTION
 
-  value = var.deploy_cirrus ? module.cirrus[0].cirrus_task_role_arns : tomap({})
+  value = var.deploy_cirrus ? module.cirrus[0].cirrus_task_role_arns : null
+}
+
+output "cirrus_task_resolved_ecr_image_digests" {
+  description = <<-DESCRIPTION
+  Map of cirrus task names to their resolved ECR image digests (if `resolve_ecr_tag_to_digest` was set for the task + task type).
+  DESCRIPTION
+
+  value = var.deploy_cirrus ? module.cirrus[0].cirrus_task_resolved_ecr_image_digests : null
 }
 
 output "cirrus_task_batch_compute_template_variables" {
@@ -176,7 +184,7 @@ output "cirrus_task_batch_compute_template_variables" {
   This shows the final variable values that were used during YAML templating.
   DESCRIPTION
 
-  value = var.deploy_cirrus ? module.cirrus[0].cirrus_task_batch_compute_template_variables : tomap({})
+  value = var.deploy_cirrus ? module.cirrus[0].cirrus_task_batch_compute_template_variables : null
 }
 
 output "cirrus_task_template_variables" {
@@ -185,7 +193,7 @@ output "cirrus_task_template_variables" {
   This shows the final variable values that were used during YAML templating.
   DESCRIPTION
 
-  value = var.deploy_cirrus ? module.cirrus[0].cirrus_task_template_variables : tomap({})
+  value = var.deploy_cirrus ? module.cirrus[0].cirrus_task_template_variables : null
 }
 
 output "cirrus_workflow_template_variables" {
@@ -194,7 +202,7 @@ output "cirrus_workflow_template_variables" {
   This shows the final variable values that were used during YAML templating.
   DESCRIPTION
 
-  value = var.deploy_cirrus ? module.cirrus[0].cirrus_workflow_template_variables : tomap({})
+  value = var.deploy_cirrus ? module.cirrus[0].cirrus_workflow_template_variables : null
 }
 
 output "warning_sns_topic_arn" {
