@@ -86,6 +86,10 @@ lambda:
   # specific values (e.g., maybe dev would use 'unstable'). ZIP-based Lambdas
   # from S3 or the local filesystem are supported instead of images, too.
   ecr_image_uri: <your-full-ECR-image-URI>:${first-task-example.image_tag}
+  # If you're using mutable ECR image tags, such as pinning dev to 'unstable',
+  # and want terraform to always check for the latest digest associated with
+  # that tag, enable this flag.
+  resolve_ecr_tag_to_digest: true
   # Deploy within the FilmDrop VPC unless you have an explicit reason not to
   vpc_enabled: true
   # Consider your code's specific resource requirements when setting a timeout
@@ -113,6 +117,10 @@ batch:
   parameters:
     url: filler
     url_out: filler
+  # If you're using mutable ECR image tags, such as pinning dev to 'unstable',
+  # and want terraform to always check for the latest digest associated with
+  # that tag, enable this flag.
+  resolve_ecr_tag_to_digest: true
   # This is a multi-line JSON string that defines your Batch Job container. See:
   # https://docs.aws.amazon.com/batch/latest/APIReference/API_RegisterJobDefinition.html
   # This configuration will depend upon your compute needs and the type of Batch
