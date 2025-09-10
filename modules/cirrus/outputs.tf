@@ -121,7 +121,6 @@ output "cirrus_task_resolved_ecr_image_digests" {
       lambda = task_output.lambda.resolved_ecr_image_digest
       batch  = task_output.batch.resolved_ecr_image_digest
     }
-    if task_output.lambda.resolved_ecr_image_digest != null || task_output.batch.resolved_ecr_image_digest != null
   }
 }
 
