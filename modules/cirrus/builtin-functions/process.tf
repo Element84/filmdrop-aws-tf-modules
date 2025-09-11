@@ -126,6 +126,7 @@ resource "aws_lambda_function" "cirrus_process" {
   description                    = "Cirrus Process Lambda"
   role                           = aws_iam_role.cirrus_process_lambda_role.arn
   handler                        = "process.lambda_handler"
+  source_code_hash               = local.cirrus_lambda_zip_hash
   runtime                        = "python3.12"
   timeout                        = var.cirrus_process_lambda_timeout
   memory_size                    = var.cirrus_process_lambda_memory

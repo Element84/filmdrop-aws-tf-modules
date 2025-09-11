@@ -96,16 +96,17 @@ resource "aws_iam_role_policy_attachment" "cirrus_update_state_lambda_role_polic
 }
 
 resource "aws_lambda_function" "cirrus_update_state" {
-  filename      = local.cirrus_lambda_filename
-  function_name = "${var.resource_prefix}-update-state"
-  description   = "Cirrus Update-State Lambda"
-  role          = aws_iam_role.cirrus_update_state_lambda_role.arn
-  handler       = "update_state.lambda_handler"
-  runtime       = "python3.12"
-  timeout       = var.cirrus_update_state_lambda_timeout
-  memory_size   = var.cirrus_update_state_lambda_memory
-  publish       = true
-  architectures = ["arm64"]
+  filename         = local.cirrus_lambda_filename
+  function_name    = "${var.resource_prefix}-update-state"
+  description      = "Cirrus Update-State Lambda"
+  role             = aws_iam_role.cirrus_update_state_lambda_role.arn
+  handler          = "update_state.lambda_handler"
+  source_code_hash = local.cirrus_lambda_zip_hash
+  runtime          = "python3.12"
+  timeout          = var.cirrus_update_state_lambda_timeout
+  memory_size      = var.cirrus_update_state_lambda_memory
+  publish          = true
+  architectures    = ["arm64"]
 
   environment {
     variables = {
