@@ -4,7 +4,7 @@ locals {
 }
 
 resource "null_resource" "get_cirrus_lambda" {
-  count    = var.cirrus_lambda_zip_filepath == null ? 1 : 0
+  count = var.cirrus_lambda_zip_filepath == null ? 1 : 0
   triggers = {
     always_run = var.cirrus_lambda_version
   }
