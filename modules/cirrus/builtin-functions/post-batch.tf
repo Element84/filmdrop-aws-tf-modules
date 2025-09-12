@@ -103,16 +103,17 @@ resource "aws_iam_role_policy" "cirrus_post_batch_lambda_role_main" {
 # LAMBDA FUNCTION
 # ------------------------------------------------------------------------------
 resource "aws_lambda_function" "cirrus_post_batch" {
-  function_name = "${var.resource_prefix}-post-batch"
-  description   = "Lambda function for Cirrus builtin Task 'post-batch'"
-  role          = aws_iam_role.cirrus_post_batch_lambda.arn
-  architectures = ["arm64"]
-  runtime       = "python3.12"
-  filename      = local.cirrus_lambda_filename
-  handler       = "post_batch.lambda_handler"
-  timeout       = var.cirrus_post_batch_lambda_timeout
-  memory_size   = var.cirrus_post_batch_lambda_memory
-  publish       = true
+  function_name    = "${var.resource_prefix}-post-batch"
+  description      = "Lambda function for Cirrus builtin Task 'post-batch'"
+  role             = aws_iam_role.cirrus_post_batch_lambda.arn
+  architectures    = ["arm64"]
+  runtime          = "python3.12"
+  filename         = local.cirrus_lambda_filename
+  source_code_hash = local.cirrus_lambda_zip_hash
+  handler          = "post_batch.lambda_handler"
+  timeout          = var.cirrus_post_batch_lambda_timeout
+  memory_size      = var.cirrus_post_batch_lambda_memory
+  publish          = true
 
   environment {
     variables = {

@@ -92,16 +92,17 @@ resource "aws_iam_role_policy" "cirrus_pre_batch_lambda_role_main" {
 # LAMBDA FUNCTION
 # ------------------------------------------------------------------------------
 resource "aws_lambda_function" "cirrus_pre_batch" {
-  function_name = "${var.resource_prefix}-pre-batch"
-  description   = "Lambda function for Cirrus builtin Task 'pre-batch'"
-  role          = aws_iam_role.cirrus_pre_batch_lambda.arn
-  architectures = ["arm64"]
-  runtime       = "python3.12"
-  filename      = local.cirrus_lambda_filename
-  handler       = "pre_batch.lambda_handler"
-  timeout       = var.cirrus_pre_batch_lambda_timeout
-  memory_size   = var.cirrus_pre_batch_lambda_memory
-  publish       = true
+  function_name    = "${var.resource_prefix}-pre-batch"
+  description      = "Lambda function for Cirrus builtin Task 'pre-batch'"
+  role             = aws_iam_role.cirrus_pre_batch_lambda.arn
+  architectures    = ["arm64"]
+  runtime          = "python3.12"
+  filename         = local.cirrus_lambda_filename
+  source_code_hash = local.cirrus_lambda_zip_hash
+  handler          = "pre_batch.lambda_handler"
+  timeout          = var.cirrus_pre_batch_lambda_timeout
+  memory_size      = var.cirrus_pre_batch_lambda_memory
+  publish          = true
 
   environment {
     variables = {

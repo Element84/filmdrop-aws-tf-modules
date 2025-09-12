@@ -62,6 +62,17 @@ variable "cirrus_lambda_version" {
   default     = null
 }
 
+variable "cirrus_lambda_zip_filepath" {
+  description = <<-DESCRIPTION
+  (Optional) Filepath to a Cirrus Lambda Dist ZIP relative to the root module of
+  this Terraform deployment. If provided, will not download from GitHub Releases
+  the version of Cirrus as specified in `cirrus_lambda_version`.
+  DESCRIPTION
+  type        = string
+  nullable    = true
+  default     = null
+}
+
 variable "cirrus_data_bucket" {
   description = <<-DESCRIPTION
   (Optional) S3 bucket for storing cirrus outputs. If provided, the bucket is presumed to have already been created outside of this module and that you have the necessary permissions in place to allow access for resources created by this module.

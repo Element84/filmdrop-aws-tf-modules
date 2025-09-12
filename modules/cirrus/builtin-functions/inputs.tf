@@ -31,6 +31,17 @@ variable "cirrus_lambda_version" {
   default     = "1.0.2"
 }
 
+variable "cirrus_lambda_zip_filepath" {
+  description = <<-DESCRIPTION
+  (Optional) Filepath to a Cirrus Lambda Dist ZIP relative to the root module of
+  this Terraform deployment. If provided, will not download from GitHub Releases
+  the version of Cirrus as specified in `cirrus_lambda_version`.
+  DESCRIPTION
+  type        = string
+  nullable    = true
+  default     = null
+}
+
 variable "cirrus_api_lambda_timeout" {
   description = "Cirrus API lambda timeout (sec)"
   type        = number
