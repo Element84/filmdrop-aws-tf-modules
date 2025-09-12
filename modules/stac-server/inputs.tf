@@ -467,6 +467,34 @@ variable "cors_headers" {
   default     = ""
 }
 
+variable "deploy_alarms" {
+  type        = bool
+  default     = true
+  description = "Deploy stac-server dead letter queue alarm stack"
+}
+
+variable "dead_letter_queue_warning_alarm_threshold" {
+  description = "Message count threshold trigger for dead letter queue for warning alarm"
+  type        = number
+  default     = 2
+}
+
+variable "dead_letter_queue_critical_alarm_threshold" {
+  description = "Message count threshold trigger for dead letter queue for critical alarm"
+  type        = number
+  default     = 10
+}
+
+variable "warning_sns_topic_arn" {
+  description = "SNS topic to be used by all stac-server `warning` alarms."
+  type        = string
+}
+
+variable "critical_sns_topic_arn" {
+  description = "SNS topic to be used by all stac-server `critical` alarms"
+  type        = string
+}
+
 variable "domain_alias" {
   description = "Custom domain alias for private API Gateway endpoint"
   type        = string

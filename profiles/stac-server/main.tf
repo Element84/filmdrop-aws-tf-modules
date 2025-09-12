@@ -43,10 +43,12 @@ module "stac-server" {
   stac_api_rootpath = var.stac_server_inputs.deploy_cloudfront || var.stac_server_inputs.domain_alias != "" ? "" : "/${var.environment}"
   stac_api_url      = var.stac_server_inputs.domain_alias != "" ? "https://${var.stac_server_inputs.domain_alias}" : ""
 
-  cors_origin      = var.stac_server_inputs.cors_origin
-  cors_credentials = var.stac_server_inputs.cors_credentials
-  cors_methods     = var.stac_server_inputs.cors_methods
-  cors_headers     = var.stac_server_inputs.cors_headers
+  cors_origin            = var.stac_server_inputs.cors_origin
+  cors_credentials       = var.stac_server_inputs.cors_credentials
+  cors_methods           = var.stac_server_inputs.cors_methods
+  cors_headers           = var.stac_server_inputs.cors_headers
+  warning_sns_topic_arn  = var.warning_sns_topic_arn
+  critical_sns_topic_arn = var.critical_sns_topic_arn
 }
 
 module "cloudfront_api_gateway_endpoint" {
