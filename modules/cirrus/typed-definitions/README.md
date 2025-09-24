@@ -1,6 +1,6 @@
 # Purpose
 
-This is a simple utility module created to facilitate storing Cirrus `task`,
+This is a simple utility module created to facilitate storing Cirrus `feeder`, `task`,
 `task-batch-compute`, and `workflow` input configurations as individual YAML
 files rather than lists of HCL objects in each environment configuration.
 

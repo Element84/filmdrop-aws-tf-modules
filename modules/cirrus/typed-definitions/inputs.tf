@@ -1,3 +1,101 @@
+variable "cirrus_feeders" {
+  description = <<-DESCRIPTION
+  (Optional) List of objects that conform to the feeder module's "feeder_config"
+  object schema. Used for explicitly typecasting the HCL objects that were
+  constructed from YAML definition files.
+
+  If null, an empty list is returned.
+  DESCRIPTION
+  type = list(object({
+    name = string
+
+    # TODO: 
+    # - biggest open question is, do we send events directly to the lambda, or somewhere else? re: errors/retries/dlq
+    # - probably a list if implementation's not overly complex, although multiple triggers to the same feeder are rare
+    #     in the real world
+    trigger = object({
+      description = optional(string)
+
+      # 
+      s3 = optional(object({
+      }))
+
+      # 
+      sns = optional(object({
+      }))
+    })
+
+    lambda = object({
+      description               = optional(string)
+      ecr_image_uri             = optional(string)
+      resolve_ecr_tag_to_digest = optional(bool)
+      filename                  = optional(string)
+      image_config = optional(object({
+        command           = optional(list(string))
+        entry_point       = optional(list(string))
+        working_directory = optional(string)
+      }))
+      s3_bucket       = optional(string)
+      s3_key          = optional(string)
+      handler         = optional(string)
+      runtime         = optional(string)
+      timeout_seconds = optional(number)
+      memory_mb       = optional(number)
+      publish         = optional(bool)
+      architectures   = optional(list(string))
+      env_vars        = optional(map(string))
+      vpc_enabled     = optional(bool)
+      role_statements = optional(list(object({
+        sid           = string
+        effect        = string
+        actions       = list(string)
+        resources     = list(string)
+        not_actions   = optional(list(string))
+        not_resources = optional(list(string))
+        condition = optional(object({
+          test     = string
+          variable = string
+          values   = list(string)
+        }))
+        principals = optional(object({
+          type        = string
+          identifiers = list(string)
+        }))
+        not_principals = optional(object({
+          type        = string
+          identifiers = list(string)
+        }))
+      })))
+      alarms = optional(list(object({
+        critical            = bool
+        statistic           = string
+        metric_name         = string
+        comparison_operator = string
+        threshold           = number
+        period              = optional(number, 60)
+        evaluation_periods  = optional(number, 5)
+      })))
+    })
+  }))
+
+  # Force default if null
+  nullable = false
+  default  = []
+
+  validation {
+    condition     = length(var.cirrus_feeders) == length(distinct(var.cirrus_feeders[*].name))
+    error_message = "Each cirrus feeder name must be unique to avoid resource clobbering"
+  }
+
+  validation {
+    condition = alltrue([
+      for name in var.cirrus_feeders[*].name :
+      length(regexall("^[A-Za-z0-9-]+$", name)) > 0 ? true : false
+    ])
+    error_message = "Each cirrus feeder name must only use alphanumeric characters and hyphens"
+  }
+}
+
 variable "cirrus_task_batch_compute" {
   description = <<-DESCRIPTION
   (Optional) List of objects that conform to the task-batch-compute module's

@@ -214,6 +214,9 @@ cirrus_inputs = {
     timeout = 15
     memory  = 128
   }
+  feeder_definitions_dir                       = null
+  feeder_definitions_variables                 = null
+  feeder_definitions_variables_ssm             = null
   task_batch_compute_definitions_dir           = null
   task_batch_compute_definitions_variables     = null
   task_batch_compute_definitions_variables_ssm = null
