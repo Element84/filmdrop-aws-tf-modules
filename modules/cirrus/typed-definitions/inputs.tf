@@ -9,22 +9,6 @@ variable "cirrus_feeders" {
   type = list(object({
     name = string
 
-    # TODO: 
-    # - biggest open question is, do we send events directly to the lambda, or somewhere else? re: errors/retries/dlq
-    # - probably a list if implementation's not overly complex, although multiple triggers to the same feeder are rare
-    #     in the real world
-    trigger = object({
-      description = optional(string)
-
-      # 
-      s3 = optional(object({
-      }))
-
-      # 
-      sns = optional(object({
-      }))
-    })
-
     lambda = object({
       description               = optional(string)
       ecr_image_uri             = optional(string)
