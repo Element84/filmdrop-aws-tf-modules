@@ -7,15 +7,18 @@ variable "cirrus_feeders" {
   If null, an empty list is returned.
   DESCRIPTION
   type = list(object({
-    name = string
-
-    sqs = object({
-      message_retention_seconds = optional(number)
-    })
+    name        = string
+    description = optional(string)
 
     lambda = object({
       filename = optional(string)
+      handler  = optional(string)
+      runtime  = optional(string)
     })
+
+    sqs = optional(object({
+      message_retention_seconds = optional(number)
+    }))
   }))
 
   # Force default if null

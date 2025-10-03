@@ -6,27 +6,26 @@ variable "resource_prefix" {
 
 variable "feeder_config" {
   # NOTE: type changes here require changes in the typed-definitions module, too
-  type = list(object({
-    name = string
-
-    sqs = object({
-      message_retention_seconds = optional(number)
-    })
+  type = object({
+    name        = string
+    description = optional(string)
 
     lambda = object({
       filename = optional(string)
+      handler  = optional(string)
+      runtime  = optional(string)
     })
-  }))
+
+    sqs = optional(object({
+      message_retention_seconds = optional(number)
+    }))
+  })
 
   # Value must be provided else this module serves no purpose
   nullable = false
 
   validation {
     condition     = var.feeder_config.lambda != null
-    error_message = "Feeder configs must specify Lambda config"
-  }
-  validation {
-    condition     = var.feeder_config.sqs != null
-    error_message = "Feeder configs must specify SQS config"
+    error_message = "Feeder configs must specify a Lambda config"
   }
 }
