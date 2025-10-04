@@ -10,6 +10,10 @@ variable "cirrus_feeders" {
     name        = string
     description = optional(string)
 
+    triggers_s3 = optional(list(object({
+      type = string
+    })))
+
     lambda = object({
       filename = optional(string)
       handler  = optional(string)
