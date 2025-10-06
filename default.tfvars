@@ -220,14 +220,14 @@ cirrus_inputs = {
     memory  = 128
   }
   # feeder_definitions in beta, not ready for prod use
-  feeder_definitions_dir                       = "../cirrus-feeders/feeders"
+  feeder_definitions_dir                       = "../temp/cirrus-feeders/feeders"
   task_batch_compute_definitions_dir           = null
   task_batch_compute_definitions_variables     = null
   task_batch_compute_definitions_variables_ssm = null
-  task_definitions_dir                         = "../cirrus-feeders/tasks"
+  task_definitions_dir                         = "../temp/cirrus-feeders/tasks"
   task_definitions_variables                   = null
   task_definitions_variables_ssm               = null
-  workflow_definitions_dir                     = "../cirrus-feeders/workflows"
+  workflow_definitions_dir                     = "../temp/cirrus-feeders/workflows"
   workflow_definitions_variables               = null
   workflow_definitions_variables_ssm           = null
 }

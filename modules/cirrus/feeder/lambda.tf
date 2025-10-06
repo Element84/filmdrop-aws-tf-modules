@@ -11,12 +11,7 @@ data "aws_iam_policy_document" "feeder_lambda_assume_role" {
       identifiers = ["lambda.amazonaws.com"]
     }
 
-    # Conditions to prevent the "confused deputy" security problem
-    condition {
-      test     = "ArnEquals"
-      variable = "aws:SourceArn"
-      values   = ["arn:aws:lambda:${local.current_region}:${local.current_account}:function:${local.name_main}"]
-    }
+    # Help prevent cross-account confused deputy
     condition {
       test     = "StringEquals"
       variable = "aws:SourceAccount"
