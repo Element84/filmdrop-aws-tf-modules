@@ -55,15 +55,15 @@ data "aws_iam_policy_document" "lambda_assume_role" {
       identifiers = ["lambda.amazonaws.com"]
     }
 
+    # TODO: feeders will need sqs arn here in the values arr. For now, commenting this out but needs fixing
     # Conditions to prevent the "confused deputy" security problem
-    condition {
-      test     = "ArnEquals"
-      variable = "aws:SourceArn"
-      # TODO: feeders will need sqs arn here
-      values = [
-        "arn:aws:lambda:${local.current_region}:${local.current_account}:function:${var.function_name}"
-      ]
-    }
+    # condition {
+    #   test     = "ArnEquals"
+    #   variable = "aws:SourceArn"
+    #   values = [
+    #     "arn:aws:lambda:${local.current_region}:${local.current_account}:function:${var.function_name}"
+    #   ]
+    # }
     condition {
       test     = "StringEquals"
       variable = "aws:SourceAccount"
@@ -73,9 +73,9 @@ data "aws_iam_policy_document" "lambda_assume_role" {
 }
 
 resource "aws_iam_role" "lambda" {
-  name_prefix        = "${var.function_name}-role-"
+  name               = "${var.function_name}-lambda-role"
   description        = "Lambda execution role for Lambda '${var.function_name}'"
-  assume_role_policy = data.aws_iam_policy_document.lambda_assume_role[0].json
+  assume_role_policy = data.aws_iam_policy_document.lambda_assume_role.json
 }
 # ==============================================================================
 
@@ -83,19 +83,19 @@ resource "aws_iam_role" "lambda" {
 # IAM ROLE -- MANAGED POLICY ATTACHMENTS
 # ------------------------------------------------------------------------------
 resource "aws_iam_role_policy_attachment" "lambda_basic_execution" {
-  role       = aws_iam_role.lambda[0].name
+  role       = aws_iam_role.lambda.name
   policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
 }
 
 resource "aws_iam_role_policy_attachment" "lambda_read_only" {
-  role       = aws_iam_role.lambda[0].name
+  role       = aws_iam_role.lambda.name
   policy_arn = "arn:aws:iam::aws:policy/AWSLambda_ReadOnlyAccess"
 }
 
 resource "aws_iam_role_policy_attachment" "lambda_vpc_access" {
   count = local.deploy_lambda_in_vpc ? 1 : 0
 
-  role       = aws_iam_role.lambda[0].name
+  role       = aws_iam_role.lambda.name
   policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole"
 }
 # ==============================================================================
@@ -177,9 +177,9 @@ data "aws_iam_policy_document" "lambda_role_additional" {
 resource "aws_iam_role_policy" "lambda_role_additional" {
   count = local.create_additional_lambda_policy ? 1 : 0
 
-  name_prefix = "${var.function_name}-role-additional-policy-"
-  role        = aws_iam_role.lambda[0].name
-  policy      = data.aws_iam_policy_document.lambda_role_additional[0].json
+  name   = "${var.function_name}-role-addt"
+  role   = aws_iam_role.lambda.name
+  policy = data.aws_iam_policy_document.lambda_role_additional[0].json
 }
 # ==============================================================================
 
@@ -196,7 +196,7 @@ resource "aws_lambda_function" "func" {
   memory_size   = var.lambda_config.memory_mb
   package_type  = var.lambda_config.ecr_image_uri != null ? "Image" : "Zip"
   publish       = var.lambda_config.publish
-  role          = aws_iam_role.lambda[0].arn
+  role          = aws_iam_role.lambda.arn
   runtime       = var.lambda_config.runtime
   s3_bucket     = var.lambda_config.s3_bucket
   s3_key        = var.lambda_config.s3_key
@@ -313,7 +313,7 @@ resource "aws_cloudwatch_metric_alarm" "lambda" {
   )
 
   dimensions = {
-    FunctionName = aws_lambda_function.func[0].arn
+    FunctionName = aws_lambda_function.func.arn
   }
 }
 # ==============================================================================

@@ -219,8 +219,12 @@ module "feeder" {
     feeder.name => feeder
   }
 
-  resource_prefix = var.resource_prefix
-  feeder_config   = each.value
+  resource_prefix        = var.resource_prefix
+  feeder_config          = each.value
+  vpc_subnet_ids         = var.vpc_subnet_ids
+  vpc_security_group_ids = var.vpc_security_group_ids
+  warning_sns_topic_arn  = var.warning_sns_topic_arn
+  critical_sns_topic_arn = var.critical_sns_topic_arn
 }
 
 # Creates 0..many sets of Batch-related resources for cirrus batch compute
