@@ -220,16 +220,7 @@ resource "aws_lambda_function" "func" {
     : null
   )
 
-  # TODO: now we are merging the env vars from the standard config, and extras that a user can pass in
-  # Create zero or one environment configuration blocks
-  # dynamic "environment" {
-  #   for_each = var.lambda_config.env_vars != null ? [1] : []
-  #   content {
-  #     variables = {
-  #       for k, v in var.lambda_config.env_vars : k => v
-  #     }
-  #   }
-  # }
+  # Create env vars from both the lambda_config and any provided as inputs to the module
   environment {
     variables = merge(
       var.lambda_config.env_vars != null ? var.lambda_config.env_vars : {},

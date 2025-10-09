@@ -1,8 +1,10 @@
 locals {
-  # If we're not creating at least one s3 or SNS trigger, some resources below can use this to skip creation
+  # If we're not creating at least one s3 or SNS trigger, some resources below can use this to skip creation. Note
+  # that we do create the queue and its DLQ, as the user may be configuring the queue first and later adding triggers
   at_least_one_trigger = (var.feeder_config.triggers_s3 != null || var.feeder_config.triggers_sns != null)
 }
 
+# The feeder SQS queue, and its DLQ
 resource "aws_sqs_queue" "feeder_queue" {
   name = local.name_main
 

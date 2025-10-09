@@ -35,9 +35,8 @@ data "aws_iam_policy_document" "feeder_lambda_general_perms" {
       "sqs:SendMessage",
     ]
 
-    # TODO: Change this to the process queue ARN once we have it as a variable
     resources = [
-      "arn:aws:sqs:us-west-2:662634391897:fd-jai-feed-tes-cirrus-process",
+      var.builtin_feeder_definitions_variables.CIRRUS_PROCESS_QUEUE_ARN,
     ]
   }
 }
@@ -66,7 +65,7 @@ resource "aws_lambda_event_source_mapping" "sqs_trigger" {
   ]
 
   # TODO:
-  # This is the key setting that enables partial batch failure reporting.
+  # This would enable partial batch failure reporting.
   # The Lambda must return a specific JSON structure for this to work, so whether to enable this is up for discussion
   # function_response_types = ["ReportBatchItemFailures"]
 }

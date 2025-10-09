@@ -130,6 +130,7 @@ locals {
     CIRRUS_DATA_BUCKET       = module.base.cirrus_data_bucket
     CIRRUS_PAYLOAD_BUCKET    = module.base.cirrus_payload_bucket
     CIRRUS_PROCESS_QUEUE_URL = module.base.cirrus_process_sqs_queue_url
+    CIRRUS_PROCESS_QUEUE_ARN = module.base.cirrus_process_sqs_queue_arn
   }
 
   # Construct Cirrus task-batch-compute, task, and workflow definitions.
