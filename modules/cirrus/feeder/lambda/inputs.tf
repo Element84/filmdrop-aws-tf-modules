@@ -71,6 +71,17 @@ variable "lambda_config" {
   })
 }
 
+# TODO: description
+variable "lambda_env_vars" {
+  description = <<-DESCRIPTION
+  (Optional) Map of environment variables to set in the lambda function.
+
+  DESCRIPTION
+  type        = map(string)
+  nullable    = true
+  default     = null
+}
+
 variable "warning_sns_topic_arn" {
   description = <<-DESCRIPTION
   (Optional) SNS topic to be used by all `warning` alarms.

@@ -130,3 +130,13 @@ variable "critical_sns_topic_arn" {
   nullable    = true
   default     = null
 }
+
+# TODO: description. see workflow/inputs.tf
+variable "builtin_feeder_definitions_variables" {
+  description = <<-DESCRIPTION
+  (Optional) 
+  DESCRIPTION
+  type        = map(string)
+  nullable    = false
+  default     = {}
+}

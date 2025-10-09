@@ -127,8 +127,9 @@ locals {
 locals {
   # These variables may be used in definition templates for convenience.
   builtin_definitions_variables = {
-    CIRRUS_DATA_BUCKET    = module.base.cirrus_data_bucket
-    CIRRUS_PAYLOAD_BUCKET = module.base.cirrus_payload_bucket
+    CIRRUS_DATA_BUCKET       = module.base.cirrus_data_bucket
+    CIRRUS_PAYLOAD_BUCKET    = module.base.cirrus_payload_bucket
+    CIRRUS_PROCESS_QUEUE_URL = module.base.cirrus_process_sqs_queue_url
   }
 
   # Construct Cirrus task-batch-compute, task, and workflow definitions.
@@ -219,12 +220,13 @@ module "feeder" {
     feeder.name => feeder
   }
 
-  resource_prefix        = var.resource_prefix
-  feeder_config          = each.value
-  vpc_subnet_ids         = var.vpc_subnet_ids
-  vpc_security_group_ids = var.vpc_security_group_ids
-  warning_sns_topic_arn  = var.warning_sns_topic_arn
-  critical_sns_topic_arn = var.critical_sns_topic_arn
+  resource_prefix                      = var.resource_prefix
+  feeder_config                        = each.value
+  vpc_subnet_ids                       = var.vpc_subnet_ids
+  vpc_security_group_ids               = var.vpc_security_group_ids
+  warning_sns_topic_arn                = var.warning_sns_topic_arn
+  critical_sns_topic_arn               = var.critical_sns_topic_arn
+  builtin_feeder_definitions_variables = local.builtin_definitions_variables
 }
 
 # Creates 0..many sets of Batch-related resources for cirrus batch compute

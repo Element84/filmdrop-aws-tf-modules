@@ -8,9 +8,11 @@ module "lambda" {
   vpc_security_group_ids = var.vpc_security_group_ids
   warning_sns_topic_arn  = var.warning_sns_topic_arn
   critical_sns_topic_arn = var.critical_sns_topic_arn
+  lambda_env_vars        = var.builtin_feeder_definitions_variables
 }
 
-# Add SQS perms the feeder lambda needs to read from the feeder queue
+# Allow this feeder lambda to read from and delete messages in the feeder SQS queue. Also allow it to send
+# messages to the process queue
 data "aws_iam_policy_document" "feeder_lambda_general_perms" {
   statement {
     effect = "Allow"
@@ -25,6 +27,19 @@ data "aws_iam_policy_document" "feeder_lambda_general_perms" {
       aws_sqs_queue.feeder_queue.arn,
     ]
   }
+
+  statement {
+    effect = "Allow"
+
+    actions = [
+      "sqs:SendMessage",
+    ]
+
+    # TODO: Change this to the process queue ARN once we have it as a variable
+    resources = [
+      "arn:aws:sqs:us-west-2:662634391897:fd-jai-feed-tes-cirrus-process",
+    ]
+  }
 }
 
 resource "aws_iam_role_policy" "general_perms" {
@@ -33,7 +48,7 @@ resource "aws_iam_role_policy" "general_perms" {
   policy = data.aws_iam_policy_document.feeder_lambda_general_perms.json
 }
 
-# Feeder queue perms to invoke the feeder lambda
+# Feeder queue perms to invoke this lambda; required for sqs -> lambda triggers
 resource "aws_lambda_permission" "sqs_lambda_permission" {
   action        = "lambda:InvokeFunction"
   function_name = module.lambda.function_name
@@ -52,6 +67,6 @@ resource "aws_lambda_event_source_mapping" "sqs_trigger" {
 
   # TODO:
   # This is the key setting that enables partial batch failure reporting.
-  # The Lambda must return a specific JSON structure for this to work.
+  # The Lambda must return a specific JSON structure for this to work, so whether to enable this is up for discussion
   # function_response_types = ["ReportBatchItemFailures"]
 }
