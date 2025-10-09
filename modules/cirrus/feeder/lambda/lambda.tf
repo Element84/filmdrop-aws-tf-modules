@@ -73,7 +73,7 @@ data "aws_iam_policy_document" "lambda_assume_role" {
 }
 
 resource "aws_iam_role" "lambda" {
-  name               = "${var.function_name}-lambda-role"
+  name               = "${var.function_name}-lbdrole"
   description        = "Lambda execution role for Lambda '${var.function_name}'"
   assume_role_policy = data.aws_iam_policy_document.lambda_assume_role.json
 }

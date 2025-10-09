@@ -40,6 +40,9 @@ resource "aws_sqs_queue_redrive_allow_policy" "feeder_queue_redrive_allow_policy
 
 # Grant each S3 bucket and SNS topic permissions to send messages to the feeder queue
 data "aws_iam_policy_document" "sqs_access" {
+  # If the user hasn't yet defined any triggers at all, don't create this policy
+  count = local.at_least_one_trigger ? 1 : 0
+
   statement {
     effect    = "Allow"
     actions   = ["sqs:SendMessage"]
@@ -57,8 +60,8 @@ data "aws_iam_policy_document" "sqs_access" {
       test     = "ArnEquals"
       variable = "aws:SourceArn"
       values = concat(
-        [for t in values(aws_sns_topic.event_topic) : t.arn],
-        [for b in values(aws_s3_bucket.event_bucket) : b.arn]
+        [for b in var.feeder_config.triggers_s3 : b.bucket_arn],
+        [for t in var.feeder_config.triggers_sns : t.topic_arn]
       )
     }
   }
@@ -69,5 +72,5 @@ resource "aws_sqs_queue_policy" "sqs_policy" {
   count = local.at_least_one_trigger ? 1 : 0
 
   queue_url = aws_sqs_queue.feeder_queue.url
-  policy    = data.aws_iam_policy_document.sqs_access.json
+  policy    = data.aws_iam_policy_document.sqs_access[0].json
 }

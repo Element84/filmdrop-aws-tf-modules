@@ -11,7 +11,7 @@ variable "cirrus_feeders" {
     description = optional(string)
 
     triggers_sns = optional(list(object({
-      topic_name_suffix    = string
+      topic_arn            = string
       delivery_policy      = optional(string)
       filter_policy        = optional(string)
       filter_policy_scope  = optional(string)
@@ -19,10 +19,11 @@ variable "cirrus_feeders" {
     })))
 
     triggers_s3 = optional(list(object({
-      bucket_name_suffix = string
-      events             = list(string)
-      filter_prefix      = optional(string)
-      filter_suffix      = optional(string)
+      bucket_name   = string
+      bucket_arn    = string
+      events        = list(string)
+      filter_prefix = optional(string)
+      filter_suffix = optional(string)
     })))
 
     sqs = optional(object({
@@ -34,7 +35,7 @@ variable "cirrus_feeders" {
       max_receive_count          = optional(number)
     }))
 
-    lambda_new = optional(object({
+    lambda = optional(object({
       description               = optional(string)
       ecr_image_uri             = optional(string)
       resolve_ecr_tag_to_digest = optional(bool)

@@ -1,19 +1,10 @@
-# Create an SNS topic for each trigger
-resource "aws_sns_topic" "event_topic" {
-  for_each = {
-    for trigger in coalesce(var.feeder_config.triggers_sns, []) : trigger.topic_name_suffix => trigger
-  }
-
-  name = "${local.name_main}-${each.key}"
-}
-
-# Create a subscription on each SNS topic to send messages to the feeder SQS queue
+# Create a subscription on each SNS topic to send messages to the feeder queue
 resource "aws_sns_topic_subscription" "sqs_subscription" {
   for_each = {
-    for trigger in coalesce(var.feeder_config.triggers_sns, []) : trigger.topic_name_suffix => trigger
+    for trigger in coalesce(var.feeder_config.triggers_sns, []) : trigger.topic_arn => trigger
   }
 
-  topic_arn = aws_sns_topic.event_topic[each.key].arn
+  topic_arn = each.value.topic_arn
   protocol  = "sqs"
   endpoint  = aws_sqs_queue.feeder_queue.arn
 
