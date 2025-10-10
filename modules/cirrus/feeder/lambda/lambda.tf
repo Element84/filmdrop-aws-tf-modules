@@ -55,17 +55,17 @@ data "aws_iam_policy_document" "lambda_assume_role" {
       identifiers = ["lambda.amazonaws.com"]
     }
 
+    # Conditions to prevent the "confused deputy" security problem
     condition {
       test     = "StringEquals"
       variable = "aws:SourceAccount"
       values   = [local.current_account]
     }
 
-    # TODO: feeders will need sqs arn here in the values array (in addition to the feeder lambda arn), while
-    # tasks only require the task lambda arn. An optional input to this module e.g sts_assume_role_principals
+    # TODO: For better security against confused deputy, add ARNs here.
+    # Feeder Lambdas will need sqs arn here in the values array (in addition to the feeder lambda arn), while
+    # Task Lambdas only require the task lambda arn. An optional input to this module e.g sts_assume_role_principals
     # may be the way to go
-
-    # Conditions to prevent the "confused deputy" security problem
     # condition {
     #   test     = "ArnEquals"
     #   variable = "aws:SourceArn"

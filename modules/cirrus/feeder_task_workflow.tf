@@ -76,7 +76,8 @@ locals {
     )
   }
 
-  # TODO: Now do the same for feeder definitions
+  # TODO: Feeders need SSM var support
+  # Now do the same for feeder definitions
   all_feeder_defs_vars = {}
 
   # Now do the same for task definitions

@@ -4,7 +4,6 @@ variable "resource_prefix" {
   nullable    = false
 }
 
-# TODO: description
 variable "feeder_config" {
   description = <<-DESCRIPTION
   Defines the core Cirrus feeder infrastructure.

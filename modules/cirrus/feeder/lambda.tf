@@ -70,8 +70,7 @@ resource "aws_lambda_event_source_mapping" "sqs_trigger" {
     aws_lambda_permission.sqs_lambda_permission
   ]
 
-  # TODO:
-  # This would enable partial batch failure reporting.
+  # TODO: Consider enabling partial batch failure reporting.
   # The Lambda must return a specific JSON structure for this to work, so whether to enable this is up for discussion
   # function_response_types = ["ReportBatchItemFailures"]
 }

@@ -7,8 +7,7 @@ variable "cirrus_feeders" {
   If null, an empty list is returned.
   DESCRIPTION
   type = list(object({
-    name        = string
-    description = optional(string)
+    name = string
 
     triggers_sns = optional(list(object({
       topic_arn            = string
