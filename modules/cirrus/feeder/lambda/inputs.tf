@@ -5,18 +5,28 @@ variable "function_name" {
 }
 
 variable "vpc_subnet_ids" {
-  description = "List of subnet ids in the target VPC that cirrus the lambda resources should be connected to."
+  description = <<-DESCRIPTION
+  List of subnet ids in the target VPC that the lambda resources should be connected to.
+  DESCRIPTION
   type        = list(string)
   nullable    = false
 }
 
 variable "vpc_security_group_ids" {
-  description = "List of security groups in the target VPC that cirrus the lambda resources should use."
+  description = <<-DESCRIPTION
+  List of security groups in the target VPC that the lambda resources should use.
+  DESCRIPTION
   type        = list(string)
   nullable    = false
 }
 
 variable "lambda_config" {
+  description = <<-DESCRIPTION
+  The standard config for Cirrus Task and Feeder Lambdas. See the /cirrus/task/README.md for full details.
+
+  Note: if possible, reusing this module for both tasks and feeders may be beneficial, moving the documentation of the lambda_config here centrally.
+  DESCRIPTION
+
   type = object({
     description               = optional(string)
     ecr_image_uri             = optional(string)
@@ -71,10 +81,9 @@ variable "lambda_config" {
   })
 }
 
-# TODO: description
 variable "lambda_env_vars" {
   description = <<-DESCRIPTION
-  (Optional) Map of environment variables to set in the lambda function.
+  Map of environment variables to set in the lambda function. Note that lambda_config.env_vars allows for a map of environment variables to be set as well; if both are provided, the maps will be merged. lambda_config.env_vars is intended for user-provided environment variables via the definition.yaml config). This variable is intended for environment variables that are required for the lambda to function properly, and thus are set at the module level.
 
   DESCRIPTION
   type        = map(string)
@@ -84,7 +93,7 @@ variable "lambda_env_vars" {
 
 variable "warning_sns_topic_arn" {
   description = <<-DESCRIPTION
-  (Optional) SNS topic to be used by all `warning` alarms.
+  SNS topic to be used by all `warning` alarms.
 
   If any non-critical alarms are configured via `var.lambda_config.alarms`, they will use this SNS topic for their alarm action.
   DESCRIPTION
@@ -95,7 +104,7 @@ variable "warning_sns_topic_arn" {
 
 variable "critical_sns_topic_arn" {
   description = <<-DESCRIPTION
-  (Optional) SNS topic to be used by all `critical` alarms.
+  SNS topic to be used by all `critical` alarms.
 
   If any critical alarms are configured via `var.lambda_config.alarms`, they will use this SNS topic for their alarm action.
   DESCRIPTION

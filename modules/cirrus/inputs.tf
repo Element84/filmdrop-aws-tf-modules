@@ -351,7 +351,7 @@ variable "cirrus_feeder_definitions_dir" {
   ... more feeder subdirs ...
   ```
 
-  Where each `definition.yaml` is a YAML representation of the `feeder` module's `feeder_config` input HCL variable. See that module's [inputs](./feeder/README.md#input_feeder_config) for valid `feeder_config` object attributes.
+  Where each `definition.yaml` is a YAML representation of the `feeder` module's `feeder_config` input HCL variable. See that module's [inputs](./feeder/README.md) for valid `feeder_config` object attributes.
 
   If `null`, no feeder resources will be created.
   DESCRIPTION

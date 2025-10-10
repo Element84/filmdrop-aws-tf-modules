@@ -228,6 +228,7 @@ module "feeder" {
   warning_sns_topic_arn                = var.warning_sns_topic_arn
   critical_sns_topic_arn               = var.critical_sns_topic_arn
   builtin_feeder_definitions_variables = local.builtin_definitions_variables
+  cirrus_process_sqs_queue_url         = module.base.cirrus_process_sqs_queue_url
 }
 
 # Creates 0..many sets of Batch-related resources for cirrus batch compute

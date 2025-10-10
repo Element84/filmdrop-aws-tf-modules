@@ -1,3 +1,9 @@
+locals {
+  default_env_vars = {
+    CIRRUS_PROCESS_QUEUE_URL = var.cirrus_process_sqs_queue_url
+  }
+}
+
 # Creates the feeder lambda
 module "lambda" {
   source = "./lambda"
@@ -8,7 +14,7 @@ module "lambda" {
   vpc_security_group_ids = var.vpc_security_group_ids
   warning_sns_topic_arn  = var.warning_sns_topic_arn
   critical_sns_topic_arn = var.critical_sns_topic_arn
-  lambda_env_vars        = var.builtin_feeder_definitions_variables
+  lambda_env_vars        = local.default_env_vars
 }
 
 # Allow this feeder lambda to read from and delete messages in the feeder SQS queue. Also allow it to send

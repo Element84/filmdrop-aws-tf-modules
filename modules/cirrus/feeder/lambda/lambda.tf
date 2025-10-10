@@ -55,7 +55,16 @@ data "aws_iam_policy_document" "lambda_assume_role" {
       identifiers = ["lambda.amazonaws.com"]
     }
 
-    # TODO: feeders will need sqs arn here in the values arr. For now, commenting this out but needs fixing
+    condition {
+      test     = "StringEquals"
+      variable = "aws:SourceAccount"
+      values   = [local.current_account]
+    }
+
+    # TODO: feeders will need sqs arn here in the values array (in addition to the feeder lambda arn), while
+    # tasks only require the task lambda arn. An optional input to this module e.g sts_assume_role_principals
+    # may be the way to go
+
     # Conditions to prevent the "confused deputy" security problem
     # condition {
     #   test     = "ArnEquals"
@@ -64,11 +73,6 @@ data "aws_iam_policy_document" "lambda_assume_role" {
     #     "arn:aws:lambda:${local.current_region}:${local.current_account}:function:${var.function_name}"
     #   ]
     # }
-    condition {
-      test     = "StringEquals"
-      variable = "aws:SourceAccount"
-      values   = [local.current_account]
-    }
   }
 }
 

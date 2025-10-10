@@ -4,11 +4,25 @@ variable "resource_prefix" {
   nullable    = false
 }
 
+# TODO: description
 variable "feeder_config" {
+  description = <<-DESCRIPTION
+  Defines the core Cirrus feeder infrastructure.
+
+  `name`: (Required) Identifier for the cirrus feeder. Must be unique across all feeders. Valid characters are: `[A-Za-z0-9-]`.
+
+  `triggers_sns`: (Optional) List of SNS topic(s) to subscribe the feeder to. Each entry must include the `topic_arn` and may optionally include `delivery_policy`, `filter_policy`, `filter_policy_scope`, and `raw_message_delivery`. See Terraform's [aws_sns_topic_subscription](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/sns_topic_subscription) resource documentation for details.
+
+  `triggers_s3`: (Optional) List of S3 bucket(s) to configure event notifications on. Each entry must include the `bucket_name`, `bucket_arn`, and `events` attributes, and may optionally include `filter_prefix` and `filter_suffix`. See Terraform's [aws_s3_bucket_notification](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/s3_bucket_notification) resource documentation for details.
+
+  `sqs`: (Optional) Configuration for the feeder's SQS queue. If not provided, defaults will be used. See Terraform's [aws_sqs_queue](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/sqs_queue) resource documentation for details.
+
+  `lambda`: The standard config for Cirrus Task and Feeder Lambdas. See the /cirrus/task/README.md for full details.
+  DESCRIPTION
+
   # NOTE: type changes here require changes in the typed-definitions module, too
   type = object({
-    name        = string
-    description = optional(string)
+    name = string
 
     triggers_sns = optional(list(object({
       topic_arn            = string
@@ -86,7 +100,10 @@ variable "feeder_config" {
         evaluation_periods  = optional(number, 5)
       })))
     }))
+    #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   })
+  # The `~~~~` comment above is to ensure the markdown table column generated
+  # by terraform-docs is wide enough for the object schema to be readable.
 
   # Value must be provided else this module serves no purpose
   nullable = false
@@ -111,9 +128,9 @@ variable "vpc_security_group_ids" {
 
 variable "warning_sns_topic_arn" {
   description = <<-DESCRIPTION
-  (Optional) SNS topic to be used by all `warning` alarms.
+  SNS topic to be used by all `warning` alarms.
 
-  If any non-critical alarms are configured via `var.lambda_config.alarms`, they will use this SNS topic for their alarm action.
+  If any non-critical alarms are configured via `var.feeder_config.lambda.alarms`, they will use this SNS topic for their alarm action.
   DESCRIPTION
   type        = string
   nullable    = true
@@ -122,21 +139,27 @@ variable "warning_sns_topic_arn" {
 
 variable "critical_sns_topic_arn" {
   description = <<-DESCRIPTION
-  (Optional) SNS topic to be used by all `critical` alarms.
+  SNS topic to be used by all `critical` alarms.
 
-  If any critical alarms are configured via `var.lambda_config.alarms`, they will use this SNS topic for their alarm action.
+  If any critical alarms are configured via `var.feeder_config.lambda.alarms`, they will use this SNS topic for their alarm action.
   DESCRIPTION
   type        = string
   nullable    = true
   default     = null
 }
 
-# TODO: description. see workflow/inputs.tf
 variable "builtin_feeder_definitions_variables" {
   description = <<-DESCRIPTION
-  (Optional) 
+  Predefined builtin variables, such as `CIRRUS_DATA_BUCKET`, that are set in the `cirrus` module.
   DESCRIPTION
   type        = map(string)
   nullable    = false
   default     = {}
+}
+
+variable "cirrus_process_sqs_queue_url" {
+  description = <<-DESCRIPTION
+  URL of the cirrus process queue. Given that feeders' primary function is to enqueue messages to the process queue this is required. 
+  DESCRIPTION
+  type        = string
 }
