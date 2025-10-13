@@ -78,6 +78,7 @@ variable "stac_server_inputs" {
   type = object({
     app_name                                    = string
     version                                     = string
+    private_dns_enabled                         = optional(bool)
     stac_id                                     = optional(string)
     stac_title                                  = optional(string)
     stac_description                            = optional(string)
@@ -158,6 +159,7 @@ variable "stac_server_inputs" {
   default = {
     app_name                                    = "stac_server"
     version                                     = "v3.10.0"
+    private_dns_enabled                         = false
     stac_id                                     = "stac-server"
     stac_title                                  = "STAC API"
     stac_description                            = "A STAC API using stac-server"
