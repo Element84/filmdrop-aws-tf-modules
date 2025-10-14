@@ -110,7 +110,7 @@ variable "stac_server_inputs" {
     api_method_authorization_type               = optional(string)
     private_api_additional_security_group_ids   = optional(list(string))
     private_certificate_arn                     = optional(string)
-    vpce_private_dns_enabled                    = optional(bool)
+    vpce_private_dns_enabled                    = bool
     api_lambda = optional(object({
       handler         = optional(string)
       memory_mb       = optional(number)
