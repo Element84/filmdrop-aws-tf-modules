@@ -104,7 +104,7 @@ variable "stac_api_rootpath" {
   default     = ""
 }
 
-variable "stac_api_private_dns_enabled" {
+variable "vpce_private_dns_enabled" {
   type        = bool
   default     = false
   description = <<-DESCRIPTION
