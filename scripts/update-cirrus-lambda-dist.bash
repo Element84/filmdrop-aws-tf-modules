@@ -4,11 +4,11 @@
 #
 # Usage:
 #
-#     ./scripts/update-cirrus-lambda-dist.bash vX.Y.Z
+#     ./scripts/update-cirrus-lambda-dist.bash vX.Y.Z a.bc
 #
 # or
 #
-#     export CIRRUS_TAG=vX.Y.Z
+#     export CIRRUS_TAG=vX.Y.Z CIRRUS_PY_VERSION=a.bc
 #     ./scripts/update-cirrus-lambda-dist.bash
 
 set -euo pipefail
@@ -31,19 +31,31 @@ find_this () {
 main() {
     find_this "${BASH_SOURCE[0]}"
 
-    local cirrus_tag output
+    local cirrus_tag cirrus_py_version output
     cirrus_tag="${1:-"${CIRRUS_TAG:-}"}"
+    cirrus_py_version="${2:-"${CIRRUS_PY_VERSION:-}"}"
     output="${THIS_DIR}/../${CIRRUS_LAMBDA_DIST_PATH}"
+    filename="https://github.com/cirrus-geo/cirrus-geo/releases/download/${cirrus_tag}/cirrus-lambda-dist_${cirrus_tag}_python-${cirrus_py_version}_aarch64.zip"
 
     [ -n "${cirrus_tag}" ] || {
         echo "ERROR: CIRRUS_TAG is not set in the environment and is not provided on the command line."
-        echo "Usage: ${BASH_SOURCE[0]} [CIRRUS_TAG]"
+        echo "Usage: ${BASH_SOURCE[0]} [CIRRUS_TAG] [CIRRUS_PY_VERSION]"
         exit 1
     }
 
-    echo "Downloading cirrus ${cirrus_tag} to ${output}..."
-    curl -Lfs -o "${output}" "https://github.com/cirrus-geo/cirrus-geo/releases/download/${cirrus_tag}/cirrus-lambda-dist.zip"
-    echo "Done!"
+    [ -n "${cirrus_py_version}" ] || {
+        echo "ERROR: CIRRUS_PY_VERSION is not set in the environment and is not provided on the command line."
+        echo "Usage: ${BASH_SOURCE[0]} [CIRRUS_TAG] [CIRRUS_PY_VERSION]"
+        exit 1
+    }
+
+    echo "Downloading cirrus ${cirrus_tag} (Python ${cirrus_py_version}) to ${output}..."
+    if curl -Lfs -o "${output}" "${filename}"; then
+        echo "Done!"
+    else
+        echo "ERROR: Failed to download cirrus: ${filename}"
+        exit 1
+    fi
 }
 
 
