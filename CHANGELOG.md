@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Added
 
 - Added back support for deploying with custom Cirrus lambda zip
+- Option to enable private dns for execute-api VPC endpoint created for stac-server
 
 ### Changed
 

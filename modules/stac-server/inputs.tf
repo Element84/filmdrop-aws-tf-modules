@@ -104,6 +104,16 @@ variable "stac_api_rootpath" {
   default     = ""
 }
 
+variable "vpce_private_dns_enabled" {
+  type        = bool
+  default     = false
+  description = <<-DESCRIPTION
+  Whether to enable Private DNS on the Interface VPC Endpoint used for the STAC API (execute-api). 
+  Leave false if you rely on VPC endpoint-specific hostnames; set true to resolve the standard API Gateway 
+  hostname to the VPC endpoint from within the VPC.
+  DESCRIPTION
+}
+
 variable "api_lambda" {
   description = <<-DESCRIPTION
   (optional, object) Parameters for the stac-server API Lambda function.
