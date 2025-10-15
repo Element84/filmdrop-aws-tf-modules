@@ -9,14 +9,18 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Added
 
-- Added back support for deploying with custom Cirrus lambda zip
-- Option to enable private dns for execute-api VPC endpoint created for stac-server
-
 ### Changed
 
 ### Fixed
 
 ### Removed
+
+## [2.55.0] - 2025-10-15
+
+### Added
+
+- Added back support for deploying with custom Cirrus lambda zip
+- Option to enable private dns for execute-api VPC endpoint created for stac-server
 
 ## [2.54.0] - 2025-09-10
 
