@@ -102,7 +102,7 @@ resource "aws_lambda_function" "cirrus_update_state" {
   role             = aws_iam_role.cirrus_update_state_lambda_role.arn
   handler          = "update_state.lambda_handler"
   source_code_hash = local.cirrus_lambda_zip_hash
-  runtime          = "python3.12"
+  runtime          = local.cirrus_python_version
   timeout          = var.cirrus_update_state_lambda_timeout
   memory_size      = var.cirrus_update_state_lambda_memory
   publish          = true

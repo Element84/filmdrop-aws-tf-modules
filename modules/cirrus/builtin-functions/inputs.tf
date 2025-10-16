@@ -30,18 +30,25 @@ variable "cirrus_lambda_version" {
   nullable    = false
   # If you update this, ensure cirrus_python_version is updated to the python version required by this version of cirrus
   default = "1.0.2"
+
+  # If a value is provided, ensure cirrus_python_version is also provided
+  validation {
+    condition     = var.cirrus_lambda_version != null && var.cirrus_python_version == null
+    error_message = "If cirrus lambda_version is set, cirrus python_version must also be set."
+  }
 }
 
 variable "cirrus_python_version" {
   description = <<-DESCRIPTION
-  (Optional) Python runtime version for the Cirrus Lambda functions. Each Cirrus Lambda version has a singular Python version it can correctly function with. Ensure you set this to that version.
+  (Optional) Python runtime version for the builtin Cirrus Lambda functions. Each Cirrus
+  version has explicit Python version(s) it can correctly function with. Ensure you set this to that version.
 
   If either cirrus_lambda_version or cirrus_lambda_zip_filepath are set, this must also be set.
   
   DESCRIPTION
   type        = string
   nullable    = false
-  # Ensure this matches the python version required by the default cirrus_lambda_version
+  # Ensure this meets the python version requirement of the default cirrus_lambda_version
   default = "python3.12"
 }
 
