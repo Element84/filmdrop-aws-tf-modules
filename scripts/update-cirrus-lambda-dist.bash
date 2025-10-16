@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 
-# Update the cirrus lambda dist zip.
+# Update the Cirrus lambda dist zip.
+# Note: each Cirrus lambda zip version runs on a specific Python version, so you must also specify
+# the correct Python version it requires. 
 #
 # Usage:
 #

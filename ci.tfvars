@@ -196,24 +196,24 @@ cirrus_inputs = {
   }
   api_lambda = {
     timeout = 10
-    memory  = 128
+    memory  = 512
   }
   process_lambda = {
     timeout              = 10
-    memory               = 128
+    memory               = 512
     reserved_concurrency = 16
   }
   update_state_lambda = {
     timeout = 15
-    memory  = 128
+    memory  = 512
   }
   pre_batch_lambda = {
     timeout = 15
-    memory  = 128
+    memory  = 512
   }
   post_batch_lambda = {
     timeout = 15
-    memory  = 128
+    memory  = 512
   }
   task_batch_compute_definitions_dir           = null
   task_batch_compute_definitions_variables     = null

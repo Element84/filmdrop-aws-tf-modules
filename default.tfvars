@@ -1,7 +1,7 @@
 ##### PROJECT VARIABLES ####
 # The following variables are global to the FilmDrop infrastructure stack
 environment            = "test"
-project_name           = "TestProj"
+project_name           = "jja"
 domain_zone            = ""
 s3_access_log_bucket   = ""
 s3_logs_archive_bucket = ""
@@ -201,24 +201,24 @@ cirrus_inputs = {
   }
   api_lambda = {
     timeout = 10
-    memory  = 128
+    memory  = 512
   }
   process_lambda = {
     timeout              = 10
-    memory               = 128
+    memory               = 512
     reserved_concurrency = 16
   }
   update_state_lambda = {
     timeout = 15
-    memory  = 128
+    memory  = 512
   }
   pre_batch_lambda = {
     timeout = 15
-    memory  = 128
+    memory  = 512
   }
   post_batch_lambda = {
     timeout = 15
-    memory  = 128
+    memory  = 512
   }
   task_batch_compute_definitions_dir           = null
   task_batch_compute_definitions_variables     = null
@@ -229,6 +229,7 @@ cirrus_inputs = {
   workflow_definitions_dir                     = null
   workflow_definitions_variables               = null
   workflow_definitions_variables_ssm           = null
+  lambda_version                               = "1.0.1"
 }
 
 cirrus_dashboard_inputs = {
@@ -269,17 +270,17 @@ cirrus_dashboard_inputs = {
 # To disable each flag: set to 'false'; to enable: set to 'true'
 deploy_vpc                               = false
 deploy_vpc_search                        = true
-deploy_log_archive                       = true
+deploy_log_archive                       = false
 deploy_stac_server_opensearch_serverless = false
-deploy_stac_server                       = true
+deploy_stac_server                       = false
 deploy_stac_server_outside_vpc           = false
-deploy_analytics                         = true
-deploy_titiler                           = true
-deploy_console_ui                        = true
+deploy_analytics                         = false
+deploy_titiler                           = false
+deploy_console_ui                        = false
 deploy_cirrus                            = true
-deploy_cirrus_dashboard                  = true
+deploy_cirrus_dashboard                  = false
 deploy_local_stac_server_artifacts       = false
-deploy_waf_rule                          = true
+deploy_waf_rule                          = false
 
 
 #### WAF Rule Settings

@@ -155,7 +155,7 @@ variable "cirrus_api_lambda_memory" {
   DESCRIPTION
   type        = number
   nullable    = false
-  default     = 128
+  default     = 512
 }
 
 variable "cirrus_process_lambda_timeout" {
@@ -173,7 +173,7 @@ variable "cirrus_process_lambda_memory" {
   DESCRIPTION
   type        = number
   nullable    = false
-  default     = 128
+  default     = 512
 }
 
 variable "cirrus_process_lambda_reserved_concurrency" {
@@ -218,7 +218,7 @@ variable "cirrus_update_state_lambda_memory" {
   DESCRIPTION
   type        = number
   nullable    = false
-  default     = 128
+  default     = 512
 }
 
 variable "cirrus_pre_batch_lambda_timeout" {
@@ -236,7 +236,7 @@ variable "cirrus_pre_batch_lambda_memory" {
   DESCRIPTION
   type        = number
   nullable    = false
-  default     = 128
+  default     = 512
 }
 
 variable "cirrus_post_batch_lambda_timeout" {
@@ -254,7 +254,7 @@ variable "cirrus_post_batch_lambda_memory" {
   DESCRIPTION
   type        = number
   nullable    = false
-  default     = 128
+  default     = 512
 }
 
 variable "cirrus_timestream_magnetic_store_retention_period_in_days" {
