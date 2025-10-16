@@ -22,34 +22,17 @@ variable "cirrus_payload_bucket" {
 
 variable "cirrus_lambda_version" {
   description = <<-DESCRIPTION
-  (Optional) Version of Cirrus lambda to deploy.
+  (Optional) Version of Cirrus lambda to deploy. Defaults to the Cirrus version associated with this FilmDrop release.
 
-  Defaults to the Cirrus version associated with this FilmDrop release.
+  If set, cirrus_lambda_runtime must also be set to the Python runtime version required.
+
+  See [cirrus-geo releases](https://github.com/cirrus-geo/cirrus-geo/releases) for more information.
   DESCRIPTION
   type        = string
   nullable    = false
-  # If you update this, ensure cirrus_python_version is updated to the python version required by this version of cirrus
+  # If you update this, ensure cirrus_lambda_runtime is updated to the python version required by this
+  # version of cirrus
   default = "1.0.2"
-
-  # If a value is provided, ensure cirrus_python_version is also provided
-  validation {
-    condition     = var.cirrus_lambda_version != null && var.cirrus_python_version == null
-    error_message = "If cirrus lambda_version is set, cirrus python_version must also be set."
-  }
-}
-
-variable "cirrus_python_version" {
-  description = <<-DESCRIPTION
-  (Optional) Python runtime version for the builtin Cirrus Lambda functions. Each Cirrus
-  version has explicit Python version(s) it can correctly function with. Ensure you set this to that version.
-
-  If either cirrus_lambda_version or cirrus_lambda_zip_filepath are set, this must also be set.
-  
-  DESCRIPTION
-  type        = string
-  nullable    = false
-  # Ensure this meets the python version requirement of the default cirrus_lambda_version
-  default = "python3.12"
 }
 
 variable "cirrus_lambda_zip_filepath" {
@@ -61,6 +44,19 @@ variable "cirrus_lambda_zip_filepath" {
   type        = string
   nullable    = true
   default     = null
+}
+
+variable "cirrus_lambda_runtime" {
+  description = <<-DESCRIPTION
+  (Optional) Python runtime version for the builtin Cirrus Lambda functions. Each Cirrus
+  version has explicit Python version(s) it can correctly function with. Ensure you set this to that version.
+
+  If either cirrus_lambda_version or cirrus_lambda_zip_filepath are set, this must also be set.
+  DESCRIPTION
+  type        = string
+  nullable    = false
+  # Ensure this meets the python version requirement of the default cirrus_lambda_version
+  default = "python3.12"
 }
 
 variable "cirrus_api_lambda_timeout" {

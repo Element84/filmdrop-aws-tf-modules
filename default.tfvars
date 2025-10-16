@@ -229,7 +229,9 @@ cirrus_inputs = {
   workflow_definitions_dir                     = null
   workflow_definitions_variables               = null
   workflow_definitions_variables_ssm           = null
-  lambda_version                               = "1.0.1"
+  lambda_version                               = "1.0.2"
+  # lambda_zip_filepath = "cirrus-lambda-dist-1.0.2.zip"
+  lambda_runtime = "python3.12"
 }
 
 cirrus_dashboard_inputs = {

@@ -107,7 +107,7 @@ resource "aws_lambda_function" "cirrus_post_batch" {
   description      = "Lambda function for Cirrus builtin Task 'post-batch'"
   role             = aws_iam_role.cirrus_post_batch_lambda.arn
   architectures    = ["arm64"]
-  runtime          = local.cirrus_python_version
+  runtime          = local.cirrus_lambda_runtime
   filename         = local.cirrus_lambda_filename
   source_code_hash = local.cirrus_lambda_zip_hash
   handler          = "post_batch.lambda_handler"

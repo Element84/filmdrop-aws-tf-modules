@@ -15,6 +15,7 @@ module "builtin_functions" {
   cirrus_payload_bucket                            = module.base.cirrus_payload_bucket
   cirrus_lambda_version                            = var.cirrus_lambda_version
   cirrus_lambda_zip_filepath                       = var.cirrus_lambda_zip_filepath
+  cirrus_lambda_runtime                            = var.cirrus_lambda_runtime
   cirrus_api_rest_type                             = var.cirrus_api_rest_type
   cirrus_private_api_additional_security_group_ids = var.cirrus_private_api_additional_security_group_ids
   cirrus_api_lambda_timeout                        = var.cirrus_api_lambda_timeout

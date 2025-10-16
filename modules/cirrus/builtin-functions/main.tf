@@ -1,5 +1,5 @@
 locals {
-  cirrus_python_version = var.cirrus_python_version
+  cirrus_lambda_runtime = var.cirrus_lambda_runtime
 
   # If the user has provided a local zip, the filename is simply that; importantly, if they are not, we include the
   # version in the filename to ensure an update is forced when the version changes
@@ -16,6 +16,6 @@ resource "null_resource" "get_cirrus_lambda" {
     always_run = var.cirrus_lambda_version
   }
   provisioner "local-exec" {
-    command = "curl -s -L -o ${local.cirrus_lambda_filename} --fail https://github.com/cirrus-geo/cirrus-geo/releases/download/v${var.cirrus_lambda_version}/cirrus-lambda-dist_v${var.cirrus_lambda_version}_python-${local.cirrus_python_version}_aarch64.zip"
+    command = "curl -s -L -o ${local.cirrus_lambda_filename} --fail https://github.com/cirrus-geo/cirrus-geo/releases/download/v${var.cirrus_lambda_version}/cirrus-lambda-dist_v${var.cirrus_lambda_version}_python-${local.cirrus_lambda_runtime}_aarch64.zip"
   }
 }
