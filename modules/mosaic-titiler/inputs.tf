@@ -102,7 +102,7 @@ variable "titiler_mosaicjson_release_tag" {
   type        = string
 }
 
-variable "lambda_runtime" {
+variable "lambda_pyversion" {
   description = "AWS lambda runtime version"
   type        = string
   default     = "python3.10"

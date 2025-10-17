@@ -53,7 +53,7 @@ variable "cirrus_lambda_version" {
   description = <<-DESCRIPTION
   (Optional) Version of Cirrus lambda to deploy. Defaults to the Cirrus version associated with this FilmDrop release.
 
-  If set, cirrus_lambda_runtime must also be set to the Python runtime version required.
+  If set, cirrus_lambda_pyversion must also be set to the Python runtime version required.
 
   See [cirrus-geo releases](https://github.com/cirrus-geo/cirrus-geo/releases) for more information.
   DESCRIPTION
@@ -61,11 +61,11 @@ variable "cirrus_lambda_version" {
   nullable    = true
   default     = null
 
-  # If a value is provided, ensure cirrus_lambda_runtime is also provided. Note that this validation must
+  # If a value is provided, ensure cirrus_lambda_pyversion is also provided. Note that this validation must
   # occur here rather than in /builtin-functions/inputs.tf, as we set non-null default values there
   validation {
-    condition     = var.cirrus_lambda_version == null || var.cirrus_lambda_runtime != null
-    error_message = "If cirrus lambda_version is set, cirrus lambda_runtime must also be set."
+    condition     = var.cirrus_lambda_version == null || var.cirrus_lambda_pyversion != null
+    error_message = "If cirrus lambda_version is set, cirrus lambda_pyversion must also be set."
   }
 }
 
@@ -75,21 +75,21 @@ variable "cirrus_lambda_zip_filepath" {
   this Terraform deployment. If provided, will not download from GitHub Releases
   the version of Cirrus as specified in `cirrus_lambda_version`.
 
-  If set, cirrus_lambda_runtime must also be set to the Python runtime version required.
+  If set, cirrus_lambda_pyversion must also be set to the Python runtime version required.
   DESCRIPTION
   type        = string
   nullable    = true
   default     = null
 
-  # If a value is provided, ensure cirrus_lambda_runtime is also provided. Note that this validation could
+  # If a value is provided, ensure cirrus_lambda_pyversion is also provided. Note that this validation could
   # occur in builtin-functions/inputs.tf, but we set it here to match the cirrus_lambda_version validation behavior
   validation {
-    condition     = var.cirrus_lambda_zip_filepath == null || var.cirrus_lambda_runtime != null
-    error_message = "If cirrus lambda_zip_filepath is set, cirrus lambda_runtime must also be set."
+    condition     = var.cirrus_lambda_zip_filepath == null || var.cirrus_lambda_pyversion != null
+    error_message = "If cirrus lambda_zip_filepath is set, cirrus lambda_pyversion must also be set."
   }
 }
 
-variable "cirrus_lambda_runtime" {
+variable "cirrus_lambda_pyversion" {
   description = <<-DESCRIPTION
   (Optional) Python runtime version for the builtin Cirrus Lambda functions. Each Cirrus
   version has explicit Python version(s) it can correctly function with. Ensure you set this to that version.

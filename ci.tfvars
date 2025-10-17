@@ -194,6 +194,9 @@ cirrus_inputs = {
     timestream_magnetic_store_retention_period_in_days = 93
     timestream_memory_store_retention_period_in_hours  = 24
   }
+  lambda_version      = null
+  lambda_zip_filepath = null
+  lambda_pyversion    = null
   api_lambda = {
     timeout = 10
     memory  = 512

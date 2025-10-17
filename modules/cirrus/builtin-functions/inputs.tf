@@ -24,13 +24,13 @@ variable "cirrus_lambda_version" {
   description = <<-DESCRIPTION
   (Optional) Version of Cirrus lambda to deploy. Defaults to the Cirrus version associated with this FilmDrop release.
 
-  If set, cirrus_lambda_runtime must also be set to the Python runtime version required.
+  If set, cirrus_lambda_pyversion must also be set to the Python runtime version required.
 
   See [cirrus-geo releases](https://github.com/cirrus-geo/cirrus-geo/releases) for more information.
   DESCRIPTION
   type        = string
   nullable    = false
-  # If you update this, ensure cirrus_lambda_runtime is updated to the python version required by this
+  # If you update this, ensure cirrus_lambda_pyversion is also updated to the python version required by this
   # version of cirrus
   default = "1.0.2"
 }
@@ -46,7 +46,7 @@ variable "cirrus_lambda_zip_filepath" {
   default     = null
 }
 
-variable "cirrus_lambda_runtime" {
+variable "cirrus_lambda_pyversion" {
   description = <<-DESCRIPTION
   (Optional) Python runtime version for the builtin Cirrus Lambda functions. Each Cirrus
   version has explicit Python version(s) it can correctly function with. Ensure you set this to that version.
@@ -56,7 +56,7 @@ variable "cirrus_lambda_runtime" {
   type        = string
   nullable    = false
   # Ensure this meets the python version requirement of the default cirrus_lambda_version
-  default = "python3.12"
+  default = "3.12"
 }
 
 variable "cirrus_api_lambda_timeout" {

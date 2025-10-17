@@ -27,7 +27,7 @@ resource "null_resource" "download-lambda-source-bundle" {
   triggers = {
     bucket  = aws_s3_bucket.lambda-source.id
     version = var.titiler_mosaicjson_release_tag
-    runtime = var.lambda_runtime
+    runtime = var.lambda_pyversion
   }
 
   provisioner "local-exec" {
@@ -36,11 +36,11 @@ resource "null_resource" "download-lambda-source-bundle" {
 mkdir -p ${path.module}/lambda
 which wget || echo "wget is required, but not found - this is going to fail..."
 wget --secure-protocol=TLSv1_2 --quiet \
-  https://github.com/Element84/titiler-mosaicjson/releases/download/${var.titiler_mosaicjson_release_tag}/lambda-${var.lambda_runtime}.zip \
-  -O ${path.module}/lambda/${var.titiler_mosaicjson_release_tag}-lambda-${var.lambda_runtime}.zip
+  https://github.com/Element84/titiler-mosaicjson/releases/download/${var.titiler_mosaicjson_release_tag}/lambda-${var.lambda_pyversion}.zip \
+  -O ${path.module}/lambda/${var.titiler_mosaicjson_release_tag}-lambda-${var.lambda_pyversion}.zip
 aws s3 cp --quiet \
-  ${path.module}/lambda/${var.titiler_mosaicjson_release_tag}-lambda-${var.lambda_runtime}.zip \
-  s3://${aws_s3_bucket.lambda-source.id}/${var.titiler_mosaicjson_release_tag}-lambda-${var.lambda_runtime}-${self.id}.zip
+  ${path.module}/lambda/${var.titiler_mosaicjson_release_tag}-lambda-${var.lambda_pyversion}.zip \
+  s3://${aws_s3_bucket.lambda-source.id}/${var.titiler_mosaicjson_release_tag}-lambda-${var.lambda_pyversion}-${self.id}.zip
 EOF
   }
 }
@@ -53,9 +53,9 @@ resource "aws_lambda_function" "titiler-mosaic-lambda" {
   memory_size   = var.titiler_memory
 
   s3_bucket = aws_s3_bucket.lambda-source.id
-  s3_key    = "${var.titiler_mosaicjson_release_tag}-lambda-${var.lambda_runtime}-${null_resource.download-lambda-source-bundle.id}.zip"
+  s3_key    = "${var.titiler_mosaicjson_release_tag}-lambda-${var.lambda_pyversion}-${null_resource.download-lambda-source-bundle.id}.zip"
   handler   = "handler.handler"
-  runtime   = var.lambda_runtime
+  runtime   = var.lambda_pyversion
 
   environment {
     variables = {
