@@ -76,6 +76,10 @@ locals {
     )
   }
 
+  # TODO: Feeders need SSM var support
+  # Now do the same for feeder definitions
+  all_feeder_defs_vars = {}
+
   # Now do the same for task definitions
   cirrus_task_defs_vars_ssm_resolved = {
     for task_name, params in var.cirrus_task_definitions_variables_ssm :
@@ -124,8 +128,10 @@ locals {
 locals {
   # These variables may be used in definition templates for convenience.
   builtin_definitions_variables = {
-    CIRRUS_DATA_BUCKET    = module.base.cirrus_data_bucket
-    CIRRUS_PAYLOAD_BUCKET = module.base.cirrus_payload_bucket
+    CIRRUS_DATA_BUCKET       = module.base.cirrus_data_bucket
+    CIRRUS_PAYLOAD_BUCKET    = module.base.cirrus_payload_bucket
+    CIRRUS_PROCESS_QUEUE_URL = module.base.cirrus_process_sqs_queue_url
+    CIRRUS_PROCESS_QUEUE_ARN = module.base.cirrus_process_sqs_queue_arn
   }
 
   # Construct Cirrus task-batch-compute, task, and workflow definitions.
@@ -141,6 +147,15 @@ locals {
   # Ternary defaults must be 'null' rather than an empty list since Terraform is
   # unable to implicitly typecast the complex config objects into a single type,
   # which would result in a type mismatch since tuple(n items) != list().
+  cirrus_feeder_definitions = (
+    var.cirrus_feeder_definitions_dir != null ? [
+      for feeder_yaml in fileset(path.root, "${var.cirrus_feeder_definitions_dir}/**/definition.yaml") :
+      yamldecode(templatefile(feeder_yaml, merge(
+        local.all_feeder_defs_vars,
+        local.builtin_definitions_variables
+      )))
+    ] : null
+  )
   cirrus_task_batch_compute_definitions = (
     var.cirrus_task_batch_compute_definitions_dir != null ? [
       for tbc_yaml in fileset(path.root, "${var.cirrus_task_batch_compute_definitions_dir}/**/definition.yaml") :
@@ -191,12 +206,31 @@ module "typed_definitions" {
   # of strictly-typed objects for variable-length module invocations below. This
   # module call simply typecasts the input definitions and outputs the results.
   # See that module's README for more information.
+  cirrus_feeders            = local.cirrus_feeder_definitions
   cirrus_task_batch_compute = local.cirrus_task_batch_compute_definitions
   cirrus_tasks              = local.cirrus_task_definitions
   cirrus_workflows          = local.cirrus_workflow_definitions
 }
 # ==============================================================================
 
+
+# Creates 0..many sets of feeder resource groups
+module "feeder" {
+  source = "./feeder"
+  for_each = {
+    for feeder in module.typed_definitions.cirrus_feeders :
+    feeder.name => feeder
+  }
+
+  resource_prefix                      = var.resource_prefix
+  feeder_config                        = each.value
+  vpc_subnet_ids                       = var.vpc_subnet_ids
+  vpc_security_group_ids               = var.vpc_security_group_ids
+  warning_sns_topic_arn                = var.warning_sns_topic_arn
+  critical_sns_topic_arn               = var.critical_sns_topic_arn
+  builtin_feeder_definitions_variables = local.builtin_definitions_variables
+  cirrus_process_sqs_queue_url         = module.base.cirrus_process_sqs_queue_url
+}
 
 # Creates 0..many sets of Batch-related resources for cirrus batch compute
 module "task_batch_compute" {

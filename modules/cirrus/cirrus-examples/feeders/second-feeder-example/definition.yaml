@@ -1,0 +1,59 @@
+name: cool-data2
+
+# Note that the lambda options here are the same as for tasks
+lambda:
+  ecr_image_uri: <your-full-ECR-image-URI>:${second-feeder-example.image_tag}
+  env_vars:
+    PARAM1: value1
+    PARAM2: value2
+
+# Customize the SQS queue, if needed
+sqs:
+  delay_seconds: 10
+  message_retention_seconds: 3000
+  max_message_size: 1048576
+  receive_wait_time_seconds: 5
+  visibility_timeout_seconds: 60
+  max_receive_count: 7
+
+# Trigger from multiple S3 buckets, explicit event types, and prefixes/suffixes
+triggers_s3:
+  - bucket_name: some-bucket1
+    bucket_arn: arn:aws:s3:::some-bucket1
+    events:
+      - s3:ObjectCreated:*
+    filter_prefix: input1/
+    filter_suffix: .tif
+  - bucket_name: some-bucket2
+    bucket_arn: arn:aws:s3:::some-bucket2
+    events:
+      - s3:ObjectCreated:*
+      - s3:ObjectTagging:Put
+    filter_prefix: input2/
+    filter_suffix: .zarr
+
+# Trigger from multiple SNS topics, with optional filtering and delivery policies
+triggers_sns:
+  - topic_arn: arn:aws:sns:us-west-2:123456789:some-topic1
+  - topic_arn: arn:aws:sns:us-west-2:123456789:some-topic2
+    filter_policy: |
+      {
+          "event_type": ["new_scene"]
+      }
+    filter_policy_scope: "MessageBody"
+    raw_message_delivery: true
+    delivery_policy: |
+      {
+          "healthyRetryPolicy": {
+              "minDelayTarget": 1,
+              "maxDelayTarget": 60,
+              "numRetries": 50,
+              "numNoDelayRetries": 3,
+              "numMinDelayRetries": 2,
+              "numMaxDelayRetries": 35,
+              "backoffFunction": "exponential"
+          },
+          "throttlePolicy": {
+              "maxReceivesPerSecond": 10
+          }
+      }

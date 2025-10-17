@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Added
 
+- Added feeders as configuration ([177](https://github.com/Element84/filmdrop-aws-tf-modules/pull/177))
+
 ### Changed
 
 - Updated Terraform version to latest stable 1.13.4. While not technically a semver breaking change, you may want to review the [Terraform upgrade guides](https://developer.hashicorp.com/terraform/language/v1.8.x/upgrade-guides) for 1.8, 1.9, 1.10, 1.11, 1.12, and 1.13

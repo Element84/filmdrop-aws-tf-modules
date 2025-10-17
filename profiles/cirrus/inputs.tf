@@ -78,6 +78,7 @@ variable "cirrus_inputs" {
       timeout = number
       memory  = number
     })
+    feeder_definitions_dir                       = optional(string)
     task_batch_compute_definitions_dir           = optional(string)
     task_batch_compute_definitions_variables     = optional(map(map(string)))
     task_batch_compute_definitions_variables_ssm = optional(map(map(string)))
@@ -134,6 +135,7 @@ variable "cirrus_inputs" {
       timeout = 15
       memory  = 128
     }
+    feeder_definitions_dir                       = null
     task_batch_compute_definitions_dir           = null
     task_batch_compute_definitions_variables     = null
     task_batch_compute_definitions_variables_ssm = null
