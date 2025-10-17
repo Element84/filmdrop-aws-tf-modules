@@ -62,8 +62,8 @@ data "aws_iam_policy_document" "sqs_access" {
       test     = "ArnEquals"
       variable = "aws:SourceArn"
       values = concat(
-        [for b in var.feeder_config.triggers_s3 : b.bucket_arn],
-        [for t in var.feeder_config.triggers_sns : t.topic_arn]
+        [for b in coalesce(var.feeder_config.triggers_s3, []) : b.bucket_arn],
+        [for t in coalesce(var.feeder_config.triggers_sns, []) : t.topic_arn]
       )
     }
   }
