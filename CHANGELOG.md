@@ -9,7 +9,16 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Added
 
+- If using the optional `cirrus_inputs.lambda_version` or `cirrus_inputs.lambda_zip_filepath` to denote a specific
+  version of Cirrus, you must additionally define a `cirrus_inputs.lambda_pyversion`. Cirrus geo versions are now
+  tied to specific Python runtime versions; see the
+  [cirrus-geo releases](https://github.com/cirrus-geo/cirrus-geo/releases) for details.
+
 ### Changed
+
+- Cirrus Lambda builtins (api, process, update_state, pre_batch, post_batch) now require a minimum of 512 MB memory.
+  If you've explicitly set memory values lower than that in your `tfvars` an error will occur, noting you need to
+  increase the value. If you're using the defaults, the next `terraform apply` run will update your Lambdas in place.
 
 - Updated Terraform version to latest stable 1.13.4. While not technically a semver breaking change, you may want to review the [Terraform upgrade guides](https://developer.hashicorp.com/terraform/language/v1.8.x/upgrade-guides) for 1.8, 1.9, 1.10, 1.11, 1.12, and 1.13
 
