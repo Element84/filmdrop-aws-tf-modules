@@ -48,10 +48,6 @@ module "stac-server" {
   deploy_stac_server_opensearch_serverless = var.deploy_stac_server_opensearch_serverless
   deploy_stac_server_outside_vpc           = var.deploy_stac_server_outside_vpc
   fd_web_acl_id                            = var.deploy_waf_rule ? module.base_infra.web_acl_id : var.ext_web_acl_id
-
-  depends_on = [
-    module.setup
-  ]
 }
 
 module "titiler" {
