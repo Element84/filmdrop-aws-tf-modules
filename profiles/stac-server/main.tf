@@ -1,6 +1,8 @@
 module "stac-server" {
-  source = "../../modules/stac-server"
+  # TODO: set to v1.0.0 prior to merging
+  source = "git::https://github.com/Element84/terraform-aws-stac-server.git?ref=jai/support-stacserver-version"
 
+  deploy_local_stac_server_artifacts          = var.deploy_local_stac_server_artifacts
   vpc_id                                      = var.vpc_id
   vpc_cidr_range                              = var.vpc_cidr
   vpc_subnet_ids                              = var.private_subnet_ids

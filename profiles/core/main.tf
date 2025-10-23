@@ -26,15 +26,13 @@ module "base_infra" {
 }
 
 module "stac-server" {
-  count = var.deploy_stac_server ? 1 : 0
-  # TODO: set to v1.0.0 prior to merging
-  source = "git::https://github.com/Element84/terraform-aws-stac-server.git?ref=jai/support-stacserver-version"
+  count  = var.deploy_stac_server ? 1 : 0
+  source = "../stac-server"
 
   providers = {
     aws.east = aws.east
   }
 
-  stac_server_version                      = var.stac_server_inputs.version
   deploy_local_stac_server_artifacts       = var.deploy_local_stac_server_artifacts
   vpc_id                                   = module.base_infra.vpc_id
   private_subnet_ids                       = module.base_infra.private_subnet_ids
