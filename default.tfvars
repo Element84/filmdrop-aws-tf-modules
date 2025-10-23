@@ -21,7 +21,7 @@ sns_critical_subscriptions_map = {}
 ##### APPLICATION VARIABLES ####
 stac_server_inputs = {
   app_name                                    = "stac_server"
-  version                                     = "v3.10.0"
+  version                                     = null
   stac_id                                     = "stac-server"
   stac_title                                  = "STAC API"
   stac_title                                  = "A STAC API using stac-server"
