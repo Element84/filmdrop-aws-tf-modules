@@ -50,7 +50,7 @@ resource "aws_lambda_function" "stac_server_api" {
       CORS_CREDENTIALS                 = var.cors_credentials
       CORS_METHODS                     = var.cors_methods
       CORS_HEADERS                     = var.cors_headers
-    },
+      },
       var.api_lambda.environment_variables
     )
   }
