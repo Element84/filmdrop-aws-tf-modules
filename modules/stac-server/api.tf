@@ -15,7 +15,7 @@ resource "aws_lambda_function" "stac_server_api" {
   memory_size      = var.api_lambda.memory_mb
 
   environment {
-    variables = {
+    variables = merge({
       STAC_ID                 = var.stac_id
       STAC_TITLE              = var.stac_title
       STAC_DESCRIPTION        = var.stac_description
@@ -50,7 +50,9 @@ resource "aws_lambda_function" "stac_server_api" {
       CORS_CREDENTIALS                 = var.cors_credentials
       CORS_METHODS                     = var.cors_methods
       CORS_HEADERS                     = var.cors_headers
-    }
+    },
+      var.api_lambda.environment_variables
+    )
   }
 
   dynamic "vpc_config" {
