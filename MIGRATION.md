@@ -20,6 +20,9 @@ a newer version. For example, if a new required variable is added, this should b
 - `console_ui_inputs.filmdrop_ui_release` is now `console_ui_inputs.version`
 - `deploy_sample_data_bucket` option has been removed
 
+### 2.55.0
+
+- Terraform version >= 1.13.0 is now required
 
 ### 2.x
 
