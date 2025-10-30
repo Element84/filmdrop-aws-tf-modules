@@ -9,6 +9,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Added
 
+- Added support for custom environment variables in STAC Server Lambda functions (`api_lambda`, `ingest_lambda`,
+`pre_hook_lambda`). Users can now pass custom environment variables via the optional `environment_variables`
+parameter, enabling support for STAC Server v4.4.0+ features like `ENABLE_CONTEXT_EXTENSION` and
+`ENABLE_THUMBNAILS`. This enhancement is fully backward compatible.
+
 - If using the optional `cirrus_inputs.lambda_version` or `cirrus_inputs.lambda_zip_filepath` to denote a specific
   version of Cirrus, you must additionally define a `cirrus_inputs.lambda_pyversion`. Cirrus geo versions are now
   tied to specific Python runtime versions; see the
