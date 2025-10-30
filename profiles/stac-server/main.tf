@@ -1,7 +1,5 @@
 module "stac-server" {
-  # TODO: set to v1.0.0 prior to merge, and remove lint ignore
-  # tflint-ignore: all
-  source = "git::https://github.com/Element84/terraform-aws-stac-server.git?ref=main"
+  source = "git::https://github.com/Element84/terraform-aws-stac-server.git?ref=v1.0.0"
 
   deploy_local_stac_server_artifacts          = var.deploy_local_stac_server_artifacts
   stac_server_version                         = var.stac_server_inputs.version
