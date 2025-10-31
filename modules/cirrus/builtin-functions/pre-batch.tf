@@ -96,7 +96,7 @@ resource "aws_lambda_function" "cirrus_pre_batch" {
   description      = "Lambda function for Cirrus builtin Task 'pre-batch'"
   role             = aws_iam_role.cirrus_pre_batch_lambda.arn
   architectures    = ["arm64"]
-  runtime          = "python3.12"
+  runtime          = "python${local.cirrus_lambda_pyversion}"
   filename         = local.cirrus_lambda_filename
   source_code_hash = local.cirrus_lambda_zip_hash
   handler          = "pre_batch.lambda_handler"

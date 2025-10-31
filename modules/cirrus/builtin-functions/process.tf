@@ -127,7 +127,7 @@ resource "aws_lambda_function" "cirrus_process" {
   role                           = aws_iam_role.cirrus_process_lambda_role.arn
   handler                        = "process.lambda_handler"
   source_code_hash               = local.cirrus_lambda_zip_hash
-  runtime                        = "python3.12"
+  runtime                        = "python${local.cirrus_lambda_pyversion}"
   timeout                        = var.cirrus_process_lambda_timeout
   memory_size                    = var.cirrus_process_lambda_memory
   reserved_concurrent_executions = var.cirrus_process_lambda_reserved_concurrency

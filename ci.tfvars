@@ -194,26 +194,29 @@ cirrus_inputs = {
     timestream_magnetic_store_retention_period_in_days = 93
     timestream_memory_store_retention_period_in_hours  = 24
   }
+  lambda_version      = null
+  lambda_zip_filepath = null
+  lambda_pyversion    = null
   api_lambda = {
     timeout = 10
-    memory  = 128
+    memory  = 512
   }
   process_lambda = {
     timeout              = 10
-    memory               = 128
+    memory               = 512
     reserved_concurrency = 16
   }
   update_state_lambda = {
     timeout = 15
-    memory  = 128
+    memory  = 512
   }
   pre_batch_lambda = {
     timeout = 15
-    memory  = 128
+    memory  = 512
   }
   post_batch_lambda = {
     timeout = 15
-    memory  = 128
+    memory  = 512
   }
   task_batch_compute_definitions_dir           = null
   task_batch_compute_definitions_variables     = null

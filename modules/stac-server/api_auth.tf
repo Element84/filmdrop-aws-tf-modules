@@ -12,9 +12,12 @@ resource "aws_lambda_function" "stac_server_api_auth_pre_hook" {
   memory_size      = var.pre_hook_lambda.memory_mb
 
   environment {
-    variables = {
-      API_KEYS_SECRET_ID : one(aws_secretsmanager_secret.stac_server_api_auth_keys[*].arn)
-    }
+    variables = merge(
+      {
+        API_KEYS_SECRET_ID : one(aws_secretsmanager_secret.stac_server_api_auth_keys[*].arn)
+      },
+      var.pre_hook_lambda.environment_variables
+    )
   }
 
   dynamic "vpc_config" {

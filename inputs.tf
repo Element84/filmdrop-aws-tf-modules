@@ -112,25 +112,28 @@ variable "stac_server_inputs" {
     private_certificate_arn                     = optional(string)
     vpce_private_dns_enabled                    = bool
     api_lambda = optional(object({
-      handler         = optional(string)
-      memory_mb       = optional(number)
-      runtime         = optional(string)
-      timeout_seconds = optional(number)
-      zip_filepath    = optional(string)
+      handler               = optional(string)
+      memory_mb             = optional(number)
+      runtime               = optional(string)
+      timeout_seconds       = optional(number)
+      zip_filepath          = optional(string)
+      environment_variables = optional(map(string))
     }))
     ingest_lambda = optional(object({
-      handler         = optional(string)
-      memory_mb       = optional(number)
-      runtime         = optional(string)
-      timeout_seconds = optional(number)
-      zip_filepath    = optional(string)
+      handler               = optional(string)
+      memory_mb             = optional(number)
+      runtime               = optional(string)
+      timeout_seconds       = optional(number)
+      zip_filepath          = optional(string)
+      environment_variables = optional(map(string))
     }))
     pre_hook_lambda = optional(object({
-      handler         = optional(string)
-      memory_mb       = optional(number)
-      runtime         = optional(string)
-      timeout_seconds = optional(number)
-      zip_filepath    = optional(string)
+      handler               = optional(string)
+      memory_mb             = optional(number)
+      runtime               = optional(string)
+      timeout_seconds       = optional(number)
+      zip_filepath          = optional(string)
+      environment_variables = optional(map(string))
     }))
     auth_function = object({
       cf_function_name             = string
@@ -430,6 +433,7 @@ variable "cirrus_inputs" {
     })
     lambda_version      = optional(string)
     lambda_zip_filepath = optional(string)
+    lambda_pyversion    = optional(string)
     api_lambda = object({
       timeout = number
       memory  = number
@@ -485,26 +489,27 @@ variable "cirrus_inputs" {
     }
     lambda_version      = null
     lambda_zip_filepath = null
+    lambda_pyversion    = null
     api_lambda = {
       timeout = 10
-      memory  = 128
+      memory  = 512
     }
     process_lambda = {
       timeout              = 10
-      memory               = 128
+      memory               = 512
       reserved_concurrency = 16
     }
     update_state_lambda = {
       timeout = 15
-      memory  = 128
+      memory  = 512
     }
     pre_batch_lambda = {
       timeout = 15
-      memory  = 128
+      memory  = 512
     }
     post_batch_lambda = {
       timeout = 15
-      memory  = 128
+      memory  = 512
     }
     task_batch_compute_definitions_dir           = null
     task_batch_compute_definitions_variables     = null

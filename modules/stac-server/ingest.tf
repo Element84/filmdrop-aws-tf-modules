@@ -21,7 +21,7 @@ resource "aws_lambda_function" "stac_server_ingest" {
   reserved_concurrent_executions = var.reserved_concurrent_executions
 
   environment {
-    variables = {
+    variables = merge({
       LOG_LEVEL                        = var.log_level
       OPENSEARCH_HOST                  = var.opensearch_host != "" ? var.opensearch_host : local.opensearch_endpoint
       OPENSEARCH_CREDENTIALS_SECRET_ID = var.deploy_stac_server_opensearch_serverless ? "" : aws_secretsmanager_secret.opensearch_stac_user_password_secret.arn
@@ -33,7 +33,9 @@ resource "aws_lambda_function" "stac_server_ingest" {
       CORS_METHODS                     = var.cors_methods
       CORS_HEADERS                     = var.cors_headers
       ENABLE_INGEST_ACTION_TRUNCATE    = var.enable_ingest_action_truncate
-    }
+      },
+      var.ingest_lambda.environment_variables
+    )
   }
 
   dynamic "vpc_config" {
