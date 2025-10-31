@@ -8,6 +8,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ## [2.56.0] - 2025-10-31
 ### Added
 
+- Moved stac-server to a standalone module [https://github.com/Element84/terraform-aws-stac-server](https://github.com/Element84/terraform-aws-stac-server)
+
 - Added support for custom environment variables in STAC Server Lambda functions (`api_lambda`, `ingest_lambda`,
 `pre_hook_lambda`). Users can now pass custom environment variables via the optional `environment_variables`
 parameter, enabling support for STAC Server v4.4.0+ features like `ENABLE_CONTEXT_EXTENSION` and
