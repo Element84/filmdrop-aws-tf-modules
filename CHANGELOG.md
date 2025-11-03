@@ -5,6 +5,20 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
+## Unreleased
+
+### Added
+
+### Changed
+
+- Bump the minimum required Terraform version across all modules to v1.13.0
+
+### Fixed
+
+### Removed
+
+
+
 ## [2.56.0] - 2025-10-31
 ### Added
 
@@ -24,7 +38,7 @@ parameter, enabling support for STAC Server v4.4.0+ features like `ENABLE_CONTEX
   If you've explicitly set memory values lower than that in your `tfvars` an error will occur, noting you need to
   increase the value. If you're using the defaults, the next `terraform apply` run will update your Lambdas in place.
 
-- Updated Terraform version to latest stable 1.13.4. While not technically a semver breaking change, you may want to review the [Terraform upgrade guides](https://developer.hashicorp.com/terraform/language/v1.8.x/upgrade-guides) for 1.8, 1.9, 1.10, 1.11, 1.12, and 1.13
+- Updated Terraform version dictated in .terraform-version to latest stable 1.13.4. While not technically a semver breaking change, you may want to review the [Terraform upgrade guides](https://developer.hashicorp.com/terraform/language/v1.8.x/upgrade-guides) for 1.8, 1.9, 1.10, 1.11, 1.12, and 1.13
 
 ### Fixed
 

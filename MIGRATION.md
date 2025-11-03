@@ -5,6 +5,8 @@ a newer version. For example, if a new required variable is added, this should b
 
 ### Unreleased
 
+- Terraform version >= 1.13.0 is now required
+
 - If using the optional `cirrus_inputs.lambda_version` or `cirrus_inputs.lambda_zip_filepath` to denote a specific
   version of Cirrus, you must additionally define a `cirrus_inputs.lambda_pyversion`. Cirrus geo versions are now
   tied to specific Python runtime versions; see the
@@ -19,7 +21,6 @@ a newer version. For example, if a new required variable is added, this should b
 - `cirrus_dashboard_inputs.cirrus_dashboard_release` is now `cirrus_dashboard_inputs.version`
 - `console_ui_inputs.filmdrop_ui_release` is now `console_ui_inputs.version`
 - `deploy_sample_data_bucket` option has been removed
-
 
 ### 2.x
 
