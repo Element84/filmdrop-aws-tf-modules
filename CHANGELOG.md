@@ -5,10 +5,22 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
-## [2.56.0] - 2025-10-31
+## Unreleased
+
 ### Added
 
+### Changed
+
 - Bump the minimum required Terraform version across all modules to v1.13.0
+
+### Fixed
+
+### Removed
+
+
+
+## [2.56.0] - 2025-10-31
+### Added
 
 - Added support for custom environment variables in STAC Server Lambda functions (`api_lambda`, `ingest_lambda`,
 `pre_hook_lambda`). Users can now pass custom environment variables via the optional `environment_variables`
