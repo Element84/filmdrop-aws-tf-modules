@@ -5,8 +5,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
-## Unreleased
-
+## [2.56.0] - 2025-10-31
 ### Added
 
 - Moved stac-server to a standalone module [https://github.com/Element84/terraform-aws-stac-server](https://github.com/Element84/terraform-aws-stac-server)
