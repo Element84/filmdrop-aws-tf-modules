@@ -5,13 +5,6 @@ a newer version. For example, if a new required variable is added, this should b
 
 ### Unreleased
 
-- Terraform version >= 1.13.0 is now required
-
-- If using the optional `cirrus_inputs.lambda_version` or `cirrus_inputs.lambda_zip_filepath` to denote a specific
-  version of Cirrus, you must additionally define a `cirrus_inputs.lambda_pyversion`. Cirrus geo versions are now
-  tied to specific Python runtime versions; see the
-  [cirrus-geo releases](https://github.com/cirrus-geo/cirrus-geo/releases) for details.
-
 - Removes support for VPC creation. To retain the existing VPC resources, manually
   remove them from the Terraform state file. However, you should then create another
   IaC deployment for that VPC.
@@ -21,6 +14,12 @@ a newer version. For example, if a new required variable is added, this should b
 - `cirrus_dashboard_inputs.cirrus_dashboard_release` is now `cirrus_dashboard_inputs.version`
 - `console_ui_inputs.filmdrop_ui_release` is now `console_ui_inputs.version`
 - `deploy_sample_data_bucket` option has been removed
+
+### 2.56.0
+
+- If using the optional `cirrus_inputs.lambda_version` or `cirrus_inputs.lambda_zip_filepath` to denote a specific version of Cirrus, you must additionally define a `cirrus_inputs.lambda_pyversion`. Cirrus geo versions are now tied to specific Python runtime versions; see the [cirrus-geo releases](https://github.com/cirrus-geo/cirrus-geo/releases) for details.
+
+- Updated Terraform version to latest stable 1.13.4. While not technically a semver breaking change, you may want to review the [Terraform upgrade guides](https://developer.hashicorp.com/terraform/language/v1.8.x/upgrade-guides) for 1.8, 1.9, 1.10, 1.11, 1.12, and 1.13
 
 ### 2.x
 

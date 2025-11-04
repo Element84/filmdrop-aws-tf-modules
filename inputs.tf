@@ -161,7 +161,7 @@ variable "stac_server_inputs" {
   })
   default = {
     app_name                                    = "stac_server"
-    version                                     = "v3.10.0"
+    version                                     = null
     stac_id                                     = "stac-server"
     stac_title                                  = "STAC API"
     stac_description                            = "A STAC API using stac-server"
@@ -660,7 +660,6 @@ variable "deploy_cirrus_dashboard" {
 variable "deploy_local_stac_server_artifacts" {
   description = "Deploy STAC Server artifacts for local deploy"
   type        = bool
-  default     = true
 }
 
 variable "deploy_waf_rule" {

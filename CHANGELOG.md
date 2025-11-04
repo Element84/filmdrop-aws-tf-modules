@@ -9,9 +9,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Added
 
-### Changed
+- Moved stac-server to a standalone module [https://github.com/Element84/terraform-aws-stac-server](https://github.com/Element84/terraform-aws-stac-server)
 
-- Bump the minimum required Terraform version across all modules to v1.13.0
+### Changed
 
 ### Fixed
 
@@ -20,6 +20,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 
 ## [2.56.0] - 2025-10-31
+
 ### Added
 
 - Added support for custom environment variables in STAC Server Lambda functions (`api_lambda`, `ingest_lambda`,
@@ -39,10 +40,6 @@ parameter, enabling support for STAC Server v4.4.0+ features like `ENABLE_CONTEX
   increase the value. If you're using the defaults, the next `terraform apply` run will update your Lambdas in place.
 
 - Updated Terraform version dictated in .terraform-version to latest stable 1.13.4. While not technically a semver breaking change, you may want to review the [Terraform upgrade guides](https://developer.hashicorp.com/terraform/language/v1.8.x/upgrade-guides) for 1.8, 1.9, 1.10, 1.11, 1.12, and 1.13
-
-### Fixed
-
-### Removed
 
 ## [2.55.0] - 2025-10-15
 
