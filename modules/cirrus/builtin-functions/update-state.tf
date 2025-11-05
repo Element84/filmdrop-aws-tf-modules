@@ -78,7 +78,16 @@ resource "aws_iam_policy" "cirrus_update_state_lambda_policy" {
         "${var.cirrus_publish_sns_topic_arn}",
         "${var.cirrus_workflow_event_sns_topic_arn}"
       ]
-    }
+    },
+    {
+      "Effect": "Allow",
+      "Action": [
+        "logs:CreateLogStream",
+        "logs:PutLogEvents",
+        "logs:DescribeLogGroups",
+        "logs:DescribeLogStreams"
+      ],
+      "Resource": "arn:aws:logs:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:log-group:${var.workflow_log_group_name}:*"
   ]
 }
 EOF
@@ -109,16 +118,21 @@ resource "aws_lambda_function" "cirrus_update_state" {
   architectures    = ["arm64"]
 
   environment {
-    variables = {
-      CIRRUS_LOG_LEVEL                = var.cirrus_log_level
-      CIRRUS_DATA_BUCKET              = var.cirrus_data_bucket
-      CIRRUS_PAYLOAD_BUCKET           = var.cirrus_payload_bucket
-      CIRRUS_STATE_DB                 = var.cirrus_state_dynamodb_table_name
-      CIRRUS_EVENT_DB_AND_TABLE       = "${var.cirrus_state_event_timestreamwrite_database_name}|${var.cirrus_state_event_timestreamwrite_table_name}"
-      CIRRUS_WORKFLOW_EVENT_TOPIC_ARN = var.cirrus_workflow_event_sns_topic_arn
-      CIRRUS_PUBLISH_TOPIC_ARN        = var.cirrus_publish_sns_topic_arn
-      CIRRUS_PROCESS_QUEUE_URL        = var.cirrus_process_sqs_queue_url
-    }
+    variables = merge(
+      {
+        CIRRUS_LOG_LEVEL                = var.cirrus_log_level
+        CIRRUS_DATA_BUCKET              = var.cirrus_data_bucket
+        CIRRUS_PAYLOAD_BUCKET           = var.cirrus_payload_bucket
+        CIRRUS_STATE_DB                 = var.cirrus_state_dynamodb_table_name
+        CIRRUS_EVENT_DB_AND_TABLE       = "${var.cirrus_state_event_timestreamwrite_database_name}|${var.cirrus_state_event_timestreamwrite_table_name}"
+        CIRRUS_WORKFLOW_EVENT_TOPIC_ARN = var.cirrus_workflow_event_sns_topic_arn
+        CIRRUS_PUBLISH_TOPIC_ARN        = var.cirrus_publish_sns_topic_arn
+        CIRRUS_PROCESS_QUEUE_URL        = var.cirrus_process_sqs_queue_url
+      },
+      var.cirrus_workflow_log_grou_name != null ? {
+        CIRRUS_WORKFLOW_LOG_GROUP = var.cirrus_workflow_log_group_name
+      } : {}
+    )
   }
 
   vpc_config {

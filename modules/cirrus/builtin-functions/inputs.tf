@@ -286,3 +286,24 @@ variable "private_certificate_arn" {
   type        = string
   default     = ""
 }
+
+variable "metrics_enabled" {
+  description = "Whether metrics collection is enabled"
+  type        = bool
+  nullable    = false
+  default     = false
+}
+
+variable "workflow_log_group_name" {
+  description = "CloudWatch Log Group name for workflow events"
+  type        = string
+  nullable    = true
+  default     = null
+}
+
+variable "workflow_metric_namespace" {
+  description = "CloudWatch Metrics namespace for workflow metrics"
+  type        = string
+  nullable    = true
+  default     = null
+}

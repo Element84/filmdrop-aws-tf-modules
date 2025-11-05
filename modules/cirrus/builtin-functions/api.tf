@@ -76,6 +76,15 @@ resource "aws_iam_policy" "cirrus_api_lambda_policy" {
         "timestream:Select"
       ],
       "Resource": "${var.cirrus_state_event_timestreamwrite_table_arn}"
+    },
+    {
+      "Effect": "Allow",
+      "Action": [
+        "cloudwatch:GetMetricData",
+        "cloudwatch:GetMetricStatistics",
+        "cloudwatch:ListMetrics"
+      ]
+      "Resource": "*"
     }
   ]
 }
@@ -107,13 +116,18 @@ resource "aws_lambda_function" "cirrus_api" {
   architectures    = ["arm64"]
 
   environment {
-    variables = {
-      CIRRUS_LOG_LEVEL          = var.cirrus_log_level
-      CIRRUS_DATA_BUCKET        = var.cirrus_data_bucket
-      CIRRUS_PAYLOAD_BUCKET     = var.cirrus_payload_bucket
-      CIRRUS_STATE_DB           = var.cirrus_state_dynamodb_table_name
-      CIRRUS_EVENT_DB_AND_TABLE = "${var.cirrus_state_event_timestreamwrite_database_name}|${var.cirrus_state_event_timestreamwrite_table_name}"
-    }
+    variables = merge(
+      {
+        CIRRUS_LOG_LEVEL          = var.cirrus_log_level
+        CIRRUS_DATA_BUCKET        = var.cirrus_data_bucket
+        CIRRUS_PAYLOAD_BUCKET     = var.cirrus_payload_bucket
+        CIRRUS_STATE_DB           = var.cirrus_state_dynamodb_table_name
+        CIRRUS_EVENT_DB_AND_TABLE = "${var.cirrus_state_event_timestreamwrite_database_name}|${var.cirrus_state_event_timestreamwrite_table_name}"
+      },
+      var.metrics_enabled ? {
+        CIRRUS_WORKFLOW_METRIC_NAMESPACE = var.workflow_metric_namespace
+      } : {}
+    )
   }
 
   vpc_config {
