@@ -1,5 +1,6 @@
 ##### PROJECT VARIABLES ####
 # The following variables are global to the FilmDrop infrastructure stack
+environment            = "git"
 domain_zone            = ""
 s3_access_log_bucket   = ""
 s3_logs_archive_bucket = ""

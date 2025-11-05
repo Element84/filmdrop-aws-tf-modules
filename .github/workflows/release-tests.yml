@@ -30,19 +30,19 @@ jobs:
         with:
           terraform_version: ${{ steps.tf_version.outputs.value }}
 
-      # REPOSITORY_NAME
-      # - Here we create an s3-friendly terraform state filename, based on the branch/tag name and commit sha. Note
+      # - TF_STATE_FILENAME: an s3-friendly terraform state filename, based on the branch/tag name and commit sha. Note
       #   that we need this to be unique per workflow run to avoid statefile conflicts, thus the sha addition
+      # - Similarly for PROJECT_NAME, which is used to prefix resources, but must be < 9 chars long
       - name: Setting Pre-Requisites
         id: prereqs
         run: |
-          echo "REPOSITORY_NAME=`echo \"${{  github.ref_name }}-${{ github.sha }}\" | tr -d './' | cut -c1-15`" >> $GITHUB_ENV
+          echo "TF_STATE_FILENAME=`echo \"${{  github.ref_name }}-${{ github.sha }}\" | tr -d './' | cut -c1-15`" >> $GITHUB_ENV
+          echo "PROJECT_NAME=`echo \"${{  github.ref_name }}-${{ github.sha }}\" | tr -d './' | cut -c1-8`" >> $GITHUB_ENV
 
       - name: Prepararing Environment
         id: prep_env
         run: |
-          echo "environment = \"git\"" >> ci.tfvars
-          echo "project_name = \"${REPOSITORY_NAME}\"" >> ci.tfvars
+          echo "project_name = \"${PROJECT_NAME}\"" >> ci.tfvars
           cat ci.tfvars
           echo "Creating terraform backend file ..."
           echo 'terraform {' >> test.s3.backend.tf
@@ -50,7 +50,7 @@ jobs:
           echo '    encrypt = true' >> test.s3.backend.tf
           echo '    use_lockfile = true' >> test.s3.backend.tf
           echo "    bucket = \"${{ secrets.FD_CICD_TF_STATE_BUCKET }}\"" >> test.s3.backend.tf
-          echo "    key = \"filmdrop-cicd-${REPOSITORY_NAME}.tfstate\"" >> test.s3.backend.tf
+          echo "    key = \"filmdrop-cicd-${TF_STATE_FILENAME}.tfstate\"" >> test.s3.backend.tf
           echo "    region = \"${{ secrets.FD_CICD_AWS_REGION }}\"" >> test.s3.backend.tf
           echo '  }' >> test.s3.backend.tf
           echo '}' >> test.s3.backend.tf
