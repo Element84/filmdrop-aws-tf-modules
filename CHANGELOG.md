@@ -9,14 +9,19 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Added
 
-- Moved stac-server to a standalone module [https://github.com/Element84/terraform-aws-stac-server](https://github.com/Element84/terraform-aws-stac-server)
-
 ### Changed
 
 ### Fixed
 
 ### Removed
 
+
+
+## [2.57.0] - 2025-11-05
+
+### Added
+
+- Moved stac-server to a standalone module [https://github.com/Element84/terraform-aws-stac-server](https://github.com/Element84/terraform-aws-stac-server)
 
 
 ## [2.56.0] - 2025-10-31
