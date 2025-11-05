@@ -23,6 +23,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 - Moved stac-server to a standalone module [https://github.com/Element84/terraform-aws-stac-server](https://github.com/Element84/terraform-aws-stac-server)
 
+- Terraform >= v1.13.0 is now required
 
 ## [2.56.0] - 2025-10-31
 
