@@ -465,7 +465,7 @@ variable "cirrus_inputs" {
     workflow_definitions_variables               = optional(map(map(string)))
     workflow_definitions_variables_ssm           = optional(map(map(string)))
     cirrus_cli_iam_role_trust_principal          = optional(list(string))
-    metrics_enabled                              = optional(bool)
+    cirrus_workflow_metrics_enabled              = optional(bool)
   })
   default = {
     data_bucket                               = "cirrus-data-bucket-name"
@@ -522,7 +522,7 @@ variable "cirrus_inputs" {
     workflow_definitions_variables               = null
     workflow_definitions_variables_ssm           = null
     cirrus_cli_iam_role_trust_principal          = null
-    metrics_enabled                              = false
+    cirrus_workflow_metrics_enabled              = false
   }
 }
 

@@ -87,7 +87,7 @@ resource "aws_iam_policy" "cirrus_update_state_lambda_policy" {
         "logs:DescribeLogGroups",
         "logs:DescribeLogStreams"
       ],
-      "Resource": "arn:aws:logs:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:log-group:${var.workflow_log_group_name}:*"
+      "Resource": "arn:aws:logs:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:log-group:${var.cirrus_workflow_metrics_log_group_name}:*"
   ]
 }
 EOF
@@ -129,8 +129,8 @@ resource "aws_lambda_function" "cirrus_update_state" {
         CIRRUS_PUBLISH_TOPIC_ARN        = var.cirrus_publish_sns_topic_arn
         CIRRUS_PROCESS_QUEUE_URL        = var.cirrus_process_sqs_queue_url
       },
-      var.cirrus_workflow_log_grou_name != null ? {
-        CIRRUS_WORKFLOW_LOG_GROUP = var.cirrus_workflow_log_group_name
+      var.cirrus_workflow_metrics_enabled ? {
+        CIRRUS_WORKFLOW_LOG_GROUP = var.cirrus_workflow_metrics_log_group_name
       } : {}
     )
   }

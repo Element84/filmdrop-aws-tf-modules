@@ -124,8 +124,8 @@ resource "aws_lambda_function" "cirrus_api" {
         CIRRUS_STATE_DB           = var.cirrus_state_dynamodb_table_name
         CIRRUS_EVENT_DB_AND_TABLE = "${var.cirrus_state_event_timestreamwrite_database_name}|${var.cirrus_state_event_timestreamwrite_table_name}"
       },
-      var.metrics_enabled ? {
-        CIRRUS_WORKFLOW_METRIC_NAMESPACE = var.workflow_metric_namespace
+      var.cirrus_workflow_metrics_enabled ? {
+        CIRRUS_WORKFLOW_METRIC_NAMESPACE = var.cirrus_workflow_metrics_namespace
       } : {}
     )
   }

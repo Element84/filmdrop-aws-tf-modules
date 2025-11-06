@@ -287,21 +287,21 @@ variable "private_certificate_arn" {
   default     = ""
 }
 
-variable "metrics_enabled" {
+variable "cirrus_workflow_metrics_enabled" {
   description = "Whether metrics collection is enabled"
   type        = bool
   nullable    = false
   default     = false
 }
 
-variable "workflow_log_group_name" {
+variable "cirrus_workflow_metrics_log_group_name" {
   description = "CloudWatch Log Group name for workflow events"
   type        = string
   nullable    = true
   default     = null
 }
 
-variable "workflow_metric_namespace" {
+variable "cirrus_workflow_metrics_namespace" {
   description = "CloudWatch Metrics namespace for workflow metrics"
   type        = string
   nullable    = true

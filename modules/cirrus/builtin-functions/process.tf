@@ -112,7 +112,7 @@ resource "aws_iam_policy" "cirrus_process_lambda_policy" {
         "logs:DescribeLogGroups",
         "logs:DescribeLogStreams"
       ],
-      "Resource": "arn:aws:logs:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:log-group:${var.workflow_log_group_name}:*"
+      "Resource": "arn:aws:logs:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:log-group:${var.cirrus_workflow_metrics_log_group_name}:*"
     }
   ]
 }
@@ -155,8 +155,8 @@ resource "aws_lambda_function" "cirrus_process" {
         CIRRUS_WORKFLOW_EVENT_TOPIC_ARN = var.cirrus_workflow_event_sns_topic_arn
         CIRRUS_BASE_WORKFLOW_ARN        = "arn:aws:states:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:stateMachine:${var.resource_prefix}-"
       },
-      var.cirrus_workflow_log_group_name != null ? {
-        CIRRUS_WORKFLOW_LOG_GROUP       = var.cirrus_workflow_log_group_name
+      var.cirrus_workflow_metrics_enabled ? {
+        CIRRUS_WORKFLOW_LOG_GROUP       = var.cirrus_workflow_metrics_log_group_name
       } : {}
     )
   }
