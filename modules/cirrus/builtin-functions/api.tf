@@ -83,7 +83,7 @@ resource "aws_iam_policy" "cirrus_api_lambda_policy" {
         "cloudwatch:GetMetricData",
         "cloudwatch:GetMetricStatistics",
         "cloudwatch:ListMetrics"
-      ]
+      ],
       "Resource": "*"
     }
   ]

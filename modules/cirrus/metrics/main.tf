@@ -31,7 +31,7 @@ resource "aws_cloudwatch_log_metric_filter" "a_workflow_by_event" {
     namespace = "${var.resource_prefix}-workflow"
     value     = "1"
     dimensions = {
-      event = "$.event"
+      event    = "$.event"
       workflow = "$.workflow"
     }
   }

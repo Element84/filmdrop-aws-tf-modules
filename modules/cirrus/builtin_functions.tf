@@ -40,8 +40,8 @@ module "builtin_functions" {
   cirrus_process_sqs_queue_url                     = module.base.cirrus_process_sqs_queue_url
   cirrus_update_state_dead_letter_sqs_queue_arn    = module.base.cirrus_update_state_dead_letter_sqs_queue_arn
   cirrus_workflow_metrics_enabled                  = var.cirrus_workflow_metrics_enabled
-  cirrus_workflow_metrics_log_group_name           = var.cirrus_workflow_metrics_enabled ? module.metrics.cirrus_workflow_metrics_log_group_name : null
-  cirrus_workflow_metrics_namespace                = var.cirrus_workflow_metrics_enabled ? module.metrics.cirrus_workflow_metrics_namespace : null
+  cirrus_workflow_metrics_log_group_name           = var.cirrus_workflow_metrics_enabled ? module.metrics.cirrus_workflow_metrics_log_group_name : ""
+  cirrus_workflow_metrics_namespace                = var.cirrus_workflow_metrics_enabled ? module.metrics.cirrus_workflow_metrics_namespace : ""
   warning_sns_topic_arn                            = var.warning_sns_topic_arn
   critical_sns_topic_arn                           = var.critical_sns_topic_arn
   deploy_alarms                                    = var.deploy_alarms
