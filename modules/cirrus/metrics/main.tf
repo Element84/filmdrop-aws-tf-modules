@@ -46,7 +46,7 @@ data "aws_iam_policy_document" "cirrus_workflow_metrics_write_policy_doc" {
       "logs:DescribeLogStreams"
     ]
     resources = [
-      module.metrics.aws_cloudwatch_log_group.workflow_events.arn
+      aws_cloudwatch_log_group.workflow_events.arn
     ]
   }
 }
