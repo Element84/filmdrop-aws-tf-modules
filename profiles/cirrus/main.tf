@@ -47,6 +47,7 @@ module "cirrus" {
   cirrus_process_sqs_cross_account_sender_arns              = var.cirrus_inputs.process.sqs_cross_account_sender_arns
   private_certificate_arn                                   = var.cirrus_inputs.private_certificate_arn
   domain_alias                                              = var.cirrus_inputs.domain_alias
+  cirrus_workflow_metrics_enabled                           = var.cirrus_inputs.cirrus_workflow_metrics_enabled
 }
 
 locals {
