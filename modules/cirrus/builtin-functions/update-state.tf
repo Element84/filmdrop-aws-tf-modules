@@ -104,6 +104,12 @@ resource "aws_iam_role_policy_attachment" "cirrus_update_state_lambda_role_polic
   policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole"
 }
 
+resource "aws_iam_role_policy_attachment" "cirrus_update_state_lambda_role_policy_attachment3" {
+  count      = var.cirrus_workflow_metrics_enabled ? 1 : 0
+  role       = aws_iam_role.cirrus_update_state_lambda_role.name
+  policy_arn = var.cirrus_workflow_metrics_write_policy_arn
+}
+
 resource "aws_lambda_function" "cirrus_update_state" {
   filename         = local.cirrus_lambda_filename
   function_name    = "${var.resource_prefix}-update-state"

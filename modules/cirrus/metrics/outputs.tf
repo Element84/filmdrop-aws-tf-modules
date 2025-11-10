@@ -7,3 +7,13 @@ output "cirrus_workflow_metrics_namespace" {
   description = "CloudWatch Metrics namespace for Cirrus Workflow Metrics"
   value       = "${var.resource_prefix}-workflow"
 }
+
+output "cirrus_workflow_metrics_write_policy_arn" {
+  description = "ARN of the IAM policy for allowing writes to the Cirrus Workflow Metrics Log Group"
+  value       = aws_iam_policy.cirrus_workflow_metrics_write_policy.arn
+}
+
+output "cirrus_workflow_metrics_read_policy_arn" {
+  description = "ARN of the IAM policy for allowing reads to the Cirrus Workflow Metrics Namespace"
+  value       = aws_iam_policy.cirrus_workflow_metrics_read_policy.arn
+}

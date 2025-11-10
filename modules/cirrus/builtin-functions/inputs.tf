@@ -307,3 +307,15 @@ variable "cirrus_workflow_metrics_namespace" {
   nullable    = true
   default     = null
 }
+
+variable "cirrus_workflow_metrics_write_policy_arn" {
+  description = "ARN of the IAM policy for workflow metrics (only used when metrics are enabled)"
+  type        = string
+  default     = ""
+}
+
+variable "cirrus_workflow_metrics_read_policy_arn" {
+  description = "ARN of the IAM policy for workflow metrics (only used when metrics are enabled)"
+  type        = string
+  default     = ""
+}

@@ -103,16 +103,6 @@ resource "aws_iam_policy" "cirrus_process_lambda_policy" {
         "sns:Publish"
       ],
       "Resource": "${var.cirrus_workflow_event_sns_topic_arn}"
-    },
-    {
-      "Effect": "Allow",
-      "Action": [
-        "logs:CreateLogStream",
-        "logs:PutLogEvents",
-        "logs:DescribeLogGroups",
-        "logs:DescribeLogStreams"
-      ],
-      "Resource": "arn:aws:logs:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:log-group:${var.cirrus_workflow_metrics_log_group_name}:*"
     }
   ]
 }
@@ -128,6 +118,12 @@ resource "aws_iam_role_policy_attachment" "cirrus_process_lambda_role_policy_att
 resource "aws_iam_role_policy_attachment" "cirrus_process_lambda_role_policy_attachment2" {
   role       = aws_iam_role.cirrus_process_lambda_role.name
   policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole"
+}
+
+resource "aws_iam_role_policy_attachment" "cirrus_process_lambda_role_policy_attachment3" {
+  count      = var.cirrus_workflow_metrics_enabled ? 1 : 0
+  role       = aws_iam_role.cirrus_process_lambda_role.name
+  policy_arn = var.cirrus_workflow_metrics_write_policy_arn
 }
 
 resource "aws_lambda_function" "cirrus_process" {

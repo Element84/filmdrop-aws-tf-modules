@@ -42,6 +42,8 @@ module "builtin_functions" {
   cirrus_workflow_metrics_enabled                  = var.cirrus_workflow_metrics_enabled
   cirrus_workflow_metrics_log_group_name           = var.cirrus_workflow_metrics_enabled ? module.metrics.cirrus_workflow_metrics_log_group_name : ""
   cirrus_workflow_metrics_namespace                = var.cirrus_workflow_metrics_enabled ? module.metrics.cirrus_workflow_metrics_namespace : ""
+  cirrus_workflow_metrics_write_policy_arn         = var.cirrus_workflow_metrics_enabled ? module.metrics.cirrus_workflow_metrics_write_policy_arn : ""
+  cirrus_workflow_metrics_read_policy_arn          = var.cirrus_workflow_metrics_enabled ? module.metrics.cirrus_workflow_metrics_read_policy_arn : ""
   warning_sns_topic_arn                            = var.warning_sns_topic_arn
   critical_sns_topic_arn                           = var.critical_sns_topic_arn
   deploy_alarms                                    = var.deploy_alarms
