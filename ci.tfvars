@@ -227,6 +227,7 @@ cirrus_inputs = {
   workflow_definitions_dir                     = null
   workflow_definitions_variables               = null
   workflow_definitions_variables_ssm           = null
+  cirrus_workflow_metrics_enabled              = true
 }
 
 cirrus_dashboard_inputs = {

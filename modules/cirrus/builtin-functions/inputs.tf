@@ -286,3 +286,36 @@ variable "private_certificate_arn" {
   type        = string
   default     = ""
 }
+
+variable "cirrus_workflow_metrics_enabled" {
+  description = "Whether metrics collection is enabled"
+  type        = bool
+  nullable    = false
+  default     = false
+}
+
+variable "cirrus_workflow_metrics_log_group_name" {
+  description = "CloudWatch Log Group name for workflow events"
+  type        = string
+  nullable    = true
+  default     = null
+}
+
+variable "cirrus_workflow_metrics_namespace" {
+  description = "CloudWatch Metrics namespace for workflow metrics"
+  type        = string
+  nullable    = true
+  default     = null
+}
+
+variable "cirrus_workflow_metrics_write_policy_arn" {
+  description = "ARN of the IAM policy for workflow metrics (only used when metrics are enabled)"
+  type        = string
+  default     = ""
+}
+
+variable "cirrus_workflow_metrics_read_policy_arn" {
+  description = "ARN of the IAM policy for workflow metrics (only used when metrics are enabled)"
+  type        = string
+  default     = ""
+}
