@@ -78,16 +78,7 @@ resource "aws_iam_policy" "cirrus_update_state_lambda_policy" {
         "${var.cirrus_publish_sns_topic_arn}",
         "${var.cirrus_workflow_event_sns_topic_arn}"
       ]
-    },
-    {
-      "Effect": "Allow",
-      "Action": [
-        "logs:CreateLogStream",
-        "logs:PutLogEvents",
-        "logs:DescribeLogGroups",
-        "logs:DescribeLogStreams"
-      ],
-      "Resource": "arn:aws:logs:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:log-group:${var.cirrus_workflow_metrics_log_group_name}:*"
+    }
   ]
 }
 EOF

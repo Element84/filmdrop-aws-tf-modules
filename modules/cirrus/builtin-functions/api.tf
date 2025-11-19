@@ -76,15 +76,6 @@ resource "aws_iam_policy" "cirrus_api_lambda_policy" {
         "timestream:Select"
       ],
       "Resource": "${var.cirrus_state_event_timestreamwrite_table_arn}"
-    },
-    {
-      "Effect": "Allow",
-      "Action": [
-        "cloudwatch:GetMetricData",
-        "cloudwatch:GetMetricStatistics",
-        "cloudwatch:ListMetrics"
-      ],
-      "Resource": "*"
     }
   ]
 }
