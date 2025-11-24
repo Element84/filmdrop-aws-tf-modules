@@ -19,7 +19,7 @@ jobs:
       CIRRUS_TAG: v1.1.2
       CIRRUS_PY_VERSION: 3.13
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
 
       # Read the terraform version from the .terraform-version file, and then install that version
       - name: Get Terraform version
@@ -195,7 +195,7 @@ jobs:
         with:
           tflint_version: latest
 
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@v6
         with:
           python-version: "3.11"
       - name: Install pre-commit
