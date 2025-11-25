@@ -59,11 +59,6 @@ data "aws_iam_policy_document" "cirrus_workflow_metrics_read_policy_doc" {
     resources = [
       "*",
     ]
-    condition {
-      test     = "StringEquals"
-      variable = "cloudwatch:namespace"
-      values   = ["${var.resource_prefix}-workflow"]
-    }
   }
 }
 
