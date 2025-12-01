@@ -167,10 +167,12 @@ resource "aws_lambda_function" "cirrus_process" {
         CIRRUS_DATA_BUCKET              = var.cirrus_data_bucket
         CIRRUS_PAYLOAD_BUCKET           = var.cirrus_payload_bucket
         CIRRUS_STATE_DB                 = var.cirrus_state_dynamodb_table_name
-        CIRRUS_EVENT_DB_AND_TABLE       = "${var.cirrus_state_event_timestreamwrite_database_name}|${var.cirrus_state_event_timestreamwrite_table_name}"
         CIRRUS_WORKFLOW_EVENT_TOPIC_ARN = var.cirrus_workflow_event_sns_topic_arn
         CIRRUS_BASE_WORKFLOW_ARN        = "arn:aws:states:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:stateMachine:${var.resource_prefix}-"
       },
+      var.workflow_metrics_timestream_enabled ? {
+        CIRRUS_EVENT_DB_AND_TABLE = "${var.cirrus_state_event_timestreamwrite_database_name}|${var.cirrus_state_event_timestreamwrite_table_name}"
+      } : {},
       var.cirrus_workflow_metrics_enabled ? {
         CIRRUS_WORKFLOW_LOG_GROUP = var.cirrus_workflow_metrics_log_group_name
       } : {}
