@@ -141,7 +141,7 @@ resource "aws_iam_role_policy_attachment" "cirrus_process_lambda_role_policy_att
 }
 
 resource "aws_iam_role_policy_attachment" "cirrus_process_lambda_role_policy_attachment4" {
-  count      = var.cirrus_workflow_metrics_enabled ? 1 : 0
+  count      = var.workflow_metrics_timestream_enabled ? 1 : 0
   role       = aws_iam_role.cirrus_process_lambda_role.name
   policy_arn = data.aws_iam_policy_document.cirrus_process_lambda_policy_timestream.json
 }
