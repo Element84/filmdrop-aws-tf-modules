@@ -319,3 +319,11 @@ variable "cirrus_workflow_metrics_read_policy_arn" {
   type        = string
   default     = ""
 }
+
+variable "workflow_metrics_timestream_enabled" {
+  description = <<-DESCRIPTION
+  Whether TimestreamDB is enabled; see Cirrus core module inputs for details.
+  DESCRIPTION
+  type        = bool
+  nullable    = false
+}
