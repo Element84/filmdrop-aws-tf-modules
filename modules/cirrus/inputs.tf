@@ -722,3 +722,14 @@ variable "cirrus_workflow_metrics_enabled" {
   nullable    = false
   default     = false
 }
+
+variable "workflow_metrics_timestream_enabled" {
+  description = <<-DESCRIPTION
+  This enables Cirrus Workflow Metric collection via Timestream. Historically, this has been the primary method for collecting Cirrus workflow metrics (thus the default value being true). However, with AWS deprecation of Timestream for LiveAnalytics (https://docs.aws.amazon.com/timestream/latest/developerguide/AmazonTimestreamForLiveAnalytics-availability-change.html), metric collection via CloudWatch was introduced.
+
+  See the notes under the CloudWatch metric collection var for strategies on transitioning from Timestream to CloudWatch metrics.
+  DESCRIPTION
+  type        = bool
+  nullable    = false
+  default     = true
+}

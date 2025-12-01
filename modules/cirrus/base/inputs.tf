@@ -55,3 +55,11 @@ variable "deploy_alarms" {
   default     = true
   description = "Deploy Cirrus Alarms stack"
 }
+
+variable "workflow_metrics_timestream_enabled" {
+  description = <<-DESCRIPTION
+  Whether TimestreamDB is enabled; see Cirrus core module inputs for details.
+  DESCRIPTION
+  type        = bool
+  nullable    = false
+}
