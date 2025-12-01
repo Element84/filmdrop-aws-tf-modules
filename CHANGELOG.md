@@ -9,7 +9,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Added
 
-- Moved stac-server to a standalone module [https://github.com/Element84/terraform-aws-stac-server](https://github.com/Element84/terraform-aws-stac-server)
+- Added `workflow_metrics_timestream_enabled` ability to disable Timestream for LiveAnalytics, which has been deprecated
+
 - Added Cirrus Workflow Metrics resources and configuration per
   [#191](https://github.com/Element84/filmdrop-aws-tf-modules/issues/191), and
   in congruence with
