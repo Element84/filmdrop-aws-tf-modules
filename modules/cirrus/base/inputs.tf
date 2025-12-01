@@ -58,7 +58,7 @@ variable "deploy_alarms" {
 
 variable "workflow_metrics_timestream_enabled" {
   description = <<-DESCRIPTION
-  Whether TimestreamDB is enabled; see Cirrus core module inputs for details.
+  Whether or not TimestreamDB is enabled for workflow metrics; see Cirrus core module inputs for details.
   DESCRIPTION
   type        = bool
   nullable    = false
