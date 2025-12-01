@@ -228,6 +228,7 @@ cirrus_inputs = {
   workflow_definitions_variables               = null
   workflow_definitions_variables_ssm           = null
   cirrus_workflow_metrics_enabled              = true
+  workflow_metrics_timestream_enabled          = true
 }
 
 cirrus_dashboard_inputs = {
