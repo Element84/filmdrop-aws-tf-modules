@@ -93,6 +93,12 @@ resource "aws_iam_role_policy_attachment" "cirrus_api_lambda_role_policy_attachm
   policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole"
 }
 
+resource "aws_iam_role_policy_attachment" "cirrus_api_lambda_role_policy_attachment3" {
+  count      = var.cirrus_workflow_metrics_enabled ? 1 : 0
+  role       = aws_iam_role.cirrus_api_lambda_role.name
+  policy_arn = var.cirrus_workflow_metrics_read_policy_arn
+}
+
 resource "aws_lambda_function" "cirrus_api" {
   filename         = local.cirrus_lambda_filename
   function_name    = "${var.resource_prefix}-api"
@@ -107,13 +113,18 @@ resource "aws_lambda_function" "cirrus_api" {
   architectures    = ["arm64"]
 
   environment {
-    variables = {
-      CIRRUS_LOG_LEVEL          = var.cirrus_log_level
-      CIRRUS_DATA_BUCKET        = var.cirrus_data_bucket
-      CIRRUS_PAYLOAD_BUCKET     = var.cirrus_payload_bucket
-      CIRRUS_STATE_DB           = var.cirrus_state_dynamodb_table_name
-      CIRRUS_EVENT_DB_AND_TABLE = "${var.cirrus_state_event_timestreamwrite_database_name}|${var.cirrus_state_event_timestreamwrite_table_name}"
-    }
+    variables = merge(
+      {
+        CIRRUS_LOG_LEVEL          = var.cirrus_log_level
+        CIRRUS_DATA_BUCKET        = var.cirrus_data_bucket
+        CIRRUS_PAYLOAD_BUCKET     = var.cirrus_payload_bucket
+        CIRRUS_STATE_DB           = var.cirrus_state_dynamodb_table_name
+        CIRRUS_EVENT_DB_AND_TABLE = "${var.cirrus_state_event_timestreamwrite_database_name}|${var.cirrus_state_event_timestreamwrite_table_name}"
+      },
+      var.cirrus_workflow_metrics_enabled ? {
+        CIRRUS_WORKFLOW_METRIC_NAMESPACE = var.cirrus_workflow_metrics_namespace
+      } : {}
+    )
   }
 
   vpc_config {
