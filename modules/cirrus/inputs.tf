@@ -711,3 +711,14 @@ variable "private_certificate_arn" {
   type        = string
   default     = ""
 }
+
+variable "cirrus_workflow_metrics_enabled" {
+  description = <<-DESCRIPTION
+  This enables Cirrus Workflow Metric collection via CloudWatch.  This requires Cirrus version 1.2.0 or greater.  The Workflow Metrics classes replace the EventDB (Timestream-based) system, due to its deprecation.
+
+  This can be enabled concurrently with the existing EventDB (Timestream) system, for a transition period while metric data is accumulated. You would need to manually remove the `CIRRUS_WORKFLOW_METRIC_NAMESPACE` environment variable from the Cirrus API lambda, to allow continued surfacing of Timestream metrics.  Once sufficient data has accumulated in the associated CloudWatch metrics, restoring the `CIRRUS_WORKFLOW_METRIC_NAMESPACE` will swap over to serving those metrics.  For a more detailed plan, see https://github.com/cirrus-geo/cirrus-geo/pull/329#issuecomment-3412712053
+  DESCRIPTION
+  type        = bool
+  nullable    = false
+  default     = false
+}
