@@ -14,6 +14,7 @@ resource "aws_ssm_parameter" "deployment_pointer" {
 }
 
 resource "aws_ssm_parameter" "event_db_and_table" {
+  count = var.workflow_metrics_timestream_enabled ? 1 : 0
   name  = "${local.parameter_prefix}CIRRUS_EVENT_DB_AND_TABLE"
   type  = "String"
   value = "${module.base.cirrus_state_event_timestreamwrite_database_name}|${module.base.cirrus_state_event_timestreamwrite_table_name}"

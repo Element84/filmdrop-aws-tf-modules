@@ -18,7 +18,7 @@ EOF
 
 }
 
-data "aws_iam_policy_document" "cirrus_process_lambda_policy_main" {
+data "aws_iam_policy_document" "cirrus_process_lambda_policy_main_doc" {
   statement {
     effect = "Allow"
     actions = [
@@ -102,7 +102,9 @@ data "aws_iam_policy_document" "cirrus_process_lambda_policy_main" {
   }
 }
 
-data "aws_iam_policy_document" "cirrus_process_lambda_policy_timestream" {
+data "aws_iam_policy_document" "cirrus_process_lambda_policy_timestream_doc" {
+  count = var.workflow_metrics_timestream_enabled ? 1 : 0
+
   statement {
     effect = "Allow"
     actions = [
@@ -124,9 +126,18 @@ data "aws_iam_policy_document" "cirrus_process_lambda_policy_timestream" {
   }
 }
 
+resource "aws_iam_policy" "cirrus_process_lambda_policy_main" {
+  policy = data.aws_iam_policy_document.cirrus_process_lambda_policy_main_doc.json
+}
+
+resource "aws_iam_policy" "cirrus_process_lambda_policy_timestream" {
+  count  = var.workflow_metrics_timestream_enabled ? 1 : 0
+  policy = data.aws_iam_policy_document.cirrus_process_lambda_policy_timestream_doc[0].json
+}
+
 resource "aws_iam_role_policy_attachment" "cirrus_process_lambda_role_policy_attachment1" {
   role       = aws_iam_role.cirrus_process_lambda_role.name
-  policy_arn = data.aws_iam_policy_document.cirrus_process_lambda_policy_main.json
+  policy_arn = aws_iam_policy.cirrus_process_lambda_policy_main.arn
 }
 
 resource "aws_iam_role_policy_attachment" "cirrus_process_lambda_role_policy_attachment2" {
@@ -143,7 +154,7 @@ resource "aws_iam_role_policy_attachment" "cirrus_process_lambda_role_policy_att
 resource "aws_iam_role_policy_attachment" "cirrus_process_lambda_role_policy_attachment4" {
   count      = var.workflow_metrics_timestream_enabled ? 1 : 0
   role       = aws_iam_role.cirrus_process_lambda_role.name
-  policy_arn = data.aws_iam_policy_document.cirrus_process_lambda_policy_timestream.json
+  policy_arn = aws_iam_policy.cirrus_process_lambda_policy_timestream[0].arn
 }
 
 resource "aws_lambda_function" "cirrus_process" {
