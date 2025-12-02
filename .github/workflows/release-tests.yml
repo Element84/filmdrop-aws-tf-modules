@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       CI: true
-      CIRRUS_TAG: v1.1.2
+      CIRRUS_TAG: v1.2.0
       CIRRUS_PY_VERSION: 3.13
     steps:
       - uses: actions/checkout@v6
