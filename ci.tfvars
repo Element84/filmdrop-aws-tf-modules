@@ -1,5 +1,6 @@
 ##### PROJECT VARIABLES ####
 # The following variables are global to the FilmDrop infrastructure stack
+environment            = "git"
 domain_zone            = ""
 s3_access_log_bucket   = ""
 s3_logs_archive_bucket = ""
@@ -23,9 +24,9 @@ stac_server_inputs = {
   stac_id                                     = "stac-server"
   stac_title                                  = "STAC API"
   stac_title                                  = "A STAC API using stac-server"
-  deploy_cloudfront                           = false
   api_rest_type                               = "EDGE"
   api_method_authorization_type               = "NONE"
+  deploy_cloudfront                           = false
   web_acl_id                                  = ""
   domain_alias                                = ""
   enable_transactions_extension               = false
