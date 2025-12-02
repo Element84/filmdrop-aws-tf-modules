@@ -20,26 +20,26 @@ jobs:
       security-events: write # for github/codeql-action/upload-sarif to upload SARIF results
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4.1.1
+      - uses: actions/checkout@v6
 
       - name: Snyk IaC report vulnerabilities
-        uses: snyk/actions/iac@v1.0.0
+        uses: snyk/actions/iac@v1
         continue-on-error: true # To make sure that SARIF upload gets called
         env:
-          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+          SNYK_TOKEN: ${{ secrets.FD_CICD_SYNK_TOKEN }}
         with:
           args: --sarif-file-output=snyk.sarif
 
         # Push the Snyk Code results into GitHub Code Scanning tab
       - name: Upload result to GitHub Code Scanning
-        uses: github/codeql-action/upload-sarif@v3
+        uses: github/codeql-action/upload-sarif@v4
         with:
           sarif_file: snyk.sarif
 
       - name: Snyk IaC gatekeeper
-        uses: snyk/actions/iac@v1.0.0
+        uses: snyk/actions/iac@v1
         env:
-          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+          SNYK_TOKEN: ${{ secrets.FD_CICD_SYNK_TOKEN }}
         with:
           args:
             --sarif-file-output=snyk.sarif
