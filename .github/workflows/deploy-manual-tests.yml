@@ -46,7 +46,7 @@ jobs:
           echo '    encrypt = true' >> test.s3.backend.tf
           echo '    use_lockfile = true' >> test.s3.backend.tf
           echo "    bucket = \"${{ secrets.FD_CICD_TF_STATE_BUCKET }}\"" >> test.s3.backend.tf
-          echo "    key = \"${REPOSITORY_NAME}-github-test.tfstate\"" >> test.s3.backend.tf
+          echo "    key = \"${REPOSITORY_NAME}-manual-test.tfstate\"" >> test.s3.backend.tf
           echo "    region = \"${{ secrets.FD_CICD_AWS_REGION }}\"" >> test.s3.backend.tf
           echo '  }' >> test.s3.backend.tf
           echo '}' >> test.s3.backend.tf
@@ -58,7 +58,7 @@ jobs:
 
       - name: Configure Terraform Init Credentials
         id: init_creds
-        uses: aws-actions/configure-aws-credentials@v4
+        uses: aws-actions/configure-aws-credentials@v5
         with:
           aws-region: ${{ secrets.FD_CICD_AWS_REGION }}
           role-to-assume: ${{ secrets.FD_CICD_AWS_ROLE }}
@@ -74,7 +74,7 @@ jobs:
 
       - name: Configure Terraform Plan Credentials
         id: plan_creds
-        uses: aws-actions/configure-aws-credentials@v4
+        uses: aws-actions/configure-aws-credentials@v5
         with:
           aws-region: ${{ secrets.FD_CICD_AWS_REGION }}
           role-to-assume: ${{ secrets.FD_CICD_AWS_ROLE }}
@@ -86,7 +86,7 @@ jobs:
 
       - name: Configure Terraform Apply Credentials
         id: apply_creds
-        uses: aws-actions/configure-aws-credentials@v4
+        uses: aws-actions/configure-aws-credentials@v5
         with:
           aws-region: ${{ secrets.FD_CICD_AWS_REGION }}
           role-to-assume: ${{ secrets.FD_CICD_AWS_ROLE }}
@@ -111,7 +111,7 @@ jobs:
       - name: Configure Terraform Cleanup Check Credentials
         id: cleanup_check_creds
         if: always()
-        uses: aws-actions/configure-aws-credentials@v4
+        uses: aws-actions/configure-aws-credentials@v5
         with:
           aws-region: ${{ secrets.FD_CICD_AWS_REGION }}
           role-to-assume: ${{ secrets.FD_CICD_AWS_ROLE }}
@@ -125,7 +125,7 @@ jobs:
       - name: Configure Terraform Cleanup Credentials
         id: cleanup_creds
         if: always()
-        uses: aws-actions/configure-aws-credentials@v4
+        uses: aws-actions/configure-aws-credentials@v5
         with:
           aws-region: ${{ secrets.FD_CICD_AWS_REGION }}
           role-to-assume: ${{ secrets.FD_CICD_AWS_ROLE }}
