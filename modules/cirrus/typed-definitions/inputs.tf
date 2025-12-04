@@ -135,8 +135,8 @@ variable "cirrus_tasks" {
         entry_point       = optional(list(string))
         working_directory = optional(string)
       }))
-      s3_bucket       = optional(string)
-      s3_key          = optional(string)
+      s3_bucket            = optional(string)
+      s3_key               = optional(string)
       handler              = optional(string)
       runtime              = optional(string)
       timeout_seconds      = optional(number)
@@ -144,8 +144,8 @@ variable "cirrus_tasks" {
       ephemeral_storage_mb = optional(number)
       publish              = optional(bool)
       architectures        = optional(list(string))
-      env_vars        = optional(map(string))
-      vpc_enabled     = optional(bool)
+      env_vars             = optional(map(string))
+      vpc_enabled          = optional(bool)
       role_statements = optional(list(object({
         sid           = string
         effect        = string
