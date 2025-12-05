@@ -48,6 +48,7 @@ module "cirrus" {
   private_certificate_arn                                   = var.cirrus_inputs.private_certificate_arn
   domain_alias                                              = var.cirrus_inputs.domain_alias
   cirrus_workflow_metrics_enabled                           = var.cirrus_inputs.cirrus_workflow_metrics_enabled
+  workflow_metrics_timestream_enabled                       = var.cirrus_inputs.workflow_metrics_timestream_enabled
 }
 
 locals {

@@ -40,11 +40,13 @@ resource "aws_dynamodb_table" "cirrus_state_dynamodb_table" {
 }
 
 resource "aws_timestreamwrite_database" "cirrus_state_event_timestreamwrite_database" {
+  count         = var.workflow_metrics_timestream_enabled ? 1 : 0
   database_name = "${var.resource_prefix}-state-events"
 }
 
 resource "aws_timestreamwrite_table" "cirrus_state_event_timestreamwrite_table" {
-  database_name = aws_timestreamwrite_database.cirrus_state_event_timestreamwrite_database.database_name
+  count         = var.workflow_metrics_timestream_enabled ? 1 : 0
+  database_name = aws_timestreamwrite_database.cirrus_state_event_timestreamwrite_database[0].database_name
   table_name    = "${var.resource_prefix}-state-events-table"
 
   retention_properties {
@@ -96,7 +98,7 @@ resource "aws_cloudwatch_metric_alarm" "cirrus_state_user_errors_warning_alarm" 
 }
 
 resource "aws_cloudwatch_metric_alarm" "cirrus_state_events_system_errors_warning_alarm" {
-  count                     = var.deploy_alarms ? 1 : 0
+  count                     = var.deploy_alarms && var.workflow_metrics_timestream_enabled ? 1 : 0
   alarm_name                = "WARNING: ${var.resource_prefix}-state-events Timestream Events System Errors Warning Alarm"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -112,12 +114,12 @@ resource "aws_cloudwatch_metric_alarm" "cirrus_state_events_system_errors_warnin
   insufficient_data_actions = []
 
   dimensions = {
-    DatabaseName = aws_timestreamwrite_database.cirrus_state_event_timestreamwrite_database.database_name
+    DatabaseName = aws_timestreamwrite_database.cirrus_state_event_timestreamwrite_database[0].database_name
   }
 }
 
 resource "aws_cloudwatch_metric_alarm" "cirrus_state_events_user_errors_warning_alarm" {
-  count                     = var.deploy_alarms ? 1 : 0
+  count                     = var.deploy_alarms && var.workflow_metrics_timestream_enabled ? 1 : 0
   alarm_name                = "WARNING: ${var.resource_prefix}-state-events Timestream Events User Errors Warning Alarm"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = 1
@@ -133,6 +135,16 @@ resource "aws_cloudwatch_metric_alarm" "cirrus_state_events_user_errors_warning_
   insufficient_data_actions = []
 
   dimensions = {
-    DatabaseName = aws_timestreamwrite_database.cirrus_state_event_timestreamwrite_database.database_name
+    DatabaseName = aws_timestreamwrite_database.cirrus_state_event_timestreamwrite_database[0].database_name
   }
+}
+
+moved {
+  from = aws_timestreamwrite_database.cirrus_state_event_timestreamwrite_database
+  to   = aws_timestreamwrite_database.cirrus_state_event_timestreamwrite_database[0]
+}
+
+moved {
+  from = aws_timestreamwrite_table.cirrus_state_event_timestreamwrite_table
+  to   = aws_timestreamwrite_table.cirrus_state_event_timestreamwrite_table[0]
 }
