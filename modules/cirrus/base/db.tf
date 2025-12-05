@@ -138,3 +138,13 @@ resource "aws_cloudwatch_metric_alarm" "cirrus_state_events_user_errors_warning_
     DatabaseName = aws_timestreamwrite_database.cirrus_state_event_timestreamwrite_database[0].database_name
   }
 }
+
+moved {
+  from = aws_timestreamwrite_database.cirrus_state_event_timestreamwrite_database
+  to   = aws_timestreamwrite_database.cirrus_state_event_timestreamwrite_database[0]
+}
+
+moved {
+  from = aws_timestreamwrite_table.cirrus_state_event_timestreamwrite_table
+  to   = aws_timestreamwrite_table.cirrus_state_event_timestreamwrite_table[0]
+}

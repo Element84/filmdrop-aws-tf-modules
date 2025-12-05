@@ -81,3 +81,8 @@ resource "aws_ssm_parameter" "cirrus_iam_cli_role" {
   type  = "String"
   value = aws_iam_role.cirrus_instance_cli_management_role[0].arn
 }
+
+moved {
+  from = aws_ssm_parameter.event_db_and_table
+  to   = aws_ssm_parameter.event_db_and_table[0]
+}
