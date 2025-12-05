@@ -3,6 +3,11 @@ name: Deploy Manual Testing
 on:
   workflow_dispatch:
 
+# A manual test which you can use to run a terraform apply on your own branch to test changes.
+# Note that we only notify slack when:
+#  - terraform apply fails (an additional notif will be sent if the subsequent terraform destroy succeeds,
+#     indicating that resources were properly cleaned up)
+#  - or terraform destroy fails
 jobs:
   release-tests:
     permissions:
@@ -11,17 +16,19 @@ jobs:
     runs-on: ubuntu-latest
     env:
       CI: true
-      STAC_SERVER_TAG: v3.7.0
       CIRRUS_TAG: v1.2.0
       CIRRUS_PY_VERSION: 3.13
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: "18"
+      - uses: actions/checkout@v6
+
+      # Read the terraform version from the .terraform-version file, and install that version
+      - name: Get Terraform version
+        id: tf_version
+        run: |
+          echo "value=$(cat .terraform-version)" >> $GITHUB_OUTPUT
       - uses: hashicorp/setup-terraform@v3
         with:
-          terraform_version: "1.13.4"
+          terraform_version: ${{ steps.tf_version.outputs.value }}
 
       - name: Setting Pre-Requisites
         id: prereqs
@@ -31,24 +38,19 @@ jobs:
       - name: Prepararing Environment
         id: prep_env
         run: |
-          echo "environment = \"git\"" >> ci.tfvars
           echo "project_name = \"${REPOSITORY_NAME}\"" >> ci.tfvars
           cat ci.tfvars
           echo "Creating terraform backend file ..."
           echo 'terraform {' >> test.s3.backend.tf
           echo '  backend "s3" {' >> test.s3.backend.tf
           echo '    encrypt = true' >> test.s3.backend.tf
-          echo "    bucket = \"${{ secrets.TF_STATE_BUCKET }}\"" >> test.s3.backend.tf
-          echo "    dynamodb_table = \"${{ secrets.TF_STATE_LOCK_TABLE }}\"" >> test.s3.backend.tf
-          echo "    key = \"${REPOSITORY_NAME}-github-test.tfstate\"" >> test.s3.backend.tf
-          echo "    region = \"${{ secrets.AWS_REGION }}\"" >> test.s3.backend.tf
+          echo '    use_lockfile = true' >> test.s3.backend.tf
+          echo "    bucket = \"${{ secrets.FD_CICD_TF_STATE_BUCKET }}\"" >> test.s3.backend.tf
+          echo "    key = \"${REPOSITORY_NAME}-manual-test.tfstate\"" >> test.s3.backend.tf
+          echo "    region = \"${{ secrets.FD_CICD_AWS_REGION }}\"" >> test.s3.backend.tf
           echo '  }' >> test.s3.backend.tf
           echo '}' >> test.s3.backend.tf
           cat test.s3.backend.tf
-
-      - name: Update stac-server lambdas
-        id: update_stac_lambdas
-        run: ./scripts/update-stac-server-lambdas.bash
 
       - name: Update cirrus lambda dist
         id: update_cirrus_lambda_dist
@@ -56,10 +58,10 @@ jobs:
 
       - name: Configure Terraform Init Credentials
         id: init_creds
-        uses: aws-actions/configure-aws-credentials@v4
+        uses: aws-actions/configure-aws-credentials@v5
         with:
-          aws-region: ${{ secrets.AWS_REGION }}
-          role-to-assume: ${{ secrets.AWS_ROLE }}
+          aws-region: ${{ secrets.FD_CICD_AWS_REGION }}
+          role-to-assume: ${{ secrets.FD_CICD_AWS_ROLE }}
           role-session-name: GitHubReleaseInit
 
       - name: Terraform Init
@@ -72,10 +74,10 @@ jobs:
 
       - name: Configure Terraform Plan Credentials
         id: plan_creds
-        uses: aws-actions/configure-aws-credentials@v4
+        uses: aws-actions/configure-aws-credentials@v5
         with:
-          aws-region: ${{ secrets.AWS_REGION }}
-          role-to-assume: ${{ secrets.AWS_ROLE }}
+          aws-region: ${{ secrets.FD_CICD_AWS_REGION }}
+          role-to-assume: ${{ secrets.FD_CICD_AWS_ROLE }}
           role-session-name: GitHubReleasePlan
 
       - name: Terraform Plan
@@ -84,10 +86,10 @@ jobs:
 
       - name: Configure Terraform Apply Credentials
         id: apply_creds
-        uses: aws-actions/configure-aws-credentials@v4
+        uses: aws-actions/configure-aws-credentials@v5
         with:
-          aws-region: ${{ secrets.AWS_REGION }}
-          role-to-assume: ${{ secrets.AWS_ROLE }}
+          aws-region: ${{ secrets.FD_CICD_AWS_REGION }}
+          role-to-assume: ${{ secrets.FD_CICD_AWS_ROLE }}
           role-session-name: GitHubReleaseApply
 
       - name: Terraform Apply
@@ -96,34 +98,23 @@ jobs:
         run: terraform apply -lock=false -input=false test.tfplan
 
       - name: Post status to Slack channel
-        id: tf_apply_successs
-        if: steps.tf_apply.outcome == 'success'
-        continue-on-error: true
-        uses: slackapi/slack-github-action@v1.26.0
-        with:
-          channel-id: ${{ secrets.SLACK_CHANNEL_ID }}
-          slack-message: ":badger_dance: ${{  github.ref_name }} terraform apply job has succeeded!\n${{ github.event.pull_request.html_url || github.event.head_commit.url }}"
-        env:
-          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
-
-      - name: Post status to Slack channel
         id: tf_apply_failure
         if: steps.tf_apply.outcome != 'success'
         continue-on-error: true
         uses: slackapi/slack-github-action@v1.26.0
         with:
-          channel-id: ${{ secrets.SLACK_CHANNEL_ID }}
-          slack-message: ":sadpanda: ${{  github.ref_name }} terraform apply has failed!\n:alert: make sure cleanup job deletes all AWS resources!\n${{ github.event.pull_request.html_url || github.event.head_commit.url }}"
+          channel-id: ${{ secrets.FD_CICD_SLACK_BOT_TOKEN }}
+          slack-message: ":sadpanda: deploy-manual-testing - ${{  github.ref_name }} - terraform apply has failed!\n:alert: make sure cleanup job deletes all AWS resources!\n${{ github.event.pull_request.html_url || github.event.head_commit.url }}"
         env:
-          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+          SLACK_BOT_TOKEN: ${{ secrets.FD_CICD_SLACK_BOT_TOKEN }}
 
       - name: Configure Terraform Cleanup Check Credentials
         id: cleanup_check_creds
         if: always()
-        uses: aws-actions/configure-aws-credentials@v4
+        uses: aws-actions/configure-aws-credentials@v5
         with:
-          aws-region: ${{ secrets.AWS_REGION }}
-          role-to-assume: ${{ secrets.AWS_ROLE }}
+          aws-region: ${{ secrets.FD_CICD_AWS_REGION }}
+          role-to-assume: ${{ secrets.FD_CICD_AWS_ROLE }}
           role-session-name: GitHubReleaseCleanupCheck
 
       - name: Terraform Destroy Pre-Check
@@ -134,10 +125,10 @@ jobs:
       - name: Configure Terraform Cleanup Credentials
         id: cleanup_creds
         if: always()
-        uses: aws-actions/configure-aws-credentials@v4
+        uses: aws-actions/configure-aws-credentials@v5
         with:
-          aws-region: ${{ secrets.AWS_REGION }}
-          role-to-assume: ${{ secrets.AWS_ROLE }}
+          aws-region: ${{ secrets.FD_CICD_AWS_REGION }}
+          role-to-assume: ${{ secrets.FD_CICD_AWS_ROLE }}
           role-session-name: GitHubReleaseCleanup
 
       - name: Terraform Destroy
@@ -148,14 +139,14 @@ jobs:
 
       - name: Post status to Slack channel
         id: tf_destroy_apply_successs
-        if: steps.tf_destroy_apply.outcome == 'success'
+        if: steps.tf_apply.outcome != 'success' && steps.tf_destroy_apply.outcome == 'success'
         continue-on-error: true
         uses: slackapi/slack-github-action@v1.26.0
         with:
-          channel-id: ${{ secrets.SLACK_CHANNEL_ID }}
-          slack-message: ":badger_dance: ${{  github.ref_name }} cleanup job has succeeded!\n${{ github.event.pull_request.html_url || github.event.head_commit.url }}"
+          channel-id: ${{ secrets.FD_CICD_SLACK_CHANNEL_ID }}
+          slack-message: ":badger_dance: deploy-manual-testing - ${{  github.ref_name }} - cleanup job has succeeded!\n${{ github.event.pull_request.html_url || github.event.head_commit.url }}"
         env:
-          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+          SLACK_BOT_TOKEN: ${{ secrets.FD_CICD_SLACK_BOT_TOKEN }}
 
       - name: Post status to Slack channel
         id: tf_destroy_apply_failure
@@ -163,22 +154,31 @@ jobs:
         continue-on-error: true
         uses: slackapi/slack-github-action@v1.26.0
         with:
-          channel-id: ${{ secrets.SLACK_CHANNEL_ID }}
-          slack-message: ":sadpanda: ${{  github.ref_name }} cleanup job has failed!\n:alert: make sure AWS resources are deleted!\n${{ github.event.pull_request.html_url || github.event.head_commit.url }}"
+          channel-id: ${{ secrets.FD_CICD_SLACK_CHANNEL_ID }}
+          slack-message: ":sadpanda: deploy-manual-testing - ${{  github.ref_name }} - cleanup job has failed!\n:alert: make sure AWS resources are deleted!\n${{ github.event.pull_request.html_url || github.event.head_commit.url }}"
         env:
-          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+          SLACK_BOT_TOKEN: ${{ secrets.FD_CICD_SLACK_BOT_TOKEN }}
 
   pre-commit:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
+
+      # Read the terraform version from the .terraform-version file, and then install that version
+      - name: Get Terraform version
+        id: tf_version
+        run: |
+          echo "value=$(cat .terraform-version)" >> $GITHUB_OUTPUT
       - uses: hashicorp/setup-terraform@v3
         with:
-          terraform_version: "1.13.4"
-      - uses: terraform-linters/setup-tflint@v4
+          terraform_version: ${{ steps.tf_version.outputs.value }}
+
+      - name: Install tflint
+        uses: terraform-linters/setup-tflint@v6
         with:
-          tflint_version: "v0.49.0"
-      - uses: actions/setup-python@v5
+          tflint_version: latest
+
+      - uses: actions/setup-python@v6
         with:
           python-version: "3.11"
       - name: Install pre-commit
