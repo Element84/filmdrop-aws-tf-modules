@@ -712,7 +712,7 @@ variable "private_certificate_arn" {
   default     = ""
 }
 
-variable "cirrus_workflow_metrics_enabled" {
+variable "workflow_metrics_cloudwatch_enabled" {
   description = <<-DESCRIPTION
   This enables Cirrus Workflow Metric collection via CloudWatch.  This requires Cirrus version 1.2.0 or greater.  The Workflow Metrics classes replace the EventDB (Timestream-based) system, due to its deprecation.
 

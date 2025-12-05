@@ -96,9 +96,9 @@ resource "aws_iam_role_policy_attachment" "cirrus_update_state_lambda_role_polic
 }
 
 resource "aws_iam_role_policy_attachment" "cirrus_update_state_lambda_role_policy_attachment3" {
-  count      = var.cirrus_workflow_metrics_enabled ? 1 : 0
+  count      = var.workflow_metrics_cloudwatch_enabled ? 1 : 0
   role       = aws_iam_role.cirrus_update_state_lambda_role.name
-  policy_arn = var.cirrus_workflow_metrics_write_policy_arn
+  policy_arn = var.workflow_metrics_cloudwatch_write_policy_arn
 }
 
 resource "aws_lambda_function" "cirrus_update_state" {
@@ -126,8 +126,8 @@ resource "aws_lambda_function" "cirrus_update_state" {
         CIRRUS_PUBLISH_TOPIC_ARN        = var.cirrus_publish_sns_topic_arn
         CIRRUS_PROCESS_QUEUE_URL        = var.cirrus_process_sqs_queue_url
       },
-      var.cirrus_workflow_metrics_enabled ? {
-        CIRRUS_WORKFLOW_LOG_GROUP = var.cirrus_workflow_metrics_log_group_name
+      var.workflow_metrics_cloudwatch_enabled ? {
+        CIRRUS_WORKFLOW_LOG_GROUP = var.workflow_metrics_cloudwatch_log_group_name
       } : {}
     )
   }
