@@ -21,6 +21,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Fixed
 
+- Added missing `ephemeral_storage_mb` field to `cirrus_tasks` typed definition in `modules/cirrus/typed-definitions/inputs.tf` to match the `task_config.lambda` object schema in `modules/cirrus/task/inputs.tf`
+
 ### Removed
 
 
