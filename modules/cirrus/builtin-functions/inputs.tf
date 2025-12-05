@@ -287,7 +287,7 @@ variable "private_certificate_arn" {
   default     = ""
 }
 
-variable "cirrus_workflow_metrics_enabled" {
+variable "workflow_metrics_cloudwatch_enabled" {
   description = "Whether metrics collection is enabled"
   type        = bool
   nullable    = false

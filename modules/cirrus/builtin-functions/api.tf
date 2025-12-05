@@ -107,7 +107,7 @@ resource "aws_iam_role_policy_attachment" "cirrus_api_lambda_role_policy_attachm
 }
 
 resource "aws_iam_role_policy_attachment" "cirrus_api_lambda_role_policy_attachment3" {
-  count      = var.cirrus_workflow_metrics_enabled ? 1 : 0
+  count      = var.workflow_metrics_cloudwatch_enabled ? 1 : 0
   role       = aws_iam_role.cirrus_api_lambda_role.name
   policy_arn = var.cirrus_workflow_metrics_read_policy_arn
 }
@@ -142,7 +142,7 @@ resource "aws_lambda_function" "cirrus_api" {
       var.workflow_metrics_timestream_enabled ? {
         CIRRUS_EVENT_DB_AND_TABLE = "${var.cirrus_state_event_timestreamwrite_database_name}|${var.cirrus_state_event_timestreamwrite_table_name}"
       } : {},
-      var.cirrus_workflow_metrics_enabled ? {
+      var.workflow_metrics_cloudwatch_enabled ? {
         CIRRUS_WORKFLOW_METRIC_NAMESPACE = var.cirrus_workflow_metrics_namespace
       } : {}
     )
