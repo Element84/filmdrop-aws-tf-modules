@@ -121,9 +121,9 @@ resource "aws_iam_role_policy_attachment" "cirrus_process_lambda_role_policy_att
 }
 
 resource "aws_iam_role_policy_attachment" "cirrus_process_lambda_role_policy_attachment3" {
-  count      = var.cirrus_workflow_metrics_enabled ? 1 : 0
+  count      = var.workflow_metrics_cloudwatch_enabled ? 1 : 0
   role       = aws_iam_role.cirrus_process_lambda_role.name
-  policy_arn = var.cirrus_workflow_metrics_write_policy_arn
+  policy_arn = var.workflow_metrics_cloudwatch_write_policy_arn
 }
 
 resource "aws_lambda_function" "cirrus_process" {
@@ -151,8 +151,8 @@ resource "aws_lambda_function" "cirrus_process" {
         CIRRUS_WORKFLOW_EVENT_TOPIC_ARN = var.cirrus_workflow_event_sns_topic_arn
         CIRRUS_BASE_WORKFLOW_ARN        = "arn:aws:states:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:stateMachine:${var.resource_prefix}-"
       },
-      var.cirrus_workflow_metrics_enabled ? {
-        CIRRUS_WORKFLOW_LOG_GROUP = var.cirrus_workflow_metrics_log_group_name
+      var.workflow_metrics_cloudwatch_enabled ? {
+        CIRRUS_WORKFLOW_LOG_GROUP = var.workflow_metrics_cloudwatch_log_group_name
       } : {}
     )
   }

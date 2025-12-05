@@ -37,7 +37,7 @@ resource "aws_cloudwatch_log_metric_filter" "a_workflow_by_event" {
   }
 }
 
-data "aws_iam_policy_document" "cirrus_workflow_metrics_write_policy_doc" {
+data "aws_iam_policy_document" "workflow_metrics_cloudwatch_write_policy_doc" {
   statement {
     actions = [
       "logs:CreateLogStream",
@@ -51,7 +51,7 @@ data "aws_iam_policy_document" "cirrus_workflow_metrics_write_policy_doc" {
   }
 }
 
-data "aws_iam_policy_document" "cirrus_workflow_metrics_read_policy_doc" {
+data "aws_iam_policy_document" "workflow_metrics_cloudwatch_read_policy_doc" {
   statement {
     actions = [
       "cloudwatch:GetMetricData",
@@ -62,12 +62,12 @@ data "aws_iam_policy_document" "cirrus_workflow_metrics_read_policy_doc" {
   }
 }
 
-resource "aws_iam_policy" "cirrus_workflow_metrics_write_policy" {
+resource "aws_iam_policy" "workflow_metrics_cloudwatch_write_policy" {
   name   = "${var.resource_prefix}-workflow-metrics-write-policy"
-  policy = data.aws_iam_policy_document.cirrus_workflow_metrics_write_policy_doc.json
+  policy = data.aws_iam_policy_document.workflow_metrics_cloudwatch_write_policy_doc.json
 }
 
-resource "aws_iam_policy" "cirrus_workflow_metrics_read_policy" {
+resource "aws_iam_policy" "workflow_metrics_cloudwatch_read_policy" {
   name   = "${var.resource_prefix}-workflow-metrics-read-policy"
-  policy = data.aws_iam_policy_document.cirrus_workflow_metrics_read_policy_doc.json
+  policy = data.aws_iam_policy_document.workflow_metrics_cloudwatch_read_policy_doc.json
 }
