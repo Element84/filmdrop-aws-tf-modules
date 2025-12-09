@@ -466,7 +466,7 @@ variable "cirrus_inputs" {
     workflow_definitions_variables               = optional(map(map(string)))
     workflow_definitions_variables_ssm           = optional(map(map(string)))
     cirrus_cli_iam_role_trust_principal          = optional(list(string))
-    cirrus_workflow_metrics_enabled              = optional(bool)
+    workflow_metrics_cloudwatch_enabled          = optional(bool)
     workflow_metrics_timestream_enabled          = optional(bool)
   })
   default = {
@@ -524,7 +524,7 @@ variable "cirrus_inputs" {
     workflow_definitions_variables               = null
     workflow_definitions_variables_ssm           = null
     cirrus_cli_iam_role_trust_principal          = null
-    cirrus_workflow_metrics_enabled              = false
+    workflow_metrics_cloudwatch_enabled          = false
     workflow_metrics_timestream_enabled          = true
   }
 }
