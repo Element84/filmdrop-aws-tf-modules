@@ -39,11 +39,11 @@ module "builtin_functions" {
   cirrus_process_sqs_queue_arn                     = module.base.cirrus_process_sqs_queue_arn
   cirrus_process_sqs_queue_url                     = module.base.cirrus_process_sqs_queue_url
   cirrus_update_state_dead_letter_sqs_queue_arn    = module.base.cirrus_update_state_dead_letter_sqs_queue_arn
-  cirrus_workflow_metrics_enabled                  = var.cirrus_workflow_metrics_enabled
-  cirrus_workflow_metrics_log_group_name           = var.cirrus_workflow_metrics_enabled ? module.metrics[0].cirrus_workflow_metrics_log_group_name : ""
-  cirrus_workflow_metrics_namespace                = var.cirrus_workflow_metrics_enabled ? module.metrics[0].cirrus_workflow_metrics_namespace : ""
-  cirrus_workflow_metrics_write_policy_arn         = var.cirrus_workflow_metrics_enabled ? module.metrics[0].cirrus_workflow_metrics_write_policy_arn : ""
-  cirrus_workflow_metrics_read_policy_arn          = var.cirrus_workflow_metrics_enabled ? module.metrics[0].cirrus_workflow_metrics_read_policy_arn : ""
+  workflow_metrics_cloudwatch_enabled              = var.workflow_metrics_cloudwatch_enabled
+  workflow_metrics_cloudwatch_log_group_name       = var.workflow_metrics_cloudwatch_enabled ? module.metrics[0].workflow_metrics_cloudwatch_log_group_name : ""
+  workflow_metrics_cloudwatch_namespace            = var.workflow_metrics_cloudwatch_enabled ? module.metrics[0].workflow_metrics_cloudwatch_namespace : ""
+  workflow_metrics_cloudwatch_write_policy_arn     = var.workflow_metrics_cloudwatch_enabled ? module.metrics[0].workflow_metrics_cloudwatch_write_policy_arn : ""
+  workflow_metrics_cloudwatch_read_policy_arn      = var.workflow_metrics_cloudwatch_enabled ? module.metrics[0].workflow_metrics_cloudwatch_read_policy_arn : ""
   workflow_metrics_timestream_enabled              = var.workflow_metrics_timestream_enabled
   warning_sns_topic_arn                            = var.warning_sns_topic_arn
   critical_sns_topic_arn                           = var.critical_sns_topic_arn
