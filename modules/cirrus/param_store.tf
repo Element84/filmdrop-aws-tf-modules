@@ -14,6 +14,7 @@ resource "aws_ssm_parameter" "deployment_pointer" {
 }
 
 resource "aws_ssm_parameter" "event_db_and_table" {
+  count = var.workflow_metrics_timestream_enabled ? 1 : 0
   name  = "${local.parameter_prefix}CIRRUS_EVENT_DB_AND_TABLE"
   type  = "String"
   value = "${module.base.cirrus_state_event_timestreamwrite_database_name}|${module.base.cirrus_state_event_timestreamwrite_table_name}"
@@ -79,4 +80,9 @@ resource "aws_ssm_parameter" "cirrus_iam_cli_role" {
   name  = "${local.parameter_prefix}CIRRUS_CLI_IAM_ARN"
   type  = "String"
   value = aws_iam_role.cirrus_instance_cli_management_role[0].arn
+}
+
+moved {
+  from = aws_ssm_parameter.event_db_and_table
+  to   = aws_ssm_parameter.event_db_and_table[0]
 }

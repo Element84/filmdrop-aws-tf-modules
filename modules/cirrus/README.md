@@ -71,8 +71,9 @@ the templating process.
 
 | Name | Source | Description |
 |------|--------|-------------|
-| <a name="module_base"></a> [base](#module_base) | `./base` |  |
 | <a name="module_custom_warning_alarms"></a> [custom_warning_alarms](#module_custom_warning_alarms) | `../base_infra/alerts` |  |
+| <a name="module_metrics"></a> [metrics](#module_metrics) | `./metrics` |  |
+| <a name="module_base"></a> [base](#module_base) | `./base` |  |
 | <a name="module_builtin_functions"></a> [builtin_functions](#module_builtin_functions) | `./builtin-functions` |  |
 | <a name="module_custom_critical_alarms"></a> [custom_critical_alarms](#module_custom_critical_alarms) | `../base_infra/alerts` |  |
 | <a name="module_typed_definitions"></a> [typed_definitions](#module_typed_definitions) | `./typed-definitions` |  |
@@ -128,6 +129,8 @@ the templating process.
 | <a name="input_cirrus_process_sqs_cross_account_sender_arns"></a> [cirrus\_process\_sqs\_cross\_account\_sender\_arns](#input\_cirrus\_process\_sqs\_cross\_account\_sender\_arns) | List of AWS principal ARNs from external accounts that should be allowed to send messages to the cirrus process SQS queue | `list(string)` | `[]` | no |
 | <a name="input_domain_alias"></a> [domain\_alias](#input\_domain\_alias) | Custom domain alias for private API Gateway endpoint | `string` | `""` | no |
 | <a name="input_private_certificate_arn"></a> [private\_certificate\_arn](#input\_private\_certificate\_arn) | Private Certificate ARN for custom domain alias of private API Gateway endpoint | `string` | `""` | no |
+| <a name="input_cirrus_workflow_metrics_enabled"></a> [cirrus\_workflow\_metrics\_enabled](#input\_cirrus\_workflow\_metrics\_enabled) | This enables Cirrus Workflow Metric collection via CloudWatch.  This requires Cirrus version 1.2.0 or greater.  The Workflow Metrics classes replace the EventDB (Timestream-based) system, due to its deprecation.<br/><br/>This can be enabled concurrently with the existing EventDB (Timestream) system, for a transition period while metric data is accumulated. You would need to manually remove the `CIRRUS_WORKFLOW_METRIC_NAMESPACE` environment variable from the Cirrus API lambda, to allow continued surfacing of Timestream metrics.  Once sufficient data has accumulated in the associated CloudWatch metrics, restoring the `CIRRUS_WORKFLOW_METRIC_NAMESPACE` will swap over to serving those metrics.  For a more detailed plan, see https://github.com/cirrus-geo/cirrus-geo/pull/329#issuecomment-3412712053 | `bool` | `false` | no |
+| <a name="input_workflow_metrics_timestream_enabled"></a> [workflow\_metrics\_timestream\_enabled](#input\_workflow\_metrics\_timestream\_enabled) | This enables Cirrus Workflow Metric collection via Timestream. Historically, this has been the primary method for collecting Cirrus workflow metrics (thus the default value being true). However, with AWS deprecation of Timestream for LiveAnalytics (https://docs.aws.amazon.com/timestream/latest/developerguide/AmazonTimestreamForLiveAnalytics-availability-change.html), metric collection via CloudWatch was introduced.<br/><br/>See the notes under the CloudWatch metric collection var for strategies on transitioning from Timestream to CloudWatch metrics. | `bool` | `true` | no |
 
 ## Outputs
 

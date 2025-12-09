@@ -18,76 +18,92 @@ EOF
 
 }
 
-resource "aws_iam_policy" "cirrus_update_state_lambda_policy" {
-  name_prefix = "${var.resource_prefix}-process-policy-"
+data "aws_iam_policy_document" "cirrus_update_state_lambda_policy_main_doc" {
+  statement {
+    effect = "Allow"
+    actions = [
+      "dynamodb:Query",
+      "dynamodb:Scan",
+      "dynamodb:GetItem",
+      "dynamodb:PutItem",
+      "dynamodb:UpdateItem",
+      "dynamodb:DescribeTable"
+    ]
+    resources = [
+      var.cirrus_state_dynamodb_table_arn,
+      "${var.cirrus_state_dynamodb_table_arn}/index/*"
+    ]
+  }
 
-  policy = <<EOF
-{
-  "Version": "2012-10-17",
-  "Statement": [
-    {
-      "Effect": "Allow",
-      "Action": [
-        "dynamodb:Query",
-        "dynamodb:Scan",
-        "dynamodb:GetItem",
-        "dynamodb:PutItem",
-        "dynamodb:UpdateItem",
-        "dynamodb:DescribeTable"
-      ],
-      "Resource": [
-        "${var.cirrus_state_dynamodb_table_arn}",
-        "${var.cirrus_state_dynamodb_table_arn}/index/*"
-      ]
-    },
-    {
-      "Effect": "Allow",
-      "Action": [
-        "timestream:DescribeEndpoints"
-      ],
-      "Resource": "*"
-    },
-    {
-      "Effect": "Allow",
-      "Action": [
-        "timestream:WriteRecords"
-      ],
-      "Resource": "${var.cirrus_state_event_timestreamwrite_table_arn}"
-    },
-    {
-      "Effect": "Allow",
-      "Action": [
-        "sqs:SendMessage"
-      ],
-      "Resource": "${var.cirrus_process_sqs_queue_arn}"
-    },
-    {
-      "Effect": "Allow",
-      "Action": [
-        "s3:GetObject",
-        "s3:PutObject"
-      ],
-      "Resource": "arn:aws:s3:::${var.cirrus_payload_bucket}/*"
-    },
-    {
-      "Effect": "Allow",
-      "Action": [
-        "sns:Publish"
-      ],
-      "Resource": [
-        "${var.cirrus_publish_sns_topic_arn}",
-        "${var.cirrus_workflow_event_sns_topic_arn}"
-      ]
-    }
-  ]
+  statement {
+    effect = "Allow"
+    actions = [
+      "sqs:SendMessage"
+    ]
+    resources = [
+      var.cirrus_process_sqs_queue_arn
+    ]
+  }
+
+  statement {
+    effect = "Allow"
+    actions = [
+      "s3:GetObject",
+      "s3:PutObject"
+    ]
+    resources = [
+      "arn:aws:s3:::${var.cirrus_payload_bucket}/*"
+    ]
+  }
+
+  statement {
+    effect = "Allow"
+    actions = [
+      "sns:Publish"
+    ]
+    resources = [
+      var.cirrus_publish_sns_topic_arn,
+      var.cirrus_workflow_event_sns_topic_arn
+    ]
+  }
 }
-EOF
 
+data "aws_iam_policy_document" "cirrus_update_state_lambda_policy_timestream_doc" {
+  count = var.workflow_metrics_timestream_enabled ? 1 : 0
+
+  statement {
+    effect = "Allow"
+    actions = [
+      "timestream:DescribeEndpoints"
+    ]
+    resources = [
+      "*"
+    ]
+  }
+
+  statement {
+    effect = "Allow"
+    actions = [
+      "timestream:WriteRecords"
+    ]
+    resources = [
+      var.cirrus_state_event_timestreamwrite_table_arn
+    ]
+  }
+}
+
+resource "aws_iam_policy" "cirrus_update_state_lambda_policy_main" {
+  policy = data.aws_iam_policy_document.cirrus_update_state_lambda_policy_main_doc.json
+}
+
+resource "aws_iam_policy" "cirrus_update_state_lambda_policy_timestream" {
+  count  = var.workflow_metrics_timestream_enabled ? 1 : 0
+  policy = data.aws_iam_policy_document.cirrus_update_state_lambda_policy_timestream_doc[0].json
 }
 
 resource "aws_iam_role_policy_attachment" "cirrus_update_state_lambda_role_policy_attachment1" {
   role       = aws_iam_role.cirrus_update_state_lambda_role.name
-  policy_arn = aws_iam_policy.cirrus_update_state_lambda_policy.arn
+  policy_arn = aws_iam_policy.cirrus_update_state_lambda_policy_main.arn
 }
 
 resource "aws_iam_role_policy_attachment" "cirrus_update_state_lambda_role_policy_attachment2" {
@@ -99,6 +115,12 @@ resource "aws_iam_role_policy_attachment" "cirrus_update_state_lambda_role_polic
   count      = var.cirrus_workflow_metrics_enabled ? 1 : 0
   role       = aws_iam_role.cirrus_update_state_lambda_role.name
   policy_arn = var.cirrus_workflow_metrics_write_policy_arn
+}
+
+resource "aws_iam_role_policy_attachment" "cirrus_update_state_lambda_role_policy_attachment4" {
+  count      = var.workflow_metrics_timestream_enabled ? 1 : 0
+  role       = aws_iam_role.cirrus_update_state_lambda_role.name
+  policy_arn = aws_iam_policy.cirrus_update_state_lambda_policy_timestream[0].arn
 }
 
 resource "aws_lambda_function" "cirrus_update_state" {
@@ -121,11 +143,13 @@ resource "aws_lambda_function" "cirrus_update_state" {
         CIRRUS_DATA_BUCKET              = var.cirrus_data_bucket
         CIRRUS_PAYLOAD_BUCKET           = var.cirrus_payload_bucket
         CIRRUS_STATE_DB                 = var.cirrus_state_dynamodb_table_name
-        CIRRUS_EVENT_DB_AND_TABLE       = "${var.cirrus_state_event_timestreamwrite_database_name}|${var.cirrus_state_event_timestreamwrite_table_name}"
         CIRRUS_WORKFLOW_EVENT_TOPIC_ARN = var.cirrus_workflow_event_sns_topic_arn
         CIRRUS_PUBLISH_TOPIC_ARN        = var.cirrus_publish_sns_topic_arn
         CIRRUS_PROCESS_QUEUE_URL        = var.cirrus_process_sqs_queue_url
       },
+      var.workflow_metrics_timestream_enabled ? {
+        CIRRUS_EVENT_DB_AND_TABLE = "${var.cirrus_state_event_timestreamwrite_database_name}|${var.cirrus_state_event_timestreamwrite_table_name}"
+      } : {},
       var.cirrus_workflow_metrics_enabled ? {
         CIRRUS_WORKFLOW_LOG_GROUP = var.cirrus_workflow_metrics_log_group_name
       } : {}
