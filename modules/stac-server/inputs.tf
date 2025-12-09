@@ -124,21 +124,26 @@ variable "api_lambda" {
     - handler: (optional, string) Lambda handler.
     - memory_mb: (optional, number) Lambda max memory (MB).
     - timeout_seconds (optional, number) Lambda timeout (seconds).
+    - environment_variables: (optional, map(string)) Custom environment variables
+      to add to the Lambda. These will be merged with the default environment
+      variables. Custom variables with the same key will override defaults.
   DESCRIPTION
 
   type = object({
-    zip_filepath    = optional(string)
-    runtime         = optional(string, "nodejs20.x")
-    handler         = optional(string, "index.handler")
-    memory_mb       = optional(number, 1024)
-    timeout_seconds = optional(number, 30)
+    zip_filepath          = optional(string)
+    runtime               = optional(string, "nodejs20.x")
+    handler               = optional(string, "index.handler")
+    memory_mb             = optional(number, 1024)
+    timeout_seconds       = optional(number, 30)
+    environment_variables = optional(map(string), {})
   })
   default = {
-    zip_filepath    = null
-    runtime         = "nodejs20.x"
-    handler         = "index.handler"
-    memory_mb       = 1024
-    timeout_seconds = 30
+    zip_filepath          = null
+    runtime               = "nodejs20.x"
+    handler               = "index.handler"
+    memory_mb             = 1024
+    timeout_seconds       = 30
+    environment_variables = {}
   }
   nullable = false
 }
@@ -153,21 +158,26 @@ variable "ingest_lambda" {
     - handler: (optional, string) Lambda handler.
     - memory_mb: (optional, number) Lambda max memory (MB).
     - timeout_seconds (optional, number) Lambda timeout (seconds).
+    - environment_variables: (optional, map(string)) Custom environment variables
+      to add to the Lambda. These will be merged with the default environment
+      variables. Custom variables with the same key will override defaults.
   DESCRIPTION
 
   type = object({
-    zip_filepath    = optional(string)
-    runtime         = optional(string, "nodejs20.x")
-    handler         = optional(string, "index.handler")
-    memory_mb       = optional(number, 512)
-    timeout_seconds = optional(number, 60)
+    zip_filepath          = optional(string)
+    runtime               = optional(string, "nodejs20.x")
+    handler               = optional(string, "index.handler")
+    memory_mb             = optional(number, 512)
+    timeout_seconds       = optional(number, 60)
+    environment_variables = optional(map(string), {})
   })
   default = {
-    zip_filepath    = null
-    runtime         = "nodejs20.x"
-    handler         = "index.handler"
-    memory_mb       = 512
-    timeout_seconds = 60
+    zip_filepath          = null
+    runtime               = "nodejs20.x"
+    handler               = "index.handler"
+    memory_mb             = 512
+    timeout_seconds       = 60
+    environment_variables = {}
   }
   nullable = false
 }
@@ -182,21 +192,26 @@ variable "pre_hook_lambda" {
     - handler: (optional, string) Lambda handler.
     - memory_mb: (optional, number) Lambda max memory (MB).
     - timeout_seconds (optional, number) Lambda timeout (seconds).
+    - environment_variables: (optional, map(string)) Custom environment variables
+      to add to the Lambda. These will be merged with the default environment
+      variables. Custom variables with the same key will override defaults.
   DESCRIPTION
 
   type = object({
-    zip_filepath    = optional(string)
-    runtime         = optional(string, "nodejs20.x")
-    handler         = optional(string, "index.handler")
-    memory_mb       = optional(number, 128)
-    timeout_seconds = optional(number, 25)
+    zip_filepath          = optional(string)
+    runtime               = optional(string, "nodejs20.x")
+    handler               = optional(string, "index.handler")
+    memory_mb             = optional(number, 128)
+    timeout_seconds       = optional(number, 25)
+    environment_variables = optional(map(string), {})
   })
   default = {
-    zip_filepath    = null
-    runtime         = "nodejs20.x"
-    handler         = "index.handler"
-    memory_mb       = 128
-    timeout_seconds = 25
+    zip_filepath          = null
+    runtime               = "nodejs20.x"
+    handler               = "index.handler"
+    memory_mb             = 128
+    timeout_seconds       = 25
+    environment_variables = {}
   }
   nullable = false
 }

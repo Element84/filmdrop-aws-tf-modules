@@ -15,6 +15,7 @@ module "builtin_functions" {
   cirrus_payload_bucket                            = module.base.cirrus_payload_bucket
   cirrus_lambda_version                            = var.cirrus_lambda_version
   cirrus_lambda_zip_filepath                       = var.cirrus_lambda_zip_filepath
+  cirrus_lambda_pyversion                          = var.cirrus_lambda_pyversion
   cirrus_api_rest_type                             = var.cirrus_api_rest_type
   cirrus_private_api_additional_security_group_ids = var.cirrus_private_api_additional_security_group_ids
   cirrus_api_lambda_timeout                        = var.cirrus_api_lambda_timeout
@@ -38,6 +39,12 @@ module "builtin_functions" {
   cirrus_process_sqs_queue_arn                     = module.base.cirrus_process_sqs_queue_arn
   cirrus_process_sqs_queue_url                     = module.base.cirrus_process_sqs_queue_url
   cirrus_update_state_dead_letter_sqs_queue_arn    = module.base.cirrus_update_state_dead_letter_sqs_queue_arn
+  workflow_metrics_cloudwatch_enabled              = var.workflow_metrics_cloudwatch_enabled
+  workflow_metrics_cloudwatch_log_group_name       = var.workflow_metrics_cloudwatch_enabled ? module.metrics[0].workflow_metrics_cloudwatch_log_group_name : ""
+  workflow_metrics_cloudwatch_namespace            = var.workflow_metrics_cloudwatch_enabled ? module.metrics[0].workflow_metrics_cloudwatch_namespace : ""
+  workflow_metrics_cloudwatch_write_policy_arn     = var.workflow_metrics_cloudwatch_enabled ? module.metrics[0].workflow_metrics_cloudwatch_write_policy_arn : ""
+  workflow_metrics_cloudwatch_read_policy_arn      = var.workflow_metrics_cloudwatch_enabled ? module.metrics[0].workflow_metrics_cloudwatch_read_policy_arn : ""
+  workflow_metrics_timestream_enabled              = var.workflow_metrics_timestream_enabled
   warning_sns_topic_arn                            = var.warning_sns_topic_arn
   critical_sns_topic_arn                           = var.critical_sns_topic_arn
   deploy_alarms                                    = var.deploy_alarms

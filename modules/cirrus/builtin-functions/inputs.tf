@@ -22,13 +22,17 @@ variable "cirrus_payload_bucket" {
 
 variable "cirrus_lambda_version" {
   description = <<-DESCRIPTION
-  (Optional) Version of Cirrus lambda to deploy.
+  (Optional) Version of Cirrus lambda to deploy. Defaults to the Cirrus version associated with this FilmDrop release.
 
-  Defaults to the Cirrus version associated with this FilmDrop release.
+  If set, cirrus_lambda_pyversion must also be set to the Python runtime version required.
+
+  See [cirrus-geo releases](https://github.com/cirrus-geo/cirrus-geo/releases) for more information.
   DESCRIPTION
   type        = string
   nullable    = false
-  default     = "1.0.2"
+  # If you update this, ensure cirrus_lambda_pyversion is also updated to the python version required by this
+  # version of cirrus
+  default = "1.1.2"
 }
 
 variable "cirrus_lambda_zip_filepath" {
@@ -42,6 +46,19 @@ variable "cirrus_lambda_zip_filepath" {
   default     = null
 }
 
+variable "cirrus_lambda_pyversion" {
+  description = <<-DESCRIPTION
+  (Optional) Python runtime version for the builtin Cirrus Lambda functions. Each Cirrus
+  version has explicit Python version(s) it can correctly function with. Ensure you set this to that version.
+
+  If either cirrus_lambda_version or cirrus_lambda_zip_filepath are set, this must also be set.
+  DESCRIPTION
+  type        = string
+  nullable    = false
+  # Ensure this meets the python version requirement of the default cirrus_lambda_version
+  default = "3.13"
+}
+
 variable "cirrus_api_lambda_timeout" {
   description = "Cirrus API lambda timeout (sec)"
   type        = number
@@ -51,7 +68,13 @@ variable "cirrus_api_lambda_timeout" {
 variable "cirrus_api_lambda_memory" {
   description = "Cirrus API lambda memory (MB)"
   type        = number
-  default     = 128
+  nullable    = false
+  default     = 512
+
+  validation {
+    condition     = var.cirrus_api_lambda_memory >= 512
+    error_message = "cirrus_api_lambda_memory must be >= 512 MB. All Cirrus Lambda built-ins require at least 512 MB."
+  }
 }
 
 variable "cirrus_process_lambda_timeout" {
@@ -63,7 +86,13 @@ variable "cirrus_process_lambda_timeout" {
 variable "cirrus_process_lambda_memory" {
   description = "Cirrus process lambda memory (MB)"
   type        = number
-  default     = 128
+  nullable    = false
+  default     = 512
+
+  validation {
+    condition     = var.cirrus_process_lambda_memory >= 512
+    error_message = "cirrus_process_lambda_memory must be >= 512 MB. All Cirrus Lambda built-ins require at least 512 MB."
+  }
 }
 
 variable "cirrus_process_lambda_reserved_concurrency" {
@@ -81,7 +110,13 @@ variable "cirrus_update_state_lambda_timeout" {
 variable "cirrus_update_state_lambda_memory" {
   description = "Cirrus update-state lambda memory (MB)"
   type        = number
-  default     = 128
+  nullable    = false
+  default     = 512
+
+  validation {
+    condition     = var.cirrus_update_state_lambda_memory >= 512
+    error_message = "cirrus_update_state_lambda_memory must be >= 512 MB. All Cirrus Lambda built-ins require at least 512 MB."
+  }
 }
 
 variable "cirrus_pre_batch_lambda_timeout" {
@@ -99,7 +134,12 @@ variable "cirrus_pre_batch_lambda_memory" {
   DESCRIPTION
   type        = number
   nullable    = false
-  default     = 128
+  default     = 512
+
+  validation {
+    condition     = var.cirrus_pre_batch_lambda_memory >= 512
+    error_message = "cirrus_pre_batch_lambda_memory must be >= 512 MB. All Cirrus Lambda built-ins require at least 512 MB."
+  }
 }
 
 variable "cirrus_post_batch_lambda_timeout" {
@@ -117,7 +157,12 @@ variable "cirrus_post_batch_lambda_memory" {
   DESCRIPTION
   type        = number
   nullable    = false
-  default     = 128
+  default     = 512
+
+  validation {
+    condition     = var.cirrus_post_batch_lambda_memory >= 512
+    error_message = "cirrus_post_batch_lambda_memory must be >= 512 MB. All Cirrus Lambda built-ins require at least 512 MB."
+  }
 }
 
 variable "cirrus_state_dynamodb_table_name" {
@@ -240,4 +285,45 @@ variable "private_certificate_arn" {
   description = "Private Certificate ARN for custom domain alias of private API Gateway endpoint"
   type        = string
   default     = ""
+}
+
+variable "workflow_metrics_cloudwatch_enabled" {
+  description = "Whether metrics collection is enabled"
+  type        = bool
+  nullable    = false
+  default     = false
+}
+
+variable "workflow_metrics_cloudwatch_log_group_name" {
+  description = "CloudWatch Log Group name for workflow events"
+  type        = string
+  nullable    = true
+  default     = null
+}
+
+variable "workflow_metrics_cloudwatch_namespace" {
+  description = "CloudWatch Metrics namespace for workflow metrics"
+  type        = string
+  nullable    = true
+  default     = null
+}
+
+variable "workflow_metrics_cloudwatch_write_policy_arn" {
+  description = "ARN of the IAM policy for workflow metrics (only used when metrics are enabled)"
+  type        = string
+  default     = ""
+}
+
+variable "workflow_metrics_cloudwatch_read_policy_arn" {
+  description = "ARN of the IAM policy for workflow metrics (only used when metrics are enabled)"
+  type        = string
+  default     = ""
+}
+
+variable "workflow_metrics_timestream_enabled" {
+  description = <<-DESCRIPTION
+  Whether TimestreamDB is enabled (for workflow metrics) or not; see Cirrus core module inputs for details.
+  DESCRIPTION
+  type        = bool
+  nullable    = false
 }

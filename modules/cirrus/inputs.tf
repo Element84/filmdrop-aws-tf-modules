@@ -51,15 +51,22 @@ variable "vpc_security_group_ids" {
 
 variable "cirrus_lambda_version" {
   description = <<-DESCRIPTION
-  (Optional) Version of Cirrus lambda to deploy. Please ensure the Cirrus version you set is compatible with this module.
+  (Optional) Version of Cirrus lambda to deploy. Defaults to the Cirrus version associated with this FilmDrop release.
 
-  If `null`, defaults to the Cirrus version associated with this FilmDrop release.
+  If set, cirrus_lambda_pyversion must also be set to the Python runtime version required.
 
   See [cirrus-geo releases](https://github.com/cirrus-geo/cirrus-geo/releases) for more information.
   DESCRIPTION
   type        = string
   nullable    = true
   default     = null
+
+  # If a value is provided, ensure cirrus_lambda_pyversion is also provided. Note that this validation must
+  # occur here rather than in /builtin-functions/inputs.tf, as we set non-null default values there
+  validation {
+    condition     = var.cirrus_lambda_version == null || var.cirrus_lambda_pyversion != null
+    error_message = "If cirrus lambda_version is set, cirrus lambda_pyversion must also be set."
+  }
 }
 
 variable "cirrus_lambda_zip_filepath" {
@@ -67,6 +74,27 @@ variable "cirrus_lambda_zip_filepath" {
   (Optional) Filepath to a Cirrus Lambda Dist ZIP relative to the root module of
   this Terraform deployment. If provided, will not download from GitHub Releases
   the version of Cirrus as specified in `cirrus_lambda_version`.
+
+  If set, cirrus_lambda_pyversion must also be set to the Python runtime version required.
+  DESCRIPTION
+  type        = string
+  nullable    = true
+  default     = null
+
+  # If a value is provided, ensure cirrus_lambda_pyversion is also provided. Note that this validation could
+  # occur in builtin-functions/inputs.tf, but we set it here to match the cirrus_lambda_version validation behavior
+  validation {
+    condition     = var.cirrus_lambda_zip_filepath == null || var.cirrus_lambda_pyversion != null
+    error_message = "If cirrus lambda_zip_filepath is set, cirrus lambda_pyversion must also be set."
+  }
+}
+
+variable "cirrus_lambda_pyversion" {
+  description = <<-DESCRIPTION
+  (Optional) Python runtime version for the builtin Cirrus Lambda functions. Each Cirrus
+  version has explicit Python version(s) it can correctly function with. Ensure you set this to that version.
+
+  If either cirrus_lambda_version or cirrus_lambda_zip_filepath are set, this must also be set.
   DESCRIPTION
   type        = string
   nullable    = true
@@ -155,7 +183,7 @@ variable "cirrus_api_lambda_memory" {
   DESCRIPTION
   type        = number
   nullable    = false
-  default     = 128
+  default     = 512
 }
 
 variable "cirrus_process_lambda_timeout" {
@@ -173,7 +201,7 @@ variable "cirrus_process_lambda_memory" {
   DESCRIPTION
   type        = number
   nullable    = false
-  default     = 128
+  default     = 512
 }
 
 variable "cirrus_process_lambda_reserved_concurrency" {
@@ -218,7 +246,7 @@ variable "cirrus_update_state_lambda_memory" {
   DESCRIPTION
   type        = number
   nullable    = false
-  default     = 128
+  default     = 512
 }
 
 variable "cirrus_pre_batch_lambda_timeout" {
@@ -236,7 +264,7 @@ variable "cirrus_pre_batch_lambda_memory" {
   DESCRIPTION
   type        = number
   nullable    = false
-  default     = 128
+  default     = 512
 }
 
 variable "cirrus_post_batch_lambda_timeout" {
@@ -254,7 +282,7 @@ variable "cirrus_post_batch_lambda_memory" {
   DESCRIPTION
   type        = number
   nullable    = false
-  default     = 128
+  default     = 512
 }
 
 variable "cirrus_timestream_magnetic_store_retention_period_in_days" {
@@ -707,4 +735,26 @@ variable "private_certificate_arn" {
   description = "Private Certificate ARN for custom domain alias of private API Gateway endpoint"
   type        = string
   default     = ""
+}
+
+variable "workflow_metrics_cloudwatch_enabled" {
+  description = <<-DESCRIPTION
+  This enables Cirrus Workflow Metric collection via CloudWatch.  This requires Cirrus version 1.2.0 or greater.  The Workflow Metrics classes replace the EventDB (Timestream-based) system, due to its deprecation.
+
+  This can be enabled concurrently with the existing EventDB (Timestream) system, for a transition period while metric data is accumulated. You would need to manually remove the `CIRRUS_WORKFLOW_METRIC_NAMESPACE` environment variable from the Cirrus API lambda, to allow continued surfacing of Timestream metrics.  Once sufficient data has accumulated in the associated CloudWatch metrics, restoring the `CIRRUS_WORKFLOW_METRIC_NAMESPACE` will swap over to serving those metrics.  For a more detailed plan, see https://github.com/cirrus-geo/cirrus-geo/pull/329#issuecomment-3412712053
+  DESCRIPTION
+  type        = bool
+  nullable    = false
+  default     = false
+}
+
+variable "workflow_metrics_timestream_enabled" {
+  description = <<-DESCRIPTION
+  This enables Cirrus Workflow Metric collection via Timestream. Historically, this has been the primary method for collecting Cirrus workflow metrics (thus the default value being true). However, with AWS deprecation of Timestream for LiveAnalytics (https://docs.aws.amazon.com/timestream/latest/developerguide/AmazonTimestreamForLiveAnalytics-availability-change.html), metric collection via CloudWatch was introduced.
+
+  See the notes under the CloudWatch metric collection var for strategies on transitioning from Timestream to CloudWatch metrics.
+  DESCRIPTION
+  type        = bool
+  nullable    = false
+  default     = true
 }

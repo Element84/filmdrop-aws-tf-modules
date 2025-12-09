@@ -13,11 +13,55 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Changed
 
-- Updated Terraform version to latest stable 1.13.4. While not technically a semver breaking change, you may want to review the [Terraform upgrade guides](https://developer.hashicorp.com/terraform/language/v1.8.x/upgrade-guides) for 1.8, 1.9, 1.10, 1.11, 1.12, and 1.13
+- Added `workflow_metrics_timestream_enabled` ability to disable Timestream for LiveAnalytics, which has been deprecated. **Note:** existing projects will see destruction and creation of Lambda IAM resources. These *should* result in no material change to actual roles/policies; they're a destructuring of larger policies into smaller modular policies
+
+
+- Added Cirrus Workflow Metrics resources and configuration per
+  [#191](https://github.com/Element84/filmdrop-aws-tf-modules/issues/191), and
+  in congruence with
+  [cirrus-geo#329](https://github.com/cirrus-geo/cirrus-geo/pull/329) to enable
+  continued support of the cirrus-dashboard metrics page
+  ([#191](https://github.com/Element84/filmdrop-aws-tf-modules/issues/193)).
+
+### Changed
 
 ### Fixed
 
+- Added missing `ephemeral_storage_mb` field to `cirrus_tasks` typed definition in `modules/cirrus/typed-definitions/inputs.tf` to match the `task_config.lambda` object schema in `modules/cirrus/task/inputs.tf`
+
 ### Removed
+
+
+
+## [2.57.0] - 2025-11-05
+
+### Added
+
+- Moved stac-server to a standalone module [https://github.com/Element84/terraform-aws-stac-server](https://github.com/Element84/terraform-aws-stac-server)
+
+- Terraform >= v1.13.0 is now required
+
+## [2.56.0] - 2025-10-31
+
+### Added
+
+- Added support for custom environment variables in STAC Server Lambda functions (`api_lambda`, `ingest_lambda`,
+`pre_hook_lambda`). Users can now pass custom environment variables via the optional `environment_variables`
+parameter, enabling support for STAC Server v4.4.0+ features like `ENABLE_CONTEXT_EXTENSION` and
+`ENABLE_THUMBNAILS`. This enhancement is fully backward compatible.
+
+- If using the optional `cirrus_inputs.lambda_version` or `cirrus_inputs.lambda_zip_filepath` to denote a specific
+  version of Cirrus, you must additionally define a `cirrus_inputs.lambda_pyversion`. Cirrus geo versions are now
+  tied to specific Python runtime versions; see the
+  [cirrus-geo releases](https://github.com/cirrus-geo/cirrus-geo/releases) for details.
+
+### Changed
+
+- Cirrus Lambda builtins (api, process, update_state, pre_batch, post_batch) now require a minimum of 512 MB memory.
+  If you've explicitly set memory values lower than that in your `tfvars` an error will occur, noting you need to
+  increase the value. If you're using the defaults, the next `terraform apply` run will update your Lambdas in place.
+
+- Updated Terraform version dictated in .terraform-version to latest stable 1.13.4. While not technically a semver breaking change, you may want to review the [Terraform upgrade guides](https://developer.hashicorp.com/terraform/language/v1.8.x/upgrade-guides) for 1.8, 1.9, 1.10, 1.11, 1.12, and 1.13
 
 ## [2.55.0] - 2025-10-15
 

@@ -12,22 +12,16 @@ jobs:
     env:
       CI: true
       STAC_SERVER_TAG: v3.7.0
-      CIRRUS_TAG: v1.0.0a0
+      CIRRUS_TAG: v1.2.0
+      CIRRUS_PY_VERSION: 3.13
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: "18"
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
       - uses: hashicorp/setup-terraform@v3
         with:
           terraform_version: "1.13.4"
-
-      - name: Update stac-server lambdas
-        id: update_stac_lambdas
-        run: ./scripts/update-stac-server-lambdas.bash
 
       - name: Update cirrus lambda dist
         id: update_cirrus_lambda_dist
@@ -40,6 +34,7 @@ jobs:
       - name: Terraform Validate
         id: tf_validate
         run: terraform validate -no-color
+
   pre-commit:
     runs-on: ubuntu-latest
     steps:

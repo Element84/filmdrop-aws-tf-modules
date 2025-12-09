@@ -112,25 +112,28 @@ variable "stac_server_inputs" {
     private_certificate_arn                     = optional(string)
     vpce_private_dns_enabled                    = bool
     api_lambda = optional(object({
-      handler         = optional(string)
-      memory_mb       = optional(number)
-      runtime         = optional(string)
-      timeout_seconds = optional(number)
-      zip_filepath    = optional(string)
+      handler               = optional(string)
+      memory_mb             = optional(number)
+      runtime               = optional(string)
+      timeout_seconds       = optional(number)
+      zip_filepath          = optional(string)
+      environment_variables = optional(map(string))
     }))
     ingest_lambda = optional(object({
-      handler         = optional(string)
-      memory_mb       = optional(number)
-      runtime         = optional(string)
-      timeout_seconds = optional(number)
-      zip_filepath    = optional(string)
+      handler               = optional(string)
+      memory_mb             = optional(number)
+      runtime               = optional(string)
+      timeout_seconds       = optional(number)
+      zip_filepath          = optional(string)
+      environment_variables = optional(map(string))
     }))
     pre_hook_lambda = optional(object({
-      handler         = optional(string)
-      memory_mb       = optional(number)
-      runtime         = optional(string)
-      timeout_seconds = optional(number)
-      zip_filepath    = optional(string)
+      handler               = optional(string)
+      memory_mb             = optional(number)
+      runtime               = optional(string)
+      timeout_seconds       = optional(number)
+      zip_filepath          = optional(string)
+      environment_variables = optional(map(string))
     }))
     auth_function = object({
       cf_function_name             = string
@@ -158,7 +161,7 @@ variable "stac_server_inputs" {
   })
   default = {
     app_name                                    = "stac_server"
-    version                                     = "v3.10.0"
+    version                                     = null
     stac_id                                     = "stac-server"
     stac_title                                  = "STAC API"
     stac_description                            = "A STAC API using stac-server"
@@ -430,6 +433,7 @@ variable "cirrus_inputs" {
     })
     lambda_version      = optional(string)
     lambda_zip_filepath = optional(string)
+    lambda_pyversion    = optional(string)
     api_lambda = object({
       timeout = number
       memory  = number
@@ -462,6 +466,8 @@ variable "cirrus_inputs" {
     workflow_definitions_variables               = optional(map(map(string)))
     workflow_definitions_variables_ssm           = optional(map(map(string)))
     cirrus_cli_iam_role_trust_principal          = optional(list(string))
+    workflow_metrics_cloudwatch_enabled          = optional(bool)
+    workflow_metrics_timestream_enabled          = optional(bool)
   })
   default = {
     data_bucket                               = "cirrus-data-bucket-name"
@@ -486,26 +492,27 @@ variable "cirrus_inputs" {
     }
     lambda_version      = null
     lambda_zip_filepath = null
+    lambda_pyversion    = null
     api_lambda = {
       timeout = 10
-      memory  = 128
+      memory  = 512
     }
     process_lambda = {
       timeout              = 10
-      memory               = 128
+      memory               = 512
       reserved_concurrency = 16
     }
     update_state_lambda = {
       timeout = 15
-      memory  = 128
+      memory  = 512
     }
     pre_batch_lambda = {
       timeout = 15
-      memory  = 128
+      memory  = 512
     }
     post_batch_lambda = {
       timeout = 15
-      memory  = 128
+      memory  = 512
     }
     feeder_definitions_dir                       = null
     task_batch_compute_definitions_dir           = null
@@ -518,6 +525,8 @@ variable "cirrus_inputs" {
     workflow_definitions_variables               = null
     workflow_definitions_variables_ssm           = null
     cirrus_cli_iam_role_trust_principal          = null
+    workflow_metrics_cloudwatch_enabled          = false
+    workflow_metrics_timestream_enabled          = true
   }
 }
 
@@ -657,7 +666,6 @@ variable "deploy_cirrus_dashboard" {
 variable "deploy_local_stac_server_artifacts" {
   description = "Deploy STAC Server artifacts for local deploy"
   type        = bool
-  default     = true
 }
 
 variable "deploy_waf_rule" {

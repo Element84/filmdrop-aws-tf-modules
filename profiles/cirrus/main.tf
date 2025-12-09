@@ -11,6 +11,7 @@ module "cirrus" {
   vpc_security_group_ids                                    = [var.security_group_id]
   cirrus_lambda_version                                     = var.cirrus_inputs.lambda_version
   cirrus_lambda_zip_filepath                                = var.cirrus_inputs.lambda_zip_filepath
+  cirrus_lambda_pyversion                                   = var.cirrus_inputs.lambda_pyversion
   cirrus_process_sqs_timeout                                = var.cirrus_inputs.process.sqs_timeout
   cirrus_process_sqs_max_receive_count                      = var.cirrus_inputs.process.sqs_max_receive_count
   cirrus_timestream_magnetic_store_retention_period_in_days = var.cirrus_inputs.state.timestream_magnetic_store_retention_period_in_days
@@ -47,6 +48,8 @@ module "cirrus" {
   cirrus_process_sqs_cross_account_sender_arns              = var.cirrus_inputs.process.sqs_cross_account_sender_arns
   private_certificate_arn                                   = var.cirrus_inputs.private_certificate_arn
   domain_alias                                              = var.cirrus_inputs.domain_alias
+  workflow_metrics_cloudwatch_enabled                       = var.cirrus_inputs.workflow_metrics_cloudwatch_enabled
+  workflow_metrics_timestream_enabled                       = var.cirrus_inputs.workflow_metrics_timestream_enabled
 }
 
 locals {

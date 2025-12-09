@@ -25,14 +25,6 @@ module "base_infra" {
   s3_logs_archive_bucket         = var.s3_logs_archive_bucket
 }
 
-# Run setup scripts
-module "setup" {
-  source = "../setup"
-
-  stac_server_version                = var.stac_server_inputs.version
-  deploy_local_stac_server_artifacts = var.deploy_local_stac_server_artifacts
-}
-
 module "stac-server" {
   count  = var.deploy_stac_server ? 1 : 0
   source = "../stac-server"
@@ -41,6 +33,7 @@ module "stac-server" {
     aws.east = aws.east
   }
 
+  deploy_local_stac_server_artifacts       = var.deploy_local_stac_server_artifacts
   vpc_id                                   = module.base_infra.vpc_id
   private_subnet_ids                       = module.base_infra.private_subnet_ids
   security_group_id                        = module.base_infra.security_group_id
@@ -53,10 +46,6 @@ module "stac-server" {
   deploy_stac_server_opensearch_serverless = var.deploy_stac_server_opensearch_serverless
   deploy_stac_server_outside_vpc           = var.deploy_stac_server_outside_vpc
   fd_web_acl_id                            = var.deploy_waf_rule ? module.base_infra.web_acl_id : var.ext_web_acl_id
-
-  depends_on = [
-    module.setup
-  ]
 }
 
 module "titiler" {

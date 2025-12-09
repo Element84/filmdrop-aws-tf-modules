@@ -23,74 +23,99 @@ EOF
 
 }
 
-resource "aws_iam_policy" "cirrus_api_lambda_policy" {
-  name_prefix = "${var.resource_prefix}-api-policy-"
+data "aws_iam_policy_document" "cirrus_api_lambda_policy_main_doc" {
+  statement {
+    effect = "Allow"
+    actions = [
+      "s3:ListBucket",
+      "s3:GetObject",
+      "s3:GetBucketLocation"
+    ]
+    resources = [
+      "arn:aws:s3:::${var.cirrus_data_bucket}*"
+    ]
+  }
 
-  # TODO: the secret thing is probably not gonna work without some fixes in boto3utils...
-  # We should probably reconsider if this is the right solution.
-  policy = <<EOF
-{
-  "Version": "2012-10-17",
-  "Statement": [
-    {
-      "Action": [
-        "s3:ListBucket",
-        "s3:GetObject",
-        "s3:GetBucketLocation"
-      ],
-      "Resource": "arn:aws:s3:::${var.cirrus_data_bucket}*",
-      "Effect": "Allow"
-    },
-    {
-      "Action": "secretsmanager:GetSecretValue",
-      "Resource": [
-        "arn:aws:secretsmanager:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:secret:${var.resource_prefix}*"
-      ],
-      "Effect": "Allow"
-    },
-    {
-      "Effect": "Allow",
-      "Action": [
-        "dynamodb:Query",
-        "dynamodb:Scan",
-        "dynamodb:GetItem",
-        "dynamodb:PutItem",
-        "dynamodb:UpdateItem",
-        "dynamodb:DescribeTable"
-      ],
-      "Resource": [
-        "${var.cirrus_state_dynamodb_table_arn}",
-        "${var.cirrus_state_dynamodb_table_arn}/index/*"
-      ]
-    },
-    {
-      "Effect": "Allow",
-      "Action": [
-        "timestream:DescribeEndpoints"
-      ],
-      "Resource": "*"
-    },
-    {
-      "Effect": "Allow",
-      "Action": [
-        "timestream:Select"
-      ],
-      "Resource": "${var.cirrus_state_event_timestreamwrite_table_arn}"
-    }
-  ]
+  statement {
+    effect = "Allow"
+    actions = [
+      "secretsmanager:GetSecretValue"
+    ]
+    resources = [
+      "arn:aws:secretsmanager:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:secret:${var.resource_prefix}*"
+    ]
+  }
+
+  statement {
+    effect = "Allow"
+    actions = [
+      "dynamodb:Query",
+      "dynamodb:Scan",
+      "dynamodb:GetItem",
+      "dynamodb:PutItem",
+      "dynamodb:UpdateItem",
+      "dynamodb:DescribeTable"
+    ]
+    resources = [
+      var.cirrus_state_dynamodb_table_arn,
+      "${var.cirrus_state_dynamodb_table_arn}/index/*"
+    ]
+  }
 }
-EOF
 
+data "aws_iam_policy_document" "cirrus_api_lambda_policy_timestream_doc" {
+  count = var.workflow_metrics_timestream_enabled ? 1 : 0
+
+  statement {
+    effect = "Allow"
+    actions = [
+      "timestream:DescribeEndpoints"
+    ]
+    resources = [
+      "*"
+    ]
+  }
+
+  statement {
+    effect = "Allow"
+    actions = [
+      "timestream:Select"
+    ]
+    resources = [
+      var.cirrus_state_event_timestreamwrite_table_arn
+    ]
+  }
+}
+
+resource "aws_iam_policy" "cirrus_api_lambda_policy_main" {
+  policy = data.aws_iam_policy_document.cirrus_api_lambda_policy_main_doc.json
+}
+
+resource "aws_iam_policy" "cirrus_api_lambda_policy_timestream" {
+  count  = var.workflow_metrics_timestream_enabled ? 1 : 0
+  policy = data.aws_iam_policy_document.cirrus_api_lambda_policy_timestream_doc[0].json
 }
 
 resource "aws_iam_role_policy_attachment" "cirrus_api_lambda_role_policy_attachment1" {
   role       = aws_iam_role.cirrus_api_lambda_role.name
-  policy_arn = aws_iam_policy.cirrus_api_lambda_policy.arn
+  policy_arn = aws_iam_policy.cirrus_api_lambda_policy_main.arn
 }
 
 resource "aws_iam_role_policy_attachment" "cirrus_api_lambda_role_policy_attachment2" {
   role       = aws_iam_role.cirrus_api_lambda_role.name
   policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole"
+}
+
+resource "aws_iam_role_policy_attachment" "cirrus_api_lambda_role_policy_attachment3" {
+  count      = var.workflow_metrics_cloudwatch_enabled ? 1 : 0
+  role       = aws_iam_role.cirrus_api_lambda_role.name
+  policy_arn = var.workflow_metrics_cloudwatch_read_policy_arn
+}
+
+resource "aws_iam_role_policy_attachment" "cirrus_api_lambda_role_policy_attachment4" {
+  count      = var.workflow_metrics_timestream_enabled ? 1 : 0
+  role       = aws_iam_role.cirrus_api_lambda_role.name
+  policy_arn = aws_iam_policy.cirrus_api_lambda_policy_timestream[0].arn
 }
 
 resource "aws_lambda_function" "cirrus_api" {
@@ -100,20 +125,27 @@ resource "aws_lambda_function" "cirrus_api" {
   role             = aws_iam_role.cirrus_api_lambda_role.arn
   handler          = "api.lambda_handler"
   source_code_hash = local.cirrus_lambda_zip_hash
-  runtime          = "python3.12"
+  runtime          = "python${local.cirrus_lambda_pyversion}"
   timeout          = var.cirrus_api_lambda_timeout
   memory_size      = var.cirrus_api_lambda_memory
   publish          = true
   architectures    = ["arm64"]
 
   environment {
-    variables = {
-      CIRRUS_LOG_LEVEL          = var.cirrus_log_level
-      CIRRUS_DATA_BUCKET        = var.cirrus_data_bucket
-      CIRRUS_PAYLOAD_BUCKET     = var.cirrus_payload_bucket
-      CIRRUS_STATE_DB           = var.cirrus_state_dynamodb_table_name
-      CIRRUS_EVENT_DB_AND_TABLE = "${var.cirrus_state_event_timestreamwrite_database_name}|${var.cirrus_state_event_timestreamwrite_table_name}"
-    }
+    variables = merge(
+      {
+        CIRRUS_LOG_LEVEL      = var.cirrus_log_level
+        CIRRUS_DATA_BUCKET    = var.cirrus_data_bucket
+        CIRRUS_PAYLOAD_BUCKET = var.cirrus_payload_bucket
+        CIRRUS_STATE_DB       = var.cirrus_state_dynamodb_table_name
+      },
+      var.workflow_metrics_timestream_enabled ? {
+        CIRRUS_EVENT_DB_AND_TABLE = "${var.cirrus_state_event_timestreamwrite_database_name}|${var.cirrus_state_event_timestreamwrite_table_name}"
+      } : {},
+      var.workflow_metrics_cloudwatch_enabled ? {
+        CIRRUS_WORKFLOW_METRIC_NAMESPACE = var.workflow_metrics_cloudwatch_namespace
+      } : {}
+    )
   }
 
   vpc_config {

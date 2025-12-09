@@ -21,7 +21,7 @@ sns_critical_subscriptions_map = {}
 ##### APPLICATION VARIABLES ####
 stac_server_inputs = {
   app_name                                    = "stac_server"
-  version                                     = "v3.10.0"
+  version                                     = null
   stac_id                                     = "stac-server"
   stac_title                                  = "STAC API"
   stac_title                                  = "A STAC API using stac-server"
@@ -199,26 +199,29 @@ cirrus_inputs = {
     timestream_magnetic_store_retention_period_in_days = 93
     timestream_memory_store_retention_period_in_hours  = 24
   }
+  lambda_version      = null
+  lambda_zip_filepath = null
+  lambda_pyversion    = null
   api_lambda = {
     timeout = 10
-    memory  = 128
+    memory  = 512
   }
   process_lambda = {
     timeout              = 10
-    memory               = 128
+    memory               = 512
     reserved_concurrency = 16
   }
   update_state_lambda = {
     timeout = 15
-    memory  = 128
+    memory  = 512
   }
   pre_batch_lambda = {
     timeout = 15
-    memory  = 128
+    memory  = 512
   }
   post_batch_lambda = {
     timeout = 15
-    memory  = 128
+    memory  = 512
   }
   feeder_definitions_dir                       = null
   task_batch_compute_definitions_dir           = null
@@ -230,6 +233,8 @@ cirrus_inputs = {
   workflow_definitions_dir                     = null
   workflow_definitions_variables               = null
   workflow_definitions_variables_ssm           = null
+  workflow_metrics_cloudwatch_enabled          = true
+  workflow_metrics_timestream_enabled          = true
 }
 
 cirrus_dashboard_inputs = {

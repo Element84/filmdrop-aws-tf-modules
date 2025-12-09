@@ -57,6 +57,7 @@ variable "cirrus_inputs" {
     })
     lambda_version      = optional(string)
     lambda_zip_filepath = optional(string)
+    lambda_pyversion    = optional(string)
     api_lambda = object({
       timeout = number
       memory  = number
@@ -89,6 +90,8 @@ variable "cirrus_inputs" {
     workflow_definitions_variables               = optional(map(map(string)))
     workflow_definitions_variables_ssm           = optional(map(map(string)))
     cirrus_cli_iam_role_trust_principal          = optional(list(string))
+    workflow_metrics_cloudwatch_enabled          = optional(bool)
+    workflow_metrics_timestream_enabled          = optional(bool)
   })
   default = {
     data_bucket                               = "cirrus-data-bucket-name"
@@ -114,26 +117,27 @@ variable "cirrus_inputs" {
     }
     lambda_version      = null
     lambda_zip_filepath = null
+    lambda_pyversion    = null
     api_lambda = {
       timeout = 10
-      memory  = 128
+      memory  = 512
     }
     process_lambda = {
       timeout              = 10
-      memory               = 128
+      memory               = 512
       reserved_concurrency = 16
     }
     update_state_lambda = {
       timeout = 15
-      memory  = 128
+      memory  = 512
     }
     pre_batch_lambda = {
       timeout = 15
-      memory  = 128
+      memory  = 512
     }
     post_batch_lambda = {
       timeout = 15
-      memory  = 128
+      memory  = 512
     }
     feeder_definitions_dir                       = null
     task_batch_compute_definitions_dir           = null
@@ -146,6 +150,8 @@ variable "cirrus_inputs" {
     workflow_definitions_variables               = null
     workflow_definitions_variables_ssm           = null
     cirrus_cli_iam_role_trust_principal          = null
+    workflow_metrics_cloudwatch_enabled          = false
+    workflow_metrics_timestream_enabled          = true
   }
 }
 

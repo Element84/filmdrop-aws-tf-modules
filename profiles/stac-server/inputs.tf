@@ -75,25 +75,28 @@ variable "stac_server_inputs" {
     private_certificate_arn                     = optional(string)
     vpce_private_dns_enabled                    = bool
     api_lambda = optional(object({
-      handler         = optional(string)
-      memory_mb       = optional(number)
-      runtime         = optional(string)
-      timeout_seconds = optional(number)
-      zip_filepath    = optional(string)
+      handler               = optional(string)
+      memory_mb             = optional(number)
+      runtime               = optional(string)
+      timeout_seconds       = optional(number)
+      zip_filepath          = optional(string)
+      environment_variables = optional(map(string))
     }))
     ingest_lambda = optional(object({
-      handler         = optional(string)
-      memory_mb       = optional(number)
-      runtime         = optional(string)
-      timeout_seconds = optional(number)
-      zip_filepath    = optional(string)
+      handler               = optional(string)
+      memory_mb             = optional(number)
+      runtime               = optional(string)
+      timeout_seconds       = optional(number)
+      zip_filepath          = optional(string)
+      environment_variables = optional(map(string))
     }))
     pre_hook_lambda = optional(object({
-      handler         = optional(string)
-      memory_mb       = optional(number)
-      runtime         = optional(string)
-      timeout_seconds = optional(number)
-      zip_filepath    = optional(string)
+      handler               = optional(string)
+      memory_mb             = optional(number)
+      runtime               = optional(string)
+      timeout_seconds       = optional(number)
+      zip_filepath          = optional(string)
+      environment_variables = optional(map(string))
     }))
     auth_function = object({
       cf_function_name             = string
@@ -121,7 +124,7 @@ variable "stac_server_inputs" {
   })
   default = {
     app_name                                    = "stac_server"
-    version                                     = "v3.10.0"
+    version                                     = null
     stac_id                                     = "stac-server"
     stac_title                                  = "STAC API"
     stac_description                            = "A STAC API using stac-server"
@@ -182,6 +185,11 @@ variable "stac_server_inputs" {
       include_ongoing_ingest           = false
     }
   }
+}
+
+variable "deploy_local_stac_server_artifacts" {
+  description = "Deploy STAC Server artifacts for local deploy"
+  type        = bool
 }
 
 variable "s3_logs_archive_bucket" {
