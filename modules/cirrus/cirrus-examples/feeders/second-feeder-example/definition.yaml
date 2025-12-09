@@ -7,7 +7,8 @@ lambda:
     PARAM1: value1
     PARAM2: value2
 
-# Customize the SQS queue, if needed
+# Customize the SQS queue that will be created. Note that you can omit this section entirely and a queue
+# with defaults will be created
 sqs:
   delay_seconds: 10
   message_retention_seconds: 3000
@@ -16,7 +17,8 @@ sqs:
   visibility_timeout_seconds: 60
   max_receive_count: 7
 
-# Trigger from multiple S3 buckets, explicit event types, and prefixes/suffixes
+# Trigger from multiple S3 buckets, explicit event types, and prefixes/suffixes. Note that these must
+# already exist, we're not creating them here. 
 triggers_s3:
   - bucket_name: some-bucket1
     bucket_arn: arn:aws:s3:::some-bucket1
@@ -26,9 +28,30 @@ triggers_s3:
     filter_suffix: .tif
   - bucket_name: some-bucket2
     bucket_arn: arn:aws:s3:::some-bucket2
+    # s3:ObjectCreated:* may be most commonly used; for fun we list all non-wildcard supported event
+    # types (at the time of writing)
     events:
-      - s3:ObjectCreated:*
+      - s3:ObjectCreated:Put
+      - s3:ObjectCreated:Post
+      - s3:ObjectCreated:Copy
+      - s3:ObjectCreated:CompleteMultipartUpload
+      - s3:ObjectRemoved:Delete
+      - s3:ObjectRemoved:DeleteMarkerCreated
+      - s3:ObjectRestore:Post
+      - s3:ObjectRestore:Completed
+      - s3:ObjectRestore:Delete
+      - s3:ReducedRedundancyLostObject
+      - s3:Replication:OperationFailedReplication
+      - s3:Replication:OperationMissedThreshold
+      - s3:Replication:OperationReplicatedAfterThreshold
+      - s3:Replication:OperationNotTracked
+      - s3:LifecycleExpiration:Delete
+      - s3:LifecycleExpiration:DeleteMarkerCreated
+      - s3:LifecycleTransition
+      - s3:IntelligentTiering
       - s3:ObjectTagging:Put
+      - s3:ObjectTagging:Delete
+      - s3:ObjectAcl:Put
     filter_prefix: input2/
     filter_suffix: .zarr
 

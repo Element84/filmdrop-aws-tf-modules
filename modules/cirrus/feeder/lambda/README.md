@@ -4,7 +4,7 @@ Work in progress. The intent is to provide a generic Lambda module that can be u
 adhere to a common type definition; currently, both feeder and task Lambdas do so.
 
 Rather than duplicate Lambda-related resource configuration in /cirrus/task and /cirrus/feeder, the hope is that
-this module can be used by both.
+this module can be used by both. See Issue #212 for more detail
 
 <!-- BEGIN_TF_DOCS -->
 ## Requirements

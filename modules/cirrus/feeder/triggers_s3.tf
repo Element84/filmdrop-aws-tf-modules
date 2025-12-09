@@ -1,5 +1,5 @@
 # Create a notification on each S3 bucket to send events to the feeder SQS queue
-resource "aws_s3_bucket_notification" "bucket_notification" {
+resource "aws_s3_bucket_notification" "bucket_notification_trigger" {
   for_each = {
     for trigger in coalesce(var.feeder_config.triggers_s3, []) : trigger.bucket_arn => trigger
   }

@@ -62,10 +62,10 @@ data "aws_iam_policy_document" "lambda_assume_role" {
       values   = [local.current_account]
     }
 
-    # TODO: For better security against confused deputy, add ARNs here.
-    # Feeder Lambdas will need sqs arn here in the values array (in addition to the feeder lambda arn), while
-    # Task Lambdas only require the task lambda arn. An optional input to this module e.g sts_assume_role_principals
-    # may be the way to go
+    # TODO: For better security against confused deputy, add ARNs here. See Issue #212. In particular:
+    #  - Feeder Lambdas will need sqs arn here in the values array (in addition to the feeder lambda arn), while
+    #  - Task Lambdas only require the task lambda arn. An optional input to this module e.g sts_assume_role_principals
+    #  may be the way to go
     # condition {
     #   test     = "ArnEquals"
     #   variable = "aws:SourceArn"

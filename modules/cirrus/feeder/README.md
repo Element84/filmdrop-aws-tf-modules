@@ -10,7 +10,7 @@ This module provides an opinionated way to create Cirrus feeders via config, in 
 **Feeder Lambda**
 
 Your Lambda code should, in general, receive trigger events, proccess as needed, and send them to the Cirrus Process
-Queue. `CIRRUS_PROCESS_QUEUE_URL` is available as an environment variable for convenience.
+Queue in the form of a Cirrus Process Payload. `CIRRUS_PROCESS_QUEUE_URL` is available as an environment variable for convenience.
 
 <!-- BEGIN_TF_DOCS -->
 ## Requirements

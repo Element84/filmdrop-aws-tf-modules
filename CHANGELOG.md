@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Added
 
-- Added feeders as configuration ([177](https://github.com/Element84/filmdrop-aws-tf-modules/pull/177))
+- Added feeders as configuration ([177](https://github.com/Element84/filmdrop-aws-tf-modules/pull/177)). For common Cirrus "feeder" use cases, S3 and SNS, this feature allows for defining trigger -> sqs -> lambda infrastructure via config in a manner similar to tasks and workflows
 
 ### Changed
 

@@ -1,5 +1,8 @@
 # IMPORTANT -------------------------------------------------------------------
 # This is a minimal Feeder example depicting SNS topic triggering.
+# - Point to an existing SNS topic ARN in triggers_sns
+# - Define the lambda that will be created to process messages from that topic
+# - Optionally, customize the SQS queue. If left out, as is done below, a default SQS queue will be created
 # -----------------------------------------------------------------------------
 
 name: cool-data1
@@ -11,7 +14,7 @@ triggers_sns:
 lambda:
   ecr_image_uri: <your-full-ECR-image-URI>:${first-feeder-example.image_tag}
   ephemeral_storage_mb: 1024
-  timeout_seconds: 900
+  timeout_seconds: 60
   memory_mb: 128
 
 # sqs:
