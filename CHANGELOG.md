@@ -9,7 +9,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Added
 
-- Moved stac-server to a standalone module [https://github.com/Element84/terraform-aws-stac-server](https://github.com/Element84/terraform-aws-stac-server)
+- Added `workflow_metrics_timestream_enabled` ability to disable Timestream for LiveAnalytics, which has been deprecated. **Note:** existing projects will see destruction and creation of Lambda IAM resources. These *should* result in no material change to actual roles/policies; they're a destructuring of larger policies into smaller modular policies
+
 - Added Cirrus Workflow Metrics resources and configuration per
   [#191](https://github.com/Element84/filmdrop-aws-tf-modules/issues/191), and
   in congruence with
@@ -20,6 +21,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Changed
 
 ### Fixed
+
+- Added missing `ephemeral_storage_mb` field to `cirrus_tasks` typed definition in `modules/cirrus/typed-definitions/inputs.tf` to match the `task_config.lambda` object schema in `modules/cirrus/task/inputs.tf`
 
 ### Removed
 
