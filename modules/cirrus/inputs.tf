@@ -363,6 +363,31 @@ variable "custom_cloudwatch_critical_alarms_map" {
   default     = {}
 }
 
+variable "cirrus_feeder_definitions_dir" {
+  description = <<-DESCRIPTION
+  (Optional) Filepath to directory containing feeder definition subdirectories. Path is relative to this Terraform deployment's root module.
+
+  The specified directory's expected structure is:
+  ```
+  example-feeder-1/
+    definition.yaml
+    README.md (optional)
+  example-feeder-2/
+    definition.yaml
+    README.md (optional)
+
+  ... more feeder subdirs ...
+  ```
+
+  Where each `definition.yaml` is a YAML representation of the `feeder` module's `feeder_config` input HCL variable. See that module's [inputs](./feeder/README.md) for valid `feeder_config` object attributes.
+
+  If `null`, no feeder resources will be created.
+  DESCRIPTION
+  type        = string
+  nullable    = true
+  default     = null
+}
+
 variable "cirrus_task_batch_compute_definitions_dir" {
   description = <<-DESCRIPTION
   (Optional) Filepath to a directory containing task batch compute definition subdirectories. Path is relative to this Terraform deployment's root module.
