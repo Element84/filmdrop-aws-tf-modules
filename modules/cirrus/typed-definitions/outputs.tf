@@ -1,3 +1,7 @@
+output "cirrus_feeders" {
+  value = var.cirrus_feeders
+}
+
 output "cirrus_task_batch_compute" {
   value = var.cirrus_task_batch_compute
 }
