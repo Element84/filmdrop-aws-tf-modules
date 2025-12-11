@@ -9,6 +9,19 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Added
 
+### Changed
+
+### Fixed
+
+### Removed
+
+
+
+
+## [2.58.0] - 2025-12-10
+
+### Added
+
 - Added feeders as configuration ([177](https://github.com/Element84/filmdrop-aws-tf-modules/pull/177)). For common Cirrus "feeder" use cases, S3 and SNS, this feature allows for defining trigger -> sqs -> lambda infrastructure via config in a manner similar to tasks and workflows. **Note:** existing projects will see two additional output values `CIRRUS_PROCESS_QUEUE_ARN` and `CIRRUS_PROCESS_QUEUE_URL` included in three existing maps
 
 - Added `workflow_metrics_timestream_enabled` ability to disable Timestream for LiveAnalytics, which has been deprecated. **Note:** existing projects will see destruction and creation of Lambda IAM resources. These *should* result in no material change to actual roles/policies; they're a destructuring of larger policies into smaller modular policies
@@ -20,15 +33,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
   continued support of the cirrus-dashboard metrics page
   ([#191](https://github.com/Element84/filmdrop-aws-tf-modules/issues/193)).
 
-### Changed
-
 ### Fixed
 
 - Added missing `ephemeral_storage_mb` field to `cirrus_tasks` typed definition in `modules/cirrus/typed-definitions/inputs.tf` to match the `task_config.lambda` object schema in `modules/cirrus/task/inputs.tf`
-
-### Removed
-
-
 
 ## [2.57.0] - 2025-11-05
 

@@ -4,20 +4,27 @@
 
 ## Proposed Changes
 
-1.
+- 
 
 ## Testing
 
 This change was validated by the following observations:
 
-1.
+- 
 
 ## Checklist
 
+**General**
+
 - [ ] I have deployed and validated this change
 - [ ] Changelog
-  - [ ] I have added my changes to the changelog
+  - [ ] I have added my changes to CHANGELOG.md
   - [ ] No changelog entry is necessary
-- [ ] README migration
-  - [ ] I have added any migration steps to the Readme
-  - [ ] No migration is necessary
+
+**If releasing a new version**
+
+- [ ] In both CHANGELOG.md and MIGRATION.md, I have moved unreleased items to a newly created release section
+
+**If migration step(s) might be required**
+
+- [ ] I have added any migration steps to MIGRATION.md
