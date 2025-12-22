@@ -1,5 +1,5 @@
 module "console-ui" {
-  source = "../../modules/console-ui"
+  source = "git::https://github.com/Element84/terraform-aws-stac-server.git//modules/ongoing-ingest?ref=tr/console-ui-module"
 
   vpc_id                 = var.vpc_id
   vpc_private_subnet_ids = var.private_subnet_ids
