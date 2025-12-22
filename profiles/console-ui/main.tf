@@ -1,5 +1,5 @@
 module "console-ui" {
-  source = "git::https://github.com/Element84/terraform-aws-stac-server.git//modules/ongoing-ingest?ref=tr/console-ui-module"
+  source = "git::https://github.com/Element84/terraform-aws-console-ui.git?ref=tr/console-ui-module"
 
   vpc_id                 = var.vpc_id
   vpc_private_subnet_ids = var.private_subnet_ids
@@ -7,6 +7,8 @@ module "console-ui" {
 
   filmdrop_ui_release_tag = var.console_ui_inputs.version
   console_ui_bucket_name  = var.console_ui_inputs.deploy_s3_bucket == false ? var.console_ui_inputs.external_content_bucket.external_content_website_bucket_name : var.console_ui_inputs.deploy_cloudfront ? module.cloudfront_s3_website[0].content_bucket_name : module.content_website[0].content_bucket
+
+  # ahehd
 
   filmdrop_ui_config    = filebase64(var.console_ui_inputs.filmdrop_ui_config_file)
   filmdrop_ui_logo_file = var.console_ui_inputs.filmdrop_ui_logo_file
