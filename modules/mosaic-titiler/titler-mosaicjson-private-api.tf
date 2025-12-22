@@ -32,7 +32,7 @@ resource "aws_vpc_endpoint" "titiler_api_gateway_private" {
   ip_address_type     = "ipv4"
   subnet_ids          = data.aws_subnet.selected[*].id
   auto_accept         = true
-  private_dns_enabled = false
+  private_dns_enabled = true
   security_group_ids = concat(
     aws_security_group.titiler_api_gateway_private_vpce[*].id,
     coalesce(var.private_api_additional_security_group_ids, [])
