@@ -63,7 +63,7 @@ output "titiler_url" {
 }
 
 output "titiler_vpce_dns_regional" {
-  value = var.deploy_titiler ? module.titiler[0].titiler_vpce_dns_regional : ""
+  value = var.deploy_titiler ? module.titiler[0].titiler_vpce_dns_regional : null
 }
 
 output "stac_ingest_queue_arn" {

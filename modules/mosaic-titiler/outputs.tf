@@ -12,8 +12,8 @@ output "titiler_mosaic_wafv2_web_acl_arn" {
 
 output "titiler_vpce_dns_regional" {
   value = var.is_private_endpoint ? {
-    dns_name       = aws_vpc_endpoint.titiler_api_gateway_private.dns_entry[0].dns_name
-    hosted_zone_id = aws_vpc_endpoint.titiler_api_gateway_private.dns_entry[0].hosted_zone_id
+    dns_name       = aws_vpc_endpoint.titiler_api_gateway_private[0].dns_entry[0].dns_name
+    hosted_zone_id = aws_vpc_endpoint.titiler_api_gateway_private[0].dns_entry[0].hosted_zone_id
   } : null
   description = <<-DESCRIPTION
     When titiler is deployed with is_private_endpoint = true, this output provides the VPC Endpoint DNS information.
