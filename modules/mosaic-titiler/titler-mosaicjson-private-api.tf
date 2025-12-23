@@ -47,6 +47,10 @@ resource "aws_api_gateway_rest_api" "titiler_api_gateway" {
   count = var.is_private_endpoint ? 1 : 0
   name  = "${local.name_prefix}-titiler"
 
+  # titiler serves binary data (images), thus the need to enable binary media types. note that it still handles
+  # stac and other non-binary requests correctly
+  binary_media_types = ["*/*"]
+
   endpoint_configuration {
     types            = ["PRIVATE"]
     vpc_endpoint_ids = var.is_private_endpoint ? aws_vpc_endpoint.titiler_api_gateway_private[*].id : null
