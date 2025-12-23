@@ -62,6 +62,10 @@ output "titiler_url" {
   value = module.filmdrop.titiler_url
 }
 
+output "titiler_vpce_dns_regional" {
+  value = module.filmdrop.titiler_vpce_dns_regional
+}
+
 output "stac_ingest_queue_arn" {
   value = module.filmdrop.stac_ingest_queue_arn
 }
