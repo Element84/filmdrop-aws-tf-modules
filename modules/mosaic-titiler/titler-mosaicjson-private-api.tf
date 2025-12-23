@@ -26,13 +26,14 @@ resource "aws_vpc_security_group_ingress_rule" "titiler_api_gateway_private_vcpe
 resource "aws_vpc_endpoint" "titiler_api_gateway_private" {
   count = var.is_private_endpoint ? 1 : 0
 
-  service_name        = "com.amazonaws.${data.aws_region.current.name}.execute-api"
-  vpc_id              = var.vpc_id
-  vpc_endpoint_type   = "Interface"
-  ip_address_type     = "ipv4"
-  subnet_ids          = data.aws_subnet.selected[*].id
-  auto_accept         = true
-  private_dns_enabled = false
+  service_name      = "com.amazonaws.${data.aws_region.current.name}.execute-api"
+  vpc_id            = var.vpc_id
+  vpc_endpoint_type = "Interface"
+  ip_address_type   = "ipv4"
+  subnet_ids        = data.aws_subnet.selected[*].id
+  auto_accept       = true
+  # required to enable private dns for this vpc endpoint/the titiler api gateway private endpoint
+  private_dns_enabled = true
   security_group_ids = concat(
     aws_security_group.titiler_api_gateway_private_vpce[*].id,
     coalesce(var.private_api_additional_security_group_ids, [])
@@ -46,6 +47,11 @@ resource "aws_vpc_endpoint" "titiler_api_gateway_private" {
 resource "aws_api_gateway_rest_api" "titiler_api_gateway" {
   count = var.is_private_endpoint ? 1 : 0
   name  = "${local.name_prefix}-titiler"
+
+  # titiler serves binary data (images), thus the need to enable binary media types. without this, api gateway may
+  # return the binary data as plain text, breaking titiler's functionality. note that this still handles
+  # stac and other non-binary requests correctly
+  binary_media_types = ["*/*"]
 
   endpoint_configuration {
     types            = ["PRIVATE"]
