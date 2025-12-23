@@ -11,7 +11,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Changed
 
-- Minor changes (#217) to how TiTiler behaves when is_private_endpoint = true, to support communications with its API Gateway and VPC Endpoint
+- Minor changes ([#217](https://github.com/Element84/filmdrop-aws-tf-modules/issues/217)) to how TiTiler behaves when is_private_endpoint = true, tsupporting communications with its API Gateway and VPC Endpoint
 
 ### Fixed
 
