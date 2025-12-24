@@ -45,6 +45,7 @@ stac_server_inputs = {
   opensearch_cluster_dedicated_master_count   = 3
   opensearch_cluster_availability_zone_count  = 3
   opensearch_ebs_volume_size                  = 35
+  opensearch_override_main_response_version   = null
   ingest_sns_topic_arns                       = []
   additional_ingest_sqs_senders_arns          = []
   cors_origin                                 = "*"
