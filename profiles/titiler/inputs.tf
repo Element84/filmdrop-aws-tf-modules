@@ -37,6 +37,7 @@ variable "titiler_inputs" {
     api_method_authorization_type             = optional(string)
     private_certificate_arn                   = optional(string)
     vpce_private_dns_enabled                  = optional(bool)
+    custom_vpce_id                            = optional(string)
     private_api_additional_security_group_ids = optional(list(string))
     auth_function = object({
       cf_function_name             = string
@@ -63,6 +64,7 @@ variable "titiler_inputs" {
     api_method_authorization_type             = "NONE"
     private_certificate_arn                   = ""
     vpce_private_dns_enabled                  = false
+    custom_vpce_id                            = null
     private_api_additional_security_group_ids = null
     auth_function = {
       cf_function_name             = ""
