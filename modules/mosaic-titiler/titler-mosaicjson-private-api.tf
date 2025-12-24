@@ -26,14 +26,13 @@ resource "aws_vpc_security_group_ingress_rule" "titiler_api_gateway_private_vcpe
 resource "aws_vpc_endpoint" "titiler_api_gateway_private" {
   count = var.is_private_endpoint ? 1 : 0
 
-  service_name      = "com.amazonaws.${data.aws_region.current.name}.execute-api"
-  vpc_id            = var.vpc_id
-  vpc_endpoint_type = "Interface"
-  ip_address_type   = "ipv4"
-  subnet_ids        = data.aws_subnet.selected[*].id
-  auto_accept       = true
-  # required to enable private dns for this vpc endpoint/the titiler api gateway private endpoint
-  private_dns_enabled = true
+  service_name        = "com.amazonaws.${data.aws_region.current.name}.execute-api"
+  vpc_id              = var.vpc_id
+  vpc_endpoint_type   = "Interface"
+  ip_address_type     = "ipv4"
+  subnet_ids          = data.aws_subnet.selected[*].id
+  auto_accept         = true
+  private_dns_enabled = var.vpce_private_dns_enabled
   security_group_ids = concat(
     aws_security_group.titiler_api_gateway_private_vpce[*].id,
     coalesce(var.private_api_additional_security_group_ids, [])

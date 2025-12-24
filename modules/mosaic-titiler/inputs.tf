@@ -200,3 +200,14 @@ variable "private_certificate_arn" {
   type        = string
   default     = ""
 }
+
+variable "vpce_private_dns_enabled" {
+  type        = bool
+  default     = false
+  description = <<-DESCRIPTION
+  Whether to enable Private DNS on the Interface VPC Endpoint used for the STAC API (execute-api). 
+  Only applicable when is_private_endpoint is true, otherwise ignored.
+  Leave false if you rely on VPC endpoint-specific hostnames; set true to resolve the standard API Gateway 
+  hostname to the VPC endpoint from within the VPC.
+  DESCRIPTION
+}
