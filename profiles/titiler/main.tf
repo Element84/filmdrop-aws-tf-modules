@@ -20,6 +20,7 @@ module "titiler" {
   is_private_endpoint                       = var.titiler_inputs.is_private_endpoint
   domain_alias                              = var.titiler_inputs.domain_alias
   private_certificate_arn                   = var.titiler_inputs.private_certificate_arn
+  vpce_private_dns_enabled                  = var.titiler_inputs.vpce_private_dns_enabled
 }
 
 module "cloudfront_api_gateway_endpoint" {
