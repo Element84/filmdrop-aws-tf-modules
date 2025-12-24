@@ -1,5 +1,12 @@
 locals {
   name_prefix = "fd-${var.project_name}-${var.environment}"
+  # if var.custom_vpce_id was provided, the user is indicating they want to use a custom vpc endpoint which they have
+  # defined. if not, and if is_private_endpoint is true, we use the vpce we create in this module
+  # vpce_id = try(coalesce(var.custom_vpce_id, aws_vpc_endpoint.titiler_api_gateway_private[0].id), null)
+  vpce_id = var.custom_vpce_id != null ? var.custom_vpce_id : (var.is_private_endpoint ? aws_vpc_endpoint.titiler_api_gateway_private[0].id : null)
+  # additionally, only create a vpc endpoint in this module if the api gateway is private *and* the user has not
+  # indicated they are using their own vpc endpoint
+  create_vpce = var.is_private_endpoint == true && var.custom_vpce_id == null
 }
 
 resource "aws_security_group" "titiler_api_gateway_private_vpce" {
@@ -24,7 +31,7 @@ resource "aws_vpc_security_group_ingress_rule" "titiler_api_gateway_private_vcpe
 }
 
 resource "aws_vpc_endpoint" "titiler_api_gateway_private" {
-  count = var.is_private_endpoint ? 1 : 0
+  count = local.create_vpce ? 1 : 0
 
   service_name        = "com.amazonaws.${data.aws_region.current.name}.execute-api"
   vpc_id              = var.vpc_id
@@ -54,7 +61,7 @@ resource "aws_api_gateway_rest_api" "titiler_api_gateway" {
 
   endpoint_configuration {
     types            = ["PRIVATE"]
-    vpc_endpoint_ids = var.is_private_endpoint ? aws_vpc_endpoint.titiler_api_gateway_private[*].id : null
+    vpc_endpoint_ids = var.is_private_endpoint ? [local.vpce_id] : null
   }
 }
 
@@ -75,7 +82,7 @@ data "aws_iam_policy_document" "titiler_api_gateway_private" {
     condition {
       variable = "aws:SourceVpce"
       test     = "StringNotEquals"
-      values   = [aws_vpc_endpoint.titiler_api_gateway_private[0].id]
+      values   = [local.vpce_id]
     }
   }
 
@@ -309,7 +316,7 @@ resource "aws_api_gateway_domain_name" "titiler_api_gateway_domain_name" {
       "Resource": "arn:aws:execute-api:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:/domainnames/*",
       "Condition": {
         "StringNotEquals": {
-          "aws:SourceVpce": "${aws_vpc_endpoint.titiler_api_gateway_private[0].id}"
+          "aws:SourceVpce": "${local.vpce_id}"
         }
       }
     }
@@ -320,7 +327,7 @@ EOF
 
 resource "aws_api_gateway_domain_name_access_association" "titiler_api_gateway_domain_name_access_association" {
   count                          = var.is_private_endpoint == true && var.domain_alias != "" && var.private_certificate_arn != "" ? 1 : 0
-  access_association_source      = aws_vpc_endpoint.titiler_api_gateway_private[0].id
+  access_association_source      = local.vpce_id
   access_association_source_type = "VPCE"
   domain_name_arn                = aws_api_gateway_domain_name.titiler_api_gateway_domain_name[0].arn
 }

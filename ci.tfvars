@@ -97,6 +97,7 @@ titiler_inputs = {
   api_method_authorization_type             = "NONE"
   private_certificate_arn                   = ""
   vpce_private_dns_enabled                  = false
+  custom_vpce_id                            = null
   private_api_additional_security_group_ids = null
   auth_function = {
     cf_function_name             = ""
