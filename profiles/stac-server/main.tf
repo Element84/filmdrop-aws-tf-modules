@@ -28,6 +28,7 @@ module "stac-server" {
   opensearch_cluster_dedicated_master_count   = var.stac_server_inputs.opensearch_cluster_dedicated_master_count
   opensearch_cluster_availability_zone_count  = var.stac_server_inputs.opensearch_cluster_availability_zone_count
   opensearch_ebs_volume_size                  = var.stac_server_inputs.opensearch_ebs_volume_size
+  opensearch_override_main_response_version   = var.stac_server_inputs.opensearch_override_main_response_version
   ingest_sns_topic_arns                       = var.stac_server_inputs.ingest_sns_topic_arns
   additional_ingest_sqs_senders_arns          = var.stac_server_inputs.additional_ingest_sqs_senders_arns
   api_rest_type                               = var.stac_server_inputs.api_rest_type
