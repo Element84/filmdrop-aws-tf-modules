@@ -59,6 +59,7 @@ stac_server_inputs = {
   pre_hook_lambda                             = null
   private_certificate_arn                     = ""
   vpce_private_dns_enabled                    = false
+  custom_vpce_id                              = null
   auth_function = {
     cf_function_name             = ""
     cf_function_runtime          = "cloudfront-js-2.0"

@@ -43,6 +43,7 @@ module "stac-server" {
   deploy_stac_server_outside_vpc              = var.deploy_stac_server_outside_vpc
   private_certificate_arn                     = var.stac_server_inputs.private_certificate_arn
   vpce_private_dns_enabled                    = var.stac_server_inputs.vpce_private_dns_enabled
+  custom_vpce_id                              = var.stac_server_inputs.custom_vpce_id
   domain_alias                                = var.stac_server_inputs.domain_alias
 
   # CloudFront or a custom domain implies the rootpath is simply "/"
