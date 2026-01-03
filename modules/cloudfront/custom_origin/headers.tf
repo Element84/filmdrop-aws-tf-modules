@@ -15,7 +15,7 @@ resource "aws_lambda_function" "cloudfront_headers_lambda" {
       FORWARDEDPROTO           = "https"
       AUTHKEYNAME              = var.auth_header_name
       AUTHKEYVALUE             = var.auth_header_value
-      REGION                   = data.aws_region.current.name
+      REGION                   = data.aws_region.current.region
       SSM_FORWARDED_HOST_PARAM = aws_ssm_parameter.cloudfront_x_forwarded_host.name
     }
   }
@@ -30,8 +30,8 @@ resource "null_resource" "update_cloudfront_headers" {
   provisioner "local-exec" {
     interpreter = ["bash", "-ec"]
     command     = <<EOF
-export AWS_DEFAULT_REGION=${data.aws_region.current.name}
-export AWS_REGION=${data.aws_region.current.name}
+export AWS_DEFAULT_REGION=${data.aws_region.current.region}
+export AWS_REGION=${data.aws_region.current.region}
 
 echo "Update CloudFront Headers."
 aws lambda invoke --function-name ${aws_lambda_function.cloudfront_headers_lambda.function_name} --payload '{ }' output

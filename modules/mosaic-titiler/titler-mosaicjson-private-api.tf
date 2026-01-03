@@ -33,7 +33,7 @@ resource "aws_vpc_security_group_ingress_rule" "titiler_api_gateway_private_vcpe
 resource "aws_vpc_endpoint" "titiler_api_gateway_private" {
   count = local.create_vpce ? 1 : 0
 
-  service_name        = "com.amazonaws.${data.aws_region.current.name}.execute-api"
+  service_name        = "com.amazonaws.${data.aws_region.current.region}.execute-api"
   vpc_id              = var.vpc_id
   vpc_endpoint_type   = "Interface"
   ip_address_type     = "ipv4"
@@ -72,7 +72,7 @@ data "aws_iam_policy_document" "titiler_api_gateway_private" {
     sid       = "DenyApiInvokeForNonVpceTraffic"
     effect    = "Deny"
     actions   = ["execute-api:Invoke"]
-    resources = ["arn:aws:execute-api:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:${aws_api_gateway_rest_api.titiler_api_gateway[0].id}/*"]
+    resources = ["arn:aws:execute-api:${data.aws_region.current.region}:${data.aws_caller_identity.current.account_id}:${aws_api_gateway_rest_api.titiler_api_gateway[0].id}/*"]
 
     principals {
       type        = "AWS"
@@ -90,7 +90,7 @@ data "aws_iam_policy_document" "titiler_api_gateway_private" {
     sid       = "AllowApiInvoke"
     effect    = "Allow"
     actions   = ["execute-api:Invoke"]
-    resources = ["arn:aws:execute-api:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:${aws_api_gateway_rest_api.titiler_api_gateway[0].id}/*"]
+    resources = ["arn:aws:execute-api:${data.aws_region.current.region}:${data.aws_caller_identity.current.account_id}:${aws_api_gateway_rest_api.titiler_api_gateway[0].id}/*"]
 
     principals {
       type        = "AWS"
@@ -120,7 +120,7 @@ resource "aws_api_gateway_integration" "titiler_api_gateway_root_method_integrat
   resource_id             = aws_api_gateway_rest_api.titiler_api_gateway[0].root_resource_id
   http_method             = aws_api_gateway_method.titiler_api_gateway_root_method[0].http_method
   type                    = "AWS_PROXY"
-  uri                     = "arn:aws:apigateway:${data.aws_region.current.name}:lambda:path/2015-03-31/functions/${aws_lambda_function.titiler-mosaic-lambda.arn}/invocations"
+  uri                     = "arn:aws:apigateway:${data.aws_region.current.region}:lambda:path/2015-03-31/functions/${aws_lambda_function.titiler-mosaic-lambda.arn}/invocations"
   integration_http_method = "POST"
 }
 
@@ -229,7 +229,7 @@ resource "aws_api_gateway_integration" "titiler_api_gateway_proxy_resource_metho
   resource_id             = aws_api_gateway_resource.titiler_api_gateway_proxy_resource[0].id
   http_method             = aws_api_gateway_method.titiler_api_gateway_proxy_resource_method[0].http_method
   type                    = "AWS_PROXY"
-  uri                     = "arn:aws:apigateway:${data.aws_region.current.name}:lambda:path/2015-03-31/functions/${aws_lambda_function.titiler-mosaic-lambda.arn}/invocations"
+  uri                     = "arn:aws:apigateway:${data.aws_region.current.region}:lambda:path/2015-03-31/functions/${aws_lambda_function.titiler-mosaic-lambda.arn}/invocations"
   integration_http_method = "POST"
 }
 
@@ -275,7 +275,7 @@ resource "aws_lambda_permission" "titiler_api_gateway_lambda_permission_root_res
   function_name = aws_lambda_function.titiler-mosaic-lambda.arn
   principal     = "apigateway.amazonaws.com"
 
-  source_arn = "arn:aws:execute-api:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:${aws_api_gateway_rest_api.titiler_api_gateway[0].id}/*/*"
+  source_arn = "arn:aws:execute-api:${data.aws_region.current.region}:${data.aws_caller_identity.current.account_id}:${aws_api_gateway_rest_api.titiler_api_gateway[0].id}/*/*"
 }
 
 resource "aws_api_gateway_domain_name" "titiler_api_gateway_domain_name" {
@@ -295,13 +295,13 @@ resource "aws_api_gateway_domain_name" "titiler_api_gateway_domain_name" {
       "Effect": "Allow",
       "Principal": "*",
       "Action": "execute-api:Invoke",
-      "Resource": "arn:aws:execute-api:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:/domainnames/*"
+      "Resource": "arn:aws:execute-api:${data.aws_region.current.region}:${data.aws_caller_identity.current.account_id}:/domainnames/*"
     },
     {
       "Effect": "Deny",
       "Principal": "*",
       "Action": "execute-api:Invoke",
-      "Resource": "arn:aws:execute-api:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:/domainnames/*",
+      "Resource": "arn:aws:execute-api:${data.aws_region.current.region}:${data.aws_caller_identity.current.account_id}:/domainnames/*",
       "Condition": {
         "StringNotEquals": {
           "aws:SourceVpce": "${local.vpce_id}"

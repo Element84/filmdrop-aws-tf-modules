@@ -77,7 +77,7 @@ resource "aws_opensearch_domain" "stac_server_opensearch_domain" {
             "Action": "es:*",
             "Principal": { "AWS": "*" },
             "Effect": "Allow",
-            "Resource": "arn:aws:es:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:domain/${lower(local.name_prefix)}-stac-server/*"
+            "Resource": "arn:aws:es:${data.aws_region.current.region}:${data.aws_caller_identity.current.account_id}:domain/${lower(local.name_prefix)}-stac-server/*"
         }
     ]
 }
@@ -152,7 +152,7 @@ EOF
 resource "null_resource" "cleanup_opensearch_master_password_secret" {
   triggers = {
     opensearch_master_password_secret = "${local.name_prefix}-stac-server-master-creds-${random_id.suffix.hex}"
-    region                            = data.aws_region.current.name
+    region                            = data.aws_region.current.region
     account                           = data.aws_caller_identity.current.account_id
   }
 
@@ -215,7 +215,7 @@ EOF
 resource "null_resource" "cleanup_opensearch_stac_user_password_secret" {
   triggers = {
     opensearch_stac_user_password_secret = "${local.name_prefix}-stac-server-user-creds-${random_id.suffix.hex}"
-    region                               = data.aws_region.current.name
+    region                               = data.aws_region.current.region
     account                              = data.aws_caller_identity.current.account_id
   }
 
@@ -267,7 +267,7 @@ resource "aws_lambda_function" "stac_server_opensearch_user_initializer" {
       OPENSEARCH_HOST                    = var.opensearch_host != "" ? var.opensearch_host : local.opensearch_endpoint
       OPENSEARCH_MASTER_CREDS_SECRET_ARN = aws_secretsmanager_secret.opensearch_master_password_secret.arn
       OPENSEARCH_USER_CREDS_SECRET_ARN   = aws_secretsmanager_secret.opensearch_stac_user_password_secret.arn
-      REGION                             = data.aws_region.current.name
+      REGION                             = data.aws_region.current.region
     }
   }
 

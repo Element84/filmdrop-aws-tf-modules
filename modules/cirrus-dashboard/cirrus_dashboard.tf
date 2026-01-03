@@ -18,7 +18,7 @@ resource "aws_codebuild_project" "cirrus_dashboard_codebuild" {
 
     environment_variable {
       name  = "AWS_DEFAULT_REGION"
-      value = data.aws_region.current.name
+      value = data.aws_region.current.region
     }
 
     environment_variable {
@@ -74,7 +74,7 @@ resource "aws_codebuild_project" "cirrus_dashboard_codebuild" {
 resource "null_resource" "trigger_cirrus_dashboard_upgrade" {
   triggers = {
     new_codebuild                = aws_codebuild_project.cirrus_dashboard_codebuild.id
-    region                       = data.aws_region.current.name
+    region                       = data.aws_region.current.region
     account                      = data.aws_caller_identity.current.account_id
     cirrus_dashboard_release_tag = var.cirrus_dashboard_release_tag
     cirrus_api_endpoint          = var.cirrus_api_endpoint
@@ -88,8 +88,8 @@ resource "null_resource" "trigger_cirrus_dashboard_upgrade" {
   provisioner "local-exec" {
     interpreter = ["bash", "-ec"]
     command     = <<EOF
-export AWS_DEFAULT_REGION=${data.aws_region.current.name}
-export AWS_REGION=${data.aws_region.current.name}
+export AWS_DEFAULT_REGION=${data.aws_region.current.region}
+export AWS_REGION=${data.aws_region.current.region}
 
 echo "Triggering CodeBuild Project."
 aws codebuild start-build --project-name ${aws_codebuild_project.cirrus_dashboard_codebuild.id}
@@ -146,7 +146,7 @@ resource "aws_s3_object" "cirrus_dashboard_build_spec" {
 resource "null_resource" "cleanup_bucket" {
   triggers = {
     bucket_name = aws_s3_bucket.cirrus_dashboard_source_config.id
-    region      = data.aws_region.current.name
+    region      = data.aws_region.current.region
     account     = data.aws_caller_identity.current.account_id
   }
 

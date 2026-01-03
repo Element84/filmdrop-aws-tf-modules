@@ -36,7 +36,7 @@ resource "aws_subnet" "private_subnets" {
 # Set up default DHCP options for DNS resolution in FilmDrop VPC - defaults to AmazonProvidedDNS
 resource "aws_vpc_dhcp_options" "vpc_dhcp_options" {
   domain_name_servers = var.dhcp_options_domain_name_servers
-  domain_name         = "${data.aws_region.current.name}.compute.internal"
+  domain_name         = "${data.aws_region.current.region}.compute.internal"
 }
 
 resource "aws_vpc_dhcp_options_association" "vpc_dhcp_options_association" {

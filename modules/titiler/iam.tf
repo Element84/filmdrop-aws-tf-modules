@@ -1,5 +1,5 @@
 resource "aws_iam_role" "titiler_lambda_role" {
-  name_prefix = "titiler-${var.environment}-${data.aws_region.current.name}-lambdaRole"
+  name_prefix = "titiler-${var.environment}-${data.aws_region.current.region}-lambdaRole"
 
   assume_role_policy = <<EOF
 {
@@ -19,7 +19,7 @@ EOF
 }
 
 resource "aws_iam_policy" "titiler_lambda_policy" {
-  name_prefix = "titiler-${var.environment}-${data.aws_region.current.name}-lambdaPolicy"
+  name_prefix = "titiler-${var.environment}-${data.aws_region.current.region}-lambdaPolicy"
 
   policy = <<EOF
 {
@@ -31,7 +31,7 @@ resource "aws_iam_policy" "titiler_lambda_policy" {
                 "logs:CreateLogGroup"
             ],
             "Resource": [
-                "arn:aws:logs:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:log-group:/aws/lambda/titiler*:*"
+                "arn:aws:logs:${data.aws_region.current.region}:${data.aws_caller_identity.current.account_id}:log-group:/aws/lambda/titiler*:*"
             ],
             "Effect": "Allow"
         },
@@ -48,7 +48,7 @@ resource "aws_iam_policy" "titiler_lambda_policy" {
                 "logs:PutLogEvents"
             ],
             "Resource": [
-                "arn:aws:logs:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:log-group:/aws/lambda/titiler*:*:*"
+                "arn:aws:logs:${data.aws_region.current.region}:${data.aws_caller_identity.current.account_id}:log-group:/aws/lambda/titiler*:*:*"
             ],
             "Effect": "Allow"
         }
@@ -69,7 +69,7 @@ resource "aws_iam_role_policy_attachment" "titiler_lambda_base_policy" {
 }
 
 resource "aws_iam_role" "titiler_gw_role" {
-  name_prefix = "titiler-${var.environment}-${data.aws_region.current.name}-apigwRole"
+  name_prefix = "titiler-${var.environment}-${data.aws_region.current.region}-apigwRole"
 
   assume_role_policy = <<EOF
 {
@@ -88,7 +88,7 @@ EOF
 }
 
 resource "aws_iam_policy" "titiler_gw_policy" {
-  name_prefix = "titiler-${var.environment}-${data.aws_region.current.name}-apigwPolicy"
+  name_prefix = "titiler-${var.environment}-${data.aws_region.current.region}-apigwPolicy"
 
   policy = <<EOF
 {

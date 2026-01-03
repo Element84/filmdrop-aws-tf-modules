@@ -74,7 +74,7 @@ resource "aws_iam_role_policy_attachment" "AmazonS3ReadOnlyAccess" {
 
 resource "aws_iam_role_policy_attachment" "AcceleratorSSMPolicy" {
   count      = var.attach_accelerator_policy == true ? 1 : 0
-  policy_arn = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:policy/AWSAccelerator-SessionManagerUserKMS-${data.aws_region.current.name}"
+  policy_arn = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:policy/AWSAccelerator-SessionManagerUserKMS-${data.aws_region.current.region}"
   role       = aws_iam_role.ssm_bastion_role.name
 }
 

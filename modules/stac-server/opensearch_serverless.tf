@@ -113,7 +113,7 @@ resource "aws_lambda_function" "stac_server_waiting_for_opensearch_serverless_ac
   environment {
     variables = {
       COLLECTION_NAME = lower(var.opensearch_stac_server_domain_name_override == null ? "${local.name_prefix}-stac-server" : var.opensearch_stac_server_domain_name_override)
-      REGION          = data.aws_region.current.name
+      REGION          = data.aws_region.current.region
     }
   }
 

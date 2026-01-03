@@ -13,8 +13,8 @@ resource "null_resource" "wait_ssl_issued" {
     # check that the cert is ready
     interpreter = ["bash", "-ec"]
     command     = <<EOF
-export AWS_DEFAULT_REGION=${data.aws_region.current.name}
-export AWS_REGION=${data.aws_region.current.name}
+export AWS_DEFAULT_REGION=${data.aws_region.current.region}
+export AWS_REGION=${data.aws_region.current.region}
 
 COUNT=0
 STATUS=""
@@ -79,7 +79,7 @@ resource "aws_cloudfront_distribution" "filmdrop_managed_cloudfront_distribution
   logging_config {
     include_cookies = var.log_cookies
     bucket          = var.create_log_bucket ? aws_s3_bucket.log_bucket[0].bucket_domain_name : var.log_bucket_domain_name
-    prefix          = "cloudfront/AWSLogs/${data.aws_caller_identity.current.account_id}/${data.aws_region.current.name}/${var.environment}/${var.project_name}/${var.application_name}"
+    prefix          = "cloudfront/AWSLogs/${data.aws_caller_identity.current.account_id}/${data.aws_region.current.region}/${var.environment}/${var.project_name}/${var.application_name}"
   }
 
   aliases = var.domain_aliases

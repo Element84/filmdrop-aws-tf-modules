@@ -1,5 +1,5 @@
 resource "aws_iam_role" "stac_api_lambda_role" {
-  name_prefix = "${local.name_prefix}-stac-server-${data.aws_region.current.name}"
+  name_prefix = "${local.name_prefix}-stac-server-${data.aws_region.current.region}"
 
   assume_role_policy = <<EOF
 {
@@ -25,17 +25,17 @@ locals {
         "logs:CreateLogStream",
         "logs:CreateLogGroup",
       ]
-      Resource = "arn:aws:logs:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:log-group:/aws/lambda/${local.name_prefix}-stac-server*:*"
+      Resource = "arn:aws:logs:${data.aws_region.current.region}:${data.aws_caller_identity.current.account_id}:log-group:/aws/lambda/${local.name_prefix}-stac-server*:*"
       Effect   = "Allow"
       },
       {
         Action   = ["logs:PutLogEvents"]
-        Resource = "arn:aws:logs:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:log-group:/aws/lambda/${local.name_prefix}-stac-server-*:*:*"
+        Resource = "arn:aws:logs:${data.aws_region.current.region}:${data.aws_caller_identity.current.account_id}:log-group:/aws/lambda/${local.name_prefix}-stac-server-*:*:*"
         Effect   = "Allow"
       },
       {
         Action   = ["es:*"]
-        Resource = "arn:aws:es:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:domain/*"
+        Resource = "arn:aws:es:${data.aws_region.current.region}:${data.aws_caller_identity.current.account_id}:domain/*"
         Effect   = "Allow"
       },
       {
@@ -92,7 +92,7 @@ locals {
 }
 
 resource "aws_iam_policy" "stac_api_lambda_policy" {
-  name_prefix = "${local.name_prefix}-stac-server-${data.aws_region.current.name}"
+  name_prefix = "${local.name_prefix}-stac-server-${data.aws_region.current.region}"
 
   policy = jsonencode({
     Version   = "2012-10-17"
