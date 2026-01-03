@@ -375,16 +375,16 @@ resource "aws_launch_template" "task_batch" {
 data "aws_batch_compute_environment" "task_batch" {
   count = (!local.create_compute_environment) ? 1 : 0
 
-  compute_environment_name = var.batch_compute_config.batch_compute_environment_existing.name
+  name = var.batch_compute_config.batch_compute_environment_existing.name
 }
 
 resource "aws_batch_compute_environment" "task_batch" {
   count = local.create_compute_environment ? 1 : 0
 
-  compute_environment_name_prefix = "${var.resource_prefix}-task-compute-${var.batch_compute_config.name}-"
-  service_role                    = aws_iam_role.task_batch[0].arn
-  state                           = coalesce(var.batch_compute_config.batch_compute_environment.state, "ENABLED")
-  type                            = coalesce(var.batch_compute_config.batch_compute_environment.type, "MANAGED")
+  name_prefix  = "${var.resource_prefix}-task-compute-${var.batch_compute_config.name}-"
+  service_role = aws_iam_role.task_batch[0].arn
+  state        = coalesce(var.batch_compute_config.batch_compute_environment.state, "ENABLED")
+  type         = coalesce(var.batch_compute_config.batch_compute_environment.type, "MANAGED")
 
   compute_resources {
     allocation_strategy = var.batch_compute_config.batch_compute_environment.compute_resources.allocation_strategy
