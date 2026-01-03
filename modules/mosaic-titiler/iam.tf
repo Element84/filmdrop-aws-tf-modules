@@ -39,15 +39,16 @@ resource "aws_iam_role" "titiler-mosaic-lambda-role" {
   ]
 }
 EOF
+}
 
-  inline_policy {
-    name = "titiler-mosaic-lambda-inline-policy"
+resource "aws_iam_role_policy" "titiler-mosaic-lambda-inline-policy" {
+  name = "titiler-mosaic-lambda-inline-policy"
+  role = aws_iam_role.titiler-mosaic-lambda-role.id
 
-    policy = jsonencode({
-      Version   = "2012-10-17"
-      Statement = local.titiler_policy_stmts
-    })
-  }
+  policy = jsonencode({
+    Version   = "2012-10-17"
+    Statement = local.titiler_policy_stmts
+  })
 }
 
 resource "aws_iam_role_policy_attachment" "lambda_basic_execution" {
