@@ -293,42 +293,29 @@ resource "aws_api_gateway_deployment" "cirrus_api_gateway" {
     aws_api_gateway_integration.cirrus_api_gateway_proxy_resource_method_integration,
   ]
 
-  rest_api_id       = aws_api_gateway_rest_api.cirrus_api_gateway.id
-  stage_name        = var.cirrus_api_stage
-  stage_description = var.cirrus_api_stage_description
+  rest_api_id = aws_api_gateway_rest_api.cirrus_api_gateway.id
 
   lifecycle {
     create_before_destroy = true
   }
 }
 
+resource "aws_api_gateway_stage" "cirrus_api_gateway_stage" {
+  deployment_id = aws_api_gateway_deployment.cirrus_api_gateway.id
+  rest_api_id   = aws_api_gateway_rest_api.cirrus_api_gateway.id
+  stage_name    = var.cirrus_api_stage
+  description   = var.cirrus_api_stage_description
+
+  access_log_settings {
+    destination_arn = aws_cloudwatch_log_group.cirrus_api_gateway_logs_group.arn
+    # terraform's jsonencode() sorts keys lexicographically, which would modify the log format. so, we build a string
+    # https://github.com/hashicorp/terraform/issues/27880
+    format = "{requestId:$context.requestId,ip:$context.identity.sourceIp,caller:$context.identity.caller,user:$context.identity.user,requestTime:$context.requestTime,httpMethod:$context.httpMethod,resourcePath:$context.resourcePath,status:$context.status,protocol:$context.protocol,responseLength:$context.responseLength}"
+  }
+}
+
 resource "aws_cloudwatch_log_group" "cirrus_api_gateway_logs_group" {
-  name = "/aws/apigateway/${var.resource_prefix}-api-${aws_api_gateway_deployment.cirrus_api_gateway.rest_api_id}/${aws_api_gateway_deployment.cirrus_api_gateway.stage_name}"
-}
-
-locals {
-  access_log_format = "{\"requestId\":\"\\$context.requestId\",\"ip\":\"\\$context.identity.sourceIp\",\"caller\":\"\\$context.identity.caller\",\"user\":\"\\$context.identity.user\",\"requestTime\":\"\\$context.requestTime\",\"httpMethod\":\"\\$context.httpMethod\",\"resourcePath\":\"\\$context.resourcePath\",\"status\":\"\\$context.status\",\"protocol\":\"\\$context.protocol\",\"responseLength\":\"\\$context.responseLength\"}"
-}
-
-resource "null_resource" "enable_access_logs" {
-  triggers = {
-    stage_name              = aws_api_gateway_deployment.cirrus_api_gateway.stage_name
-    rest_api_id             = aws_api_gateway_deployment.cirrus_api_gateway.rest_api_id
-    apigw_access_logs_group = aws_cloudwatch_log_group.cirrus_api_gateway_logs_group.arn
-    access_log_format       = local.access_log_format
-  }
-
-  provisioner "local-exec" {
-    interpreter = ["bash", "-ec"]
-    command     = <<EOF
-export AWS_DEFAULT_REGION=${data.aws_region.current.name}
-export AWS_REGION=${data.aws_region.current.name}
-
-echo "Update Access Logging on FilmDrop Cirrus API."
-aws apigateway update-stage --rest-api-id ${aws_api_gateway_deployment.cirrus_api_gateway.rest_api_id} --stage-name ${aws_api_gateway_deployment.cirrus_api_gateway.stage_name} --patch-operations "[{\"op\": \"replace\",\"path\": \"/accessLogSettings/destinationArn\",\"value\": \"${aws_cloudwatch_log_group.cirrus_api_gateway_logs_group.arn}\"},{\"op\": \"replace\",\"path\": \"/accessLogSettings/format\",\"value\": \"${local.access_log_format}\"}]"
-
-EOF
-  }
+  name = "/aws/apigateway/${var.resource_prefix}-api-${aws_api_gateway_deployment.cirrus_api_gateway.rest_api_id}/${var.cirrus_api_stage}"
 }
 
 resource "aws_lambda_permission" "cirrus_api_gateway_lambda_permission_root_resource" {
@@ -480,5 +467,5 @@ resource "aws_api_gateway_base_path_mapping" "cirrus_api_gateway_domain_mapping"
   domain_name    = aws_api_gateway_domain_name.cirrus_api_gateway_domain_name[0].domain_name
   domain_name_id = aws_api_gateway_domain_name.cirrus_api_gateway_domain_name[0].domain_name_id
   api_id         = aws_api_gateway_rest_api.cirrus_api_gateway.id
-  stage_name     = aws_api_gateway_deployment.cirrus_api_gateway.stage_name
+  stage_name     = var.cirrus_api_stage
 }

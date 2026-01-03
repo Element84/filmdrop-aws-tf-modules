@@ -247,7 +247,7 @@ resource "aws_api_gateway_deployment" "titiler_api_gateway" {
   }
 }
 
-resource "aws_api_gateway_stage" "stac_server_api_gateway_stage" {
+resource "aws_api_gateway_stage" "titiler_api_gateway_stage" {
   count = var.is_private_endpoint ? 1 : 0
 
   deployment_id = aws_api_gateway_deployment.titiler_api_gateway[0].id
