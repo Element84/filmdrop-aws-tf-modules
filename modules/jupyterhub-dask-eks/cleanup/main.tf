@@ -114,8 +114,8 @@ resource "null_resource" "analytics_cleanup_lambda" {
   provisioner "local-exec" {
     interpreter = ["bash", "-ec"]
     command     = <<EOF
-export AWS_DEFAULT_REGION=${data.aws_region.current.name}
-export AWS_REGION=${data.aws_region.current.name}
+export AWS_DEFAULT_REGION=${data.aws_region.current.region}
+export AWS_REGION=${data.aws_region.current.region}
 
 echo "Running FilmDrop Analytics Cleanup Lambda."
 aws lambda invoke --function-name ${aws_lambda_function.analytics_cleanup_lambda.function_name} --payload '{ }' output

@@ -37,7 +37,7 @@ data "aws_iam_policy_document" "cirrus_process_lambda_policy_main_doc" {
       "secretsmanager:GetSecretValue"
     ]
     resources = [
-      "arn:aws:secretsmanager:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:secret:${var.resource_prefix}*"
+      "arn:aws:secretsmanager:${data.aws_region.current.region}:${data.aws_caller_identity.current.account_id}:secret:${var.resource_prefix}*"
     ]
   }
 
@@ -77,7 +77,7 @@ data "aws_iam_policy_document" "cirrus_process_lambda_policy_main_doc" {
       "states:StartExecution"
     ]
     resources = [
-      "arn:aws:states:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:stateMachine:${var.resource_prefix}-*"
+      "arn:aws:states:${data.aws_region.current.region}:${data.aws_caller_identity.current.account_id}:stateMachine:${var.resource_prefix}-*"
     ]
   }
 
@@ -179,7 +179,7 @@ resource "aws_lambda_function" "cirrus_process" {
         CIRRUS_PAYLOAD_BUCKET           = var.cirrus_payload_bucket
         CIRRUS_STATE_DB                 = var.cirrus_state_dynamodb_table_name
         CIRRUS_WORKFLOW_EVENT_TOPIC_ARN = var.cirrus_workflow_event_sns_topic_arn
-        CIRRUS_BASE_WORKFLOW_ARN        = "arn:aws:states:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:stateMachine:${var.resource_prefix}-"
+        CIRRUS_BASE_WORKFLOW_ARN        = "arn:aws:states:${data.aws_region.current.region}:${data.aws_caller_identity.current.account_id}:stateMachine:${var.resource_prefix}-"
       },
       var.workflow_metrics_timestream_enabled ? {
         CIRRUS_EVENT_DB_AND_TABLE = "${var.cirrus_state_event_timestreamwrite_database_name}|${var.cirrus_state_event_timestreamwrite_table_name}"

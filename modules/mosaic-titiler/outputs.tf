@@ -3,7 +3,7 @@ output "titiler_mosaic_api_gateway_id" {
 }
 
 output "titiler_mosaic_api_gateway_endpoint" {
-  value = var.is_private_endpoint ? "${aws_api_gateway_rest_api.titiler_api_gateway[0].id}.execute-api.${data.aws_region.current.name}.amazonaws.com" : "${aws_apigatewayv2_api.titiler-mosaic-api-gateway[0].id}.execute-api.${data.aws_region.current.name}.amazonaws.com"
+  value = var.is_private_endpoint ? "${aws_api_gateway_rest_api.titiler_api_gateway[0].id}.execute-api.${data.aws_region.current.region}.amazonaws.com" : "${aws_apigatewayv2_api.titiler-mosaic-api-gateway[0].id}.execute-api.${data.aws_region.current.region}.amazonaws.com"
 }
 
 output "titiler_mosaic_wafv2_web_acl_arn" {

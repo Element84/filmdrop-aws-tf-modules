@@ -79,7 +79,7 @@ resource "null_resource" "cleanup_analytics_credentials" {
   triggers = {
     filmdrop_analytics_dask_secret_token = "fd-analytics-${var.project_name}-${var.environment}-admin-credentials"
     filmdrop_analytics_credentials       = "fd-analytics-${var.project_name}-${var.environment}-dask-token"
-    region                               = data.aws_region.current.name
+    region                               = data.aws_region.current.region
     account                              = data.aws_caller_identity.current.account_id
   }
 
@@ -122,7 +122,7 @@ resource "null_resource" "cleanup_analytics_stack" {
   triggers = {
     filmdrop_analytics_cluster_name = "fd-analytics-${var.project_name}-${var.environment}"
     domain_param_name               = module.cloudfront_load_balancer_endpoint.cloudfront_domain_origin_param
-    region                          = data.aws_region.current.name
+    region                          = data.aws_region.current.region
     account                         = data.aws_caller_identity.current.account_id
   }
 

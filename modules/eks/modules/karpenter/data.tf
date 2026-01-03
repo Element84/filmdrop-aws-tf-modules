@@ -389,7 +389,7 @@ data "aws_iam_policy_document" "node_assume_role" {
 locals {
   account_id             = data.aws_caller_identity.current.account_id
   partition              = data.aws_partition.current.partition
-  region                 = data.aws_region.current.name
+  region                 = data.aws_region.current.region
   create_iam_role        = var.create && var.create_iam_role
   irsa_oidc_provider_url = replace(var.irsa_oidc_provider_arn, "/^(.*provider/)/", "")
   events = {

@@ -4,7 +4,7 @@ module "gateway_endpoints" {
   for_each = toset(var.gateway_endpoints_list)
 
   vpc_id          = aws_vpc.filmdrop_vpc.id
-  service_name    = "com.amazonaws.${data.aws_region.current.name}.${each.value}"
+  service_name    = "com.amazonaws.${data.aws_region.current.region}.${each.value}"
   route_table_ids = concat([aws_route_table.public_route_table.id], values(aws_route_table.private_route_tables)[*].id)
 }
 
@@ -14,7 +14,7 @@ module "interface_endpoints" {
   for_each = toset(var.interface_endpoints_list)
 
   vpc_id              = aws_vpc.filmdrop_vpc.id
-  service_name        = "com.amazonaws.${data.aws_region.current.name}.${each.value}"
+  service_name        = "com.amazonaws.${data.aws_region.current.region}.${each.value}"
   security_group_ids  = [aws_security_group.filmdrop_vpc_default_sg.id]
   subnet_ids          = values(aws_subnet.private_subnets)[*].id
   private_dns_enabled = true
