@@ -21,6 +21,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Removed
 
+- If you have stac server, cirrus, or titiler deployed as a private api gateway, Terraform will note that a null_resource.enable_access_logs is being destroyed for each. This is expected. Previously, api gateway access logs were enabled via this null resource; they are now enabled via an aws_api_gateway_stage resource.
+
+### ⚠️ Breaking
+
+- See MIGRATION.md for important updates to the AWS provider version to v6, and the terraform-aws-stac-server module to v2
 
 
 

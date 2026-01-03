@@ -15,6 +15,34 @@ a newer version. For example, if a new required variable is added, this should b
 - `console_ui_inputs.filmdrop_ui_release` is now `console_ui_inputs.version`
 - `deploy_sample_data_bucket` option has been removed
 
+### 2.59.0
+
+**AWS Provider Upgrade v5 -> v6**
+
+The Terraform AWS provider was updated from v5 to v6.
+
+- If calling this module from your own module, update your module's `hashicorp/aws` provider to version constraint to "~> 6.0"
+
+- `terraform init -upgrade`
+
+- If you have cirrus, stac server, or titiler (as *private*) deployed, each has an api gateway for which the Terraform config has been slighty modified due to a few deprecations in the `aws_api_gateway_deployment` resource (see https://registry.terraform.io/providers/hashicorp/aws/latest/docs/guides/version-6-upgrade#resource-aws_api_gateway_deployment). Your AWS resources should not be modified, this is a change internal to Terraform. To ensure no resources change, perform the following for each of cirrus, stac server, and titiler:
+
+  - Replacing properties denoted in `<>`: `terraform import module.<module_name>.aws_api_gateway_stage.<api_gateway_stage_tf_resource> <rest_api_id>/<stage_name>`
+
+  - As an example: `terraform import --var-file=default.tfvars module.filmdrop.module.stac-server[0].module.stac-server.aws_api_gateway_stage.stac_server_api_gateway_stage b0agq3jmeg/test`
+
+  - You'll see an "Import Successful" notification if your import works as expected
+
+- `terraform apply`
+
+**Updated the [terraform-aws-stac-server module](https://github.com/Element84/terraform-aws-stac-server) from v1.0.2 to v2.0.0**
+
+- This updates the packaged version of [stac-server](https://github.com/stac-utils/stac-server) from v3.10.0 to v4.5.0.  If you are *not* defining a custom version of stac-server in your tfvars (along with `deploy_local_stac_server_artifacts = true`), the following applies. See the v2.0.0 release notes for full details; the migration steps noted there:
+
+  - The minimum version of OpenSearch that [stac-server](https://github.com/stac-utils/stac-server) v4.5.0 expects is 2.19 (v3.10.0 expected 2.17). Accordingly, projects should update `opensearch_version` to `OpenSearch_2.19` at a minimum.
+
+  - Lambda runtimes should be bumped nodejs20 -> nodejs22
+
 ### 2.56.0
 
 - If using the optional `cirrus_inputs.lambda_version` or `cirrus_inputs.lambda_zip_filepath` to denote a specific version of Cirrus, you must additionally define a `cirrus_inputs.lambda_pyversion`. Cirrus geo versions are now tied to specific Python runtime versions; see the [cirrus-geo releases](https://github.com/cirrus-geo/cirrus-geo/releases) for details.
