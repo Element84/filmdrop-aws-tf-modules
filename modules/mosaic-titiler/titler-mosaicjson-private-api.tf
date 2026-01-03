@@ -240,44 +240,32 @@ resource "aws_api_gateway_deployment" "titiler_api_gateway" {
     aws_api_gateway_integration.titiler_api_gateway_proxy_resource_method_integration,
   ]
 
-  rest_api_id       = aws_api_gateway_rest_api.titiler_api_gateway[0].id
-  stage_name        = var.environment
-  stage_description = var.titiler_api_stage_description
+  rest_api_id = aws_api_gateway_rest_api.titiler_api_gateway[0].id
 
   lifecycle {
     create_before_destroy = true
   }
 }
 
+resource "aws_api_gateway_stage" "stac_server_api_gateway_stage" {
+  count = var.is_private_endpoint ? 1 : 0
+
+  deployment_id = aws_api_gateway_deployment.titiler_api_gateway[0].id
+  rest_api_id   = aws_api_gateway_rest_api.titiler_api_gateway[0].id
+  stage_name    = var.environment
+  description   = var.titiler_api_stage_description
+
+  access_log_settings {
+    destination_arn = aws_cloudwatch_log_group.titiler_api_gateway_logs_group[0].arn
+    # terraform's jsonencode() sorts keys lexicographically, which would modify the log format. so, we build a string
+    # https://github.com/hashicorp/terraform/issues/27880
+    format = "{requestId:$context.requestId,ip:$context.identity.sourceIp,caller:$context.identity.caller,user:$context.identity.user,requestTime:$context.requestTime,httpMethod:$context.httpMethod,resourcePath:$context.resourcePath,status:$context.status,protocol:$context.protocol,responseLength:$context.responseLength}"
+  }
+}
+
 resource "aws_cloudwatch_log_group" "titiler_api_gateway_logs_group" {
   count = var.is_private_endpoint ? 1 : 0
-  name  = "/aws/apigateway/${local.name_prefix}-titiler-${aws_api_gateway_deployment.titiler_api_gateway[0].rest_api_id}/${aws_api_gateway_deployment.titiler_api_gateway[0].stage_name}"
-}
-
-locals {
-  access_log_format = "{\"requestId\":\"\\$context.requestId\",\"ip\":\"\\$context.identity.sourceIp\",\"caller\":\"\\$context.identity.caller\",\"user\":\"\\$context.identity.user\",\"requestTime\":\"\\$context.requestTime\",\"httpMethod\":\"\\$context.httpMethod\",\"resourcePath\":\"\\$context.resourcePath\",\"status\":\"\\$context.status\",\"protocol\":\"\\$context.protocol\",\"responseLength\":\"\\$context.responseLength\"}"
-}
-
-resource "null_resource" "enable_access_logs" {
-  count = var.is_private_endpoint ? 1 : 0
-  triggers = {
-    stage_name              = aws_api_gateway_deployment.titiler_api_gateway[0].stage_name
-    rest_api_id             = aws_api_gateway_deployment.titiler_api_gateway[0].rest_api_id
-    apigw_access_logs_group = aws_cloudwatch_log_group.titiler_api_gateway_logs_group[0].arn
-    access_log_format       = local.access_log_format
-  }
-
-  provisioner "local-exec" {
-    interpreter = ["bash", "-ec"]
-    command     = <<EOF
-export AWS_DEFAULT_REGION=${data.aws_region.current.name}
-export AWS_REGION=${data.aws_region.current.name}
-
-echo "Update Access Logging on FilmDrop TiTiler API."
-aws apigateway update-stage --rest-api-id ${aws_api_gateway_deployment.titiler_api_gateway[0].rest_api_id} --stage-name ${aws_api_gateway_deployment.titiler_api_gateway[0].stage_name} --patch-operations "[{\"op\": \"replace\",\"path\": \"/accessLogSettings/destinationArn\",\"value\": \"${aws_cloudwatch_log_group.titiler_api_gateway_logs_group[0].arn}\"},{\"op\": \"replace\",\"path\": \"/accessLogSettings/format\",\"value\": \"${local.access_log_format}\"}]"
-
-EOF
-  }
+  name  = "/aws/apigateway/${local.name_prefix}-titiler-${aws_api_gateway_deployment.titiler_api_gateway[0].rest_api_id}/${var.environment}"
 }
 
 resource "aws_lambda_permission" "titiler_api_gateway_lambda_permission_root_resource" {
@@ -337,5 +325,5 @@ resource "aws_api_gateway_base_path_mapping" "titiler_api_gateway_domain_mapping
   domain_name    = aws_api_gateway_domain_name.titiler_api_gateway_domain_name[0].domain_name
   domain_name_id = aws_api_gateway_domain_name.titiler_api_gateway_domain_name[0].domain_name_id
   api_id         = aws_api_gateway_rest_api.titiler_api_gateway[0].id
-  stage_name     = aws_api_gateway_deployment.titiler_api_gateway[0].stage_name
+  stage_name     = var.environment
 }
