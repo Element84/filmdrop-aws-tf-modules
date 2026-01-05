@@ -17,7 +17,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 - Minor changes ([#218](https://github.com/Element84/filmdrop-aws-tf-modules/pull/218)) to how TiTiler behaves when is_private_endpoint = true, supporting communications with its API Gateway and VPC Endpoint
 
-- TiTiler module will note three IAM related resources being created: aws_iam_role_policy.titiler-mosaic-lambda-inline-policy, aws_iam_role_policy_attachment.lambda_basic_execution, aws_iam_role_policy_attachment.lambda_vpc_access. This is a result of AWS provider deprecations to managed_policy and inline_policy properties. The TiTiler role in question will update in place, resulting in no material changes to the role.
+- TiTiler module will note three IAM related resources being created: aws_iam_role_policy.titiler-mosaic-lambda-inline-policy, aws_iam_role_policy_attachment.lambda_basic_execution, aws_iam_role_policy_attachment.lambda_vpc_access. This is a result of AWS provider deprecations to managed_policy and inline_policy properties. The TiTiler role in question will updated in place, resulting in no material changes to the role.
 
 ### Fixed
 
