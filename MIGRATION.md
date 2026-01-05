@@ -5,18 +5,6 @@ a newer version. For example, if a new required variable is added, this should b
 
 ### Unreleased
 
-- Removes support for VPC creation. To retain the existing VPC resources, manually
-  remove them from the Terraform state file. However, you should then create another
-  IaC deployment for that VPC.
-- `stac_server_inputs` and `titiler_inputs`, renamed
-  `stac_server_and_titiler_s3_arns` to `authorized_s3_arns`.
-- `titiler_inputs.mosaic_titiler_release_tag` is now `titiler_inputs.version`
-- `cirrus_dashboard_inputs.cirrus_dashboard_release` is now `cirrus_dashboard_inputs.version`
-- `console_ui_inputs.filmdrop_ui_release` is now `console_ui_inputs.version`
-- `deploy_sample_data_bucket` option has been removed
-
-### 2.59.0
-
 **AWS Provider Upgrade v5 -> v6**
 
 The Terraform AWS provider was updated from v5 to v6.
@@ -41,7 +29,19 @@ The Terraform AWS provider was updated from v5 to v6.
 
   - The minimum version of OpenSearch that [stac-server](https://github.com/stac-utils/stac-server) v4.5.0 expects is 2.19 (v3.10.0 expected 2.17). Accordingly, projects should update `opensearch_version` to `OpenSearch_2.19` at a minimum.
 
-  - Lambda runtimes should be bumped nodejs20 -> nodejs22
+  - stac-server lambda runtimes should be bumped nodejs20 -> nodejs22
+
+### TODO: - released, need to note which versions
+
+- Removes support for VPC creation. To retain the existing VPC resources, manually
+  remove them from the Terraform state file. However, you should then create another
+  IaC deployment for that VPC.
+- `stac_server_inputs` and `titiler_inputs`, renamed
+  `stac_server_and_titiler_s3_arns` to `authorized_s3_arns`.
+- `titiler_inputs.mosaic_titiler_release_tag` is now `titiler_inputs.version`
+- `cirrus_dashboard_inputs.cirrus_dashboard_release` is now `cirrus_dashboard_inputs.version`
+- `console_ui_inputs.filmdrop_ui_release` is now `console_ui_inputs.version`
+- `deploy_sample_data_bucket` option has been removed
 
 ### 2.56.0
 
