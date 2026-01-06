@@ -123,7 +123,7 @@ resource "null_resource" "cleanup_bucket" {
 
   triggers = {
     bucket_name = aws_s3_bucket.log_bucket[0].id
-    region      = data.aws_region.current.name
+    region      = data.aws_region.current.region
     account     = data.aws_caller_identity.current.account_id
   }
 

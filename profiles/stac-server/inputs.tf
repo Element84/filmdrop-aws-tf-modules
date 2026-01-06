@@ -62,6 +62,7 @@ variable "stac_server_inputs" {
     opensearch_cluster_dedicated_master_count   = number
     opensearch_cluster_availability_zone_count  = number
     opensearch_ebs_volume_size                  = number
+    opensearch_override_main_response_version   = bool
     ingest_sns_topic_arns                       = list(string)
     additional_ingest_sqs_senders_arns          = list(string)
     cors_origin                                 = string
@@ -74,6 +75,7 @@ variable "stac_server_inputs" {
     private_api_additional_security_group_ids   = optional(list(string))
     private_certificate_arn                     = optional(string)
     vpce_private_dns_enabled                    = bool
+    custom_vpce_id                              = optional(string)
     api_lambda = optional(object({
       handler               = optional(string)
       memory_mb             = optional(number)
@@ -138,7 +140,7 @@ variable "stac_server_inputs" {
     items_max_limit                             = 100
     enable_ingest_action_truncate               = false
     collection_to_index_mappings                = ""
-    opensearch_version                          = "OpenSearch_2.17"
+    opensearch_version                          = "OpenSearch_2.19"
     opensearch_cluster_instance_type            = "t3.small.search"
     opensearch_cluster_instance_count           = 3
     opensearch_cluster_dedicated_master_enabled = true
@@ -146,6 +148,7 @@ variable "stac_server_inputs" {
     opensearch_cluster_dedicated_master_count   = 3
     opensearch_cluster_availability_zone_count  = 3
     opensearch_ebs_volume_size                  = 35
+    opensearch_override_main_response_version   = null
     ingest_sns_topic_arns                       = []
     additional_ingest_sqs_senders_arns          = []
     cors_origin                                 = "*"
@@ -161,6 +164,7 @@ variable "stac_server_inputs" {
     pre_hook_lambda                             = null
     private_certificate_arn                     = ""
     vpce_private_dns_enabled                    = false
+    custom_vpce_id                              = null
     auth_function = {
       cf_function_name             = ""
       cf_function_runtime          = "cloudfront-js-2.0"

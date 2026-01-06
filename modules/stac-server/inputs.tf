@@ -253,7 +253,7 @@ variable "private_api_additional_security_group_ids" {
 variable "opensearch_version" {
   description = "OpenSearch version for OpenSearch Domain"
   type        = string
-  default     = "OpenSearch_2.17"
+  default     = "OpenSearch_2.19"
 }
 
 variable "opensearch_cluster_instance_type" {

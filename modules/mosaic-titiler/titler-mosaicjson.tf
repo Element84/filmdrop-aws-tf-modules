@@ -73,7 +73,7 @@ resource "aws_lambda_function" "titiler-mosaic-lambda" {
       AWS_REQUEST_PAYER                  = var.aws_request_payer
       GDAL_INGESTED_BYTES_AT_OPEN        = var.gdal_ingested_bytes_at_open
       MOSAIC_BACKEND                     = "dynamodb://"
-      MOSAIC_HOST                        = "${data.aws_region.current.name}/${aws_dynamodb_table.titiler-mosaic-dynamodb-table.name}"
+      MOSAIC_HOST                        = "${data.aws_region.current.region}/${aws_dynamodb_table.titiler-mosaic-dynamodb-table.name}"
       REQUEST_HOST_HEADER_OVERRIDE       = var.request_host_header_override
       MOSAIC_TILE_TIMEOUT                = var.mosaic_tile_timeout
     }
@@ -384,7 +384,7 @@ resource "aws_wafv2_web_acl" "titiler-mosaic-wafv2-web-acl" {
 resource "null_resource" "cleanup_bucket" {
   triggers = {
     bucket_name = aws_s3_bucket.lambda-source.id
-    region      = data.aws_region.current.name
+    region      = data.aws_region.current.region
     account     = data.aws_caller_identity.current.account_id
   }
 

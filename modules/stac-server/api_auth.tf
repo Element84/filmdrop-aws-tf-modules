@@ -49,7 +49,7 @@ resource "null_resource" "cleanup_stac_server_api_auth_keys" {
 
   triggers = {
     stac_server_api_auth_keys = "${local.name_prefix}-stac-server-api-auth-keys"
-    region                    = data.aws_region.current.name
+    region                    = data.aws_region.current.region
     account                   = data.aws_caller_identity.current.account_id
   }
 

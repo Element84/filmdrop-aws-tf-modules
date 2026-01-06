@@ -37,7 +37,7 @@ resource "aws_s3_bucket_public_access_block" "s3_access_logs_bucket_public_acces
 resource "null_resource" "cleanup_s3_access_logs_bucket" {
   triggers = {
     bucket_name = aws_s3_bucket.s3_access_logs_bucket.id
-    region      = data.aws_region.current.name
+    region      = data.aws_region.current.region
     account     = data.aws_caller_identity.current.account_id
   }
 
