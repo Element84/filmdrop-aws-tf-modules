@@ -16,7 +16,7 @@ output "titiler_vpce_dns_regional" {
     hosted_zone_id = aws_vpc_endpoint.titiler_api_gateway_private[0].dns_entry[0].hosted_zone_id
   } : null
   description = <<-DESCRIPTION
-    When titiler is deployed with is_private_endpoint = true, and the user has *not indicated they are using a custom
+    When titiler is deployed with is_private_endpoint = true, and the user has *not* indicated they are using a custom
     vpce endpoint (local.custom_vpce_id is null),this output provides the VPC Endpoint DNS information.
     In particular, this points to the regional DNS (rather than any of the subnet-specific DNS entries).
     This can be used to create internal DNS records that point to the titiler private API Gateway endpoint.
