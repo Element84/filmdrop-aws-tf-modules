@@ -55,9 +55,8 @@ resource "aws_api_gateway_rest_api" "titiler_api_gateway" {
   name  = "${local.name_prefix}-titiler"
 
   # titiler serves binary data (images), thus the need to enable binary media types. without this, api gateway may
-  # return the binary data as plain text, breaking titiler's functionality. note that this still handles
-  # stac and other non-binary requests correctly
-  binary_media_types = ["*/*"]
+  # return the binary data as plain text, breaking titiler's functionality
+  binary_media_types = ["image/*", "application/octet-stream"]
 
   endpoint_configuration {
     types            = ["PRIVATE"]

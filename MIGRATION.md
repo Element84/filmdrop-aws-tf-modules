@@ -23,6 +23,8 @@ The Terraform AWS provider was updated from v5 to v6.
 
 - `terraform apply`
 
+- Important: trigger redeployments of each API Gateway. This is required for the new stages to take effect, without this step your Gateways may be in an inconsistent state.
+
 **Updated the [terraform-aws-stac-server module](https://github.com/Element84/terraform-aws-stac-server) from v1.0.2 to v2.0.0**
 
 - This updates the packaged version of [stac-server](https://github.com/stac-utils/stac-server) from v3.10.0 to v4.5.0.  If you are *not* defining a custom version of stac-server in your tfvars (along with `deploy_local_stac_server_artifacts = true`), the following applies. See the v2.0.0 release notes for full details; the migration steps noted there:
