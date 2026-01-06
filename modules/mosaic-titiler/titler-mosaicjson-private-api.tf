@@ -7,6 +7,9 @@ locals {
   # additionally, only create a vpc endpoint in this module if the api gateway is private *and* the user has not
   # indicated they are using their own vpc endpoint
   create_vpce = var.is_private_endpoint == true && var.custom_vpce_id == null
+
+  // ensures we use the same var everywhere stage_name of the gateway is needed, and helps avoid ciricular deps
+  stage_name = var.environment
 }
 
 resource "aws_security_group" "titiler_api_gateway_private_vpce" {
@@ -251,7 +254,7 @@ resource "aws_api_gateway_stage" "titiler_api_gateway_stage" {
 
   deployment_id = aws_api_gateway_deployment.titiler_api_gateway[0].id
   rest_api_id   = aws_api_gateway_rest_api.titiler_api_gateway[0].id
-  stage_name    = var.environment
+  stage_name    = local.stage_name
   description   = var.titiler_api_stage_description
 
   access_log_settings {
@@ -264,7 +267,7 @@ resource "aws_api_gateway_stage" "titiler_api_gateway_stage" {
 
 resource "aws_cloudwatch_log_group" "titiler_api_gateway_logs_group" {
   count = var.is_private_endpoint ? 1 : 0
-  name  = "/aws/apigateway/${local.name_prefix}-titiler-${aws_api_gateway_deployment.titiler_api_gateway[0].rest_api_id}/${var.environment}"
+  name  = "/aws/apigateway/${local.name_prefix}-titiler-${aws_api_gateway_deployment.titiler_api_gateway[0].rest_api_id}/${local.stage_name}"
 }
 
 resource "aws_lambda_permission" "titiler_api_gateway_lambda_permission_root_resource" {
@@ -324,5 +327,5 @@ resource "aws_api_gateway_base_path_mapping" "titiler_api_gateway_domain_mapping
   domain_name    = aws_api_gateway_domain_name.titiler_api_gateway_domain_name[0].domain_name
   domain_name_id = aws_api_gateway_domain_name.titiler_api_gateway_domain_name[0].domain_name_id
   api_id         = aws_api_gateway_rest_api.titiler_api_gateway[0].id
-  stage_name     = var.environment
+  stage_name     = local.stage_name
 }

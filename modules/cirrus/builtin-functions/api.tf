@@ -1,5 +1,8 @@
 locals {
   is_private_endpoint = var.cirrus_api_rest_type == "PRIVATE" ? true : false
+
+  // ensures we use the same var everywhere stage_name of the gateway is needed, and helps avoid ciricular deps
+  stage_name = var.cirrus_api_stage
 }
 
 
@@ -303,7 +306,7 @@ resource "aws_api_gateway_deployment" "cirrus_api_gateway" {
 resource "aws_api_gateway_stage" "cirrus_api_gateway_stage" {
   deployment_id = aws_api_gateway_deployment.cirrus_api_gateway.id
   rest_api_id   = aws_api_gateway_rest_api.cirrus_api_gateway.id
-  stage_name    = var.cirrus_api_stage
+  stage_name    = local.stage_name
   description   = var.cirrus_api_stage_description
 
   access_log_settings {
@@ -315,7 +318,7 @@ resource "aws_api_gateway_stage" "cirrus_api_gateway_stage" {
 }
 
 resource "aws_cloudwatch_log_group" "cirrus_api_gateway_logs_group" {
-  name = "/aws/apigateway/${var.resource_prefix}-api-${aws_api_gateway_deployment.cirrus_api_gateway.rest_api_id}/${var.cirrus_api_stage}"
+  name = "/aws/apigateway/${var.resource_prefix}-api-${aws_api_gateway_deployment.cirrus_api_gateway.rest_api_id}/${local.stage_name}"
 }
 
 resource "aws_lambda_permission" "cirrus_api_gateway_lambda_permission_root_resource" {
@@ -467,5 +470,5 @@ resource "aws_api_gateway_base_path_mapping" "cirrus_api_gateway_domain_mapping"
   domain_name    = aws_api_gateway_domain_name.cirrus_api_gateway_domain_name[0].domain_name
   domain_name_id = aws_api_gateway_domain_name.cirrus_api_gateway_domain_name[0].domain_name_id
   api_id         = aws_api_gateway_rest_api.cirrus_api_gateway.id
-  stage_name     = var.cirrus_api_stage
+  stage_name     = local.stage_name
 }
