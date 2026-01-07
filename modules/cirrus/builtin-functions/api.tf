@@ -471,4 +471,5 @@ resource "aws_api_gateway_base_path_mapping" "cirrus_api_gateway_domain_mapping"
   domain_name_id = aws_api_gateway_domain_name.cirrus_api_gateway_domain_name[0].domain_name_id
   api_id         = aws_api_gateway_rest_api.cirrus_api_gateway.id
   stage_name     = local.stage_name
+  depends_on     = [aws_api_gateway_stage.cirrus_api_gateway_stage]
 }
