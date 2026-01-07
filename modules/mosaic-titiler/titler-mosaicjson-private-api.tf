@@ -333,6 +333,5 @@ resource "aws_api_gateway_base_path_mapping" "titiler_api_gateway_domain_mapping
   domain_name    = aws_api_gateway_domain_name.titiler_api_gateway_domain_name[0].domain_name
   domain_name_id = aws_api_gateway_domain_name.titiler_api_gateway_domain_name[0].domain_name_id
   api_id         = aws_api_gateway_rest_api.titiler_api_gateway[0].id
-  stage_name     = local.stage_name
-  depends_on     = [aws_api_gateway_stage.titiler_api_gateway_stage]
+  stage_name     = aws_api_gateway_stage.titiler_api_gateway_stage[0].stage_name
 }
