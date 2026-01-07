@@ -46,6 +46,13 @@ module "stac-server" {
   deploy_stac_server_opensearch_serverless = var.deploy_stac_server_opensearch_serverless
   deploy_stac_server_outside_vpc           = var.deploy_stac_server_outside_vpc
   fd_web_acl_id                            = var.deploy_waf_rule ? module.base_infra.web_acl_id : var.ext_web_acl_id
+
+  # the stac-server api gateway stage access logging requires base_infra.api_gateway_account cloudwatch_role_arn
+  # be set. that is a value only set once at the regional level, and is not used directly by stac-server. thus, we
+  # require this explicit dependency
+  depends_on = [
+    module.base_infra
+  ]
 }
 
 module "titiler" {
@@ -65,6 +72,13 @@ module "titiler" {
   private_subnet_ids     = module.base_infra.private_subnet_ids
   security_group_id      = module.base_infra.security_group_id
   vpc_id                 = module.base_infra.vpc_id
+
+  # the titiler api gateway stage access logging requires base_infra.api_gateway_account cloudwatch_role_arn
+  # be set. that is a value only set once at the regional level, and is not used directly by titiler. thus, we
+  # require this explicit dependency
+  depends_on = [
+    module.base_infra
+  ]
 }
 
 module "analytics" {
@@ -122,6 +136,13 @@ module "cirrus" {
   cirrus_inputs          = var.cirrus_inputs
   warning_sns_topic_arn  = module.base_infra.warning_sns_topic_arn
   critical_sns_topic_arn = module.base_infra.critical_sns_topic_arn
+
+  # the cirrus api gateway stage access logging requires base_infra.api_gateway_account cloudwatch_role_arn
+  # be set. that is a value only set once at the regional level, and is not used directly by cirrus. thus, we
+  # require this explicit dependency
+  depends_on = [
+    module.base_infra
+  ]
 }
 
 module "cirrus-dashboard" {
