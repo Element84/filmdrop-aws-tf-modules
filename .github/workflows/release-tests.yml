@@ -98,27 +98,27 @@ jobs:
         continue-on-error: true
         run: terraform apply -lock=false -input=false test.tfplan
       
-      # - name: Post status to Slack channel
-      #   id: tf_apply_successs
-      #   if: steps.tf_apply.outcome == 'success'
-      #   continue-on-error: true
-      #   uses: slackapi/slack-github-action@v1.26.0
-      #   with:
-      #     channel-id: ${{ secrets.FD_CICD_SLACK_CHANNEL_ID }}
-      #     slack-message: ":badger_dance: filmdrop-aws-tf-modules - ${{  github.ref_name }} - terraform apply job has succeeded!\n${{ github.event.pull_request.html_url || github.event.head_commit.url }}"
-      #   env:
-      #     SLACK_BOT_TOKEN: ${{ secrets.FD_CICD_SLACK_BOT_TOKEN }}
+      - name: Post status to Slack channel
+        id: tf_apply_successs
+        if: steps.tf_apply.outcome == 'success'
+        continue-on-error: true
+        uses: slackapi/slack-github-action@v1.26.0
+        with:
+          channel-id: ${{ secrets.FD_CICD_SLACK_CHANNEL_ID }}
+          slack-message: ":badger_dance: filmdrop-aws-tf-modules - ${{  github.ref_name }} - terraform apply job has succeeded!\n${{ github.event.pull_request.html_url || github.event.head_commit.url }}"
+        env:
+          SLACK_BOT_TOKEN: ${{ secrets.FD_CICD_SLACK_BOT_TOKEN }}
 
-      # - name: Post status to Slack channel
-      #   id: tf_apply_failure
-      #   if: steps.tf_apply.outcome != 'success'
-      #   continue-on-error: true
-      #   uses: slackapi/slack-github-action@v1.26.0
-      #   with:
-      #     channel-id: ${{ secrets.FD_CICD_SLACK_CHANNEL_ID }}
-      #     slack-message: ":sadpanda: filmdrop-aws-tf-modules - ${{  github.ref_name }} - terraform apply has failed!\n:alert: make sure cleanup job deletes all AWS resources!\n${{ github.event.pull_request.html_url || github.event.head_commit.url }}"
-      #   env:
-      #     SLACK_BOT_TOKEN: ${{ secrets.FD_CICD_SLACK_BOT_TOKEN }}
+      - name: Post status to Slack channel
+        id: tf_apply_failure
+        if: steps.tf_apply.outcome != 'success'
+        continue-on-error: true
+        uses: slackapi/slack-github-action@v1.26.0
+        with:
+          channel-id: ${{ secrets.FD_CICD_SLACK_CHANNEL_ID }}
+          slack-message: ":sadpanda: filmdrop-aws-tf-modules - ${{  github.ref_name }} - terraform apply has failed!\n:alert: make sure cleanup job deletes all AWS resources!\n${{ github.event.pull_request.html_url || github.event.head_commit.url }}"
+        env:
+          SLACK_BOT_TOKEN: ${{ secrets.FD_CICD_SLACK_BOT_TOKEN }}
 
       - name: Configure Terraform Cleanup Check Credentials
         id: cleanup_check_creds
@@ -149,27 +149,27 @@ jobs:
         continue-on-error: true
         run: terraform apply -destroy -lock=false -input=false test-cleanup.tfplan
 
-      # - name: Post status to Slack channel
-      #   id: tf_destroy_apply_successs
-      #   if: steps.tf_destroy_apply.outcome == 'success'
-      #   continue-on-error: true
-      #   uses: slackapi/slack-github-action@v1.26.0
-      #   with:
-      #     channel-id: ${{ secrets.FD_CICD_SLACK_CHANNEL_ID }}
-      #     slack-message: ":badger_dance: filmdrop-aws-tf-modules - ${{  github.ref_name }} - cleanup job has succeeded!\n${{ github.event.pull_request.html_url || github.event.head_commit.url }}"
-      #   env:
-      #     SLACK_BOT_TOKEN: ${{ secrets.FD_CICD_SLACK_BOT_TOKEN }}
+      - name: Post status to Slack channel
+        id: tf_destroy_apply_successs
+        if: steps.tf_destroy_apply.outcome == 'success'
+        continue-on-error: true
+        uses: slackapi/slack-github-action@v1.26.0
+        with:
+          channel-id: ${{ secrets.FD_CICD_SLACK_CHANNEL_ID }}
+          slack-message: ":badger_dance: filmdrop-aws-tf-modules - ${{  github.ref_name }} - cleanup job has succeeded!\n${{ github.event.pull_request.html_url || github.event.head_commit.url }}"
+        env:
+          SLACK_BOT_TOKEN: ${{ secrets.FD_CICD_SLACK_BOT_TOKEN }}
 
-      # - name: Post status to Slack channel
-      #   id: tf_destroy_apply_failure
-      #   if: steps.tf_destroy_apply.outcome != 'success'
-      #   continue-on-error: true
-      #   uses: slackapi/slack-github-action@v1.26.0
-      #   with:
-      #     channel-id: ${{ secrets.FD_CICD_SLACK_CHANNEL_ID }}
-      #     slack-message: ":sadpanda: filmdrop-aws-tf-modules - ${{  github.ref_name }} - cleanup job has failed!\n:alert: make sure AWS resources are deleted!\n${{ github.event.pull_request.html_url || github.event.head_commit.url }}"
-      #   env:
-      #     SLACK_BOT_TOKEN: ${{ secrets.FD_CICD_SLACK_BOT_TOKEN }}
+      - name: Post status to Slack channel
+        id: tf_destroy_apply_failure
+        if: steps.tf_destroy_apply.outcome != 'success'
+        continue-on-error: true
+        uses: slackapi/slack-github-action@v1.26.0
+        with:
+          channel-id: ${{ secrets.FD_CICD_SLACK_CHANNEL_ID }}
+          slack-message: ":sadpanda: filmdrop-aws-tf-modules - ${{  github.ref_name }} - cleanup job has failed!\n:alert: make sure AWS resources are deleted!\n${{ github.event.pull_request.html_url || github.event.head_commit.url }}"
+        env:
+          SLACK_BOT_TOKEN: ${{ secrets.FD_CICD_SLACK_BOT_TOKEN }}
 
   pre-commit:
     runs-on: ubuntu-latest
