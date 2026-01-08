@@ -6,7 +6,7 @@ resource "aws_instance" "ssm_bastion" {
     "${path.module}/user_data.tpl",
     {
       PublicKeysBucket = aws_s3_bucket.filmdrop_public_keys_bucket.id
-      AWSRegion        = data.aws_region.current.name
+      AWSRegion        = data.aws_region.current.region
     },
   )
   key_name = var.key_name

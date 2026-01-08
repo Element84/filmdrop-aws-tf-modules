@@ -1,5 +1,5 @@
 module "stac-server" {
-  source = "git::https://github.com/Element84/terraform-aws-stac-server.git?ref=v1.0.1"
+  source = "git::https://github.com/Element84/terraform-aws-stac-server.git?ref=v2.0.0"
 
   deploy_local_stac_server_artifacts          = var.deploy_local_stac_server_artifacts
   stac_server_version                         = var.stac_server_inputs.version
@@ -26,6 +26,7 @@ module "stac-server" {
   opensearch_cluster_dedicated_master_count   = var.stac_server_inputs.opensearch_cluster_dedicated_master_count
   opensearch_cluster_availability_zone_count  = var.stac_server_inputs.opensearch_cluster_availability_zone_count
   opensearch_ebs_volume_size                  = var.stac_server_inputs.opensearch_ebs_volume_size
+  opensearch_override_main_response_version   = var.stac_server_inputs.opensearch_override_main_response_version
   ingest_sns_topic_arns                       = var.stac_server_inputs.ingest_sns_topic_arns
   additional_ingest_sqs_senders_arns          = var.stac_server_inputs.additional_ingest_sqs_senders_arns
   api_rest_type                               = var.stac_server_inputs.api_rest_type
@@ -40,6 +41,7 @@ module "stac-server" {
   deploy_stac_server_outside_vpc              = var.deploy_stac_server_outside_vpc
   private_certificate_arn                     = var.stac_server_inputs.private_certificate_arn
   vpce_private_dns_enabled                    = var.stac_server_inputs.vpce_private_dns_enabled
+  custom_vpce_id                              = var.stac_server_inputs.custom_vpce_id
   domain_alias                                = var.stac_server_inputs.domain_alias
 
   # CloudFront or a custom domain implies the rootpath is simply "/"

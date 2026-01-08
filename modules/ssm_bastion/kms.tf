@@ -68,7 +68,7 @@ resource "aws_s3_bucket_policy" "filmdrop_public_keys_bucket_policy" {
 resource "null_resource" "cleanup_bucket" {
   triggers = {
     bucket_name = aws_s3_bucket.filmdrop_public_keys_bucket.id
-    region      = data.aws_region.current.name
+    region      = data.aws_region.current.region
     account     = data.aws_caller_identity.current.account_id
   }
 

@@ -200,3 +200,28 @@ variable "private_certificate_arn" {
   type        = string
   default     = ""
 }
+
+variable "vpce_private_dns_enabled" {
+  type        = bool
+  default     = false
+  description = <<-DESCRIPTION
+  Whether to enable Private DNS on the Interface VPC Endpoint used for the STAC API (execute-api). 
+  Only applicable when is_private_endpoint is true, otherwise ignored.
+  Leave false if you rely on VPC endpoint-specific hostnames; set true to resolve the standard API Gateway 
+  hostname to the VPC endpoint from within the VPC.
+  DESCRIPTION
+}
+
+variable "custom_vpce_id" {
+  description = <<-DESCRIPTION
+  If you are managing a VPC Endpoint for API Gateways outside of this module, provide the VPC Endpoint ID here. 
+  This will prevent the module from creating a VPC Endpoint, and will use the provided one instead for
+  configuring access to the private TiTiler API Gateway. If both TiTiler and STAC Server are private endpoints, this
+  may be a useful architecture; both can use the single VPC Endpoint you provide.
+
+  Should be used in conjunction with is_private_endpoint = true
+  DESCRIPTION
+
+  type    = string
+  default = null
+}

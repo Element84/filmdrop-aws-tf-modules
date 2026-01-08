@@ -19,7 +19,7 @@ resource "aws_codebuild_project" "analytics_eks_codebuild" {
 
     environment_variable {
       name  = "AWS_DEFAULT_REGION"
-      value = data.aws_region.current.name
+      value = data.aws_region.current.region
     }
 
     environment_variable {
@@ -153,7 +153,7 @@ resource "aws_s3_object" "jupyter_dask_source_config_ekscluster" {
   etag = md5(templatefile("${path.module}/eksctl/eksctl_filmdrop.yaml.tpl", {
     filmdrop_analytics_cluster_name = local.kubernetes_cluster_name
     filmdrop_kubernetes_version     = var.kubernetes_version
-    filmdrop_region                 = data.aws_region.current.name
+    filmdrop_region                 = data.aws_region.current.region
     filmdrop_private_subnet_map     = jsonencode(zipmap(var.vpc_private_subnet_azs, var.vpc_private_subnet_ids))
     filmdrop_public_subnet_map      = jsonencode(zipmap(var.vpc_public_subnet_azs, var.vpc_public_subnet_ids))
     filmdrop_private_subnet_azs     = length(var.analytics_worker_node_azs) == 0 ? jsonencode([var.vpc_private_subnet_azs[0]]) : jsonencode(var.analytics_worker_node_azs)
@@ -246,7 +246,7 @@ resource "local_file" "rendered_eksctl_filmdrop" {
   content = templatefile("${path.module}/eksctl/eksctl_filmdrop.yaml.tpl", {
     filmdrop_analytics_cluster_name = local.kubernetes_cluster_name
     filmdrop_kubernetes_version     = var.kubernetes_version
-    filmdrop_region                 = data.aws_region.current.name
+    filmdrop_region                 = data.aws_region.current.region
     filmdrop_private_subnet_map     = jsonencode(zipmap(var.vpc_private_subnet_azs, var.vpc_private_subnet_ids))
     filmdrop_public_subnet_map      = jsonencode(zipmap(var.vpc_public_subnet_azs, var.vpc_public_subnet_ids))
     filmdrop_private_subnet_azs     = length(var.analytics_worker_node_azs) == 0 ? jsonencode([var.vpc_private_subnet_azs[0]]) : jsonencode(var.analytics_worker_node_azs)
@@ -321,7 +321,7 @@ resource "aws_lambda_function" "cloudfront_origin_lambda" {
 resource "null_resource" "trigger_jupyterhub_upgrade" {
   triggers = {
     new_codebuild                   = aws_codebuild_project.analytics_eks_codebuild.id
-    region                          = data.aws_region.current.name
+    region                          = data.aws_region.current.region
     account                         = data.aws_caller_identity.current.account_id
     filmdrop_analytics_cluster_name = local.kubernetes_cluster_name
     cloudfront_distribution_id      = var.cloudfront_distribution_id
@@ -330,8 +330,8 @@ resource "null_resource" "trigger_jupyterhub_upgrade" {
   provisioner "local-exec" {
     interpreter = ["bash", "-ec"]
     command     = <<EOF
-export AWS_DEFAULT_REGION=${data.aws_region.current.name}
-export AWS_REGION=${data.aws_region.current.name}
+export AWS_DEFAULT_REGION=${data.aws_region.current.region}
+export AWS_REGION=${data.aws_region.current.region}
 
 echo "Triggering CodeBuild Project."
 START_RESULT=$(aws codebuild start-build --project-name ${aws_codebuild_project.analytics_eks_codebuild.id})
@@ -380,7 +380,7 @@ EOF
 resource "null_resource" "cleanup_bucket" {
   triggers = {
     bucket_name = aws_s3_bucket.jupyter_dask_source_config.id
-    region      = data.aws_region.current.name
+    region      = data.aws_region.current.region
     account     = data.aws_caller_identity.current.account_id
   }
 

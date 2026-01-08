@@ -39,18 +39,24 @@ resource "aws_iam_role" "titiler-mosaic-lambda-role" {
   ]
 }
 EOF
+}
 
-  managed_policy_arns = [
-    "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
-    "arn:aws:iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole"
-  ]
+resource "aws_iam_role_policy" "titiler-mosaic-lambda-inline-policy" {
+  name = "titiler-mosaic-lambda-inline-policy"
+  role = aws_iam_role.titiler-mosaic-lambda-role.id
 
-  inline_policy {
-    name = "titiler-mosaic-lambda-inline-policy"
+  policy = jsonencode({
+    Version   = "2012-10-17"
+    Statement = local.titiler_policy_stmts
+  })
+}
 
-    policy = jsonencode({
-      Version   = "2012-10-17"
-      Statement = local.titiler_policy_stmts
-    })
-  }
+resource "aws_iam_role_policy_attachment" "lambda_basic_execution" {
+  role       = aws_iam_role.titiler-mosaic-lambda-role.name
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+}
+
+resource "aws_iam_role_policy_attachment" "lambda_vpc_access" {
+  role       = aws_iam_role.titiler-mosaic-lambda-role.name
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole"
 }

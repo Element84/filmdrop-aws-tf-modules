@@ -79,7 +79,7 @@ resource "aws_codebuild_project" "titiler_docker_image" {
 
     environment_variable {
       name  = "AWS_DEFAULT_REGION"
-      value = data.aws_region.current.name
+      value = data.aws_region.current.region
     }
 
     environment_variable {
@@ -134,8 +134,8 @@ resource "null_resource" "trigger_codebuild" {
   provisioner "local-exec" {
     interpreter = ["/bin/bash", "-ec"]
     command     = <<EOF
-export AWS_DEFAULT_REGION=${data.aws_region.current.name}
-export AWS_REGION=${data.aws_region.current.name}
+export AWS_DEFAULT_REGION=${data.aws_region.current.region}
+export AWS_REGION=${data.aws_region.current.region}
 
 echo "Triggering CodeBuild Project."
 START_RESULT=$(aws codebuild start-build --project-name ${aws_codebuild_project.titiler_docker_image.id})
@@ -174,7 +174,7 @@ EOF
 resource "null_resource" "cleanup_bucket" {
   triggers = {
     bucket_name = aws_s3_bucket.docker_image_build_source.id
-    region      = data.aws_region.current.name
+    region      = data.aws_region.current.region
     account     = data.aws_caller_identity.current.account_id
   }
 

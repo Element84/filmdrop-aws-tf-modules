@@ -4,7 +4,7 @@ locals {
 
 
 resource "aws_iam_role" "shared_api_gw_logging_role" {
-  name_prefix = "${local.name_prefix}-${data.aws_region.current.name}-apigw-"
+  name_prefix = "${local.name_prefix}-${data.aws_region.current.region}-apigw-"
 
   assume_role_policy = <<-JSON_POLICY_STRING
   {
@@ -23,7 +23,7 @@ resource "aws_iam_role" "shared_api_gw_logging_role" {
 }
 
 resource "aws_iam_policy" "shared_api_gw_logging_role" {
-  name_prefix = "${local.name_prefix}-${data.aws_region.current.name}-apigw-log-policy-"
+  name_prefix = "${local.name_prefix}-${data.aws_region.current.region}-apigw-log-policy-"
 
   policy = <<-JSON_POLICY_STRING
   {

@@ -48,8 +48,8 @@ resource "aws_iam_role_policy" "docker_image_codebuild_iam_policy" {
     {
       "Effect": "Allow",
       "Resource": [
-        "arn:aws:logs:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:log-group:/filmdrop/daskhub_image_build",
-        "arn:aws:logs:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:log-group:/filmdrop/daskhub_image_build:*"
+        "arn:aws:logs:${data.aws_region.current.region}:${data.aws_caller_identity.current.account_id}:log-group:/filmdrop/daskhub_image_build",
+        "arn:aws:logs:${data.aws_region.current.region}:${data.aws_caller_identity.current.account_id}:log-group:/filmdrop/daskhub_image_build:*"
       ],
       "Action": [
         "logs:CreateLogGroup",
@@ -60,8 +60,8 @@ resource "aws_iam_role_policy" "docker_image_codebuild_iam_policy" {
     {
       "Effect": "Allow",
       "Resource": [
-        "arn:aws:logs:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:log-group:/aws/codebuild/daskhub-docker-image",
-        "arn:aws:logs:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:log-group:/aws/codebuild/daskhub-docker-image:*"
+        "arn:aws:logs:${data.aws_region.current.region}:${data.aws_caller_identity.current.account_id}:log-group:/aws/codebuild/daskhub-docker-image",
+        "arn:aws:logs:${data.aws_region.current.region}:${data.aws_caller_identity.current.account_id}:log-group:/aws/codebuild/daskhub-docker-image:*"
       ],
       "Action": [
         "logs:CreateLogGroup",
@@ -72,7 +72,7 @@ resource "aws_iam_role_policy" "docker_image_codebuild_iam_policy" {
     {
       "Effect": "Allow",
       "Resource": [
-        "arn:aws:s3:::codepipeline-${data.aws_region.current.name}-*"
+        "arn:aws:s3:::codepipeline-${data.aws_region.current.region}-*"
       ],
       "Action": [
         "s3:PutObject",
@@ -91,7 +91,7 @@ resource "aws_iam_role_policy" "docker_image_codebuild_iam_policy" {
         "codebuild:BatchPutTestCases"
       ],
       "Resource": [
-        "arn:aws:codebuild:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:report-group/daskhub-docker-image-*"
+        "arn:aws:codebuild:${data.aws_region.current.region}:${data.aws_caller_identity.current.account_id}:report-group/daskhub-docker-image-*"
       ]
     },
     {
@@ -110,7 +110,7 @@ resource "aws_iam_role_policy" "docker_image_codebuild_iam_policy" {
     {
       "Effect": "Allow",
       "Action": "ec2:CreateNetworkInterfacePermission",
-      "Resource": "arn:aws:ec2:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:network-interface/*"
+      "Resource": "arn:aws:ec2:${data.aws_region.current.region}:${data.aws_caller_identity.current.account_id}:network-interface/*"
     },
     {
       "Effect": "Allow",

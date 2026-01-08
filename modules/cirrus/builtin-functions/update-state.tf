@@ -180,7 +180,7 @@ resource "aws_cloudwatch_event_rule" "cirrus_update_state_rule" {
   "detail": {
     "stateMachineArn": [
       {
-        "prefix": "arn:aws:states:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:stateMachine:${var.resource_prefix}-"
+        "prefix": "arn:aws:states:${data.aws_region.current.region}:${data.aws_caller_identity.current.account_id}:stateMachine:${var.resource_prefix}-"
       }
     ],
     "status": [

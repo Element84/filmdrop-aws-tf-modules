@@ -46,7 +46,7 @@ data "aws_iam_policy_document" "workflow_metrics_cloudwatch_write_policy_doc" {
       "logs:DescribeLogStreams"
     ]
     resources = [
-      aws_cloudwatch_log_group.workflow_events.arn
+      "${aws_cloudwatch_log_group.workflow_events.arn}:*"
     ]
   }
 }
@@ -55,6 +55,7 @@ data "aws_iam_policy_document" "workflow_metrics_cloudwatch_read_policy_doc" {
   statement {
     actions = [
       "cloudwatch:GetMetricData",
+      "cloudwatch:ListMetrics"
     ]
     resources = [
       "*",
