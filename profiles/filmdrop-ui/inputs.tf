@@ -31,8 +31,8 @@ variable "security_group_id" {
   type        = string
 }
 
-variable "console_ui_inputs" {
-  description = "Inputs for console-ui FilmDrop deployment."
+variable "filmdrop_ui_inputs" {
+  description = "Inputs for filmdrop-ui FilmDrop deployment."
   type = object({
     app_name          = string
     domain_alias      = string

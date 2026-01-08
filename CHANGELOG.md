@@ -8,6 +8,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ## Unreleased
 
 - Removing stac-server module code and pointed to new location as stac-server terraform module code now lives in it's own [stac-server terraform repo](https://github.com/Element84/terraform-aws-stac-server) ([216](https://github.com/Element84/filmdrop-aws-tf-modules/pull/216)). 
+- Removing console-ui module and using an externally sourced module [filmdrop-ui](https://github.com/Element84/terraform-aws-filmdrop-ui) ([216](https://github.com/Element84/filmdrop-aws-tf-modules/pull/216)). 
+- Changing all `console-ui` references to `filmdrop-ui` to reflect name change
 
 ### Added
 

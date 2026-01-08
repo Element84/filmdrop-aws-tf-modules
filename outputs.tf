@@ -50,8 +50,8 @@ output "stac_opensearch_endpoint" {
   value = module.filmdrop.stac_opensearch_endpoint
 }
 
-output "console_ui_url" {
-  value = module.filmdrop.console_ui_url
+output "filmdrop_ui_url" {
+  value = module.filmdrop.filmdrop_ui_url
 }
 
 output "cirrus_dashboard_url" {
@@ -250,8 +250,8 @@ output "stac_server_api_lambda_arn" {
 }
 
 
-output "console_ui_bucket_name" {
-  value = module.filmdrop.console_ui_bucket_name
+output "filmdrop_ui_bucket_name" {
+  value = module.filmdrop.filmdrop_ui_bucket_name
 }
 
 output "cirrus_dashboard_bucket_name" {
