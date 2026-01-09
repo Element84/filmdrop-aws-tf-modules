@@ -34,6 +34,7 @@ variable "allowed_extensions_enabled" {
   DESCRIPTION
   default     = true
   type        = bool
+  nullable    = false
 }
 
 variable "cpl_vsil_curl_allowed_extensions" {
