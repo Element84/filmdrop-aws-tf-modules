@@ -144,7 +144,7 @@ analytics_inputs = {
   }
 }
 
-console_ui_inputs = {
+filmdrop_ui_inputs = {
   app_name          = "console"
   domain_alias      = ""
   deploy_cloudfront = false
@@ -155,8 +155,8 @@ console_ui_inputs = {
   }
   web_acl_id              = ""
   version                 = "v5.3.0"
-  filmdrop_ui_config_file = "./profiles/console-ui/default-config/config.dev.json"
-  filmdrop_ui_logo_file   = "./profiles/console-ui/default-config/logo.png"
+  filmdrop_ui_config_file = "./profiles/filmdrop-ui/default-config/config.dev.json"
+  filmdrop_ui_logo_file   = "./profiles/filmdrop-ui/default-config/logo.png"
   filmdrop_ui_logo        = "bm9uZQo=" # Base64: 'none'
   custom_error_response = [
     {
@@ -281,7 +281,7 @@ deploy_stac_server                       = true
 deploy_stac_server_outside_vpc           = false
 deploy_analytics                         = false
 deploy_titiler                           = true
-deploy_console_ui                        = true
+deploy_filmdrop_ui                       = true
 deploy_cirrus                            = true
 deploy_cirrus_dashboard                  = true
 deploy_local_stac_server_artifacts       = false

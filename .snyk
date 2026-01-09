@@ -67,9 +67,6 @@ ignore:
     - './profiles/core/../cirrus-dashboard/../../modules/cirrus-dashboard/iam.tf > *':
         reason: Open API - no auth required
         created: 2024-04-23T14:35:23.783Z
-    - './profiles/core/../console-ui/../../modules/console-ui/iam.tf > *':
-        reason: Open API - no auth required
-        created: 2024-04-23T14:35:23.783Z
     - './profiles/core/../stac-server/../../modules/cloudfront/apigw_endpoint/../custom_origin/iam.tf > *':
         reason: Open API - no auth required
         created: 2024-04-23T14:35:23.783Z
