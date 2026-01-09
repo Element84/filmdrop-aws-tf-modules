@@ -26,6 +26,17 @@ variable "vpc_security_group_ids" {
   type        = list(string)
 }
 
+variable "allowed_extensions_enabled" {
+  description = <<-DESCRIPTION
+  Controls whether the CPL_VSIL_CURL_ALLOWED_EXTENSIONS env var is enabled.
+
+  When asset href proxying is enabled in stac-server, asset hrefs do not include a file extension. The CPL_VSIL_CURL_ALLOWED_EXTENSIONS env var must be disabled or GDAl will ignore the extension-less asset URLs.
+  DESCRIPTION
+  default     = true
+  type        = bool
+  nullable    = false
+}
+
 variable "cpl_vsil_curl_allowed_extensions" {
   description = "CPL_VSIL_CURL_ALLOWED_EXTENSIONS lambda env var"
   default     = ".tif,.TIF,.tiff"
