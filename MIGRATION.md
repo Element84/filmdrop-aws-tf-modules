@@ -33,6 +33,8 @@ The Terraform AWS provider was updated from v5 to v6.
 
   - stac-server lambda runtimes should be bumped nodejs20 -> nodejs22
 
+  - If stac-server has asset proxying enabled and you're deploying titiler, set titiler's `allowed_extensions_enabled` to `false` so GDAL can access the extension-less proxy hrefs.
+
 ### TODO: - released, need to note which versions
 
 - Removes support for VPC creation. To retain the existing VPC resources, manually
