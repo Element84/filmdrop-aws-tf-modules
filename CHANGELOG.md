@@ -7,10 +7,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## Unreleased
 
-- Removing stac-server module code and pointed to new location as stac-server terraform module code now lives in it's own [stac-server terraform repo](https://github.com/Element84/terraform-aws-stac-server) ([216](https://github.com/Element84/filmdrop-aws-tf-modules/pull/216)). 
-- Removing console-ui module and using an externally sourced module [filmdrop-ui](https://github.com/Element84/terraform-aws-filmdrop-ui) ([216](https://github.com/Element84/filmdrop-aws-tf-modules/pull/216)). 
-- Changing all `console-ui` references to `filmdrop-ui` to reflect name change
-
 ### Added
 
 - A new stac_server_inputs.custom_vpce_id var added. If provided, the user is indicating that they have an existing vpc endpoint that the stac server api gateway (and supporting resources) should allow to ingress
@@ -23,6 +19,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 - TiTiler module will note three IAM related resources being created: aws_iam_role_policy.titiler-mosaic-lambda-inline-policy, aws_iam_role_policy_attachment.lambda_basic_execution, aws_iam_role_policy_attachment.lambda_vpc_access. This is a result of AWS provider deprecations to managed_policy and inline_policy properties. The TiTiler role in question will updated in place, resulting in no material changes to the role.
 
+- Removing internal stac-server terraform module code and pointed to new location as stac-server terraform module code now lives in it's own [stac-server terraform repo](https://github.com/Element84/terraform-aws-stac-server) ([216](https://github.com/Element84/filmdrop-aws-tf-modules/pull/216)). 
+
+- Removing internal console-ui terraform module and pointing to an externally sourced module [filmdrop-ui](https://github.com/Element84/terraform-aws-filmdrop-ui) ([216](https://github.com/Element84/filmdrop-aws-tf-modules/pull/216)). 
+
 ### Fixed
 
 - Corrected permissions in Workflow Metrics CloudWatch write policy to include
@@ -33,10 +33,15 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 - If you have stac server, cirrus, or titiler (as *private*) deployed`, Terraform will note that a null_resource.enable_access_logs is being destroyed for each. This is expected. Previously, api gateway access logs were enabled via this null resource; they are now enabled via an aws_api_gateway_stage resource.
 
+
+### Moved
+
+- Changed all `console-ui` references to `filmdrop-ui` as part of module extraction and renaming to align with broader FilmDrop ecosystem naming conventions.  All resources with `console-ui` naming will be destroyed/re-created with the new name convention [216](https://github.com/Element84/filmdrop-aws-tf-modules/pull/216)
+
 ### ⚠️ Breaking
 
 - See MIGRATION.md for important updates to the AWS provider version to v6, and the terraform-aws-stac-server module to v2
-
+- See MIGRATION.md for important information regarding the name change of the module `console-ui` to `filmdrop-ui`
 
 
 ## [2.58.0] - 2025-12-10
