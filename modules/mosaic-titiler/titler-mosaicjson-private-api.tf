@@ -176,6 +176,7 @@ resource "aws_api_gateway_integration_response" "titiler_root_options_integratio
   resource_id = aws_api_gateway_rest_api.titiler_api_gateway[0].root_resource_id
   http_method = aws_api_gateway_method.titiler_root_options_method[0].http_method
   status_code = aws_api_gateway_method_response.titiler_root_options_200[0].status_code
+  depends_on  = [aws_api_gateway_integration.titiler_root_options_integration]
   response_parameters = {
     "method.response.header.Access-Control-Allow-Headers" = "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'",
     "method.response.header.Access-Control-Allow-Methods" = "'GET,OPTIONS,POST,PUT'",
@@ -218,6 +219,7 @@ resource "aws_api_gateway_integration_response" "titiler_options_integration_res
   resource_id = aws_api_gateway_resource.titiler_api_gateway_proxy_resource[0].id
   http_method = aws_api_gateway_method.titiler_options_method[0].http_method
   status_code = aws_api_gateway_method_response.titiler_options_200[0].status_code
+  depends_on  = [aws_api_gateway_integration.titiler_options_integration]
   response_parameters = {
     "method.response.header.Access-Control-Allow-Headers" = "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'",
     "method.response.header.Access-Control-Allow-Methods" = "'GET,OPTIONS,POST,PUT'",
@@ -240,6 +242,10 @@ resource "aws_api_gateway_deployment" "titiler_api_gateway" {
   depends_on = [
     aws_api_gateway_integration.titiler_api_gateway_root_method_integration,
     aws_api_gateway_integration.titiler_api_gateway_proxy_resource_method_integration,
+    aws_api_gateway_integration.titiler_root_options_integration,
+    aws_api_gateway_integration.titiler_options_integration,
+    aws_api_gateway_integration_response.titiler_root_options_integration_response,
+    aws_api_gateway_integration_response.titiler_options_integration_response,
   ]
 
   rest_api_id = aws_api_gateway_rest_api.titiler_api_gateway[0].id
@@ -327,5 +333,5 @@ resource "aws_api_gateway_base_path_mapping" "titiler_api_gateway_domain_mapping
   domain_name    = aws_api_gateway_domain_name.titiler_api_gateway_domain_name[0].domain_name
   domain_name_id = aws_api_gateway_domain_name.titiler_api_gateway_domain_name[0].domain_name_id
   api_id         = aws_api_gateway_rest_api.titiler_api_gateway[0].id
-  stage_name     = local.stage_name
+  stage_name     = aws_api_gateway_stage.titiler_api_gateway_stage[0].stage_name
 }
