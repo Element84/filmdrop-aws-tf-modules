@@ -1,5 +1,5 @@
 module "filmdrop-ui" {
-  source = "git::https://github.com/Element84/terraform-aws-filmdrop-ui.git?ref=v1.0.0"
+  source = "git::https://github.com/Element84/terraform-aws-filmdrop-ui.git?ref=v1.0.1"
 
   vpc_id                 = var.vpc_id
   vpc_private_subnet_ids = var.private_subnet_ids
@@ -7,9 +7,10 @@ module "filmdrop-ui" {
 
   filmdrop_ui_release_tag = var.filmdrop_ui_inputs.version
 
-  filmdrop_ui_config    = filebase64(var.filmdrop_ui_inputs.filmdrop_ui_config_file)
-  filmdrop_ui_logo_file = var.filmdrop_ui_inputs.filmdrop_ui_logo_file
-  filmdrop_ui_logo      = filebase64(var.filmdrop_ui_inputs.filmdrop_ui_logo_file)
+  filmdrop_ui_config      = filebase64(var.filmdrop_ui_inputs.filmdrop_ui_config_file)
+  filmdrop_ui_logo_file   = var.filmdrop_ui_inputs.filmdrop_ui_logo_file
+  filmdrop_ui_logo        = filebase64(var.filmdrop_ui_inputs.filmdrop_ui_logo_file)
+  filmdrop_ui_bucket_name = var.filmdrop_ui_inputs.deploy_s3_bucket == false ? var.filmdrop_ui_inputs.external_content_bucket.external_content_website_bucket_name : var.filmdrop_ui_inputs.deploy_cloudfront ? module.cloudfront_s3_website[0].content_bucket_name : module.content_website[0].content_bucket
 }
 
 module "cloudfront_s3_website" {

@@ -10,8 +10,6 @@ a newer version. For example, if a new required variable is added, this should b
 
 - As part of extracting the `console-ui` module it was renamed to the `filmdrop-ui` to bring it in line with the naming conventions of other parts of the FilmDrop ecosystem.  ANY resource that previously used `console-ui` in the name wil be deleted/created anew by the renaming. Handling migration will requiring updating `console-ui` input variables to use the new `filmdrop-ui` naming.
 
-- The naming convention of the S3 bucket that holds the AWS CodeBuild `buildspec.yml` have changed and applying these changes will result in the destruction and creation of this S3 bucket.
-
 - [stac-server](https://github.com/Element84/terraform-aws-stac-server)
 - [filmdrop-ui](https://github.com/Element84/terraform-aws-filmdrop-ui)
 
