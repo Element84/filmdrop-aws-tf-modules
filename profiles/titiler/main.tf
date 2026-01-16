@@ -22,6 +22,7 @@ module "titiler" {
   private_certificate_arn                   = var.titiler_inputs.private_certificate_arn
   vpce_private_dns_enabled                  = var.titiler_inputs.vpce_private_dns_enabled
   custom_vpce_id                            = var.titiler_inputs.custom_vpce_id
+  allowed_extensions_enabled                = var.titiler_inputs.allowed_extensions_enabled
 }
 
 module "cloudfront_api_gateway_endpoint" {

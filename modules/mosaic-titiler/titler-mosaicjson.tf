@@ -58,25 +58,29 @@ resource "aws_lambda_function" "titiler-mosaic-lambda" {
   runtime   = var.lambda_runtime
 
   environment {
-    variables = {
-      CPL_VSIL_CURL_ALLOWED_EXTENSIONS   = var.cpl_vsil_curl_allowed_extensions
-      CPL_VSIL_CURL_CACHE_SIZE           = "200000000"
-      GDAL_CACHEMAX                      = var.gdal_cachemax
-      GDAL_DISABLE_READDIR_ON_OPEN       = var.gdal_disable_readdir_on_open
-      GDAL_HTTP_MERGE_CONSECUTIVE_RANGES = var.gdal_http_merge_consecutive_ranges
-      GDAL_HTTP_MULTIPLEX                = var.gdal_http_multiplex
-      GDAL_HTTP_VERSION                  = var.gdal_http_version
-      GDAL_BAND_BLOCK_CACHE              = "HASHSET"
-      PYTHONWARNINGS                     = var.pythonwarnings
-      VSI_CACHE                          = var.vsi_cache
-      VSI_CACHE_SIZE                     = var.vsi_cache_size
-      AWS_REQUEST_PAYER                  = var.aws_request_payer
-      GDAL_INGESTED_BYTES_AT_OPEN        = var.gdal_ingested_bytes_at_open
-      MOSAIC_BACKEND                     = "dynamodb://"
-      MOSAIC_HOST                        = "${data.aws_region.current.region}/${aws_dynamodb_table.titiler-mosaic-dynamodb-table.name}"
-      REQUEST_HOST_HEADER_OVERRIDE       = var.request_host_header_override
-      MOSAIC_TILE_TIMEOUT                = var.mosaic_tile_timeout
-    }
+    variables = merge(
+      {
+        CPL_VSIL_CURL_CACHE_SIZE           = "200000000"
+        GDAL_CACHEMAX                      = var.gdal_cachemax
+        GDAL_DISABLE_READDIR_ON_OPEN       = var.gdal_disable_readdir_on_open
+        GDAL_HTTP_MERGE_CONSECUTIVE_RANGES = var.gdal_http_merge_consecutive_ranges
+        GDAL_HTTP_MULTIPLEX                = var.gdal_http_multiplex
+        GDAL_HTTP_VERSION                  = var.gdal_http_version
+        GDAL_BAND_BLOCK_CACHE              = "HASHSET"
+        PYTHONWARNINGS                     = var.pythonwarnings
+        VSI_CACHE                          = var.vsi_cache
+        VSI_CACHE_SIZE                     = var.vsi_cache_size
+        AWS_REQUEST_PAYER                  = var.aws_request_payer
+        GDAL_INGESTED_BYTES_AT_OPEN        = var.gdal_ingested_bytes_at_open
+        MOSAIC_BACKEND                     = "dynamodb://"
+        MOSAIC_HOST                        = "${data.aws_region.current.region}/${aws_dynamodb_table.titiler-mosaic-dynamodb-table.name}"
+        REQUEST_HOST_HEADER_OVERRIDE       = var.request_host_header_override
+        MOSAIC_TILE_TIMEOUT                = var.mosaic_tile_timeout
+      },
+      var.allowed_extensions_enabled ? {
+        CPL_VSIL_CURL_ALLOWED_EXTENSIONS = var.cpl_vsil_curl_allowed_extensions
+      } : {}
+    )
   }
 
   vpc_config {

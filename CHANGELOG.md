@@ -13,6 +13,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 - A new titiler_inputs.custom_vpce_id var added. If provided, the user is indicating that they have an existing vpc endpoint that the titiler api gateway (and supporting resources) should allow to ingress
 
+- A new titiler_inputs.allowed_extensions_enabled var added. Set to `false` (default is `true`) to exclude the GDAL's `CPL_VSIL_CURL_ALLOWED_EXTENSIONS` env var from the titiler API Lambda environment. This allows GDAL to access extension-less proxy hrefs when asset proxying is enabled in stac-server.
+
 ### Changed
 
 - Minor changes ([#218](https://github.com/Element84/filmdrop-aws-tf-modules/pull/218)) to how TiTiler behaves when is_private_endpoint = true, supporting communications with its API Gateway and VPC Endpoint

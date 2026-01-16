@@ -39,6 +39,7 @@ variable "titiler_inputs" {
     vpce_private_dns_enabled                  = optional(bool)
     custom_vpce_id                            = optional(string)
     private_api_additional_security_group_ids = optional(list(string))
+    allowed_extensions_enabled                = optional(bool)
     auth_function = object({
       cf_function_name             = string
       cf_function_runtime          = string
@@ -66,6 +67,7 @@ variable "titiler_inputs" {
     vpce_private_dns_enabled                  = false
     custom_vpce_id                            = null
     private_api_additional_security_group_ids = null
+    allowed_extensions_enabled                = true
     auth_function = {
       cf_function_name             = ""
       cf_function_runtime          = "cloudfront-js-2.0"
