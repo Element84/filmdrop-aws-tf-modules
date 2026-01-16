@@ -50,8 +50,8 @@ output "stac_opensearch_endpoint" {
   value = var.deploy_stac_server ? module.stac-server[0].stac_opensearch_endpoint : ""
 }
 
-output "console_ui_url" {
-  value = var.deploy_console_ui ? module.console-ui[0].console_ui_url : ""
+output "filmdrop_ui_url" {
+  value = var.deploy_filmdrop_ui ? module.filmdrop-ui[0].filmdrop_ui_url : ""
 }
 
 output "cirrus_dashboard_url" {
@@ -251,8 +251,8 @@ output "stac_server_api_lambda_arn" {
 }
 
 
-output "console_ui_bucket_name" {
-  value = var.deploy_console_ui ? module.console-ui[0].console_ui_bucket_name : ""
+output "filmdrop_ui_bucket_name" {
+  value = var.deploy_filmdrop_ui ? module.filmdrop-ui[0].filmdrop_ui_bucket_name : ""
 }
 
 output "cirrus_dashboard_bucket_name" {

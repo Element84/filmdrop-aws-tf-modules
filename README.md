@@ -133,7 +133,7 @@ Outputs:
 
 analytics_url = "https://someid.cloudfront.net"
 cirrus_dashboard_url = "https://someotherid.cloudfront.net"
-console_ui_url = "https://adifferentid.cloudfront.net"
+filmdrop_ui_url = "https://adifferentid.cloudfront.net"
 private_avaliability_zones = tolist([
   "us-west-2c",
   "us-west-2b",
@@ -218,7 +218,7 @@ If your account exceeded that limit while deploying, you may see an error messag
 ```text
 │ Error: creating WAF Rule (FilmDropWAFIPBlockRulefdtestpjgtestconsole): WAFLimitsExceededException: Operation would result in exceeding resource limits.
 │ 
-│   with module.filmdrop.module.console-ui[0].module.cloudfront_s3_website.module.cloudfront_distribution.module.cloudfront_waf[0].aws_waf_rule.fd_waf_ip_block_wafrule,
+│   with module.filmdrop.module.filmdrop-ui[0].module.cloudfront_s3_website.module.cloudfront_distribution.module.cloudfront_waf[0].aws_waf_rule.fd_waf_ip_block_wafrule,
 │   on modules/cloudfront/waf/waf_cloudfront.tf line 40, in resource "aws_waf_rule" "fd_waf_ip_block_wafrule":
 │   40: resource "aws_waf_rule" "fd_waf_ip_block_wafrule" {
 ```
@@ -245,7 +245,7 @@ deploy_log_archive                  = false
 deploy_stac_server                  = false
 deploy_analytics                    = false
 deploy_titiler                      = false
-deploy_console_ui                   = false
+deploy_filmdrop_ui                  = false
 deploy_cirrus_dashboard             = false
 deploy_local_stac_server_artifacts  = false
 deploy_waf_rule                     = false
