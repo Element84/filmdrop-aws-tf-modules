@@ -350,8 +350,8 @@ variable "analytics_inputs" {
   }
 }
 
-variable "console_ui_inputs" {
-  description = "Inputs for console-ui FilmDrop deployment."
+variable "filmdrop_ui_inputs" {
+  description = "Inputs for filmdrop-ui FilmDrop deployment."
   type = object({
     app_name          = string
     domain_alias      = string
@@ -402,8 +402,8 @@ variable "console_ui_inputs" {
       }
     ]
     version                 = "v5.3.0"
-    filmdrop_ui_config_file = "./profiles/console-ui/default-config/config.dev.json"
-    filmdrop_ui_logo_file   = "./profiles/console-ui/default-config/logo.png"
+    filmdrop_ui_config_file = "./profiles/filmdrop-ui/default-config/config.dev.json"
+    filmdrop_ui_logo_file   = "./profiles/filmdrop-ui/default-config/logo.png"
     filmdrop_ui_logo        = "bm9uZQo=" # Base64: 'none'
     auth_function = {
       cf_function_name             = ""
@@ -655,7 +655,7 @@ variable "deploy_titiler" {
   description = "Deploy FilmDrop TiTiler stack"
 }
 
-variable "deploy_console_ui" {
+variable "deploy_filmdrop_ui" {
   type        = bool
   default     = true
   description = "Deploy FilmDrop Console UI stack"

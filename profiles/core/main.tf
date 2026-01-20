@@ -104,9 +104,9 @@ module "analytics" {
   fd_web_acl_id              = var.deploy_waf_rule ? module.base_infra.web_acl_id : var.ext_web_acl_id
 }
 
-module "console-ui" {
-  count  = var.deploy_console_ui ? 1 : 0
-  source = "../console-ui"
+module "filmdrop-ui" {
+  count  = var.deploy_filmdrop_ui ? 1 : 0
+  source = "../filmdrop-ui"
 
   providers = {
     aws.east = aws.east
@@ -118,7 +118,7 @@ module "console-ui" {
   security_group_id      = module.base_infra.security_group_id
   project_name           = var.project_name
   environment            = var.environment
-  console_ui_inputs      = var.console_ui_inputs
+  filmdrop_ui_inputs     = var.filmdrop_ui_inputs
   domain_zone            = var.domain_zone
   s3_logs_archive_bucket = module.base_infra.s3_logs_archive_bucket
   fd_web_acl_id          = var.deploy_waf_rule ? module.base_infra.web_acl_id : var.ext_web_acl_id

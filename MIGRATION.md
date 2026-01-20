@@ -5,6 +5,14 @@ a newer version. For example, if a new required variable is added, this should b
 
 ### Unreleased
 
+
+**MOVED: `console-ui` -> `filmdrop-ui`**
+
+- As part of extracting the `console-ui` module it was renamed to the `filmdrop-ui` to bring it in line with the naming conventions of other parts of the FilmDrop ecosystem.  ANY resource that previously used `console-ui` in the name wil be deleted/created anew by the renaming. Handling migration will requiring updating `console-ui` input variables to use the new `filmdrop-ui` naming.
+
+- [stac-server](https://github.com/Element84/terraform-aws-stac-server)
+- [filmdrop-ui](https://github.com/Element84/terraform-aws-filmdrop-ui)
+
 **AWS Provider Upgrade v5 -> v6**
 
 The Terraform AWS provider was updated from v5 to v6.

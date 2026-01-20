@@ -1,0 +1,19 @@
+{
+  "APP_NAME": "FilmDrop Console",
+  "PUBLIC_URL": "https://console.dev.example.com",
+  "LOGO_URL": "./logo.png",
+  "LOGO_ALT": "FilmDrop Console Logo",
+  "STAC_API_URL": "https://stac-api.dev.example.com",
+  "DEFAULT_COLLECTION": "some-collection",
+  "STAC_LINK_ENABLED": true,
+  "SEARCH_BY_GEOM_ENABLED": true,
+  "SHOW_ITEM_AUTO_ZOOM": true,
+  "DASHBOARD_BTN_URL": "https://dashboard.dev.example.com",
+  "ANALYZE_BTN_URL": "https://analytics.dev.example.com/",
+  "SEARCH_MIN_ZOOM_LEVELS": {},
+  "SCENE_TILER_URL": "https://titiler.dev.example.com",
+  "SCENE_TILER_PARAMS": {},
+  "MOSAIC_TILER_URL": "https://titiler.dev.example.com",
+  "MOSAIC_TILER_PARAMS": {},
+  "POPUP_DISPLAY_FIELDS": {}
+}

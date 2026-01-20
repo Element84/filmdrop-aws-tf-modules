@@ -86,7 +86,7 @@ module "cloudfront_api_gateway_endpoint" {
 
 module "historical_ingest" {
   count  = var.stac_server_inputs.ingest.include_historical_ingest || var.stac_server_inputs.ingest.destination_collections_list != "" ? 1 : 0
-  source = "../../modules/stac-server/historical-ingest"
+  source = "git::https://github.com/Element84/terraform-aws-stac-server.git//modules/historical-ingest?ref=v2.0.0"
 
   source_catalog_url               = var.stac_server_inputs.ingest.source_catalog_url
   destination_catalog_url          = var.stac_server_inputs.deploy_cloudfront ? "https://${module.cloudfront_api_gateway_endpoint[0].domain_name}" : "https://${module.stac-server.stac_server_api_domain_name}${module.stac-server.stac_server_api_path}"
@@ -108,9 +108,8 @@ module "historical_ingest" {
 }
 
 module "ongoing_ingest" {
-  count  = var.stac_server_inputs.ingest.include_ongoing_ingest ? 1 : 0
-  source = "../../modules/stac-server/ongoing-ingest"
-
+  count                            = var.stac_server_inputs.ingest.include_ongoing_ingest ? 1 : 0
+  source                           = "git::https://github.com/Element84/terraform-aws-stac-server.git//modules/ongoing-ingest?ref=v2.0.0"
   source_sns_arn                   = var.stac_server_inputs.ingest.source_sns_arn
   ingest_sqs_arn                   = module.stac-server.stac_server_ingest_queue_arn
   destination_collections_list     = var.stac_server_inputs.ingest.destination_collections_list
