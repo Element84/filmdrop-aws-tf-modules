@@ -286,6 +286,7 @@ deploy_stac_server                       = true
 deploy_stac_server_outside_vpc           = false
 deploy_analytics                         = true
 deploy_titiler                           = true
+deploy_filmdrop_titiler                  = false
 deploy_filmdrop_ui                       = true
 deploy_cirrus                            = true
 deploy_cirrus_dashboard                  = true

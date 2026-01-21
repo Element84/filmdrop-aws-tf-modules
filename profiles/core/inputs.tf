@@ -288,6 +288,66 @@ variable "titiler_inputs" {
   }
 }
 
+variable "filmdrop_titiler_inputs" {
+  description = "Inputs for titiler FilmDrop deployment."
+  type = object({
+    app_name                                  = string
+    domain_alias                              = string
+    deploy_cloudfront                         = bool
+    version                                   = string
+    authorized_s3_arns                        = list(string)
+    titiler_waf_allowed_url                   = string
+    titiler_host_header                       = string
+    mosaic_tile_timeout                       = number
+    web_acl_id                                = string
+    is_private_endpoint                       = optional(bool)
+    api_method_authorization_type             = optional(string)
+    private_certificate_arn                   = optional(string)
+    vpce_private_dns_enabled                  = optional(bool)
+    custom_vpce_id                            = optional(string)
+    private_api_additional_security_group_ids = optional(list(string))
+    allowed_extensions_enabled                = optional(bool)
+    auth_function = object({
+      cf_function_name             = string
+      cf_function_runtime          = string
+      cf_function_code_path        = string
+      attach_cf_function           = bool
+      cf_function_event_type       = string
+      create_cf_function           = bool
+      create_cf_basicauth_function = bool
+      cf_function_arn              = string
+    })
+  })
+  default = {
+    app_name                                  = "titiler"
+    domain_alias                              = ""
+    deploy_cloudfront                         = true
+    version                                   = "v0.14.0-1.0.5"
+    authorized_s3_arns                        = []
+    titiler_waf_allowed_url                   = ""
+    titiler_host_header                       = ""
+    mosaic_tile_timeout                       = 30
+    web_acl_id                                = ""
+    is_private_endpoint                       = false
+    api_method_authorization_type             = "NONE"
+    private_certificate_arn                   = ""
+    vpce_private_dns_enabled                  = false
+    custom_vpce_id                            = null
+    private_api_additional_security_group_ids = null
+    allowed_extensions_enabled                = true
+    auth_function = {
+      cf_function_name             = ""
+      cf_function_runtime          = "cloudfront-js-2.0"
+      cf_function_code_path        = ""
+      attach_cf_function           = false
+      cf_function_event_type       = "viewer-request"
+      create_cf_function           = false
+      create_cf_basicauth_function = false
+      cf_function_arn              = ""
+    }
+  }
+}
+
 variable "analytics_inputs" {
   description = "Inputs for analytics FilmDrop deployment."
   type = object({
@@ -642,6 +702,12 @@ variable "deploy_titiler" {
   type        = bool
   default     = true
   description = "Deploy FilmDrop TiTiler stack"
+}
+
+variable "deploy_filmdrop_titiler" {
+  type        = bool
+  default     = true
+  description = "Boolean flag to deploy new filmdrop TiTiler or not"
 }
 
 variable "deploy_filmdrop_ui" {

@@ -655,6 +655,12 @@ variable "deploy_titiler" {
   description = "Deploy FilmDrop TiTiler stack"
 }
 
+variable "deploy_filmdrop_titiler" {
+  type        = bool
+  default     = true
+  description = "Boolean flag to deploy new filmdrop TiTiler or not"
+}
+
 variable "deploy_filmdrop_ui" {
   type        = bool
   default     = true

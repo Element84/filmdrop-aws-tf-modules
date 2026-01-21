@@ -21,7 +21,7 @@ variable "vpc_id" {
   description = "ID for the VPC"
 }
 
-variable "titiler_inputs" {
+variable "filmdrop_titiler_inputs" {
   description = "Inputs for titiler FilmDrop deployment."
   type = object({
     app_name                                  = string

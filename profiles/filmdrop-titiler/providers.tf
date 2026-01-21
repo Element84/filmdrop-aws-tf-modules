@@ -5,7 +5,8 @@ terraform {
       source  = "hashicorp/aws"
       version = "~> 6.0"
       configuration_aliases = [
-        aws.east
+        aws.east,
+        aws.main
       ]
     }
     null = {
