@@ -161,6 +161,14 @@ resource "aws_lambda_function" "cirrus_api" {
   ]
 }
 
+resource "aws_lambda_provisioned_concurrency_config" "stac_server_api_provisioned_concurrency" {
+  count = var.cirrus_api_provisioned_concurrency > 0 ? 1 : 0
+
+  function_name                     = aws_lambda_function.cirrus_api.function_name
+  provisioned_concurrent_executions = var.cirrus_api_provisioned_concurrency
+  qualifier                         = aws_lambda_function.cirrus_api.version
+}
+
 resource "aws_security_group" "cirrus_api_gateway_private_vpce" {
   count = local.is_private_endpoint ? 1 : 0
 
