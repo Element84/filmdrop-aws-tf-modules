@@ -448,7 +448,7 @@ variable "cirrus_inputs" {
     api_lambda = object({
       timeout                 = number
       memory                  = number
-      provisioned_concurrency = optional(number)
+      provisioned_concurrency = number
     })
     process_lambda = object({
       timeout              = number

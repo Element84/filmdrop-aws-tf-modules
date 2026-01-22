@@ -445,8 +445,9 @@ variable "cirrus_inputs" {
     lambda_zip_filepath = optional(string)
     lambda_pyversion    = optional(string)
     api_lambda = object({
-      timeout = number
-      memory  = number
+      timeout                 = number
+      memory                  = number
+      provisioned_concurrency = number
     })
     process_lambda = object({
       timeout              = number
@@ -504,8 +505,9 @@ variable "cirrus_inputs" {
     lambda_zip_filepath = null
     lambda_pyversion    = null
     api_lambda = {
-      timeout = 10
-      memory  = 512
+      timeout                 = 10
+      memory                  = 512
+      provisioned_concurrency = 0
     }
     process_lambda = {
       timeout              = 10
