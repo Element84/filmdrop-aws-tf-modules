@@ -20,6 +20,7 @@ module "builtin_functions" {
   cirrus_private_api_additional_security_group_ids = var.cirrus_private_api_additional_security_group_ids
   cirrus_api_lambda_timeout                        = var.cirrus_api_lambda_timeout
   cirrus_api_lambda_memory                         = var.cirrus_api_lambda_memory
+  cirrus_api_provisioned_concurrency               = var.cirrus_api_provisioned_concurrency
   cirrus_process_lambda_timeout                    = var.cirrus_process_lambda_timeout
   cirrus_process_lambda_memory                     = var.cirrus_process_lambda_memory
   cirrus_process_lambda_reserved_concurrency       = var.cirrus_process_lambda_reserved_concurrency

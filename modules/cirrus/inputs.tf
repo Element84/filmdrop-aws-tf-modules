@@ -186,6 +186,12 @@ variable "cirrus_api_lambda_memory" {
   default     = 512
 }
 
+variable "cirrus_api_provisioned_concurrency" {
+  description = "Number of lambda instances to optionally concurrently provison"
+  type        = number
+  default     = 0
+}
+
 variable "cirrus_process_lambda_timeout" {
   description = <<-DESCRIPTION
   (Optional) Cirrus `process` lambda timeout (seconds).

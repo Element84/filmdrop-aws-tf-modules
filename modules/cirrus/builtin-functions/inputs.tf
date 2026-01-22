@@ -20,12 +20,6 @@ variable "cirrus_payload_bucket" {
   type        = string
 }
 
-variable "cirrus_api_provisioned_concurrency" {
-  description = "Number of lambda instances to concurrently provison if desird for faster api response time and no cold start delay"
-  type        = number
-  default     = 0
-}
-
 variable "cirrus_lambda_version" {
   description = <<-DESCRIPTION
   (Optional) Version of Cirrus lambda to deploy. Defaults to the Cirrus version associated with this FilmDrop release.
@@ -263,6 +257,12 @@ variable "cirrus_api_stage_description" {
   description = "Cirrus API stage description"
   type        = string
   default     = ""
+}
+
+variable "cirrus_api_provisioned_concurrency" {
+  description = "Number of lambda instances to optionally concurrently provison"
+  type        = number
+  default     = 0
 }
 
 variable "warning_sns_topic_arn" {
