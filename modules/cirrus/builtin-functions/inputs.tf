@@ -262,7 +262,6 @@ variable "cirrus_api_stage_description" {
 variable "cirrus_api_provisioned_concurrency" {
   description = "Number of lambda instances to optionally concurrently provison"
   type        = number
-  default     = 0
 }
 
 variable "warning_sns_topic_arn" {
