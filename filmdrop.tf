@@ -20,6 +20,7 @@ module "filmdrop" {
   domain_zone                              = var.domain_zone
   stac_server_inputs                       = var.stac_server_inputs
   titiler_inputs                           = var.titiler_inputs
+  filmdrop_titiler_inputs                  = var.filmdrop_titiler_inputs
   analytics_inputs                         = var.analytics_inputs
   filmdrop_ui_inputs                       = var.filmdrop_ui_inputs
   cirrus_inputs                            = var.cirrus_inputs

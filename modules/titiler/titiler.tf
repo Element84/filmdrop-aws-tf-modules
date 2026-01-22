@@ -36,7 +36,7 @@ resource "null_resource" "download-lambda-source-bundle" {
 mkdir -p ${path.module}/lambda
 which wget || echo "wget is required, but not found - this is going to fail..."
 wget --secure-protocol=TLSv1_2 --quiet \
-  https://github.com/Element84/filmdrop-titiler/releases/download/${var.titiler_release_tag}/lambda-${var.lambda_runtime}.zip \
+  https://github.com/Element84/filmdrop-titiler/releases/download/${var.titiler_release_tag}/titiler-lambda-${var.lambda_runtime}.zip \
   -O ${path.module}/lambda/${var.titiler_release_tag}-lambda-${var.lambda_runtime}.zip
 aws s3 cp --quiet \
   ${path.module}/lambda/${var.titiler_release_tag}-lambda-${var.lambda_runtime}.zip \
@@ -54,7 +54,7 @@ resource "aws_lambda_function" "titiler-lambda" {
 
   s3_bucket = aws_s3_bucket.lambda-source.id
   s3_key    = "${var.titiler_release_tag}-lambda-${var.lambda_runtime}-${null_resource.download-lambda-source-bundle.id}.zip"
-  handler   = "handler.handler"
+  handler   = "filmdrop_titiler.application.handler"
   runtime   = var.lambda_runtime
 
   environment {
