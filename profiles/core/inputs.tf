@@ -448,7 +448,7 @@ variable "cirrus_inputs" {
     api_lambda = object({
       timeout                 = number
       memory                  = number
-      provisioned_concurrency = number
+      provisioned_concurrency = optional(number)
     })
     process_lambda = object({
       timeout              = number
@@ -506,9 +506,8 @@ variable "cirrus_inputs" {
     lambda_zip_filepath = null
     lambda_pyversion    = null
     api_lambda = {
-      timeout                 = 10
-      memory                  = 512
-      provisioned_concurrency = 0
+      timeout = 10
+      memory  = 512
     }
     process_lambda = {
       timeout              = 10
