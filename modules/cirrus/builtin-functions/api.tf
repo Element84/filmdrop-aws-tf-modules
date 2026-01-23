@@ -161,7 +161,7 @@ resource "aws_lambda_function" "cirrus_api" {
   ]
 }
 
-resource "aws_lambda_provisioned_concurrency_config" "stac_server_api_provisioned_concurrency" {
+resource "aws_lambda_provisioned_concurrency_config" "cirrus_api_provisioned_concurrency" {
   count = var.cirrus_api_provisioned_concurrency > 0 ? 1 : 0
 
   function_name                     = aws_lambda_function.cirrus_api.function_name
