@@ -20,46 +20,51 @@ sns_critical_subscriptions_map = {}
 
 ##### APPLICATION VARIABLES ####
 stac_server_inputs = {
-  app_name                                    = "stac_server"
-  version                                     = null
-  stac_id                                     = "stac-server"
-  stac_title                                  = "STAC API"
-  stac_title                                  = "A STAC API using stac-server"
-  api_rest_type                               = "EDGE"
-  api_method_authorization_type               = "NONE"
-  deploy_cloudfront                           = true
-  web_acl_id                                  = ""
-  domain_alias                                = ""
-  enable_transactions_extension               = false
-  enable_collections_authx                    = false
-  enable_filter_authx                         = false
-  enable_response_compression                 = true
-  items_max_limit                             = 100
-  enable_ingest_action_truncate               = false
-  collection_to_index_mappings                = ""
-  opensearch_version                          = "OpenSearch_2.19"
-  opensearch_cluster_instance_type            = "t3.small.search"
-  opensearch_cluster_instance_count           = 3
-  opensearch_cluster_dedicated_master_enabled = true
+  app_name                      = "stac_server"
+  version                       = null
+  stac_id                       = "stac-server"
+  stac_title                    = "STAC API"
+  stac_title                    = "A STAC API using stac-server"
+  api_rest_type                 = "EDGE"
+  api_method_authorization_type = "NONE"
+  deploy_cloudfront             = false
+  web_acl_id                    = ""
+  domain_alias                  = ""
+  enable_transactions_extension = false
+  enable_collections_authx      = false
+  enable_filter_authx           = false
+  enable_response_compression   = true
+  items_max_limit               = 100
+  enable_ingest_action_truncate = false
+  collection_to_index_mappings  = ""
+  opensearch_version            = "OpenSearch_2.19"
+
+  # smallest instance/cluster size option, appropriate for only for test environments
+  opensearch_cluster_instance_type           = "t3.small.search"
+  opensearch_cluster_instance_count          = 1
+  opensearch_cluster_zone_awareness_enabled  = false
+  opensearch_cluster_availability_zone_count = 1
+
+  opensearch_cluster_dedicated_master_enabled = false
   opensearch_cluster_dedicated_master_type    = "t3.small.search"
   opensearch_cluster_dedicated_master_count   = 3
-  opensearch_cluster_availability_zone_count  = 3
-  opensearch_ebs_volume_size                  = 35
-  opensearch_override_main_response_version   = null
-  ingest_sns_topic_arns                       = []
-  additional_ingest_sqs_senders_arns          = []
-  cors_origin                                 = "*"
-  cors_credentials                            = false
-  cors_methods                                = ""
-  cors_headers                                = ""
-  authorized_s3_arns                          = []
-  private_api_additional_security_group_ids   = null
-  api_lambda                                  = null
-  ingest_lambda                               = null
-  pre_hook_lambda                             = null
-  private_certificate_arn                     = ""
-  vpce_private_dns_enabled                    = false
-  custom_vpce_id                              = null
+
+  opensearch_ebs_volume_size                = 35
+  opensearch_override_main_response_version = null
+  ingest_sns_topic_arns                     = []
+  additional_ingest_sqs_senders_arns        = []
+  cors_origin                               = "*"
+  cors_credentials                          = false
+  cors_methods                              = ""
+  cors_headers                              = ""
+  authorized_s3_arns                        = []
+  private_api_additional_security_group_ids = null
+  api_lambda                                = null
+  ingest_lambda                             = null
+  pre_hook_lambda                           = null
+  private_certificate_arn                   = ""
+  vpce_private_dns_enabled                  = false
+  custom_vpce_id                            = null
   auth_function = {
     cf_function_name             = ""
     cf_function_runtime          = "cloudfront-js-2.0"
@@ -279,18 +284,18 @@ cirrus_dashboard_inputs = {
 ##### INFRASTRUCTURE FLAGS ####
 # To disable each flag: set to 'false'; to enable: set to 'true'
 deploy_vpc                               = false
-deploy_vpc_search                        = true
-deploy_log_archive                       = true
+deploy_vpc_search                        = false
+deploy_log_archive                       = false
 deploy_stac_server_opensearch_serverless = false
-deploy_stac_server                       = true
+deploy_stac_server                       = false
 deploy_stac_server_outside_vpc           = false
-deploy_analytics                         = true
-deploy_titiler                           = true
-deploy_filmdrop_ui                       = true
-deploy_cirrus                            = true
-deploy_cirrus_dashboard                  = true
+deploy_analytics                         = false
+deploy_titiler                           = false
+deploy_filmdrop_ui                       = false
+deploy_cirrus                            = false
+deploy_cirrus_dashboard                  = false
 deploy_local_stac_server_artifacts       = false
-deploy_waf_rule                          = true
+deploy_waf_rule                          = false
 
 
 #### WAF Rule Settings
