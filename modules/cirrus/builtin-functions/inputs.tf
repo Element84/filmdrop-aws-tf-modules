@@ -259,6 +259,11 @@ variable "cirrus_api_stage_description" {
   default     = ""
 }
 
+variable "cirrus_api_provisioned_concurrency" {
+  description = "Number of lambda instances to optionally concurrently provison"
+  type        = number
+}
+
 variable "warning_sns_topic_arn" {
   description = "String with FilmDrop Warning SNS topic ARN"
   type        = string

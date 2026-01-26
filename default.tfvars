@@ -213,8 +213,9 @@ cirrus_inputs = {
   lambda_zip_filepath = null
   lambda_pyversion    = null
   api_lambda = {
-    timeout = 10
-    memory  = 512
+    timeout                 = 10
+    memory                  = 512
+    provisioned_concurrency = 0
   }
   process_lambda = {
     timeout              = 10
