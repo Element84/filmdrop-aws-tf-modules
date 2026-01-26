@@ -282,20 +282,25 @@ cirrus_dashboard_inputs = {
 
 
 ##### INFRASTRUCTURE FLAGS ####
-# To disable each flag: set to 'false'; to enable: set to 'true'
-deploy_vpc                               = false
-deploy_vpc_search                        = false
-deploy_log_archive                       = false
-deploy_stac_server_opensearch_serverless = false
+# Only one of these should ever be true. Note that deploy_vpc_search relies on specific tagging/naming schemes in
+# regards to your VPC and subnets
+deploy_vpc        = false
+deploy_vpc_search = false
+
+# stac-server can either be deployed in managed or serverless mode. To deploy in managed mode, set deploy_stac_server
+# = true, leave the serverless flag = false. To deploy in serverless mode, set both to true
 deploy_stac_server                       = false
+deploy_stac_server_opensearch_serverless = false
 deploy_stac_server_outside_vpc           = false
-deploy_analytics                         = false
-deploy_titiler                           = false
-deploy_filmdrop_ui                       = false
-deploy_cirrus                            = false
-deploy_cirrus_dashboard                  = false
 deploy_local_stac_server_artifacts       = false
-deploy_waf_rule                          = false
+
+deploy_cirrus           = false
+deploy_cirrus_dashboard = false
+deploy_titiler          = false
+deploy_log_archive      = false
+deploy_analytics        = false
+deploy_filmdrop_ui      = false
+deploy_waf_rule         = false
 
 
 #### WAF Rule Settings
