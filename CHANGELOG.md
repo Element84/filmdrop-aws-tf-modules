@@ -15,6 +15,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 - A new titiler_inputs.allowed_extensions_enabled var added. Set to `false` (default is `true`) to exclude the GDAL's `CPL_VSIL_CURL_ALLOWED_EXTENSIONS` env var from the titiler API Lambda environment. This allows GDAL to access extension-less proxy hrefs when asset proxying is enabled in stac-server.
 
+- The default version of cirrus lambda version was bumped from 1.1.2 -> 1.3.0, and the package stac-server infrastructure version from 2.0.0 -> 2.0.2
+
 ### Changed
 
 - Minor changes ([#218](https://github.com/Element84/filmdrop-aws-tf-modules/pull/218)) to how TiTiler behaves when is_private_endpoint = true, supporting communications with its API Gateway and VPC Endpoint
