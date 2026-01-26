@@ -95,6 +95,7 @@ variable "stac_server_inputs" {
     opensearch_cluster_instance_type            = string
     opensearch_cluster_instance_count           = number
     opensearch_cluster_dedicated_master_enabled = bool
+    opensearch_cluster_zone_awareness_enabled   = bool
     opensearch_cluster_dedicated_master_type    = string
     opensearch_cluster_dedicated_master_count   = number
     opensearch_cluster_availability_zone_count  = number
@@ -181,6 +182,7 @@ variable "stac_server_inputs" {
     opensearch_cluster_instance_type            = "t3.small.search"
     opensearch_cluster_instance_count           = 3
     opensearch_cluster_dedicated_master_enabled = true
+    opensearch_cluster_zone_awareness_enabled   = true
     opensearch_cluster_dedicated_master_type    = "t3.small.search"
     opensearch_cluster_dedicated_master_count   = 3
     opensearch_cluster_availability_zone_count  = 3

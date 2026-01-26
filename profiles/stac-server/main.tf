@@ -1,5 +1,5 @@
 module "stac-server" {
-  source = "git::https://github.com/Element84/terraform-aws-stac-server.git?ref=v2.0.0"
+  source = "git::https://github.com/Element84/terraform-aws-stac-server.git?ref=v2.0.2"
 
   deploy_local_stac_server_artifacts          = var.deploy_local_stac_server_artifacts
   stac_server_version                         = var.stac_server_inputs.version
@@ -22,6 +22,7 @@ module "stac-server" {
   opensearch_cluster_instance_type            = var.stac_server_inputs.opensearch_cluster_instance_type
   opensearch_cluster_instance_count           = var.stac_server_inputs.opensearch_cluster_instance_count
   opensearch_cluster_dedicated_master_enabled = var.stac_server_inputs.opensearch_cluster_dedicated_master_enabled
+  opensearch_cluster_zone_awareness_enabled   = var.stac_server_inputs.opensearch_cluster_zone_awareness_enabled
   opensearch_cluster_dedicated_master_type    = var.stac_server_inputs.opensearch_cluster_dedicated_master_type
   opensearch_cluster_dedicated_master_count   = var.stac_server_inputs.opensearch_cluster_dedicated_master_count
   opensearch_cluster_availability_zone_count  = var.stac_server_inputs.opensearch_cluster_availability_zone_count
