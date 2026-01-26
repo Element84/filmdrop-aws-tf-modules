@@ -1,7 +1,7 @@
 ##### PROJECT VARIABLES ####
 # The following variables are global to the FilmDrop infrastructure stack
-environment            = "test"
 project_name           = "TestProj"
+environment            = "test"
 domain_zone            = ""
 s3_access_log_bucket   = ""
 s3_logs_archive_bucket = ""
@@ -24,8 +24,8 @@ stac_server_inputs = {
   version                       = null
   stac_id                       = "stac-server"
   stac_title                    = "STAC API"
-  stac_title                    = "A STAC API using stac-server"
-  api_rest_type                 = "EDGE"
+  stac_description              = "A STAC API using stac-server"
+  api_rest_type                 = "REGIONAL"
   api_method_authorization_type = "NONE"
   deploy_cloudfront             = false
   web_acl_id                    = ""
@@ -93,7 +93,7 @@ stac_server_inputs = {
 titiler_inputs = {
   app_name                                  = "titiler"
   domain_alias                              = ""
-  deploy_cloudfront                         = true
+  deploy_cloudfront                         = false
   version                                   = "v0.14.0-1.0.5"
   authorized_s3_arns                        = []
   mosaic_titiler_waf_allowed_url            = "test.filmdrop.io"
@@ -191,8 +191,8 @@ cirrus_inputs = {
   data_bucket                               = "" # If left blank the deployment will create the data bucket
   payload_bucket                            = "" # If left blank the deployment will create the payload bucket
   log_level                                 = "DEBUG"
-  deploy_alarms                             = true
-  api_rest_type                             = "EDGE"
+  deploy_alarms                             = false
+  api_rest_type                             = "REGIONAL"
   private_api_additional_security_group_ids = null
   private_certificate_arn                   = ""
   domain_alias                              = ""
@@ -285,8 +285,8 @@ cirrus_dashboard_inputs = {
 ##### INFRASTRUCTURE FLAGS ####
 # Only one of these should ever be true. Note that deploy_vpc_search relies on specific tagging/naming schemes in
 # regards to your VPC and subnets
+deploy_vpc_search = true
 deploy_vpc        = false
-deploy_vpc_search = false
 
 # stac-server can either be deployed in managed or serverless mode. To deploy in managed mode, set deploy_stac_server
 # = true, leave the serverless flag = false. To deploy in serverless mode, set both to true
