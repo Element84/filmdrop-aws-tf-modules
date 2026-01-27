@@ -101,20 +101,42 @@ variable "stac_server_inputs" {
     opensearch_cluster_availability_zone_count  = number
     opensearch_ebs_volume_size                  = number
     opensearch_override_main_response_version   = optional(bool)
-    ingest_sns_topic_arns                       = list(string)
-    additional_ingest_sqs_senders_arns          = list(string)
-    cors_origin                                 = string
-    cors_credentials                            = bool
-    cors_methods                                = string
-    cors_headers                                = string
-    authorized_s3_arns                          = list(string)
-    api_rest_type                               = string
-    api_provisioned_concurrency                 = optional(number)
-    api_method_authorization_type               = optional(string)
-    private_api_additional_security_group_ids   = optional(list(string))
-    private_certificate_arn                     = optional(string)
-    vpce_private_dns_enabled                    = bool
-    custom_vpce_id                              = optional(string)
+    opensearch_logs = optional(object({
+      ES_APPLICATION_LOGS = optional(object({
+        enabled                     = bool
+        retention_in_days           = number
+        deletion_protection_enabled = optional(bool, false)
+      }))
+      INDEX_SLOW_LOGS = optional(object({
+        enabled                     = bool
+        retention_in_days           = number
+        deletion_protection_enabled = optional(bool, false)
+      }))
+      SEARCH_SLOW_LOGS = optional(object({
+        enabled                     = bool
+        retention_in_days           = number
+        deletion_protection_enabled = optional(bool, false)
+      }))
+      AUDIT_LOGS = optional(object({
+        enabled                     = bool
+        retention_in_days           = number
+        deletion_protection_enabled = bool
+      }))
+    }))
+    ingest_sns_topic_arns                     = list(string)
+    additional_ingest_sqs_senders_arns        = list(string)
+    cors_origin                               = string
+    cors_credentials                          = bool
+    cors_methods                              = string
+    cors_headers                              = string
+    authorized_s3_arns                        = list(string)
+    api_rest_type                             = string
+    api_provisioned_concurrency               = optional(number)
+    api_method_authorization_type             = optional(string)
+    private_api_additional_security_group_ids = optional(list(string))
+    private_certificate_arn                   = optional(string)
+    vpce_private_dns_enabled                  = bool
+    custom_vpce_id                            = optional(string)
     api_lambda = optional(object({
       handler               = optional(string)
       memory_mb             = optional(number)

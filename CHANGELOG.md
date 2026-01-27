@@ -24,6 +24,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 - `titiler_inputs.api_provisioned_concurrency` offers the ability to optionally deploy the titiler lambda with provisioned concurrency ([245](https://github.com/Element84/filmdrop-aws-tf-modules/pull/245))
 
+- `stac_server_inputs.opensearch_logs` optionally enables various logging types on the opensearch cluster
 
 ### Changed
 
