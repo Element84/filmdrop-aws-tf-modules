@@ -240,9 +240,9 @@ variable "titiler_inputs" {
     authorized_s3_arns                        = list(string)
     mosaic_titiler_waf_allowed_url            = string
     mosaic_titiler_host_header                = string
-    mosaic_titiler_provisioned_concurrency    = optional(number, 0)
     mosaic_tile_timeout                       = number
     web_acl_id                                = string
+    mosaic_titiler_provisioned_concurrency    = optional(number)
     is_private_endpoint                       = optional(bool)
     api_method_authorization_type             = optional(string)
     private_certificate_arn                   = optional(string)

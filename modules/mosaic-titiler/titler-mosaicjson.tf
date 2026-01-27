@@ -97,10 +97,10 @@ resource "aws_lambda_function" "titiler-mosaic-lambda" {
 
 
 resource "aws_lambda_provisioned_concurrency_config" "titiler_mosaic_provisioned_concurrency" {
-  count = var.titiler_mosaic_provisioned_concurrency > 0 ? 1 : 0
+  count = coalesce(var.titiler_mosaic_provisioned_concurrency, 0) > 0 ? 1 : 0
 
   function_name                     = aws_lambda_function.titiler-mosaic-lambda.function_name
-  provisioned_concurrent_executions = var.titiler_mosaic_provisioned_concurrency
+  provisioned_concurrent_executions = coalesce(var.titiler_mosaic_provisioned_concurrency, 0)
   qualifier                         = aws_lambda_function.titiler-mosaic-lambda.version
 }
 
