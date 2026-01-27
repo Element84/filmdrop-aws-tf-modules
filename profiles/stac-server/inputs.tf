@@ -63,15 +63,37 @@ variable "stac_server_inputs" {
     opensearch_cluster_dedicated_master_count   = number
     opensearch_cluster_availability_zone_count  = number
     opensearch_ebs_volume_size                  = number
-    opensearch_override_main_response_version   = bool
-    ingest_sns_topic_arns                       = list(string)
-    additional_ingest_sqs_senders_arns          = list(string)
-    cors_origin                                 = string
-    cors_credentials                            = bool
-    cors_methods                                = string
-    cors_headers                                = string
-    authorized_s3_arns                          = list(string)
-    api_rest_type                               = string
+    opensearch_logs = optional(object({
+      ES_APPLICATION_LOGS = optional(object({
+        enabled                     = bool
+        retention_in_days           = number
+        deletion_protection_enabled = optional(bool, false)
+      }))
+      INDEX_SLOW_LOGS = optional(object({
+        enabled                     = bool
+        retention_in_days           = number
+        deletion_protection_enabled = optional(bool, false)
+      }))
+      SEARCH_SLOW_LOGS = optional(object({
+        enabled                     = bool
+        retention_in_days           = number
+        deletion_protection_enabled = optional(bool, false)
+      }))
+      AUDIT_LOGS = optional(object({
+        enabled                     = bool
+        retention_in_days           = number
+        deletion_protection_enabled = bool
+      }))
+    }), {})
+    opensearch_override_main_response_version = bool
+    ingest_sns_topic_arns                     = list(string)
+    additional_ingest_sqs_senders_arns        = list(string)
+    cors_origin                               = string
+    cors_credentials                          = bool
+    cors_methods                              = string
+    cors_headers                              = string
+    authorized_s3_arns                        = list(string)
+    api_rest_type                             = string
     # default 0 required here so that this property is not explicitly null, if not provided
     api_provisioned_concurrency               = optional(number, 0)
     api_method_authorization_type             = optional(string)
