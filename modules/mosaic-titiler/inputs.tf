@@ -119,6 +119,12 @@ variable "lambda_runtime" {
   default     = "python3.10"
 }
 
+variable "api_provisioned_concurrency" {
+  description = "Titiler mosaic lambda provisioned currency quantity"
+  type        = number
+  default     = 0
+}
+
 variable "authorized_s3_arns" {
   description = "List of S3 bucket ARNs to give GetObject permissions to"
   type        = list(string)

@@ -95,24 +95,48 @@ variable "stac_server_inputs" {
     opensearch_cluster_instance_type            = string
     opensearch_cluster_instance_count           = number
     opensearch_cluster_dedicated_master_enabled = bool
+    opensearch_cluster_zone_awareness_enabled   = bool
     opensearch_cluster_dedicated_master_type    = string
     opensearch_cluster_dedicated_master_count   = number
     opensearch_cluster_availability_zone_count  = number
     opensearch_ebs_volume_size                  = number
     opensearch_override_main_response_version   = bool
-    ingest_sns_topic_arns                       = list(string)
-    additional_ingest_sqs_senders_arns          = list(string)
-    cors_origin                                 = string
-    cors_credentials                            = bool
-    cors_methods                                = string
-    cors_headers                                = string
-    authorized_s3_arns                          = list(string)
-    api_rest_type                               = string
-    api_method_authorization_type               = optional(string)
-    private_api_additional_security_group_ids   = optional(list(string))
-    private_certificate_arn                     = optional(string)
-    vpce_private_dns_enabled                    = bool
-    custom_vpce_id                              = optional(string)
+    opensearch_logs = optional(object({
+      ES_APPLICATION_LOGS = optional(object({
+        enabled                     = bool
+        retention_in_days           = number
+        deletion_protection_enabled = optional(bool, false)
+      }))
+      INDEX_SLOW_LOGS = optional(object({
+        enabled                     = bool
+        retention_in_days           = number
+        deletion_protection_enabled = optional(bool, false)
+      }))
+      SEARCH_SLOW_LOGS = optional(object({
+        enabled                     = bool
+        retention_in_days           = number
+        deletion_protection_enabled = optional(bool, false)
+      }))
+      AUDIT_LOGS = optional(object({
+        enabled                     = bool
+        retention_in_days           = number
+        deletion_protection_enabled = bool
+      }))
+    }))
+    ingest_sns_topic_arns                     = list(string)
+    additional_ingest_sqs_senders_arns        = list(string)
+    cors_origin                               = string
+    cors_credentials                          = bool
+    cors_methods                              = string
+    cors_headers                              = string
+    authorized_s3_arns                        = list(string)
+    api_rest_type                             = string
+    api_provisioned_concurrency               = optional(number)
+    api_method_authorization_type             = optional(string)
+    private_api_additional_security_group_ids = optional(list(string))
+    private_certificate_arn                   = optional(string)
+    vpce_private_dns_enabled                  = bool
+    custom_vpce_id                            = optional(string)
     api_lambda = optional(object({
       handler               = optional(string)
       memory_mb             = optional(number)
@@ -181,6 +205,7 @@ variable "stac_server_inputs" {
     opensearch_cluster_instance_type            = "t3.small.search"
     opensearch_cluster_instance_count           = 3
     opensearch_cluster_dedicated_master_enabled = true
+    opensearch_cluster_zone_awareness_enabled   = true
     opensearch_cluster_dedicated_master_type    = "t3.small.search"
     opensearch_cluster_dedicated_master_count   = 3
     opensearch_cluster_availability_zone_count  = 3
@@ -240,6 +265,7 @@ variable "titiler_inputs" {
     mosaic_titiler_host_header                = string
     mosaic_tile_timeout                       = number
     web_acl_id                                = string
+    api_provisioned_concurrency               = optional(number)
     is_private_endpoint                       = optional(bool)
     api_method_authorization_type             = optional(string)
     private_certificate_arn                   = optional(string)

@@ -11,6 +11,7 @@ module "titiler" {
   authorized_s3_arns                        = var.titiler_inputs.authorized_s3_arns
   waf_allowed_url                           = var.titiler_inputs.is_private_endpoint ? "" : var.titiler_inputs.mosaic_titiler_waf_allowed_url == "" ? var.stac_url : var.titiler_inputs.mosaic_titiler_waf_allowed_url
   request_host_header_override              = var.titiler_inputs.is_private_endpoint ? "" : var.titiler_inputs.mosaic_titiler_host_header
+  api_provisioned_concurrency               = var.titiler_inputs.api_provisioned_concurrency
   mosaic_tile_timeout                       = var.titiler_inputs.mosaic_tile_timeout
   vpc_id                                    = var.vpc_id
   vpc_subnet_ids                            = var.private_subnet_ids
