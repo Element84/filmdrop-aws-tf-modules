@@ -27,6 +27,7 @@ stac_server_inputs = {
   stac_description              = "A STAC API using stac-server"
   api_rest_type                 = "REGIONAL"
   api_method_authorization_type = "NONE"
+  api_provisioned_concurrency   = 0
   deploy_cloudfront             = false
   web_acl_id                    = ""
   domain_alias                  = ""
