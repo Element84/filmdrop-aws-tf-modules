@@ -84,7 +84,7 @@ variable "stac_server_inputs" {
         retention_in_days           = number
         deletion_protection_enabled = bool
       }))
-    }))
+    }), {})
     opensearch_override_main_response_version = bool
     ingest_sns_topic_arns                     = list(string)
     additional_ingest_sqs_senders_arns        = list(string)
