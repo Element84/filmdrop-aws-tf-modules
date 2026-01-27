@@ -72,6 +72,7 @@ variable "stac_server_inputs" {
     cors_headers                                = string
     authorized_s3_arns                          = list(string)
     api_rest_type                               = string
+    api_provisioned_concurrency                 = optional(number)
     api_method_authorization_type               = optional(string)
     private_api_additional_security_group_ids   = optional(list(string))
     private_certificate_arn                     = optional(string)
