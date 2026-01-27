@@ -103,6 +103,7 @@ titiler_inputs = {
   web_acl_id                                = ""
   is_private_endpoint                       = false
   api_method_authorization_type             = "NONE"
+  api_provisioned_concurrency               = 0
   private_certificate_arn                   = ""
   vpce_private_dns_enabled                  = false
   custom_vpce_id                            = null

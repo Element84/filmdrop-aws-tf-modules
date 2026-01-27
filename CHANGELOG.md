@@ -22,6 +22,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 - `stac_server_inputs.api_provisioned_concurrency` enables provisioned concurrency on the stac-server API lambda
 
+- `titiler_inputs.api_provisioned_concurrency` offers the ability to optionally deploy the titiler lambda with provisioned concurrency ([245](https://github.com/Element84/filmdrop-aws-tf-modules/pull/245))
+
+
 ### Changed
 
 - Minor changes ([#218](https://github.com/Element84/filmdrop-aws-tf-modules/pull/218)) to how TiTiler behaves when is_private_endpoint = true, supporting communications with its API Gateway and VPC Endpoint
