@@ -1,6 +1,6 @@
 ##### PROJECT VARIABLES ####
 # The following variables are global to the FilmDrop infrastructure stack
-project_name           = "TestProj"
+project_name           = "jai-s7"
 environment            = "test"
 domain_zone            = ""
 s3_access_log_bucket   = ""
@@ -290,7 +290,7 @@ deploy_vpc        = false
 
 # stac-server can either be deployed in managed or serverless mode. To deploy in managed mode, set deploy_stac_server
 # = true, leave the serverless flag = false. To deploy in serverless mode, set both to true
-deploy_stac_server                       = false
+deploy_stac_server                       = true
 deploy_stac_server_opensearch_serverless = false
 deploy_stac_server_outside_vpc           = false
 deploy_local_stac_server_artifacts       = false
