@@ -119,7 +119,7 @@ variable "lambda_runtime" {
   default     = "python3.10"
 }
 
-variable "titiler_mosaic_provisioned_concurrency" {
+variable "api_provisioned_concurrency" {
   description = "Titiler mosaic lambda provisioned currency quantity"
   type        = number
   default     = 0
