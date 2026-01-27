@@ -72,12 +72,13 @@ variable "stac_server_inputs" {
     cors_headers                                = string
     authorized_s3_arns                          = list(string)
     api_rest_type                               = string
-    api_provisioned_concurrency                 = optional(number)
-    api_method_authorization_type               = optional(string)
-    private_api_additional_security_group_ids   = optional(list(string))
-    private_certificate_arn                     = optional(string)
-    vpce_private_dns_enabled                    = bool
-    custom_vpce_id                              = optional(string)
+    # default 0 required here so that this property is not explicitly null, if not provided
+    api_provisioned_concurrency               = optional(number, 0)
+    api_method_authorization_type             = optional(string)
+    private_api_additional_security_group_ids = optional(list(string))
+    private_certificate_arn                   = optional(string)
+    vpce_private_dns_enabled                  = bool
+    custom_vpce_id                            = optional(string)
     api_lambda = optional(object({
       handler               = optional(string)
       memory_mb             = optional(number)
