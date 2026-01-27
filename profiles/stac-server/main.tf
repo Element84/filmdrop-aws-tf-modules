@@ -1,5 +1,5 @@
 module "stac-server" {
-  source = "git::https://github.com/Element84/terraform-aws-stac-server.git?ref=v2.0.2"
+  source = "git::https://github.com/Element84/terraform-aws-stac-server.git?ref=v2.0.3"
 
   deploy_local_stac_server_artifacts          = var.deploy_local_stac_server_artifacts
   stac_server_version                         = var.stac_server_inputs.version
