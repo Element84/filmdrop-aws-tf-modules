@@ -1,0 +1,208 @@
+variable "cirrus_api_rest_type" {
+  description = "Cirrus API Gateway type"
+  type        = string
+  default     = "EDGE"
+}
+
+variable "cirrus_api_lambda_timeout" {
+  description = "Cirrus API lambda timeout (sec)"
+  type        = number
+  default     = 10
+}
+
+variable "cirrus_api_lambda_memory" {
+  description = "Cirrus API lambda memory (MB)"
+  type        = number
+  nullable    = false
+  default     = 512
+
+  validation {
+    condition     = var.cirrus_api_lambda_memory >= 512
+    error_message = "cirrus_api_lambda_memory must be >= 512 MB. All Cirrus Lambda built-ins require at least 512 MB."
+  }
+}
+
+variable "cirrus_private_api_additional_security_group_ids" {
+  description = <<-DESCRIPTION
+  Optional list of security group IDs that'll be applied to the VPC interface
+  endpoints of a PRIVATE-type cirrus API Gateway. These security groups are in
+  addition to the security groups that allow traffic from the private subnet
+  CIDR blocks. Only applicable when `var.cirrus_api_rest_type == PRIVATE`.
+  DESCRIPTION
+  type        = list(string)
+  default     = null
+}
+
+variable "cirrus_api_stage" {
+  description = "Cirrus API stage"
+  type        = string
+  default     = "dev"
+}
+
+variable "cirrus_api_stage_description" {
+  description = "Cirrus API stage description"
+  type        = string
+  default     = ""
+}
+
+variable "cirrus_lambda_zip_filepath" {
+  description = <<-DESCRIPTION
+  (Optional) Filepath to a Cirrus Lambda Dist ZIP relative to the root module of
+  this Terraform deployment. If provided, will not download from GitHub Releases
+  the version of Cirrus as specified in `cirrus_lambda_version`.
+  DESCRIPTION
+  type        = string
+  nullable    = true
+  default     = null
+}
+
+variable "cirrus_lambda_version" {
+  description = <<-DESCRIPTION
+  (Optional) Version of Cirrus lambda to deploy. Defaults to the Cirrus version associated with this FilmDrop release.
+
+  If set, cirrus_lambda_pyversion must also be set to the Python runtime version required.
+
+  See [cirrus-geo releases](https://github.com/cirrus-geo/cirrus-geo/releases) for more information.
+  DESCRIPTION
+  type        = string
+  nullable    = false
+  # If you update this, ensure cirrus_lambda_pyversion is also updated to the python version required by this
+  # version of cirrus
+  default = "1.3.0"
+}
+
+variable "cirrus_api_provisioned_concurrency" {
+  description = "Number of lambda instances to optionally concurrently provison"
+  type        = number
+}
+
+variable "resource_prefix" {
+  description = "String prefix to be used in every named resource."
+  type        = string
+  nullable    = false
+}
+
+variable "cirrus_payload_bucket" {
+  description = "Cirrus payload bucket"
+  type        = string
+}
+
+variable "cirrus_log_level" {
+  description = "Cirrus log level (DEBUG, INFO, WARNING, ERROR)"
+  type        = string
+  default     = "INFO"
+}
+
+variable "cirrus_data_bucket" {
+  description = "Cirrus data bucket"
+  type        = string
+}
+
+variable "cirrus_state_dynamodb_table_arn" {
+  description = "Cirrus state dynamodb table arn"
+  type        = string
+}
+
+variable "cirrus_state_dynamodb_table_name" {
+  description = "Cirrus state dynamodb table name"
+  type        = string
+}
+
+variable "workflow_metrics_timestream_enabled" {
+  description = <<-DESCRIPTION
+  Whether TimestreamDB is enabled (for workflow metrics) or not; see Cirrus core module inputs for details.
+  DESCRIPTION
+  type        = bool
+  nullable    = false
+}
+
+variable "cirrus_state_event_timestreamwrite_database_name" {
+  description = "Cirrus state timestream database name"
+  type        = string
+}
+
+variable "cirrus_state_event_timestreamwrite_table_name" {
+  description = "Cirrus state timestream table name"
+  type        = string
+}
+
+variable "cirrus_state_event_timestreamwrite_table_arn" {
+  description = "Cirrus state timestream table arn"
+  type        = string
+}
+
+variable "workflow_metrics_cloudwatch_enabled" {
+  description = "Whether metrics collection is enabled"
+  type        = bool
+  nullable    = false
+  default     = false
+}
+
+variable "workflow_metrics_cloudwatch_read_policy_arn" {
+  description = "ARN of the IAM policy for workflow metrics (only used when metrics are enabled)"
+  type        = string
+  default     = ""
+}
+
+variable "workflow_metrics_cloudwatch_namespace" {
+  description = "CloudWatch Metrics namespace for workflow metrics"
+  type        = string
+  nullable    = true
+  default     = null
+}
+
+variable "vpc_id" {
+  description = "FilmDrop VPC ID"
+  type        = string
+}
+
+variable "vpc_subnet_ids" {
+  description = "List of subnet ids in the FilmDrop vpc"
+  type        = list(string)
+}
+
+variable "vpc_security_group_ids" {
+  description = "List of security groups in the FilmDrop vpc"
+  type        = list(string)
+}
+
+variable "deploy_alarms" {
+  type        = bool
+  default     = true
+  description = "Deploy Cirrus Alarms stack"
+}
+
+variable "warning_sns_topic_arn" {
+  description = "String with FilmDrop Warning SNS topic ARN"
+  type        = string
+}
+
+variable "critical_sns_topic_arn" {
+  description = "String with FilmDrop Critical SNS topic ARN"
+  type        = string
+}
+
+variable "private_certificate_arn" {
+  description = "Private Certificate ARN for custom domain alias of private API Gateway endpoint"
+  type        = string
+  default     = ""
+}
+
+variable "domain_alias" {
+  description = "Custom domain alias for private API Gateway endpoint"
+  type        = string
+  default     = ""
+}
+
+variable "cirrus_lambda_pyversion" {
+  description = <<-DESCRIPTION
+  (Optional) Python runtime version for the builtin Cirrus Lambda functions. Each Cirrus
+  version has explicit Python version(s) it can correctly function with. Ensure you set this to that version.
+
+  If either cirrus_lambda_version or cirrus_lambda_zip_filepath are set, this must also be set.
+  DESCRIPTION
+  type        = string
+  nullable    = false
+  # Ensure this meets the python version requirement of the default cirrus_lambda_version
+  default = "3.13"
+}
