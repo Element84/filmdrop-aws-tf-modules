@@ -20,7 +20,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - The default version of cirrus lambda version was bumped from 1.1.2 -> 1.3.0, and the package stac-server infrastructure version from 2.0.0 -> 2.0.2
   - stac-server OpenSearch `opensearch_cluster_instance_count` is now editable to >0 && <3 for lower-cost deployment scenarios; see `opensearch_cluster_zone_awareness_enabled` and `opensearch_cluster_availability_zone_count` descriptions in the **terraform-aws-stac-server** repository
 
-- a new input variable and resource block offers the abilit to optionally deploy the titiler lambda with provisioned concurrency ([245](https://github.com/Element84/filmdrop-aws-tf-modules/pull/245))
+- `stac_server_inputs.api_provisioned_concurrency` enables provisioned concurrency on the stac-server API lambda
+
+- `titiler_inputs.api_provisioned_concurrency` offers the ability to optionally deploy the titiler lambda with provisioned concurrency ([245](https://github.com/Element84/filmdrop-aws-tf-modules/pull/245))
+
 
 ### Changed
 
