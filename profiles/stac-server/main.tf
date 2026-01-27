@@ -31,7 +31,7 @@ module "stac-server" {
   ingest_sns_topic_arns                       = var.stac_server_inputs.ingest_sns_topic_arns
   additional_ingest_sqs_senders_arns          = var.stac_server_inputs.additional_ingest_sqs_senders_arns
   api_rest_type                               = var.stac_server_inputs.api_rest_type
-  api_provisioned_concurrency                 = var.stac_api_provisioned_concurrency
+  api_provisioned_concurrency                 = var.stac_server_inputs.stac_api_provisioned_concurrency
   api_method_authorization_type               = var.stac_server_inputs.api_method_authorization_type
   private_api_additional_security_group_ids   = var.stac_server_inputs.private_api_additional_security_group_ids
   api_lambda                                  = var.stac_server_inputs.api_lambda
