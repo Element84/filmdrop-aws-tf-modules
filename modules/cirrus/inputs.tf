@@ -130,7 +130,7 @@ variable "cirrus_api_rest_type" {
   Must be one of: `EDGE`, `REGIONAL`, or `PRIVATE`.
   DESCRIPTION
   type        = string
-  nullable    = false
+  nullable    = true
   default     = "EDGE"
 
   validation {
@@ -173,7 +173,7 @@ variable "cirrus_api_lambda_timeout" {
   (Optional) Cirrus `api` lambda timeout (seconds).
   DESCRIPTION
   type        = number
-  nullable    = false
+  nullable    = true
   default     = 10
 }
 
@@ -182,13 +182,14 @@ variable "cirrus_api_lambda_memory" {
   (Optional) Cirrus `api` lambda memory (MB).
   DESCRIPTION
   type        = number
-  nullable    = false
+  nullable    = true
   default     = 512
 }
 
 variable "cirrus_api_provisioned_concurrency" {
   description = "Number of lambda instances to optionally concurrently provison"
   type        = number
+  nullable    = true
   default     = 0
 }
 
