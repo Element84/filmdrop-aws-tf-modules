@@ -1,7 +1,17 @@
 variable "cirrus_api_rest_type" {
-  description = "Cirrus API Gateway type"
+  description = <<-DESCRIPTION
+  (Optional) Cirrus API Gateway type.
+
+  Must be one of: `EDGE`, `REGIONAL`, or `PRIVATE`.
+  DESCRIPTION
   type        = string
+  nullable    = true
   default     = "EDGE"
+
+  validation {
+    condition     = contains(["EDGE", "REGIONAL", "PRIVATE"], var.cirrus_api_rest_type)
+    error_message = "Cirrus API rest type must be one of: EDGE, REGIONAL, or PRIVATE."
+  }
 }
 
 variable "cirrus_api_lambda_timeout" {

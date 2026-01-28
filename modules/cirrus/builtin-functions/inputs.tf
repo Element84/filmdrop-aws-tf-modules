@@ -59,22 +59,23 @@ variable "cirrus_lambda_pyversion" {
   default = "3.13"
 }
 
-variable "cirrus_api_lambda_timeout" {
-  description = "Cirrus API lambda timeout (sec)"
-  type        = number
-  default     = 10
-}
-
-variable "cirrus_api_lambda_memory" {
-  description = "Cirrus API lambda memory (MB)"
-  type        = number
-  nullable    = false
-  default     = 512
-
-  validation {
-    condition     = var.cirrus_api_lambda_memory >= 512
-    error_message = "cirrus_api_lambda_memory must be >= 512 MB. All Cirrus Lambda built-ins require at least 512 MB."
+variable "cirrus_api_lambda" {
+  description = <<-DESCRIPTION
+  (Optional) Cirrus `api` lambda timeout (seconds).
+  DESCRIPTION
+  type = object({
+    timeout                 = string
+    memory                  = string
+    api_gateway_rest_type   = string
+    provisioned_concurrency = number
+  })
+  default = {
+    timeout                 = 10
+    memory                  = 512
+    api_gateway_rest_type   = "EDGE"
+    provisioned_concurrency = 0
   }
+  nullable = true
 }
 
 variable "cirrus_process_lambda_timeout" {
@@ -230,12 +231,6 @@ variable "vpc_security_group_ids" {
   type        = list(string)
 }
 
-variable "cirrus_api_rest_type" {
-  description = "Cirrus API Gateway type"
-  type        = string
-  default     = "EDGE"
-}
-
 variable "cirrus_private_api_additional_security_group_ids" {
   description = <<-DESCRIPTION
   Optional list of security group IDs that'll be applied to the VPC interface
@@ -257,11 +252,6 @@ variable "cirrus_api_stage_description" {
   description = "Cirrus API stage description"
   type        = string
   default     = ""
-}
-
-variable "cirrus_api_provisioned_concurrency" {
-  description = "Number of lambda instances to optionally concurrently provison"
-  type        = number
 }
 
 variable "warning_sns_topic_arn" {

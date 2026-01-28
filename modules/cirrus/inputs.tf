@@ -123,22 +123,6 @@ variable "cirrus_payload_bucket" {
   default     = ""
 }
 
-variable "cirrus_api_rest_type" {
-  description = <<-DESCRIPTION
-  (Optional) Cirrus API Gateway type.
-
-  Must be one of: `EDGE`, `REGIONAL`, or `PRIVATE`.
-  DESCRIPTION
-  type        = string
-  nullable    = true
-  default     = "EDGE"
-
-  validation {
-    condition     = contains(["EDGE", "REGIONAL", "PRIVATE"], var.cirrus_api_rest_type)
-    error_message = "Cirrus API rest type must be one of: EDGE, REGIONAL, or PRIVATE."
-  }
-}
-
 variable "cirrus_private_api_additional_security_group_ids" {
   description = <<-DESCRIPTION
   (Optional) List of security group IDs that'll be applied to the VPC interface endpoints of a PRIVATE-type cirrus API Gateway.
@@ -168,29 +152,23 @@ variable "cirrus_log_level" {
   }
 }
 
-variable "cirrus_api_lambda_timeout" {
+variable "cirrus_api_lambda" {
   description = <<-DESCRIPTION
   (Optional) Cirrus `api` lambda timeout (seconds).
   DESCRIPTION
-  type        = number
-  nullable    = true
-  default     = 10
-}
-
-variable "cirrus_api_lambda_memory" {
-  description = <<-DESCRIPTION
-  (Optional) Cirrus `api` lambda memory (MB).
-  DESCRIPTION
-  type        = number
-  nullable    = true
-  default     = 512
-}
-
-variable "cirrus_api_provisioned_concurrency" {
-  description = "Number of lambda instances to optionally concurrently provison"
-  type        = number
-  nullable    = true
-  default     = 0
+  type = object({
+    timeout                 = string
+    memory                  = string
+    api_gateway_rest_type   = string
+    provisioned_concurrency = number
+  })
+  default = {
+    timeout                 = 10
+    memory                  = 512
+    api_gateway_rest_type   = "EDGE"
+    provisioned_concurrency = 0
+  }
+  nullable = true
 }
 
 variable "cirrus_process_lambda_timeout" {
