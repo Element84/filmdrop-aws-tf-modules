@@ -1,8 +1,3 @@
-moved {
-  from = module.api
-  to   = module.api
-}
-
 module "cirrus_api" {
   source = "./api"
   count  = var.deploy_api ? 1 : 0
