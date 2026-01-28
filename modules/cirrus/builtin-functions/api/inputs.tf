@@ -22,6 +22,12 @@ variable "cirrus_api_lambda_memory" {
   }
 }
 
+variable "cirrus_lambda_download_trigger" {
+  description = "Dependency trigger for ensuring cirrus lambda zip is downloaded"
+  type        = string
+  default     = null
+}
+
 variable "cirrus_private_api_additional_security_group_ids" {
   description = <<-DESCRIPTION
   Optional list of security group IDs that'll be applied to the VPC interface

@@ -318,6 +318,15 @@ variable "deploy_alarms" {
   default     = true
 }
 
+variable "deploy_api" {
+  description = <<-DESCRIPTION
+  (Optional) Whether the Cirrus API should be deployed.
+  DESCRIPTION
+  type        = bool
+  nullable    = false
+  default     = true
+}
+
 variable "warning_sns_topic_arn" {
   description = <<-DESCRIPTION
   (Optional) SNS topic to be used by all cirrus `warning` alarms.

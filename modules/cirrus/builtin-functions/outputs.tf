@@ -9,3 +9,7 @@ output "post_batch_lambda_function_arn" {
 output "cirrus_lambda_version" {
   value = var.cirrus_lambda_zip_filepath == null ? var.cirrus_lambda_version : "unknown"
 }
+
+output "cirrus_lambda_download_trigger" {
+  value = var.cirrus_lambda_zip_filepath == null ? null_resource.get_cirrus_lambda[0].id : null
+}

@@ -453,9 +453,9 @@ variable "cirrus_inputs" {
     data_bucket                               = string
     payload_bucket                            = string
     log_level                                 = string
-    api_rest_type                             = string
     private_api_additional_security_group_ids = optional(list(string))
     deploy_alarms                             = bool
+    deploy_api                                = bool
     private_certificate_arn                   = optional(string)
     domain_alias                              = optional(string)
     custom_alarms = object({
@@ -476,6 +476,7 @@ variable "cirrus_inputs" {
     api_lambda = object({
       timeout                 = number
       memory                  = number
+      api_gateway_rest_type   = string
       provisioned_concurrency = optional(number)
     })
     process_lambda = object({
@@ -513,9 +514,9 @@ variable "cirrus_inputs" {
     data_bucket                               = "cirrus-data-bucket-name"
     payload_bucket                            = "cirrus-payload-bucket-name"
     log_level                                 = "INFO"
-    api_rest_type                             = "EDGE"
     private_api_additional_security_group_ids = null
     deploy_alarms                             = true
+    deploy_api                                = true
     private_certificate_arn                   = ""
     domain_alias                              = ""
     custom_alarms = {
@@ -534,8 +535,9 @@ variable "cirrus_inputs" {
     lambda_zip_filepath = null
     lambda_pyversion    = null
     api_lambda = {
-      timeout = 10
-      memory  = 512
+      timeout               = 10
+      memory                = 512
+      api_gateway_rest_type = "EDGE"
     }
     process_lambda = {
       timeout              = 10

@@ -14,6 +14,12 @@ locals {
   stage_name = var.cirrus_api_stage
 }
 
+resource "null_resource" "cirrus_lambda_ready" {
+  triggers = {
+    download_trigger = var.cirrus_lambda_download_trigger
+  }
+}
+
 
 resource "aws_iam_role" "cirrus_api_lambda_role" {
   name_prefix = "${var.resource_prefix}-api-role-"
@@ -166,7 +172,7 @@ resource "aws_lambda_function" "cirrus_api" {
   }
 
   depends_on = [
-    null_resource.get_cirrus_lambda
+    null_resource.cirrus_lambda_ready
   ]
 }
 

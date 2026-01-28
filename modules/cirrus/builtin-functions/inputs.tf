@@ -280,6 +280,12 @@ variable "deploy_alarms" {
   description = "Deploy Cirrus Alarms stack"
 }
 
+variable "deploy_api" {
+  type        = bool
+  default     = true
+  description = "Deploy Cirrus API"
+}
+
 variable "domain_alias" {
   description = "Custom domain alias for private API Gateway endpoint"
   type        = string
