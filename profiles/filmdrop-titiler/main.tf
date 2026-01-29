@@ -9,6 +9,7 @@ module "filmdrop_titiler" {
   environment                               = var.environment
   titiler_release_tag                       = var.filmdrop_titiler_inputs.version
   authorized_s3_arns                        = var.filmdrop_titiler_inputs.authorized_s3_arns
+  api_provisioned_concurrency               = var.filmdrop_titiler_inputs.api_provisioned_concurrency
   waf_allowed_url                           = var.filmdrop_titiler_inputs.is_private_endpoint ? "" : var.filmdrop_titiler_inputs.titiler_waf_allowed_url == "" ? var.stac_url : var.filmdrop_titiler_inputs.titiler_waf_allowed_url
   request_host_header_override              = var.filmdrop_titiler_inputs.is_private_endpoint ? "" : var.filmdrop_titiler_inputs.titiler_host_header
   mosaic_tile_timeout                       = var.filmdrop_titiler_inputs.mosaic_tile_timeout

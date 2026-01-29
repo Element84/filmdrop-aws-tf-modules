@@ -26,6 +26,12 @@ variable "vpc_security_group_ids" {
   type        = list(string)
 }
 
+variable "api_provisioned_concurrency" {
+  description = "Titiler mosaic lambda provisioned currency quantity"
+  type        = number
+  default     = 0
+}
+
 variable "allowed_extensions_enabled" {
   description = <<-DESCRIPTION
   Controls whether the CPL_VSIL_CURL_ALLOWED_EXTENSIONS env var is enabled.
@@ -222,6 +228,8 @@ variable "vpce_private_dns_enabled" {
   hostname to the VPC endpoint from within the VPC.
   DESCRIPTION
 }
+
+
 
 variable "custom_vpce_id" {
   description = <<-DESCRIPTION

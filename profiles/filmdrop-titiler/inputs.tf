@@ -35,6 +35,7 @@ variable "filmdrop_titiler_inputs" {
     web_acl_id                                = string
     is_private_endpoint                       = optional(bool)
     api_method_authorization_type             = optional(string)
+    api_provisioned_concurrency               = optional(number)
     private_certificate_arn                   = optional(string)
     vpce_private_dns_enabled                  = optional(bool)
     custom_vpce_id                            = optional(string)

@@ -56,6 +56,7 @@ resource "aws_lambda_function" "titiler-lambda" {
   s3_key    = "${var.titiler_release_tag}-lambda-${var.lambda_runtime}-${null_resource.download-lambda-source-bundle.id}.zip"
   handler   = "filmdrop_titiler.application.handler"
   runtime   = var.lambda_runtime
+  publish   = true
 
   environment {
     variables = merge(
@@ -92,6 +93,16 @@ resource "aws_lambda_function" "titiler-lambda" {
     aws_dynamodb_table.titiler-dynamodb-table,
   ]
 }
+
+resource "aws_lambda_provisioned_concurrency_config" "api_provisioned_concurrency" {
+  count = coalesce(var.api_provisioned_concurrency, 0) > 0 ? 1 : 0
+
+  function_name                     = aws_lambda_function.titiler-lambda.function_name
+  provisioned_concurrent_executions = coalesce(var.api_provisioned_concurrency, 0)
+  qualifier                         = aws_lambda_function.titiler-lambda.version
+}
+
+
 
 resource "aws_apigatewayv2_api" "titiler-api-gateway" {
   count         = var.is_private_endpoint ? 0 : 1
