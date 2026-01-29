@@ -184,4 +184,10 @@ module "filmdrop-titiler" {
   security_group_id       = module.base_infra.security_group_id
   vpc_id                  = module.base_infra.vpc_id
 
+  # the titiler api gateway stage access logging requires base_infra.api_gateway_account cloudwatch_role_arn
+  # be set. that is a value only set once at the regional level, and is not used directly by titiler. thus, we
+  # require this explicit dependency
+  depends_on = [
+    module.base_infra
+  ]
 }
