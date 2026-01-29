@@ -19,10 +19,8 @@ module "cirrus" {
   cirrus_data_bucket                                        = var.cirrus_inputs.data_bucket
   cirrus_payload_bucket                                     = var.cirrus_inputs.payload_bucket
   cirrus_log_level                                          = var.cirrus_inputs.log_level
-  cirrus_api_rest_type                                      = var.cirrus_inputs.api_rest_type
   cirrus_private_api_additional_security_group_ids          = var.cirrus_inputs.private_api_additional_security_group_ids
-  cirrus_api_lambda_timeout                                 = var.cirrus_inputs.api_lambda.timeout
-  cirrus_api_lambda_memory                                  = var.cirrus_inputs.api_lambda.memory
+  cirrus_api_lambda_settings                                = var.cirrus_inputs.api_lambda
   cirrus_process_lambda_timeout                             = var.cirrus_inputs.process_lambda.timeout
   cirrus_process_lambda_memory                              = var.cirrus_inputs.process_lambda.memory
   cirrus_process_lambda_reserved_concurrency                = var.cirrus_inputs.process_lambda.reserved_concurrency

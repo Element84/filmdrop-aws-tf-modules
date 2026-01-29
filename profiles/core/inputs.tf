@@ -95,24 +95,48 @@ variable "stac_server_inputs" {
     opensearch_cluster_instance_type            = string
     opensearch_cluster_instance_count           = number
     opensearch_cluster_dedicated_master_enabled = bool
+    opensearch_cluster_zone_awareness_enabled   = bool
     opensearch_cluster_dedicated_master_type    = string
     opensearch_cluster_dedicated_master_count   = number
     opensearch_cluster_availability_zone_count  = number
     opensearch_ebs_volume_size                  = number
     opensearch_override_main_response_version   = bool
-    ingest_sns_topic_arns                       = list(string)
-    additional_ingest_sqs_senders_arns          = list(string)
-    cors_origin                                 = string
-    cors_credentials                            = bool
-    cors_methods                                = string
-    cors_headers                                = string
-    authorized_s3_arns                          = list(string)
-    api_rest_type                               = string
-    api_method_authorization_type               = optional(string)
-    private_api_additional_security_group_ids   = optional(list(string))
-    private_certificate_arn                     = optional(string)
-    vpce_private_dns_enabled                    = bool
-    custom_vpce_id                              = optional(string)
+    opensearch_logs = optional(object({
+      ES_APPLICATION_LOGS = optional(object({
+        enabled                     = bool
+        retention_in_days           = number
+        deletion_protection_enabled = optional(bool, false)
+      }))
+      INDEX_SLOW_LOGS = optional(object({
+        enabled                     = bool
+        retention_in_days           = number
+        deletion_protection_enabled = optional(bool, false)
+      }))
+      SEARCH_SLOW_LOGS = optional(object({
+        enabled                     = bool
+        retention_in_days           = number
+        deletion_protection_enabled = optional(bool, false)
+      }))
+      AUDIT_LOGS = optional(object({
+        enabled                     = bool
+        retention_in_days           = number
+        deletion_protection_enabled = bool
+      }))
+    }))
+    ingest_sns_topic_arns                     = list(string)
+    additional_ingest_sqs_senders_arns        = list(string)
+    cors_origin                               = string
+    cors_credentials                          = bool
+    cors_methods                              = string
+    cors_headers                              = string
+    authorized_s3_arns                        = list(string)
+    api_rest_type                             = string
+    api_provisioned_concurrency               = optional(number)
+    api_method_authorization_type             = optional(string)
+    private_api_additional_security_group_ids = optional(list(string))
+    private_certificate_arn                   = optional(string)
+    vpce_private_dns_enabled                  = bool
+    custom_vpce_id                            = optional(string)
     api_lambda = optional(object({
       handler               = optional(string)
       memory_mb             = optional(number)
@@ -181,6 +205,7 @@ variable "stac_server_inputs" {
     opensearch_cluster_instance_type            = "t3.small.search"
     opensearch_cluster_instance_count           = 3
     opensearch_cluster_dedicated_master_enabled = true
+    opensearch_cluster_zone_awareness_enabled   = true
     opensearch_cluster_dedicated_master_type    = "t3.small.search"
     opensearch_cluster_dedicated_master_count   = 3
     opensearch_cluster_availability_zone_count  = 3
@@ -240,6 +265,7 @@ variable "titiler_inputs" {
     mosaic_titiler_host_header                = string
     mosaic_tile_timeout                       = number
     web_acl_id                                = string
+    api_provisioned_concurrency               = optional(number)
     is_private_endpoint                       = optional(bool)
     api_method_authorization_type             = optional(string)
     private_certificate_arn                   = optional(string)
@@ -484,9 +510,9 @@ variable "cirrus_inputs" {
     data_bucket                               = string
     payload_bucket                            = string
     log_level                                 = string
-    api_rest_type                             = string
     private_api_additional_security_group_ids = optional(list(string))
     deploy_alarms                             = bool
+    deploy_api                                = bool
     private_certificate_arn                   = optional(string)
     domain_alias                              = optional(string)
     custom_alarms = object({
@@ -505,10 +531,12 @@ variable "cirrus_inputs" {
     lambda_version      = optional(string)
     lambda_zip_filepath = optional(string)
     lambda_pyversion    = optional(string)
-    api_lambda = object({
-      timeout = number
-      memory  = number
-    })
+    api_lambda = optional(object({
+      timeout                 = number
+      memory                  = number
+      api_gateway_rest_type   = string
+      provisioned_concurrency = optional(number, 0)
+    }))
     process_lambda = object({
       timeout              = number
       memory               = number
@@ -544,9 +572,9 @@ variable "cirrus_inputs" {
     data_bucket                               = "cirrus-data-bucket-name"
     payload_bucket                            = "cirrus-payload-bucket-name"
     log_level                                 = "INFO"
-    api_rest_type                             = "EDGE"
     private_api_additional_security_group_ids = null
     deploy_alarms                             = true
+    deploy_api                                = true
     private_certificate_arn                   = ""
     domain_alias                              = ""
     custom_alarms = {
@@ -565,8 +593,10 @@ variable "cirrus_inputs" {
     lambda_zip_filepath = null
     lambda_pyversion    = null
     api_lambda = {
-      timeout = 10
-      memory  = 512
+      timeout                 = 10
+      memory                  = 512
+      api_gateway_rest_type   = "EDGE"
+      provisioned_concurrency = 0
     }
     process_lambda = {
       timeout              = 10

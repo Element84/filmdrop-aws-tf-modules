@@ -15,6 +15,17 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 - A new titiler_inputs.allowed_extensions_enabled var added. Set to `false` (default is `true`) to exclude the GDAL's `CPL_VSIL_CURL_ALLOWED_EXTENSIONS` env var from the titiler API Lambda environment. This allows GDAL to access extension-less proxy hrefs when asset proxying is enabled in stac-server.
 
+- A new input variable and resource block offers ability to optionally deploy cirrus api lambda with provisioned concurrency ([240](https://github.com/Element84/filmdrop-aws-tf-modules/pull/240))
+
+- The default version of cirrus lambda version was bumped from 1.1.2 -> 1.3.0, and the package stac-server infrastructure version from 2.0.0 -> 2.0.2
+  - stac-server OpenSearch `opensearch_cluster_instance_count` is now editable to >0 && <3 for lower-cost deployment scenarios; see `opensearch_cluster_zone_awareness_enabled` and `opensearch_cluster_availability_zone_count` descriptions in the **terraform-aws-stac-server** repository
+
+- `stac_server_inputs.api_provisioned_concurrency` enables provisioned concurrency on the stac-server API lambda
+
+- `titiler_inputs.api_provisioned_concurrency` offers the ability to optionally deploy the titiler lambda with provisioned concurrency ([245](https://github.com/Element84/filmdrop-aws-tf-modules/pull/245))
+
+- `stac_server_inputs.opensearch_logs` optionally enables various logging types on the opensearch cluster
+
 ### Changed
 
 - Minor changes ([#218](https://github.com/Element84/filmdrop-aws-tf-modules/pull/218)) to how TiTiler behaves when is_private_endpoint = true, supporting communications with its API Gateway and VPC Endpoint
@@ -24,6 +35,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Removing internal stac-server terraform module code and pointed to new location as stac-server terraform module code now lives in it's own [stac-server terraform repo](https://github.com/Element84/terraform-aws-stac-server) ([216](https://github.com/Element84/filmdrop-aws-tf-modules/pull/216)). 
 
 - Removing internal console-ui terraform module and pointing to an externally sourced module [filmdrop-ui](https://github.com/Element84/terraform-aws-filmdrop-ui) ([216](https://github.com/Element84/filmdrop-aws-tf-modules/pull/216)). 
+
+- `cirrus api` lambda extracted into its own module, and can now be optionally deployed (or not) along with other cirrus built in lambdas when deploying the larger cirrus ecosystem ([248](https://github.com/Element84/filmdrop-aws-tf-modules/pull/248))
 
 ### Fixed
 
@@ -44,6 +57,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 - See MIGRATION.md for important updates to the AWS provider version to v6, and the terraform-aws-stac-server module to v2
 - See MIGRATION.md for important information regarding the name change of the module `console-ui` to `filmdrop-ui`
+- See MIGRATION.md for important information regardint the change to optional deployment of `cirrus api` lambda
 
 
 ## [2.58.0] - 2025-12-10
