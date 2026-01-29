@@ -1,34 +1,35 @@
-variable "cirrus_api_rest_type" {
+variable "cirrus_api_lambda_settings" {
   description = <<-DESCRIPTION
-  (Optional) Cirrus API Gateway type.
+  Key configurable inputs for cirrus api lambda
 
-  Must be one of: `EDGE`, `REGIONAL`, or `PRIVATE`.
+  timeout - Cirrus lambda timeout (sec)
+  memory - Cirrus API lambda memory (MB)
+  api_gateway_rest_type - Cirrus API Gateway type
+    Must be one of `EDGE`, `REGIONAL`, `PRIVATE`
+  provisioned_concurrency - Number of Cirrus API lambda instances to optionally concurrently provison
   DESCRIPTION
-  type        = string
-  nullable    = true
-  default     = "EDGE"
+  type = object({
+    timeout                 = string
+    memory                  = string
+    api_gateway_rest_type   = string
+    provisioned_concurrency = number
+  })
+  default = {
+    timeout                 = 10
+    memory                  = 512
+    api_gateway_rest_type   = "EDGE"
+    provisioned_concurrency = 0
+  }
+  nullable = true
 
   validation {
-    condition     = contains(["EDGE", "REGIONAL", "PRIVATE"], var.cirrus_api_rest_type)
+    condition     = var.cirrus_api_lambda_settings == null || contains(["EDGE", "REGIONAL", "PRIVATE"], var.cirrus_api_lambda_settings.api_gateway_rest_type)
     error_message = "Cirrus API rest type must be one of: EDGE, REGIONAL, or PRIVATE."
   }
-}
-
-variable "cirrus_api_lambda_timeout" {
-  description = "Cirrus API lambda timeout (sec)"
-  type        = number
-  default     = 10
-}
-
-variable "cirrus_api_lambda_memory" {
-  description = "Cirrus API lambda memory (MB)"
-  type        = number
-  nullable    = false
-  default     = 512
 
   validation {
-    condition     = var.cirrus_api_lambda_memory >= 512
-    error_message = "cirrus_api_lambda_memory must be >= 512 MB. All Cirrus Lambda built-ins require at least 512 MB."
+    condition     = var.cirrus_api_lambda_settings == null || var.cirrus_api_lambda_settings.memory >= 512
+    error_message = "cirrus_api_lambda_memory must be >= 512 MB. All Cirrus Lambda built-ins require at least 512 MB of memory."
   }
 }
 
@@ -87,10 +88,7 @@ variable "cirrus_lambda_version" {
   default = "1.3.0"
 }
 
-variable "cirrus_api_provisioned_concurrency" {
-  description = "Number of lambda instances to optionally concurrently provison"
-  type        = number
-}
+
 
 variable "resource_prefix" {
   description = "String prefix to be used in every named resource."

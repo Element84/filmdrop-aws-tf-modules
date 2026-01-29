@@ -17,7 +17,7 @@ module "builtin_functions" {
   cirrus_lambda_zip_filepath                       = var.cirrus_lambda_zip_filepath
   cirrus_lambda_pyversion                          = var.cirrus_lambda_pyversion
   cirrus_private_api_additional_security_group_ids = var.cirrus_private_api_additional_security_group_ids
-  cirrus_api_lambda                                = var.cirrus_api_lambda
+  cirrus_api_lambda_settings                       = var.cirrus_api_lambda_settings
   cirrus_process_lambda_timeout                    = var.cirrus_process_lambda_timeout
   cirrus_process_lambda_memory                     = var.cirrus_process_lambda_memory
   cirrus_process_lambda_reserved_concurrency       = var.cirrus_process_lambda_reserved_concurrency

@@ -8,7 +8,7 @@ locals {
   # If the user has provided a local zip, here we hash it in order to force an update when contents of the zip change
   cirrus_lambda_zip_hash = var.cirrus_lambda_zip_filepath != null ? filebase64sha256("${path.root}/${var.cirrus_lambda_zip_filepath}") : null
 
-  is_private_endpoint = var.cirrus_api_rest_type == "PRIVATE" ? true : false
+  is_private_endpoint = var.cirrus_api_lambda_settings.api_gateway_rest_type == "PRIVATE" ? true : false
 
   // ensures we use the same var everywhere stage_name of the gateway is needed, and helps avoid ciricular deps
   stage_name = var.cirrus_api_stage
@@ -144,8 +144,8 @@ resource "aws_lambda_function" "cirrus_api" {
   handler          = "api.lambda_handler"
   source_code_hash = local.cirrus_lambda_zip_hash
   runtime          = "python${local.cirrus_lambda_pyversion}"
-  timeout          = var.cirrus_api_lambda_timeout
-  memory_size      = var.cirrus_api_lambda_memory
+  timeout          = var.cirrus_api_lambda_settings.timeout
+  memory_size      = var.cirrus_api_lambda_settings.memory
   publish          = true
   architectures    = ["arm64"]
 
@@ -177,10 +177,10 @@ resource "aws_lambda_function" "cirrus_api" {
 }
 
 resource "aws_lambda_provisioned_concurrency_config" "cirrus_api_provisioned_concurrency" {
-  count = var.cirrus_api_provisioned_concurrency > 0 ? 1 : 0
+  count = var.cirrus_api_lambda_settings.provisioned_concurrency > 0 ? 1 : 0
 
   function_name                     = aws_lambda_function.cirrus_api.function_name
-  provisioned_concurrent_executions = var.cirrus_api_provisioned_concurrency
+  provisioned_concurrent_executions = var.cirrus_api_lambda_settings.provisioned_concurrency
   qualifier                         = aws_lambda_function.cirrus_api.version
 }
 
@@ -229,7 +229,7 @@ resource "aws_api_gateway_rest_api" "cirrus_api_gateway" {
   name = "${var.resource_prefix}-api"
 
   endpoint_configuration {
-    types            = [var.cirrus_api_rest_type]
+    types            = [var.cirrus_api_lambda_settings.api_gateway_rest_type]
     vpc_endpoint_ids = local.is_private_endpoint ? aws_vpc_endpoint.cirrus_api_gateway_private[*].id : null
   }
 }

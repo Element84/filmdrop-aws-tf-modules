@@ -152,9 +152,15 @@ variable "cirrus_log_level" {
   }
 }
 
-variable "cirrus_api_lambda" {
+variable "cirrus_api_lambda_settings" {
   description = <<-DESCRIPTION
-  (Optional) Cirrus `api` lambda timeout (seconds).
+  Key configurable inputs for cirrus api lambda
+
+  timeout - Cirrus lambda timeout (sec)
+  memory - Cirrus API lambda memory (MB)
+  api_gateway_rest_type - Cirrus API Gateway type
+    Must be one of `EDGE`, `REGIONAL`, `PRIVATE`
+  provisioned_concurrency - Number of Cirrus API lambda instances to optionally concurrently provison
   DESCRIPTION
   type = object({
     timeout                 = string
@@ -169,6 +175,16 @@ variable "cirrus_api_lambda" {
     provisioned_concurrency = 0
   }
   nullable = true
+
+  validation {
+    condition     = var.cirrus_api_lambda_settings == null || contains(["EDGE", "REGIONAL", "PRIVATE"], var.cirrus_api_lambda_settings.api_gateway_rest_type)
+    error_message = "Cirrus API rest type must be one of: EDGE, REGIONAL, or PRIVATE."
+  }
+
+  validation {
+    condition     = var.cirrus_api_lambda_settings == null || var.cirrus_api_lambda_settings.memory >= 512
+    error_message = "cirrus_api_lambda_memory must be >= 512 MB. All Cirrus Lambda built-ins require at least 512 MB of memory."
+  }
 }
 
 variable "cirrus_process_lambda_timeout" {
