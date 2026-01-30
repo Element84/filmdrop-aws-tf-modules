@@ -471,11 +471,11 @@ variable "cirrus_inputs" {
     lambda_version      = optional(string)
     lambda_zip_filepath = optional(string)
     lambda_pyversion    = optional(string)
-    api_lambda = optional(object({
-      timeout                 = number
-      memory                  = number
-      api_gateway_rest_type   = string
-      provisioned_concurrency = optional(number, 0)
+    api_settings = optional(object({
+      lbd_timeout                 = number
+      lbd_memory                  = number
+      gateway_rest_type           = string
+      lbd_provisioned_concurrency = optional(number, 0)
     }))
     process_lambda = object({
       timeout              = number
@@ -514,7 +514,7 @@ variable "cirrus_inputs" {
     log_level                                 = "INFO"
     private_api_additional_security_group_ids = null
     deploy_alarms                             = true
-    deploy_api                                = true
+    deploy_api                                = false
     private_certificate_arn                   = ""
     domain_alias                              = ""
     custom_alarms = {

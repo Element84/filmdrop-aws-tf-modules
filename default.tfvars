@@ -194,7 +194,7 @@ cirrus_inputs = {
   payload_bucket                            = "" # If left blank the deployment will create the payload bucket
   log_level                                 = "DEBUG"
   deploy_alarms                             = false
-  deploy_api                                = false
+  deploy_api                                = true
   private_api_additional_security_group_ids = null
   private_certificate_arn                   = ""
   domain_alias                              = ""
@@ -219,7 +219,6 @@ cirrus_inputs = {
     lbd_memory                  = 512
     lbd_provisioned_concurrency = 0
     gateway_rest_type           = "EDGE"
-
   }
   process_lambda = {
     timeout              = 10
@@ -299,7 +298,7 @@ deploy_stac_server_opensearch_serverless = false
 deploy_stac_server_outside_vpc           = false
 deploy_local_stac_server_artifacts       = false
 
-deploy_cirrus           = false
+deploy_cirrus           = true
 deploy_cirrus_dashboard = false
 deploy_titiler          = false
 deploy_log_archive      = false

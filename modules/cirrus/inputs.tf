@@ -163,8 +163,8 @@ variable "api_settings" {
   provisioned_concurrency - Number of Cirrus API lambda instances to optionally concurrently provison
   DESCRIPTION
   type = object({
-    lbd_timeout                 = string
-    lbd_memory                  = string
+    lbd_timeout                 = number
+    lbd_memory                  = number
     lbd_provisioned_concurrency = number
     gateway_rest_type           = string
   })
@@ -182,7 +182,7 @@ variable "api_settings" {
   }
 
   validation {
-    condition     = var.api_settings == null || var.api_settings.memory >= 512
+    condition     = var.api_settings == null || var.api_settings.lbd_memory >= 512
     error_message = "cirrus_api_lambda_memory must be >= 512 MB. All Cirrus Lambda built-ins require at least 512 MB of memory."
   }
 }
