@@ -50,28 +50,29 @@ stac_server_inputs = {
 
   opensearch_ebs_volume_size                = 35
   opensearch_override_main_response_version = null
-  opensearch_logs = {
-    ES_APPLICATION_LOGS = {
-      enabled                     = true
-      retention_in_days           = 7
-      deletion_protection_enabled = false
-    }
-    INDEX_SLOW_LOGS = {
-      enabled                     = true
-      retention_in_days           = 7
-      deletion_protection_enabled = false
-    }
-    SEARCH_SLOW_LOGS = {
-      enabled                     = true
-      retention_in_days           = 7
-      deletion_protection_enabled = false
-    }
-    AUDIT_LOGS = {
-      enabled                     = true
-      retention_in_days           = 7
-      deletion_protection_enabled = false
-    }
-  }
+  # logs cannot be enabled when using opensearch serverless, unfortunately. an aws limitation
+  # opensearch_logs = {
+  #   ES_APPLICATION_LOGS = {
+  #     enabled                     = true
+  #     retention_in_days           = 7
+  #     deletion_protection_enabled = false
+  #   }
+  #   INDEX_SLOW_LOGS = {
+  #     enabled                     = true
+  #     retention_in_days           = 7
+  #     deletion_protection_enabled = false
+  #   }
+  #   SEARCH_SLOW_LOGS = {
+  #     enabled                     = true
+  #     retention_in_days           = 7
+  #     deletion_protection_enabled = false
+  #   }
+  #   AUDIT_LOGS = {
+  #     enabled                     = true
+  #     retention_in_days           = 7
+  #     deletion_protection_enabled = false
+  #   }
+  # }
 
   ingest_sns_topic_arns                     = []
   additional_ingest_sqs_senders_arns        = []
