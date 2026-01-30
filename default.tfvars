@@ -244,11 +244,11 @@ cirrus_inputs = {
   lambda_version      = null
   lambda_zip_filepath = null
   lambda_pyversion    = null
-  api_lambda = {
-    timeout                 = 10
-    memory                  = 512
-    api_gateway_rest_type   = "EDGE"
-    provisioned_concurrency = 2
+  api_settings = {
+    lbd_timeout                 = 10
+    lbd_memory                  = 512
+    lbd_provisioned_concurrency = 0
+    gateway_rest_type           = "EDGE"
   }
   process_lambda = {
     timeout              = 10
@@ -328,7 +328,7 @@ deploy_stac_server_opensearch_serverless = false
 deploy_stac_server_outside_vpc           = false
 deploy_local_stac_server_artifacts       = false
 
-deploy_cirrus           = false
+deploy_cirrus           = true
 deploy_cirrus_dashboard = false
 deploy_titiler          = false
 deploy_log_archive      = false
