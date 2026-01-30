@@ -42,6 +42,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
   necessary wildcard, and in the read policy to include listing
   metrics. ([#237](https://github.com/Element84/filmdrop-aws-tf-modules/pull/237))
 
+- TiTiler's API Gateway points to the published version of it's API Lambda, so that provisioned concurrency function as expeted
+
 ### Removed
 
 - If you have stac server, cirrus, or titiler (as *private*) deployed`, Terraform will note that a null_resource.enable_access_logs is being destroyed for each. This is expected. Previously, api gateway access logs were enabled via this null resource; they are now enabled via an aws_api_gateway_stage resource.
