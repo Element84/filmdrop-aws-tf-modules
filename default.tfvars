@@ -194,7 +194,7 @@ cirrus_inputs = {
   payload_bucket                            = "" # If left blank the deployment will create the payload bucket
   log_level                                 = "DEBUG"
   deploy_alarms                             = false
-  deploy_api                                = true
+  deploy_api                                = false
   private_api_additional_security_group_ids = null
   private_certificate_arn                   = ""
   domain_alias                              = ""
@@ -214,11 +214,12 @@ cirrus_inputs = {
   lambda_version      = null
   lambda_zip_filepath = null
   lambda_pyversion    = null
-  api_lambda = {
-    timeout                 = 10
-    memory                  = 512
-    api_gateway_rest_type   = "EDGE"
-    provisioned_concurrency = 2
+  api_settings = {
+    lbd_timeout                 = 10
+    lbd_memory                  = 512
+    lbd_provisioned_concurrency = 0
+    gateway_rest_type           = "EDGE"
+
   }
   process_lambda = {
     timeout              = 10

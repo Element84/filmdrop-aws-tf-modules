@@ -1,6 +1,6 @@
-module "cirrus_api" {
+module "api" {
   source = "./api"
-  count  = var.deploy_api && var.cirrus_api_lambda_settings != null ? 1 : 0
+  count  = var.deploy_api && var.api_settings != null ? 1 : 0
 
   vpc_id                       = var.vpc_id
   vpc_subnet_ids               = var.vpc_subnet_ids
@@ -15,7 +15,7 @@ module "cirrus_api" {
   cirrus_api_stage             = var.cirrus_api_stage
   cirrus_api_stage_description = var.cirrus_api_stage_description
 
-  cirrus_api_lambda_settings = var.cirrus_api_lambda_settings
+  api_settings = var.api_settings
 
   cirrus_private_api_additional_security_group_ids = var.cirrus_private_api_additional_security_group_ids
 

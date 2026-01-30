@@ -152,37 +152,37 @@ variable "cirrus_log_level" {
   }
 }
 
-variable "cirrus_api_lambda_settings" {
+variable "api_settings" {
   description = <<-DESCRIPTION
   Key configurable inputs for cirrus api lambda
 
   timeout - Cirrus lambda timeout (sec)
   memory - Cirrus API lambda memory (MB)
-  api_gateway_rest_type - Cirrus API Gateway type
+  gateway_rest_type - Cirrus API Gateway type
     Must be one of `EDGE`, `REGIONAL`, `PRIVATE`
   provisioned_concurrency - Number of Cirrus API lambda instances to optionally concurrently provison
   DESCRIPTION
   type = object({
-    timeout                 = string
-    memory                  = string
-    api_gateway_rest_type   = string
-    provisioned_concurrency = number
+    lbd_timeout                 = string
+    lbd_memory                  = string
+    lbd_provisioned_concurrency = number
+    gateway_rest_type           = string
   })
   default = {
-    timeout                 = 10
-    memory                  = 512
-    api_gateway_rest_type   = "EDGE"
-    provisioned_concurrency = 0
+    lbd_timeout                 = 10
+    lbd_memory                  = 512
+    lbd_provisioned_concurrency = 0
+    gateway_rest_type           = "EDGE"
   }
   nullable = true
 
   validation {
-    condition     = var.cirrus_api_lambda_settings == null || contains(["EDGE", "REGIONAL", "PRIVATE"], var.cirrus_api_lambda_settings.api_gateway_rest_type)
+    condition     = var.api_settings == null || contains(["EDGE", "REGIONAL", "PRIVATE"], var.api_settings.gateway_rest_type)
     error_message = "Cirrus API rest type must be one of: EDGE, REGIONAL, or PRIVATE."
   }
 
   validation {
-    condition     = var.cirrus_api_lambda_settings == null || var.cirrus_api_lambda_settings.memory >= 512
+    condition     = var.api_settings == null || var.api_settings.memory >= 512
     error_message = "cirrus_api_lambda_memory must be >= 512 MB. All Cirrus Lambda built-ins require at least 512 MB of memory."
   }
 }
@@ -319,7 +319,7 @@ variable "deploy_api" {
   DESCRIPTION
   type        = bool
   nullable    = false
-  default     = true
+  default     = false
 }
 
 variable "warning_sns_topic_arn" {
