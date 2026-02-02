@@ -122,7 +122,7 @@ resource "aws_api_gateway_integration" "titiler_api_gateway_root_method_integrat
   resource_id             = aws_api_gateway_rest_api.titiler_api_gateway[0].root_resource_id
   http_method             = aws_api_gateway_method.titiler_api_gateway_root_method[0].http_method
   type                    = "AWS_PROXY"
-  uri                     = "arn:aws:apigateway:${data.aws_region.current.region}:lambda:path/2015-03-31/functions/${aws_lambda_function.titiler-mosaic-lambda.arn}/invocations"
+  uri                     = "arn:aws:apigateway:${data.aws_region.current.region}:lambda:path/2015-03-31/functions/${aws_lambda_function.titiler-mosaic-lambda.qualified_arn}/invocations"
   integration_http_method = "POST"
 }
 
@@ -233,7 +233,7 @@ resource "aws_api_gateway_integration" "titiler_api_gateway_proxy_resource_metho
   resource_id             = aws_api_gateway_resource.titiler_api_gateway_proxy_resource[0].id
   http_method             = aws_api_gateway_method.titiler_api_gateway_proxy_resource_method[0].http_method
   type                    = "AWS_PROXY"
-  uri                     = "arn:aws:apigateway:${data.aws_region.current.region}:lambda:path/2015-03-31/functions/${aws_lambda_function.titiler-mosaic-lambda.arn}/invocations"
+  uri                     = "arn:aws:apigateway:${data.aws_region.current.region}:lambda:path/2015-03-31/functions/${aws_lambda_function.titiler-mosaic-lambda.qualified_arn}/invocations"
   integration_http_method = "POST"
 }
 
@@ -249,6 +249,24 @@ resource "aws_api_gateway_deployment" "titiler_api_gateway" {
   ]
 
   rest_api_id = aws_api_gateway_rest_api.titiler_api_gateway[0].id
+
+  triggers = {
+    redeployment = sha1(jsonencode([
+      aws_api_gateway_resource.titiler_api_gateway_proxy_resource[0],
+      aws_api_gateway_method.titiler_api_gateway_root_method[0],
+      aws_api_gateway_integration.titiler_api_gateway_root_method_integration[0],
+      aws_api_gateway_method.titiler_api_gateway_proxy_resource_method[0],
+      aws_api_gateway_integration.titiler_api_gateway_proxy_resource_method_integration[0],
+      aws_api_gateway_method.titiler_root_options_method[0],
+      aws_api_gateway_method_response.titiler_root_options_200[0],
+      aws_api_gateway_integration.titiler_root_options_integration[0],
+      aws_api_gateway_integration_response.titiler_root_options_integration_response[0],
+      aws_api_gateway_method.titiler_options_method[0],
+      aws_api_gateway_method_response.titiler_options_200[0],
+      aws_api_gateway_integration.titiler_options_integration[0],
+      aws_api_gateway_integration_response.titiler_options_integration_response[0],
+    ]))
+  }
 
   lifecycle {
     create_before_destroy = true
@@ -281,6 +299,7 @@ resource "aws_lambda_permission" "titiler_api_gateway_lambda_permission_root_res
   statement_id  = "AllowExecutionFromAPIGatewayRootResource"
   action        = "lambda:InvokeFunction"
   function_name = aws_lambda_function.titiler-mosaic-lambda.arn
+  qualifier     = aws_lambda_function.titiler-mosaic-lambda.version
   principal     = "apigateway.amazonaws.com"
 
   source_arn = "arn:aws:execute-api:${data.aws_region.current.region}:${data.aws_caller_identity.current.account_id}:${aws_api_gateway_rest_api.titiler_api_gateway[0].id}/*/*"
