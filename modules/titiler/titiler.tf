@@ -54,7 +54,7 @@ resource "aws_lambda_function" "titiler-lambda" {
 
   s3_bucket = aws_s3_bucket.lambda-source.id
   s3_key    = "${var.titiler_release_tag}-lambda-${var.lambda_runtime}-${null_resource.download-lambda-source-bundle.id}.zip"
-  handler   = "filmdrop_titiler.application.handler"
+  handler   = "filmdrop_titiler.application.handler.handler"
   runtime   = var.lambda_runtime
   publish   = true
 

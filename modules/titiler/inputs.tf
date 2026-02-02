@@ -110,7 +110,7 @@ variable "aws_request_payer" {
 }
 
 variable "project_name" {
-  description = "Project Name (must be unique for multiple deployments to a single AWS account)"
+  description = "Project Name (must be unique for multiple deployments to a single AWS accounat)"
   type        = string
 }
 
@@ -122,7 +122,7 @@ variable "titiler_release_tag" {
 variable "lambda_runtime" {
   description = "AWS lambda runtime version"
   type        = string
-  default     = "python3.10"
+  default     = "python3.13"
 }
 
 variable "authorized_s3_arns" {
