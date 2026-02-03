@@ -59,21 +59,38 @@ variable "cirrus_lambda_pyversion" {
   default = "3.13"
 }
 
-variable "cirrus_api_lambda_timeout" {
-  description = "Cirrus API lambda timeout (sec)"
-  type        = number
-  default     = 10
-}
+variable "api_settings" {
+  description = <<-DESCRIPTION
+  Key configurable inputs for cirrus api lambda
 
-variable "cirrus_api_lambda_memory" {
-  description = "Cirrus API lambda memory (MB)"
-  type        = number
-  nullable    = false
-  default     = 512
+  timeout - Cirrus lambda timeout (sec)
+  memory - Cirrus API lambda memory (MB)
+  gateway_rest_type - Cirrus API Gateway type
+    Must be one of `EDGE`, `REGIONAL`, `PRIVATE`
+  provisioned_concurrency - Number of Cirrus API lambda instances to optionally concurrently provison
+  DESCRIPTION
+  type = object({
+    lbd_timeout                 = number
+    lbd_memory                  = number
+    lbd_provisioned_concurrency = number
+    gateway_rest_type           = string
+  })
+  default = {
+    lbd_timeout                 = 10
+    lbd_memory                  = 512
+    lbd_provisioned_concurrency = 0
+    gateway_rest_type           = "EDGE"
+  }
+  nullable = true
 
   validation {
-    condition     = var.cirrus_api_lambda_memory >= 512
-    error_message = "cirrus_api_lambda_memory must be >= 512 MB. All Cirrus Lambda built-ins require at least 512 MB."
+    condition     = var.api_settings == null || contains(["EDGE", "REGIONAL", "PRIVATE"], var.api_settings.gateway_rest_type)
+    error_message = "Cirrus API rest type must be one of: EDGE, REGIONAL, or PRIVATE."
+  }
+
+  validation {
+    condition     = var.api_settings == null || var.api_settings.lbd_memory >= 512
+    error_message = "cirrus_api_lambda_memory must be >= 512 MB. All Cirrus Lambda built-ins require at least 512 MB of memory."
   }
 }
 
@@ -230,12 +247,6 @@ variable "vpc_security_group_ids" {
   type        = list(string)
 }
 
-variable "cirrus_api_rest_type" {
-  description = "Cirrus API Gateway type"
-  type        = string
-  default     = "EDGE"
-}
-
 variable "cirrus_private_api_additional_security_group_ids" {
   description = <<-DESCRIPTION
   Optional list of security group IDs that'll be applied to the VPC interface
@@ -259,11 +270,6 @@ variable "cirrus_api_stage_description" {
   default     = ""
 }
 
-variable "cirrus_api_provisioned_concurrency" {
-  description = "Number of lambda instances to optionally concurrently provison"
-  type        = number
-}
-
 variable "warning_sns_topic_arn" {
   description = "String with FilmDrop Warning SNS topic ARN"
   type        = string
@@ -278,6 +284,12 @@ variable "deploy_alarms" {
   type        = bool
   default     = true
   description = "Deploy Cirrus Alarms stack"
+}
+
+variable "deploy_api" {
+  type        = bool
+  default     = false
+  description = "Deploy Cirrus API"
 }
 
 variable "domain_alias" {

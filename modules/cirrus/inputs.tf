@@ -123,22 +123,6 @@ variable "cirrus_payload_bucket" {
   default     = ""
 }
 
-variable "cirrus_api_rest_type" {
-  description = <<-DESCRIPTION
-  (Optional) Cirrus API Gateway type.
-
-  Must be one of: `EDGE`, `REGIONAL`, or `PRIVATE`.
-  DESCRIPTION
-  type        = string
-  nullable    = false
-  default     = "EDGE"
-
-  validation {
-    condition     = contains(["EDGE", "REGIONAL", "PRIVATE"], var.cirrus_api_rest_type)
-    error_message = "Cirrus API rest type must be one of: EDGE, REGIONAL, or PRIVATE."
-  }
-}
-
 variable "cirrus_private_api_additional_security_group_ids" {
   description = <<-DESCRIPTION
   (Optional) List of security group IDs that'll be applied to the VPC interface endpoints of a PRIVATE-type cirrus API Gateway.
@@ -168,28 +152,39 @@ variable "cirrus_log_level" {
   }
 }
 
-variable "cirrus_api_lambda_timeout" {
+variable "api_settings" {
   description = <<-DESCRIPTION
-  (Optional) Cirrus `api` lambda timeout (seconds).
-  DESCRIPTION
-  type        = number
-  nullable    = false
-  default     = 10
-}
+  Key configurable inputs for cirrus api lambda
 
-variable "cirrus_api_lambda_memory" {
-  description = <<-DESCRIPTION
-  (Optional) Cirrus `api` lambda memory (MB).
+  timeout - Cirrus lambda timeout (sec)
+  memory - Cirrus API lambda memory (MB)
+  gateway_rest_type - Cirrus API Gateway type
+    Must be one of `EDGE`, `REGIONAL`, `PRIVATE`
+  provisioned_concurrency - Number of Cirrus API lambda instances to optionally concurrently provison
   DESCRIPTION
-  type        = number
-  nullable    = false
-  default     = 512
-}
+  type = object({
+    lbd_timeout                 = number
+    lbd_memory                  = number
+    lbd_provisioned_concurrency = number
+    gateway_rest_type           = string
+  })
+  default = {
+    lbd_timeout                 = 10
+    lbd_memory                  = 512
+    lbd_provisioned_concurrency = 0
+    gateway_rest_type           = "EDGE"
+  }
+  nullable = true
 
-variable "cirrus_api_provisioned_concurrency" {
-  description = "Number of lambda instances to optionally concurrently provison"
-  type        = number
-  default     = 0
+  validation {
+    condition     = var.api_settings == null || contains(["EDGE", "REGIONAL", "PRIVATE"], var.api_settings.gateway_rest_type)
+    error_message = "Cirrus API rest type must be one of: EDGE, REGIONAL, or PRIVATE."
+  }
+
+  validation {
+    condition     = var.api_settings == null || var.api_settings.lbd_memory >= 512
+    error_message = "cirrus_api_lambda_memory must be >= 512 MB. All Cirrus Lambda built-ins require at least 512 MB of memory."
+  }
 }
 
 variable "cirrus_process_lambda_timeout" {
@@ -316,6 +311,15 @@ variable "deploy_alarms" {
   type        = bool
   nullable    = false
   default     = true
+}
+
+variable "deploy_api" {
+  description = <<-DESCRIPTION
+  (Optional) Whether the Cirrus API should be deployed.
+  DESCRIPTION
+  type        = bool
+  nullable    = false
+  default     = false
 }
 
 variable "warning_sns_topic_arn" {

@@ -36,6 +36,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 - Removing internal console-ui terraform module and pointing to an externally sourced module [filmdrop-ui](https://github.com/Element84/terraform-aws-filmdrop-ui) ([216](https://github.com/Element84/filmdrop-aws-tf-modules/pull/216)). 
 
+- `cirrus api` lambda extracted into its own module, and can now be optionally deployed (or not) along with other cirrus built in lambdas when deploying the larger cirrus ecosystem ([248](https://github.com/Element84/filmdrop-aws-tf-modules/pull/248))
+
 ### Fixed
 
 - Corrected permissions in Workflow Metrics CloudWatch write policy to include
@@ -57,6 +59,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 - See MIGRATION.md for important updates to the AWS provider version to v6, and the terraform-aws-stac-server module to v2
 - See MIGRATION.md for important information regarding the name change of the module `console-ui` to `filmdrop-ui`
+- See MIGRATION.md for important information regardint the change to optional deployment of `cirrus api` lambda
 
 
 ## [2.58.0] - 2025-12-10

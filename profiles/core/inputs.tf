@@ -450,9 +450,9 @@ variable "cirrus_inputs" {
     data_bucket                               = string
     payload_bucket                            = string
     log_level                                 = string
-    api_rest_type                             = string
     private_api_additional_security_group_ids = optional(list(string))
     deploy_alarms                             = bool
+    deploy_api                                = bool
     private_certificate_arn                   = optional(string)
     domain_alias                              = optional(string)
     custom_alarms = object({
@@ -471,11 +471,12 @@ variable "cirrus_inputs" {
     lambda_version      = optional(string)
     lambda_zip_filepath = optional(string)
     lambda_pyversion    = optional(string)
-    api_lambda = object({
-      timeout                 = number
-      memory                  = number
-      provisioned_concurrency = optional(number, 0)
-    })
+    api_settings = optional(object({
+      lbd_timeout                 = number
+      lbd_memory                  = number
+      gateway_rest_type           = string
+      lbd_provisioned_concurrency = optional(number, 0)
+    }))
     process_lambda = object({
       timeout              = number
       memory               = number
@@ -511,9 +512,9 @@ variable "cirrus_inputs" {
     data_bucket                               = "cirrus-data-bucket-name"
     payload_bucket                            = "cirrus-payload-bucket-name"
     log_level                                 = "INFO"
-    api_rest_type                             = "EDGE"
     private_api_additional_security_group_ids = null
     deploy_alarms                             = true
+    deploy_api                                = false
     private_certificate_arn                   = ""
     domain_alias                              = ""
     custom_alarms = {
@@ -531,10 +532,11 @@ variable "cirrus_inputs" {
     lambda_version      = null
     lambda_zip_filepath = null
     lambda_pyversion    = null
-    api_lambda = {
-      timeout                 = 10
-      memory                  = 512
-      provisioned_concurrency = 0
+    api_settings = {
+      lbd_timeout                 = 10
+      lbd_memory                  = 512
+      gateway_rest_type           = "EDGE"
+      lbd_provisioned_concurrency = 0
     }
     process_lambda = {
       timeout              = 10
