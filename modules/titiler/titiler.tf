@@ -77,6 +77,7 @@ resource "aws_lambda_function" "titiler-lambda" {
         MOSAIC_HOST                        = "${data.aws_region.current.region}/${aws_dynamodb_table.titiler-dynamodb-table.name}"
         REQUEST_HOST_HEADER_OVERRIDE       = var.request_host_header_override
         MOSAIC_TILE_TIMEOUT                = var.mosaic_tile_timeout
+        LD_LIBRARY_PATH                    = "/var/task"
       },
       var.allowed_extensions_enabled ? {
         CPL_VSIL_CURL_ALLOWED_EXTENSIONS = var.cpl_vsil_curl_allowed_extensions
