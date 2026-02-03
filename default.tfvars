@@ -328,7 +328,7 @@ deploy_stac_server_opensearch_serverless = false
 deploy_stac_server_outside_vpc           = false
 deploy_local_stac_server_artifacts       = false
 
-deploy_cirrus           = false
+deploy_cirrus           = true
 deploy_cirrus_dashboard = false
 deploy_titiler          = false
 deploy_filmdrop_titiler = true
