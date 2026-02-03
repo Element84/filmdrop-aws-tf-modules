@@ -532,11 +532,11 @@ variable "cirrus_inputs" {
     lambda_version      = null
     lambda_zip_filepath = null
     lambda_pyversion    = null
-    api_lambda = {
-      timeout                 = 10
-      memory                  = 512
-      api_gateway_rest_type   = "EDGE"
-      provisioned_concurrency = 0
+    api_settings = {
+      lbd_timeout                 = 10
+      lbd_memory                  = 512
+      gateway_rest_type           = "EDGE"
+      lbd_provisioned_concurrency = 0
     }
     process_lambda = {
       timeout              = 10
