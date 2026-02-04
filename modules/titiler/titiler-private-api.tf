@@ -2,7 +2,7 @@ locals {
   name_prefix = "fd-${var.project_name}-${var.environment}"
   # if var.custom_vpce_id was provided, the user is indicating they want to use a custom vpc endpoint which they have
   # defined. if not, and if is_private_endpoint is true, we use the vpce we create in this module
-  # vpce_id = try(coalesce(var.custom_vpce_id, aws_vpc_endpoint.titiler_api_gateway_private[0].id), null)
+
   vpce_id = var.custom_vpce_id != null ? var.custom_vpce_id : (var.is_private_endpoint ? aws_vpc_endpoint.titiler_api_gateway_private[0].id : null)
   # additionally, only create a vpc endpoint in this module if the api gateway is private *and* the user has not
   # indicated they are using their own vpc endpoint

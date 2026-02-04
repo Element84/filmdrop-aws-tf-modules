@@ -348,10 +348,10 @@ variable "filmdrop_titiler_inputs" {
     })
   })
   default = {
-    app_name                                  = "titiler"
+    app_name                                  = "fd-titi"
     domain_alias                              = ""
     deploy_cloudfront                         = true
-    version                                   = "v0.14.0-1.0.5"
+    version                                   = "v0.1.1"
     authorized_s3_arns                        = []
     titiler_waf_allowed_url                   = ""
     titiler_host_header                       = ""

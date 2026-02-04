@@ -47,7 +47,7 @@ EOF
 
 resource "aws_lambda_function" "titiler-lambda" {
   function_name = "titiler-${var.project_name}-${var.environment}-api"
-  description   = "Titiler mosaic API Lambda"
+  description   = "Filmdrop Titiler API Lambda"
   role          = aws_iam_role.titiler-lambda-role.arn
   timeout       = var.titiler_timeout
   memory_size   = var.titiler_memory
@@ -73,8 +73,6 @@ resource "aws_lambda_function" "titiler-lambda" {
         VSI_CACHE_SIZE                     = var.vsi_cache_size
         AWS_REQUEST_PAYER                  = var.aws_request_payer
         GDAL_INGESTED_BYTES_AT_OPEN        = var.gdal_ingested_bytes_at_open
-        MOSAIC_BACKEND                     = "dynamodb://"
-        MOSAIC_HOST                        = "${data.aws_region.current.region}/${aws_dynamodb_table.titiler-dynamodb-table.name}"
         REQUEST_HOST_HEADER_OVERRIDE       = var.request_host_header_override
         MOSAIC_TILE_TIMEOUT                = var.mosaic_tile_timeout
         LD_LIBRARY_PATH                    = "/var/task"
@@ -89,10 +87,6 @@ resource "aws_lambda_function" "titiler-lambda" {
     subnet_ids         = var.vpc_subnet_ids
     security_group_ids = var.vpc_security_group_ids
   }
-
-  depends_on = [
-    aws_dynamodb_table.titiler-dynamodb-table,
-  ]
 }
 
 resource "aws_lambda_provisioned_concurrency_config" "api_provisioned_concurrency" {
@@ -128,27 +122,6 @@ resource "aws_apigatewayv2_integration" "titiler-api-gateway_integration" {
   payload_format_version = "2.0"
 }
 
-resource "aws_dynamodb_table" "titiler-dynamodb-table" {
-  name         = "titiler-${var.project_name}-${var.environment}"
-  billing_mode = "PAY_PER_REQUEST"
-  hash_key     = "mosaicId"
-  range_key    = "quadkey"
-
-  attribute {
-    name = "mosaicId"
-    type = "S"
-  }
-
-  attribute {
-    name = "quadkey"
-    type = "S"
-  }
-
-  ttl {
-    attribute_name = "timeToLive"
-    enabled        = true
-  }
-}
 
 resource "aws_wafv2_web_acl" "titiler-wafv2-web-acl" {
   count       = var.is_private_endpoint ? 0 : 1
@@ -172,148 +145,8 @@ resource "aws_wafv2_web_acl" "titiler-wafv2-web-acl" {
   }
 
   rule {
-    name     = "allow-post-with-correct-stac-api-root"
-    priority = 1
-
-    dynamic "action" {
-      for_each = var.waf_allowed_url == null ? [] : [1]
-      content {
-        allow {}
-      }
-    }
-
-    dynamic "action" {
-      for_each = var.waf_allowed_url == null ? [1] : []
-      content {
-        count {}
-      }
-    }
-
-    statement {
-      and_statement {
-        statement {
-          # POST /mosaicjson/mosaics
-          byte_match_statement {
-            positional_constraint = "EXACTLY"
-            search_string         = "post"
-            field_to_match {
-              method {}
-            }
-            text_transformation {
-              priority = 0
-              type     = "LOWERCASE"
-            }
-          }
-        }
-
-        statement {
-          # POST /mosaicjson/mosaics
-          byte_match_statement {
-            positional_constraint = "EXACTLY"
-            search_string         = "/mosaicjson/mosaics"
-            field_to_match {
-              uri_path {}
-            }
-            text_transformation {
-              priority = 0
-              type     = "LOWERCASE"
-            }
-          }
-        }
-
-        statement {
-          byte_match_statement {
-            positional_constraint = "EXACTLY"
-            # since any URL will start with "https:", this rule should never match and count
-            search_string = var.waf_allowed_url == null ? "X" : var.waf_allowed_url
-            field_to_match {
-              json_body {
-                match_pattern {
-                  included_paths = ["/stac_api_root"]
-                }
-                match_scope               = "VALUE"
-                invalid_fallback_behavior = "NO_MATCH"
-                oversize_handling         = "NO_MATCH"
-              }
-            }
-            text_transformation {
-              priority = 0
-              type     = "LOWERCASE"
-            }
-          }
-        }
-      }
-    }
-
-    visibility_config {
-      cloudwatch_metrics_enabled = false
-      metric_name                = "${var.project_name}-${var.environment}-allow-post"
-      sampled_requests_enabled   = false
-    }
-  }
-
-  rule {
-    name     = "allow-options-for-cors"
-    priority = 2
-
-    dynamic "action" {
-      for_each = var.waf_allowed_url == null ? [] : [1]
-      content {
-        allow {}
-      }
-    }
-
-    dynamic "action" {
-      for_each = var.waf_allowed_url == null ? [1] : []
-      content {
-        count {}
-      }
-    }
-
-    statement {
-      and_statement {
-        statement {
-          # OPTIONS /mosaicjson/mosaics
-          byte_match_statement {
-            positional_constraint = "EXACTLY"
-            search_string         = "options"
-            field_to_match {
-              method {}
-            }
-            text_transformation {
-              priority = 0
-              type     = "LOWERCASE"
-            }
-          }
-        }
-
-        statement {
-          # OPTIONS /mosaicjson/mosaics
-          byte_match_statement {
-            positional_constraint = "EXACTLY"
-            search_string         = "/mosaicjson/mosaics"
-            field_to_match {
-              uri_path {}
-            }
-            text_transformation {
-              priority = 0
-              type     = "LOWERCASE"
-            }
-          }
-        }
-      }
-    }
-
-    visibility_config {
-      cloudwatch_metrics_enabled = false
-      metric_name                = "${var.project_name}-${var.environment}-allow-options"
-      sampled_requests_enabled   = false
-    }
-  }
-
-  rule {
     name     = "allow-get-stac-tiles-with-url-query-param"
-    priority = 3
+    priority = 1
 
     dynamic "action" {
       for_each = var.waf_allowed_url == null ? [] : [1]
@@ -388,6 +221,29 @@ resource "aws_wafv2_web_acl" "titiler-wafv2-web-acl" {
       metric_name                = "${var.project_name}-${var.environment}-allow-get"
       sampled_requests_enabled   = false
     }
+  }
+
+  rule {
+    name     = "ManagedRules"
+    priority = 2
+
+    override_action {
+      none {}
+    }
+
+    statement {
+      managed_rule_group_statement {
+        name        = "AWSManagedRulesKnownBadInputsRuleSet"
+        vendor_name = "AWS"
+      }
+    }
+
+    visibility_config {
+      cloudwatch_metrics_enabled = false
+      metric_name                = "${var.project_name}-${var.environment}-AWS-managed-rules"
+      sampled_requests_enabled   = false
+    }
+
   }
 
   visibility_config {

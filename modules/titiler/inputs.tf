@@ -8,11 +8,11 @@ variable "titiler_timeout" {
 variable "titiler_memory" {
   description = "Titiler lambda max memory size in MB"
   type        = number
-  default     = 1536
+  default     = 512
 }
 
 variable "environment" {
-  description = "Titiler stage name (dev/prod)"
+  description = "Titiler stage name (dev/stage/prod etc)"
   type        = string
 }
 
@@ -82,7 +82,7 @@ variable "gdal_http_version" {
 variable "gdal_ingested_bytes_at_open" {
   description = "GDAL_INGESTED_BYTES_AT_OPEN lambda env var"
   type        = number
-  default     = 32770
+  default     = 32768
 }
 
 variable "pythonwarnings" {

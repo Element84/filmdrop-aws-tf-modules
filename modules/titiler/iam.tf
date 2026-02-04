@@ -27,6 +27,7 @@ data "aws_iam_policy_document" "titiler_lambda_policy" {
 }
 
 resource "aws_iam_role_policy" "titiler-lambda-inline-policy" {
+  count  = length(var.authorized_s3_arns) > 0 ? 1 : 0
   name   = "titiler-lambda-inline-policy"
   role   = aws_iam_role.titiler-lambda-role.id
   policy = data.aws_iam_policy_document.titiler_lambda_policy.json
