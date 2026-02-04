@@ -236,7 +236,7 @@ cirrus_inputs = {
   api_settings = {
     lbd_timeout                 = 10
     lbd_memory                  = 512
-    lbd_provisioned_concurrency = 0
+    lbd_provisioned_concurrency = 1
     gateway_rest_type           = "EDGE"
   }
   process_lambda = {
