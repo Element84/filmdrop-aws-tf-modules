@@ -6,6 +6,8 @@ a newer version. For example, if a new required variable is added, this should b
 ### Unreleased
 
 
+### 3.0.0
+
 **MOVED: `console-ui` -> `filmdrop-ui`**
 
 - As part of extracting the `console-ui` module it was renamed to the `filmdrop-ui` to bring it in line with the naming conventions of other parts of the FilmDrop ecosystem.  ANY resource that previously used `console-ui` in the name wil be deleted/created anew by the renaming. Handling migration will requiring updating `console-ui` input variables to use the new `filmdrop-ui` naming.
@@ -13,7 +15,7 @@ a newer version. For example, if a new required variable is added, this should b
 - [stac-server](https://github.com/Element84/terraform-aws-stac-server)
 - [filmdrop-ui](https://github.com/Element84/terraform-aws-filmdrop-ui)
 
-- As part of enabling optional deployment of the `cirrus api` lambda, the `cirrus api` components and it's related parts were moved into their own submodule.   This is a destructive change that will force the destruction and creation of related resources.  A resource of notable concern that may contain data users wish to preserve through this update is the `cirrus api gateway log group`.  Cirrus inputs are also slightly modified with the addition of a `deploy_api` boolean flag and consolidation of related api lambda configurables into a single object.
+- As part of enabling optional deployment of the `cirrus api` lambda, the `cirrus api` components and it's related parts were moved into their own submodule.   This is a destructive change that will force the destruction and creation of related resources.  A resource of notable concern that may contain data users wish to preserve through this update is the `cirrus api gateway log group`.  Cirrus inputs are also slightly modified, including the addition of a `deploy_api` boolean flag and consolidation of related api lambda configurables into a single object.
 
 **AWS Provider Upgrade v5 -> v6**
 

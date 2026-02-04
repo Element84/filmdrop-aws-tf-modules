@@ -9,6 +9,17 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Added
 
+### Change
+
+### Fixed
+
+### Removed
+
+
+## [3.0.0] - 2026-02-04
+
+### Added
+
 - A new stac_server_inputs.custom_vpce_id var added. If provided, the user is indicating that they have an existing vpc endpoint that the stac server api gateway (and supporting resources) should allow to ingress
 
 - A new titiler_inputs.custom_vpce_id var added. If provided, the user is indicating that they have an existing vpc endpoint that the titiler api gateway (and supporting resources) should allow to ingress
