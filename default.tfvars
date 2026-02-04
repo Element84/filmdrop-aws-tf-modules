@@ -126,7 +126,7 @@ filmdrop_titiler_inputs = {
   domain_alias                              = ""
   deploy_cloudfront                         = true
   version                                   = "v0.1.1"
-  authorized_s3_arns                        = ["arn:aws:s3:::fd-moose-dev-catalog"]
+  authorized_s3_arns                        = []
   titiler_waf_allowed_url                   = "test.filmdrop_titiler.io"
   titiler_host_header                       = ""
   mosaic_tile_timeout                       = 30
@@ -328,7 +328,7 @@ deploy_stac_server_opensearch_serverless = false
 deploy_stac_server_outside_vpc           = false
 deploy_local_stac_server_artifacts       = false
 
-deploy_cirrus           = true
+deploy_cirrus           = false
 deploy_cirrus_dashboard = false
 deploy_titiler          = false
 deploy_filmdrop_titiler = true
