@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Added
 
+- Added SSM parameters for Cirrus pre-batch and post-batch lambda function ARNs (`CIRRUS_PRE_BATCH_LAMBDA_ARN` and `CIRRUS_POST_BATCH_LAMBDA_ARN`)
+
 ### Change
 
 ### Fixed
