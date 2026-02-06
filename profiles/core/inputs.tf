@@ -326,6 +326,7 @@ variable "filmdrop_titiler_inputs" {
     titiler_host_header                       = string
     mosaic_tile_timeout                       = number
     web_acl_id                                = string
+    api_provisioned_concurrency               = optional(number)
     is_private_endpoint                       = optional(bool)
     api_method_authorization_type             = optional(string)
     private_certificate_arn                   = optional(string)
@@ -350,7 +351,7 @@ variable "filmdrop_titiler_inputs" {
     deploy_cloudfront                         = true
     version                                   = "v0.1.1"
     authorized_s3_arns                        = []
-    titiler_waf_allowed_url                   = "test.filmdrop_titiler.io"
+    titiler_waf_allowed_url                   = ""
     titiler_host_header                       = ""
     mosaic_tile_timeout                       = 30
     web_acl_id                                = ""

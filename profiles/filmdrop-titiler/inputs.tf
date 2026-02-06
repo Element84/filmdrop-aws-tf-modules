@@ -58,7 +58,7 @@ variable "filmdrop_titiler_inputs" {
     deploy_cloudfront                         = true
     version                                   = "v0.1.1"
     authorized_s3_arns                        = []
-    titiler_waf_allowed_url                   = "test.filmdrop_titiler.io"
+    titiler_waf_allowed_url                   = ""
     titiler_host_header                       = ""
     mosaic_tile_timeout                       = 30
     web_acl_id                                = ""

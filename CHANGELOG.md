@@ -7,6 +7,19 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## Unreleased
 
+- a new `filmdrop-titiler` module that provides a lightweight implementation of the most recent release of TiTiler ([239](https://github.com/Element84/filmdrop-aws-tf-modules/pull/239)).  This is a new module part of a significant migration and should undergo extensive functionality and security testing before production use.
+
+### Added
+
+### Change
+
+### Fixed
+
+### Removed
+
+
+## [3.0.0] - 2026-02-04
+
 ### Added
 
 - A new stac_server_inputs.custom_vpce_id var added. If provided, the user is indicating that they have an existing vpc endpoint that the stac server api gateway (and supporting resources) should allow to ingress
@@ -25,8 +38,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - `titiler_inputs.api_provisioned_concurrency` offers the ability to optionally deploy the titiler lambda with provisioned concurrency ([245](https://github.com/Element84/filmdrop-aws-tf-modules/pull/245))
 
 - `stac_server_inputs.opensearch_logs` optionally enables various logging types on the opensearch cluster
-
-- a new `filmdrop-titiler` module that provides a lightweight implementation of the most recent release of TiTiler ([239](https://github.com/Element84/filmdrop-aws-tf-modules/pull/239))
 
 ### Changed
 
