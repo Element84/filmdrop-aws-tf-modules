@@ -82,6 +82,18 @@ resource "aws_ssm_parameter" "cirrus_iam_cli_role" {
   value = aws_iam_role.cirrus_instance_cli_management_role[0].arn
 }
 
+resource "aws_ssm_parameter" "pre_batch_lambda_arn" {
+  name  = "${local.parameter_prefix}CIRRUS_PRE_BATCH_LAMBDA_ARN"
+  type  = "String"
+  value = module.builtin_functions.pre_batch_lambda_function_arn
+}
+
+resource "aws_ssm_parameter" "post_batch_lambda_arn" {
+  name  = "${local.parameter_prefix}CIRRUS_POST_BATCH_LAMBDA_ARN"
+  type  = "String"
+  value = module.builtin_functions.post_batch_lambda_function_arn
+}
+
 moved {
   from = aws_ssm_parameter.event_db_and_table
   to   = aws_ssm_parameter.event_db_and_table[0]
