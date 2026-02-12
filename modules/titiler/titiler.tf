@@ -1,60 +1,292 @@
-module "titiler_docker_ecr" {
-  source = "./docker-images"
-
-  vpc_id             = var.vpc_id
-  private_subnet_ids = var.private_subnet_ids
-  security_group_ids = var.security_group_ids
-  prefix             = var.prefix
-  environment        = var.environment
+resource "aws_s3_bucket" "lambda-source" {
+  bucket_prefix = lower("titiler-source-${var.project_name}-${var.environment}")
+  force_destroy = true
 }
 
-resource "aws_lambda_function" "titiler_lambda" {
+resource "aws_s3_bucket_ownership_controls" "lambda-source-ownership-controls" {
+  bucket = aws_s3_bucket.lambda-source.id
+  rule {
+    object_ownership = "BucketOwnerPreferred"
+  }
+}
+
+resource "aws_s3_bucket_acl" "lambda-source-source-bucket-acl" {
+  bucket     = aws_s3_bucket.lambda-source.id
+  acl        = "private"
+  depends_on = [aws_s3_bucket_ownership_controls.lambda-source-ownership-controls]
+}
+
+resource "aws_s3_bucket_versioning" "lambda-source-versioning" {
+  bucket = aws_s3_bucket.lambda-source.id
+  versioning_configuration {
+    status = "Disabled"
+  }
+}
+
+resource "null_resource" "download-lambda-source-bundle" {
+  triggers = {
+    bucket  = aws_s3_bucket.lambda-source.id
+    version = var.titiler_release_tag
+    runtime = var.lambda_runtime
+  }
+
+  provisioner "local-exec" {
+    interpreter = ["bash", "-exc"]
+    command     = <<EOF
+mkdir -p ${path.module}/lambda
+which wget || echo "wget is required, but not found - this is going to fail..."
+wget --secure-protocol=TLSv1_2 --quiet \
+  https://github.com/Element84/filmdrop-titiler/releases/download/${var.titiler_release_tag}/titiler-lambda-${var.lambda_runtime}.zip \
+  -O ${path.module}/lambda/${var.titiler_release_tag}-lambda-${var.lambda_runtime}.zip
+aws s3 cp --quiet \
+  ${path.module}/lambda/${var.titiler_release_tag}-lambda-${var.lambda_runtime}.zip \
+  s3://${aws_s3_bucket.lambda-source.id}/${var.titiler_release_tag}-lambda-${var.lambda_runtime}-${self.id}.zip
+EOF
+  }
+}
+
+resource "aws_lambda_function" "titiler-lambda" {
   function_name = "titiler-${var.project_name}-${var.environment}-api"
-  description   = "Titiler API Lambda"
-  role          = aws_iam_role.titiler_lambda_role.arn
-  package_type  = "Image"
-  image_uri     = "${module.titiler_docker_ecr.titiler_repo}:latest"
+  description   = "Filmdrop Titiler API Lambda"
+  role          = aws_iam_role.titiler-lambda-role.arn
   timeout       = var.titiler_timeout
   memory_size   = var.titiler_memory
 
+  s3_bucket = aws_s3_bucket.lambda-source.id
+  s3_key    = "${var.titiler_release_tag}-lambda-${var.lambda_runtime}-${null_resource.download-lambda-source-bundle.id}.zip"
+  handler   = "filmdrop_titiler.application.handler.handler"
+  runtime   = var.lambda_runtime
+  publish   = true
+
   environment {
-    variables = {
-      CPL_VSIL_CURL_ALLOWED_EXTENSIONS   = var.cpl_vsil_curl_allowed_extensions
-      GDAL_CACHEMAX                      = var.gdal_cachemax
-      GDAL_DISABLE_READDIR_ON_OPEN       = var.gdal_disable_readdir_on_open
-      GDAL_HTTP_MERGE_CONSECUTIVE_RANGES = var.gdal_http_merge_consecutive_ranges
-      GDAL_HTTP_MULTIPLEX                = var.gdal_http_multiplex
-      GDAL_HTTP_VERSION                  = var.gdal_http_version
-      GDAL_INGESTED_BYTES_AT_OPEN        = var.gdal_ingested_bytes_at_open
-      PYTHONWARNINGS                     = var.pythonwarnings
-      VSI_CACHE                          = var.vsi_cache
-      VSI_CACHE_SIZE                     = var.vsi_cache_size
-      AWS_REQUEST_PAYER                  = var.aws_request_payer
-    }
+    variables = merge(
+      {
+        CPL_VSIL_CURL_CACHE_SIZE           = "200000000"
+        GDAL_CACHEMAX                      = var.gdal_cachemax
+        GDAL_DISABLE_READDIR_ON_OPEN       = var.gdal_disable_readdir_on_open
+        GDAL_HTTP_MERGE_CONSECUTIVE_RANGES = var.gdal_http_merge_consecutive_ranges
+        GDAL_HTTP_MULTIPLEX                = var.gdal_http_multiplex
+        GDAL_HTTP_VERSION                  = var.gdal_http_version
+        GDAL_BAND_BLOCK_CACHE              = "HASHSET"
+        PYTHONWARNINGS                     = var.pythonwarnings
+        VSI_CACHE                          = var.vsi_cache
+        VSI_CACHE_SIZE                     = var.vsi_cache_size
+        AWS_REQUEST_PAYER                  = var.aws_request_payer
+        GDAL_INGESTED_BYTES_AT_OPEN        = var.gdal_ingested_bytes_at_open
+        REQUEST_HOST_HEADER_OVERRIDE       = var.request_host_header_override
+        MOSAIC_TILE_TIMEOUT                = var.mosaic_tile_timeout
+        LD_LIBRARY_PATH                    = "/var/task"
+      },
+      var.allowed_extensions_enabled ? {
+        CPL_VSIL_CURL_ALLOWED_EXTENSIONS = var.cpl_vsil_curl_allowed_extensions
+      } : {}
+    )
   }
 
   vpc_config {
-    subnet_ids         = var.private_subnet_ids
-    security_group_ids = var.security_group_ids
+    subnet_ids         = var.vpc_subnet_ids
+    security_group_ids = var.vpc_security_group_ids
+  }
+}
+
+resource "aws_lambda_provisioned_concurrency_config" "api_provisioned_concurrency" {
+  count = coalesce(var.api_provisioned_concurrency, 0) > 0 ? 1 : 0
+
+  function_name                     = aws_lambda_function.titiler-lambda.function_name
+  provisioned_concurrent_executions = coalesce(var.api_provisioned_concurrency, 0)
+  qualifier                         = aws_lambda_function.titiler-lambda.version
+}
+
+
+
+resource "aws_apigatewayv2_api" "titiler-api-gateway" {
+  count         = var.is_private_endpoint ? 0 : 1
+  name          = "${var.project_name}-${var.environment}-titiler-mosaic"
+  protocol_type = "HTTP"
+  target        = aws_lambda_function.titiler-lambda.arn
+}
+
+resource "aws_lambda_permission" "titiler-api-gateway_permission" {
+  count         = var.is_private_endpoint ? 0 : 1
+  action        = "lambda:InvokeFunction"
+  function_name = aws_lambda_function.titiler-lambda.arn
+  principal     = "apigateway.amazonaws.com"
+  source_arn    = "${aws_apigatewayv2_api.titiler-api-gateway[0].execution_arn}/*/*"
+}
+
+resource "aws_apigatewayv2_integration" "titiler-api-gateway_integration" {
+  count                  = var.is_private_endpoint ? 0 : 1
+  api_id                 = aws_apigatewayv2_api.titiler-api-gateway[0].id
+  integration_type       = "AWS_PROXY"
+  integration_uri        = aws_lambda_function.titiler-lambda.invoke_arn
+  payload_format_version = "2.0"
+}
+
+
+resource "aws_wafv2_web_acl" "titiler-wafv2-web-acl" {
+  count       = var.is_private_endpoint ? 0 : 1
+  name        = "${var.project_name}-${var.environment}-mosaic"
+  description = "WAF rules for ${var.project_name}-${var.environment} mosaic titiler"
+  scope       = "CLOUDFRONT"
+  provider    = aws.east
+
+  dynamic "default_action" {
+    for_each = var.waf_allowed_url == null ? [] : [1]
+    content {
+      block {}
+    }
   }
 
+  dynamic "default_action" {
+    for_each = var.waf_allowed_url == null ? [1] : []
+    content {
+      allow {}
+    }
+  }
+
+  rule {
+    name     = "allow-get-stac-tiles-with-url-query-param"
+    priority = 1
+
+    dynamic "action" {
+      for_each = var.waf_allowed_url == null ? [] : [1]
+      content {
+        allow {}
+      }
+    }
+
+    dynamic "action" {
+      for_each = var.waf_allowed_url == null ? [1] : []
+      content {
+        count {}
+      }
+    }
+
+    statement {
+      and_statement {
+        statement {
+          # GET /stac/tiles/*
+          byte_match_statement {
+            positional_constraint = "EXACTLY"
+            search_string         = "get"
+            field_to_match {
+              method {}
+            }
+            text_transformation {
+              priority = 0
+              type     = "LOWERCASE"
+            }
+          }
+        }
+
+        statement {
+          # GET /stac/tiles/*
+          byte_match_statement {
+            positional_constraint = "STARTS_WITH"
+            search_string         = "/stac/tiles/"
+            field_to_match {
+              uri_path {}
+            }
+            text_transformation {
+              priority = 0
+              type     = "LOWERCASE"
+            }
+          }
+        }
+
+        statement {
+          byte_match_statement {
+            positional_constraint = "STARTS_WITH"
+            # since any URL will start with "https:", this rule should never match and count
+            search_string = var.waf_allowed_url == null ? "X" : var.waf_allowed_url
+
+            field_to_match {
+              single_query_argument {
+                name = "url"
+              }
+            }
+
+            text_transformation {
+              priority = 0
+              type     = "LOWERCASE"
+            }
+          }
+        }
+
+      }
+    }
+
+    visibility_config {
+      cloudwatch_metrics_enabled = false
+      metric_name                = "${var.project_name}-${var.environment}-allow-get"
+      sampled_requests_enabled   = false
+    }
+  }
+
+  rule {
+    name     = "ManagedRules"
+    priority = 2
+
+    override_action {
+      none {}
+    }
+
+    statement {
+      managed_rule_group_statement {
+        name        = "AWSManagedRulesKnownBadInputsRuleSet"
+        vendor_name = "AWS"
+      }
+    }
+
+    visibility_config {
+      cloudwatch_metrics_enabled = false
+      metric_name                = "${var.project_name}-${var.environment}-AWS-managed-rules"
+      sampled_requests_enabled   = false
+    }
+
+  }
+
+  visibility_config {
+    cloudwatch_metrics_enabled = false
+    metric_name                = "${var.project_name}-${var.environment}-waf-rules"
+    sampled_requests_enabled   = false
+  }
+}
+
+resource "null_resource" "cleanup_bucket" {
+  triggers = {
+    bucket_name = aws_s3_bucket.lambda-source.id
+    region      = data.aws_region.current.region
+    account     = data.aws_caller_identity.current.account_id
+  }
+
+  provisioner "local-exec" {
+    command = <<EOF
+export AWS_DEFAULT_REGION=${self.triggers.account}
+export AWS_REGION=${self.triggers.region}
+
+echo "FilmDrop CloudFront bucket has been created."
+
+aws s3 ls s3://${self.triggers.bucket_name}
+EOF
+
+  }
+
+
+  provisioner "local-exec" {
+    when    = destroy
+    command = <<EOF
+export AWS_DEFAULT_REGION=${self.triggers.account}
+export AWS_REGION=${self.triggers.region}
+
+echo "Cleaning FilmDrop bucket."
+
+aws s3 rm s3://${self.triggers.bucket_name}/ --recursive
+EOF
+  }
+
+
   depends_on = [
-    module.titiler_docker_ecr
+    aws_s3_bucket.lambda-source
   ]
-}
-
-
-resource "aws_apigatewayv2_api" "titiler_api_gateway" {
-  name          = "${var.environment}-titiler"
-  protocol_type = "HTTP"
-  target        = aws_lambda_function.titiler_lambda.arn
-}
-
-# Permission
-resource "aws_lambda_permission" "titiler_api_gateway_permission" {
-  action        = "lambda:InvokeFunction"
-  function_name = aws_lambda_function.titiler_lambda.arn
-  principal     = "apigateway.amazonaws.com"
-
-  source_arn = "${aws_apigatewayv2_api.titiler_api_gateway.execution_arn}/*/*"
 }
