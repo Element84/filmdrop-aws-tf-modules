@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## Unreleased
 
+- a new `filmdrop-titiler` module that provides a lightweight implementation of the most recent release of TiTiler ([239](https://github.com/Element84/filmdrop-aws-tf-modules/pull/239)).  This is a new module part of a significant migration and should undergo extensive functionality and security testing before production use.
+
 ### Added
 
 - Added SSM parameters for Cirrus pre-batch and post-batch lambda function ARNs (`CIRRUS_PRE_BATCH_LAMBDA_ARN` and `CIRRUS_POST_BATCH_LAMBDA_ARN`)

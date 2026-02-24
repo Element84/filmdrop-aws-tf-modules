@@ -20,6 +20,7 @@ module "filmdrop" {
   domain_zone                              = var.domain_zone
   stac_server_inputs                       = var.stac_server_inputs
   titiler_inputs                           = var.titiler_inputs
+  filmdrop_titiler_inputs                  = var.filmdrop_titiler_inputs
   analytics_inputs                         = var.analytics_inputs
   filmdrop_ui_inputs                       = var.filmdrop_ui_inputs
   cirrus_inputs                            = var.cirrus_inputs
@@ -32,6 +33,7 @@ module "filmdrop" {
   deploy_stac_server_outside_vpc           = var.deploy_stac_server_outside_vpc
   deploy_analytics                         = var.deploy_analytics
   deploy_titiler                           = var.deploy_titiler
+  deploy_filmdrop_titiler                  = var.deploy_filmdrop_titiler
   deploy_filmdrop_ui                       = var.deploy_filmdrop_ui
   deploy_cirrus                            = var.deploy_cirrus
   deploy_cirrus_dashboard                  = var.deploy_cirrus_dashboard

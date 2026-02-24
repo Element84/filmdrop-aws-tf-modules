@@ -164,3 +164,30 @@ module "cirrus-dashboard" {
   cirrus_dashboard_inputs = var.cirrus_dashboard_inputs
   fd_web_acl_id           = var.deploy_waf_rule ? module.base_infra.web_acl_id : var.ext_web_acl_id
 }
+
+module "filmdrop-titiler" {
+  count  = var.deploy_filmdrop_titiler ? 1 : 0
+  source = "../filmdrop-titiler"
+
+  providers = {
+    aws.east = aws.east
+    aws.main = aws.main
+  }
+
+  project_name            = var.project_name
+  environment             = var.environment
+  filmdrop_titiler_inputs = var.filmdrop_titiler_inputs
+  stac_url                = var.deploy_stac_server ? module.stac-server[0].stac_url : ""
+  s3_logs_archive_bucket  = module.base_infra.s3_logs_archive_bucket
+  domain_zone             = var.domain_zone
+  private_subnet_ids      = module.base_infra.private_subnet_ids
+  security_group_id       = module.base_infra.security_group_id
+  vpc_id                  = module.base_infra.vpc_id
+
+  # the titiler api gateway stage access logging requires base_infra.api_gateway_account cloudwatch_role_arn
+  # be set. that is a value only set once at the regional level, and is not used directly by titiler. thus, we
+  # require this explicit dependency
+  depends_on = [
+    module.base_infra
+  ]
+}
