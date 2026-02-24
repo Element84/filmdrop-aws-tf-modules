@@ -101,7 +101,7 @@ resource "aws_lambda_provisioned_concurrency_config" "api_provisioned_concurrenc
 
 resource "aws_apigatewayv2_api" "titiler-api-gateway" {
   count         = var.is_private_endpoint ? 0 : 1
-  name          = "${var.project_name}-${var.environment}-titiler-mosaic"
+  name          = "${var.project_name}-${var.environment}-filmdrop-titiler"
   protocol_type = "HTTP"
   target        = aws_lambda_function.titiler-lambda.arn
 }
@@ -125,8 +125,8 @@ resource "aws_apigatewayv2_integration" "titiler-api-gateway_integration" {
 
 resource "aws_wafv2_web_acl" "titiler-wafv2-web-acl" {
   count       = var.is_private_endpoint ? 0 : 1
-  name        = "${var.project_name}-${var.environment}-mosaic"
-  description = "WAF rules for ${var.project_name}-${var.environment} mosaic titiler"
+  name        = "${var.project_name}-${var.environment}-filmdrop-titiler"
+  description = "WAF rules for ${var.project_name}-${var.environment} filmdrop titiler"
   scope       = "CLOUDFRONT"
   provider    = aws.east
 
