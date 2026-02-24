@@ -58,7 +58,7 @@ first (`brew unlink terraform`), as the homebrew packages for `tfenv` and
 
 ## AWS configuration
 
-Export temporary AWS keys, by obtaining those credentials via AWS SSO.
+Export the temporary AWS keys, by obtaining those credentials via AWS SSO.
 The following 4 variables will be needed prior to running the infrastructure code:
 
 ```shell

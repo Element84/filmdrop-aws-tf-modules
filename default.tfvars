@@ -121,6 +121,36 @@ titiler_inputs = {
   }
 }
 
+filmdrop_titiler_inputs = {
+  app_name                                  = "fd-titi"
+  domain_alias                              = ""
+  deploy_cloudfront                         = false
+  version                                   = "v0.1.1"
+  authorized_s3_arns                        = []
+  titiler_waf_allowed_url                   = "test.filmdrop_titiler.io"
+  titiler_host_header                       = ""
+  mosaic_tile_timeout                       = 30
+  web_acl_id                                = ""
+  is_private_endpoint                       = false
+  api_method_authorization_type             = "NONE"
+  api_provisioned_concurrency               = 0
+  private_certificate_arn                   = ""
+  vpce_private_dns_enabled                  = false
+  custom_vpce_id                            = null
+  private_api_additional_security_group_ids = null
+  allowed_extensions_enabled                = true
+  auth_function = {
+    cf_function_name             = ""
+    cf_function_runtime          = "cloudfront-js-2.0"
+    cf_function_code_path        = ""
+    attach_cf_function           = false
+    cf_function_event_type       = "viewer-request"
+    create_cf_function           = false
+    create_cf_basicauth_function = false
+    cf_function_arn              = ""
+  }
+}
+
 analytics_inputs = {
   app_name                    = "analytics"
   domain_alias                = ""
@@ -298,9 +328,10 @@ deploy_stac_server_opensearch_serverless = false
 deploy_stac_server_outside_vpc           = false
 deploy_local_stac_server_artifacts       = false
 
-deploy_cirrus           = true
+deploy_cirrus           = false
 deploy_cirrus_dashboard = false
 deploy_titiler          = false
+deploy_filmdrop_titiler = false
 deploy_log_archive      = false
 deploy_analytics        = false
 deploy_filmdrop_ui      = false
