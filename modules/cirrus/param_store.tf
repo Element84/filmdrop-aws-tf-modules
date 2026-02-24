@@ -44,6 +44,12 @@ resource "aws_ssm_parameter" "process_queue_url" {
   value = module.base.cirrus_process_sqs_queue_url
 }
 
+resource "aws_ssm_parameter" "process_queue_arn" {
+  name  = "${local.parameter_prefix}CIRRUS_PROCESS_QUEUE_ARN"
+  type  = "String"
+  value = module.base.cirrus_process_sqs_queue_arn
+}
+
 resource "aws_ssm_parameter" "workflow_event_topic_arn" {
   name  = "${local.parameter_prefix}CIRRUS_WORKFLOW_EVENT_TOPIC_ARN"
   type  = "String"
@@ -80,6 +86,18 @@ resource "aws_ssm_parameter" "cirrus_iam_cli_role" {
   name  = "${local.parameter_prefix}CIRRUS_CLI_IAM_ARN"
   type  = "String"
   value = aws_iam_role.cirrus_instance_cli_management_role[0].arn
+}
+
+resource "aws_ssm_parameter" "pre_batch_lambda_arn" {
+  name  = "${local.parameter_prefix}CIRRUS_PRE_BATCH_LAMBDA_ARN"
+  type  = "String"
+  value = module.builtin_functions.pre_batch_lambda_function_arn
+}
+
+resource "aws_ssm_parameter" "post_batch_lambda_arn" {
+  name  = "${local.parameter_prefix}CIRRUS_POST_BATCH_LAMBDA_ARN"
+  type  = "String"
+  value = module.builtin_functions.post_batch_lambda_function_arn
 }
 
 moved {
