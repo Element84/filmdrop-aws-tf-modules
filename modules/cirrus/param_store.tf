@@ -44,6 +44,12 @@ resource "aws_ssm_parameter" "process_queue_url" {
   value = module.base.cirrus_process_sqs_queue_url
 }
 
+resource "aws_ssm_parameter" "process_queue_arn" {
+  name  = "${local.parameter_prefix}CIRRUS_PROCESS_QUEUE_ARN"
+  type  = "String"
+  value = module.base.cirrus_process_sqs_queue_arn
+}
+
 resource "aws_ssm_parameter" "workflow_event_topic_arn" {
   name  = "${local.parameter_prefix}CIRRUS_WORKFLOW_EVENT_TOPIC_ARN"
   type  = "String"
