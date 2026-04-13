@@ -47,6 +47,8 @@ resource "aws_vpc_dhcp_options_association" "vpc_dhcp_options_association" {
 
 # Enable VPC flow logs to the FilmDrop Archive bucket
 resource "aws_flow_log" "filmdrop_vpc_flow_logs_to_s3" {
+  count = var.archive_log_bucket_name != "" ? 1 : 0
+
   log_destination          = "arn:aws:s3:::${var.archive_log_bucket_name}/vpc-flow-logs/"
   log_destination_type     = "s3"
   log_format               = var.log_format
