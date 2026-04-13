@@ -49,6 +49,8 @@ module "cirrus" {
   domain_alias                                              = var.cirrus_inputs.domain_alias
   workflow_metrics_cloudwatch_enabled                       = var.cirrus_inputs.workflow_metrics_cloudwatch_enabled
   workflow_metrics_timestream_enabled                       = var.cirrus_inputs.workflow_metrics_timestream_enabled
+  payload_root_prefix                                       = var.cirrus_inputs.payload_root_prefix
+  payload_tmp_lifecycle_expiration_days                     = var.cirrus_inputs.payload_tmp_lifecycle_expiration_days
 }
 
 locals {

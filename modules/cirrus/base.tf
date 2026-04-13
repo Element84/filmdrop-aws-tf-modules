@@ -15,6 +15,8 @@ module "base" {
   workflow_metrics_timestream_enabled                       = var.workflow_metrics_timestream_enabled
   cirrus_data_bucket                                        = var.cirrus_data_bucket
   cirrus_payload_bucket                                     = var.cirrus_payload_bucket
+  payload_root_prefix                                       = var.payload_root_prefix
+  payload_tmp_lifecycle_expiration_days                     = var.payload_tmp_lifecycle_expiration_days
   warning_sns_topic_arn                                     = var.warning_sns_topic_arn
   deploy_alarms                                             = var.deploy_alarms
 }

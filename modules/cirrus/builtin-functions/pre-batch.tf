@@ -106,8 +106,9 @@ resource "aws_lambda_function" "cirrus_pre_batch" {
 
   environment {
     variables = {
-      CIRRUS_LOG_LEVEL      = var.cirrus_log_level
-      CIRRUS_PAYLOAD_BUCKET = var.cirrus_payload_bucket
+      CIRRUS_LOG_LEVEL           = var.cirrus_log_level
+      CIRRUS_PAYLOAD_BUCKET      = var.cirrus_payload_bucket
+      CIRRUS_PAYLOAD_ROOT_PREFIX = var.payload_root_prefix
     }
   }
 

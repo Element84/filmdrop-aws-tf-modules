@@ -13,6 +13,7 @@ module "builtin_functions" {
   cirrus_log_level                                 = var.cirrus_log_level
   cirrus_data_bucket                               = module.base.cirrus_data_bucket
   cirrus_payload_bucket                            = module.base.cirrus_payload_bucket
+  payload_root_prefix                              = var.payload_root_prefix
   cirrus_lambda_version                            = var.cirrus_lambda_version
   cirrus_lambda_zip_filepath                       = var.cirrus_lambda_zip_filepath
   cirrus_lambda_pyversion                          = var.cirrus_lambda_pyversion

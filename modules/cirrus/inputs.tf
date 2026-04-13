@@ -461,7 +461,7 @@ variable "cirrus_task_batch_compute_definitions_variables" {
 
   Each interpolation sequence's lookup value must have an associated entry in this map. If not, Terraform will raise a runtime error.
 
-  Since the Cirrus data and payload buckets will always be different for each environment, there are two predefined variables `CIRRUS_DATA_BUCKET` and `CIRRUS_PAYLOAD_BUCKET` that can be used to automatically reference these bucket names in your task batch compute definition YAML. You don't need to add entries to this variable for these.
+  Since the Cirrus data and payload buckets will always be different for each environment, there are predefined variables `CIRRUS_DATA_BUCKET`, `CIRRUS_PAYLOAD_BUCKET`, and `CIRRUS_PAYLOAD_ROOT_PREFIX` that can be used to automatically reference these values in your task batch compute definition YAML. You don't need to add entries to this variable for these.
 
   If `null` or `{}`, templating will technically still occur but nothing will be interpolated (provided your definition is also absent of interpolation sequences).
   DESCRIPTION
@@ -556,7 +556,7 @@ variable "cirrus_task_definitions_variables" {
 
   Each interpolation sequence's lookup value must have an associated entry in this map. If not, Terraform will raise a runtime error.
 
-  Since the Cirrus data and payload buckets will always be different for each environment, there are two predefined variables `CIRRUS_DATA_BUCKET` and `CIRRUS_PAYLOAD_BUCKET` that can be used to automatically reference these bucket names in your task definition YAML. You don't need to add entries to this variable for these.
+  Since the Cirrus data and payload buckets will always be different for each environment, there are predefined variables `CIRRUS_DATA_BUCKET`, `CIRRUS_PAYLOAD_BUCKET`, and `CIRRUS_PAYLOAD_ROOT_PREFIX` that can be used to automatically reference these values in your task definition YAML. You don't need to add entries to this variable for these.
 
   If `null` or `{}`, templating will technically still occur but nothing will be interpolated (provided your definition is also absent of interpolation sequences).
   DESCRIPTION
@@ -695,7 +695,7 @@ variable "cirrus_workflow_definitions_variables" {
 
   Each interpolation sequence's lookup value must have an associated entry in this map. If not, Terraform will raise a runtime error.
 
-  Since the Cirrus data and payload buckets will always be different for each environment, there are two predefined variables `CIRRUS_DATA_BUCKET` and `CIRRUS_PAYLOAD_BUCKET` that can be used to automatically reference these bucket names in your workflow definition YAML and state machine JSON. You don't need to add entries to this variable for these.
+  Since the Cirrus data and payload buckets will always be different for each environment, there are predefined variables `CIRRUS_DATA_BUCKET`, `CIRRUS_PAYLOAD_BUCKET`, and `CIRRUS_PAYLOAD_ROOT_PREFIX` that can be used to automatically reference these values in your workflow definition YAML and state machine JSON. You don't need to add entries to this variable for these.
 
   If `null` or `{}`, templating will technically still occur but nothing will be interpolated (provided your definition is also absent of interpolation sequences).
   DESCRIPTION
@@ -756,6 +756,28 @@ variable "workflow_metrics_cloudwatch_enabled" {
   type        = bool
   nullable    = false
   default     = false
+}
+
+variable "payload_root_prefix" {
+  description = <<-DESCRIPTION
+  (Optional) Root prefix for payloads in the cirrus payload bucket.
+  This value is provided to all builtin cirrus Lambda functions and
+  available as a builtin template variable as `CIRRUS_PAYLOAD_ROOT_PREFIX`.
+  DESCRIPTION
+  type        = string
+  nullable    = false
+  default     = "cirrus"
+}
+
+variable "payload_tmp_lifecycle_expiration_days" {
+  description = <<-DESCRIPTION
+  (Optional) Number of days after which objects under `{payload_root_prefix}/tmp/`
+  in the cirrus payload bucket are expired (deleted). Only applies when the payload
+  bucket is created by this module. Set to 0 to disable.
+  DESCRIPTION
+  type        = number
+  nullable    = false
+  default     = 10
 }
 
 variable "workflow_metrics_timestream_enabled" {

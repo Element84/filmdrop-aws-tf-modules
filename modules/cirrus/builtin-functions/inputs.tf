@@ -20,6 +20,12 @@ variable "cirrus_payload_bucket" {
   type        = string
 }
 
+variable "payload_root_prefix" {
+  description = "Root prefix for payloads in the cirrus payload bucket."
+  type        = string
+  default     = "cirrus"
+}
+
 variable "cirrus_lambda_version" {
   description = <<-DESCRIPTION
   (Optional) Version of Cirrus lambda to deploy. Defaults to the Cirrus version associated with this FilmDrop release.

@@ -26,6 +26,12 @@ resource "aws_ssm_parameter" "payload_bucket" {
   value = module.base.cirrus_payload_bucket
 }
 
+resource "aws_ssm_parameter" "payload_root_prefix" {
+  name  = "${local.parameter_prefix}CIRRUS_PAYLOAD_ROOT_PREFIX"
+  type  = "String"
+  value = var.payload_root_prefix
+}
+
 resource "aws_ssm_parameter" "data_bucket" {
   name  = "${local.parameter_prefix}CIRRUS_DATA_BUCKET"
   type  = "String"
