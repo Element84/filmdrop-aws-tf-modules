@@ -5,7 +5,7 @@ resource "aws_s3_bucket" "log_bucket" {
 }
 
 resource "aws_s3_bucket_replication_configuration" "log_bucket_replication" {
-  count      = var.create_log_bucket ? 1 : 0
+  count      = var.create_log_bucket && var.filmdrop_archive_bucket_name != "" ? 1 : 0
   depends_on = [aws_s3_bucket_versioning.log_bucket_versioning]
 
   role   = aws_iam_role.cloudfront_bucket_replicator_role.arn
