@@ -13,6 +13,7 @@ module "filmdrop_titiler" {
   waf_allowed_url                           = var.filmdrop_titiler_inputs.is_private_endpoint ? "" : var.filmdrop_titiler_inputs.titiler_waf_allowed_url == "" ? var.stac_url : var.filmdrop_titiler_inputs.titiler_waf_allowed_url
   request_host_header_override              = var.filmdrop_titiler_inputs.is_private_endpoint ? "" : var.filmdrop_titiler_inputs.titiler_host_header
   mosaic_tile_timeout                       = var.filmdrop_titiler_inputs.mosaic_tile_timeout
+  titiler_memory                            = coalesce(var.filmdrop_titiler_inputs.lambda_memory, 512)
   vpc_id                                    = var.vpc_id
   vpc_subnet_ids                            = var.private_subnet_ids
   vpc_security_group_ids                    = [var.security_group_id]
