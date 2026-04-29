@@ -19,6 +19,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Fixed
 
+- Skip CloudFront log bucket replication configuration when no archive bucket is provided (`deploy_log_archive = false`). Previously, an empty `filmdrop_archive_bucket_name` would produce an invalid `arn:aws:s3:::` ARN and fail during plan.
+
 ### Removed
 
 
