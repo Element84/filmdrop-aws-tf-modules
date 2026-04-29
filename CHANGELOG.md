@@ -19,6 +19,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Fixed
 
+- Expose `titiler_url` and `titiler_vpce_dns_regional` outputs for the `filmdrop-titiler` deployment path so downstream consumers can reference the TiTiler endpoint after apply.
+
 ### Removed
 
 
