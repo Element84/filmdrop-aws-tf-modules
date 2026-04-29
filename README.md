@@ -76,6 +76,34 @@ export AWS_DEFAULT_REGION=<REPLACE_WITH_AWS_DEFAULT_REGION>
 
 You can alternatively choose create an [AWS credentials file](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-files.html).
 
+## Prerequisites
+
+### OpenSearch Service-Linked Role
+
+If you are deploying STAC Server with `deploy_stac_server_outside_vpc = false` (the default), you must create the `AWSServiceRoleForAmazonOpenSearchService` service-linked role in your AWS account before deploying. This role is required by AWS OpenSearch to manage VPC resources on your behalf.
+
+**Check if the role exists:**
+
+```shell
+aws iam get-role --role-name AWSServiceRoleForAmazonOpenSearchService
+```
+
+**If it does not exist, create it:**
+
+Using AWS CLI:
+```shell
+aws iam create-service-linked-role --aws-service-name opensearchservice.amazonaws.com
+```
+
+Or using Terraform (add to your wrapper stack):
+```hcl
+resource "aws_iam_service_linked_role" "opensearch" {
+  aws_service_name = "opensearchservice.amazonaws.com"
+}
+```
+
+This is an account-level resource and only needs to be created once per AWS account. If you receive an `InvalidInput` error stating the role already exists, you can safely ignore it and proceed with deployment.
+
 ## Running FilmDrop Terraform Deployment
 
 Next, initialize the terraform environment of FilmDrop via:
