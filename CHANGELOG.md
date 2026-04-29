@@ -19,6 +19,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Fixed
 
+- Fixed unconditional creation of `aws_flow_log` resource in `vpc_infra` module. When `deploy_log_archive` is `false` and no archive bucket is configured, the flow log resource was still being created with an empty bucket name, producing an invalid ARN and failing deployment. The resource is now guarded with `count = var.archive_log_bucket_name != "" ? 1 : 0`.
+
 ### Removed
 
 
