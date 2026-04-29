@@ -38,7 +38,7 @@ variable "cirrus_lambda_version" {
   nullable    = false
   # If you update this, ensure cirrus_lambda_pyversion is also updated to the python version required by this
   # version of cirrus
-  default = "1.3.0"
+  default = "2.0.0"
 }
 
 variable "cirrus_lambda_zip_filepath" {
@@ -62,7 +62,7 @@ variable "cirrus_lambda_pyversion" {
   type        = string
   nullable    = false
   # Ensure this meets the python version requirement of the default cirrus_lambda_version
-  default = "3.13"
+  default = "3.14"
 }
 
 variable "api_settings" {

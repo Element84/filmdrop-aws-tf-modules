@@ -5,6 +5,19 @@ a newer version. For example, if a new required variable is added, this should b
 
 ### Unreleased
 
+**Cirrus v2.0.0 upgrade**
+
+If a project does not specify a cirrus version explicitly, it will be upgraded
+to cirrus v2.0.0. Note that this new cirrus version has some
+backwards-incompatible changes to the state database and the payload bucket
+organization. Upgrading should not cause any downtime for processing or
+pipelines, but will leave the state database and payload bucket in an
+inconsistent state until the cirrus management CLI `migrate` command is used to
+update both the database and payload bucket organization.
+
+See the [cirrus v2.0.0 release
+notes](https://github.com/cirrus-geo/cirrus-geo/releases/tag/v2.0.0) for more
+information.
 
 ### 3.0.0
 

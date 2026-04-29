@@ -27,7 +27,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
   number of days (default 10). Set to 0 to disable. Only functional with a
   cirrus version >=2.
 
-### Change
+### Changed
+
+- Cirrus default version is now v2.0.0, and the python runtime for cirrus
+  lambdas is v3.14.
 
 ### Fixed
 
