@@ -128,10 +128,11 @@ locals {
 locals {
   # These variables may be used in definition templates for convenience.
   builtin_definitions_variables = {
-    CIRRUS_DATA_BUCKET       = module.base.cirrus_data_bucket
-    CIRRUS_PAYLOAD_BUCKET    = module.base.cirrus_payload_bucket
-    CIRRUS_PROCESS_QUEUE_URL = module.base.cirrus_process_sqs_queue_url
-    CIRRUS_PROCESS_QUEUE_ARN = module.base.cirrus_process_sqs_queue_arn
+    CIRRUS_DATA_BUCKET         = module.base.cirrus_data_bucket
+    CIRRUS_PAYLOAD_BUCKET      = module.base.cirrus_payload_bucket
+    CIRRUS_PAYLOAD_ROOT_PREFIX = var.payload_root_prefix
+    CIRRUS_PROCESS_QUEUE_URL   = module.base.cirrus_process_sqs_queue_url
+    CIRRUS_PROCESS_QUEUE_ARN   = module.base.cirrus_process_sqs_queue_arn
   }
 
   # Construct Cirrus task-batch-compute, task, and workflow definitions.

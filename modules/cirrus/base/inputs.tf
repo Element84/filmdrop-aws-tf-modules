@@ -45,6 +45,18 @@ variable "cirrus_payload_bucket" {
   type        = string
 }
 
+variable "payload_root_prefix" {
+  description = "Root prefix for payloads in the cirrus payload bucket."
+  type        = string
+  default     = "cirrus"
+}
+
+variable "payload_tmp_lifecycle_expiration_days" {
+  description = "Days after which objects under {payload_root_prefix}/tmp/ are expired. 0 disables."
+  type        = number
+  default     = 10
+}
+
 variable "warning_sns_topic_arn" {
   description = "String with FilmDrop Warning SNS topic ARN"
   type        = string

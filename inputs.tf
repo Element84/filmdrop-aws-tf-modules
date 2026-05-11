@@ -571,6 +571,8 @@ variable "cirrus_inputs" {
     cirrus_cli_iam_role_trust_principal          = optional(list(string))
     workflow_metrics_cloudwatch_enabled          = optional(bool)
     workflow_metrics_timestream_enabled          = optional(bool)
+    payload_root_prefix                          = optional(string, "cirrus")
+    payload_tmp_lifecycle_expiration_days        = optional(number, 10)
   })
   default = {
     data_bucket                               = "cirrus-data-bucket-name"
@@ -632,6 +634,8 @@ variable "cirrus_inputs" {
     cirrus_cli_iam_role_trust_principal          = null
     workflow_metrics_cloudwatch_enabled          = false
     workflow_metrics_timestream_enabled          = true
+    payload_root_prefix                          = "cirrus"
+    payload_tmp_lifecycle_expiration_days        = 10
   }
 }
 

@@ -15,7 +15,22 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 - Added SSM parameter for Cirrus process queue ARN (`CIRRUS_PROCESS_QUEUE_ARN`)
 
-### Change
+- Added `payload_root_prefix` input variable to the cirrus module. This value
+  is propagated as the `CIRRUS_PAYLOAD_ROOT_PREFIX` environment variable to all
+  builtin Cirrus Lambda functions, stored as an SSM parameter, and available as
+  a builtin template variable in definition YAMLs. Defaults to `"cirrus"`.
+  Only functional with a cirrus version >=2.
+
+- Added `payload_tmp_lifecycle_expiration_days` input variable to the cirrus
+  module. When the payload bucket is created by the module, an S3 lifecycle
+  rule expires objects under `{payload_root_prefix}/tmp/` after the configured
+  number of days (default 10). Set to 0 to disable. Only functional with a
+  cirrus version >=2.
+
+### Changed
+
+- Cirrus default version is now v2.0.0, and the python runtime for cirrus
+  lambdas is v3.14.
 
 ### Fixed
 
@@ -49,9 +64,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 - TiTiler module will note three IAM related resources being created: aws_iam_role_policy.titiler-mosaic-lambda-inline-policy, aws_iam_role_policy_attachment.lambda_basic_execution, aws_iam_role_policy_attachment.lambda_vpc_access. This is a result of AWS provider deprecations to managed_policy and inline_policy properties. The TiTiler role in question will updated in place, resulting in no material changes to the role.
 
-- Removing internal stac-server terraform module code and pointed to new location as stac-server terraform module code now lives in it's own [stac-server terraform repo](https://github.com/Element84/terraform-aws-stac-server) ([216](https://github.com/Element84/filmdrop-aws-tf-modules/pull/216)). 
+- Removing internal stac-server terraform module code and pointed to new location as stac-server terraform module code now lives in it's own [stac-server terraform repo](https://github.com/Element84/terraform-aws-stac-server) ([216](https://github.com/Element84/filmdrop-aws-tf-modules/pull/216)).
 
-- Removing internal console-ui terraform module and pointing to an externally sourced module [filmdrop-ui](https://github.com/Element84/terraform-aws-filmdrop-ui) ([216](https://github.com/Element84/filmdrop-aws-tf-modules/pull/216)). 
+- Removing internal console-ui terraform module and pointing to an externally sourced module [filmdrop-ui](https://github.com/Element84/terraform-aws-filmdrop-ui) ([216](https://github.com/Element84/filmdrop-aws-tf-modules/pull/216)).
 
 - `cirrus api` lambda extracted into its own module, and can now be optionally deployed (or not) along with other cirrus built in lambdas when deploying the larger cirrus ecosystem ([248](https://github.com/Element84/filmdrop-aws-tf-modules/pull/248))
 

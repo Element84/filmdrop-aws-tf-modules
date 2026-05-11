@@ -268,6 +268,8 @@ cirrus_inputs = {
   workflow_definitions_variables_ssm           = null
   workflow_metrics_cloudwatch_enabled          = true
   workflow_metrics_timestream_enabled          = true
+  payload_root_prefix                          = "cirrus"
+  payload_tmp_lifecycle_expiration_days        = 10
 }
 
 cirrus_dashboard_inputs = {

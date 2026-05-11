@@ -47,10 +47,11 @@ common_role_statements:
       - arn:aws:s3:::${first-task-example.data_bucket}
       - arn:aws:s3:::${first-task-example.data_bucket}/*
   # Maybe your task needs to read from Cirrus payload bucket? Note that
-  # CIRRUS_PAYLOAD_BUCKET is a special variable that you do not need to provide
-  # a literal value for; it is automatically replaced with the Cirrus payload
-  # bucket's name (NOT the ARN) for your target deployment environment at
-  # runtime.
+  # CIRRUS_PAYLOAD_BUCKET and CIRRUS_PAYLOAD_ROOT_PREFIX are special variables
+  # that you do not need to provide literal values for; they are automatically
+  # replaced with the Cirrus payload bucket's name (NOT the ARN) and the root
+  # prefix for payloads, respectively, for your target deployment environment
+  # at runtime.
   - sid: ReadCirrusPayloadBucket
     effect: Allow
     actions:

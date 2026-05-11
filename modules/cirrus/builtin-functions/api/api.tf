@@ -152,10 +152,11 @@ resource "aws_lambda_function" "cirrus_api" {
   environment {
     variables = merge(
       {
-        CIRRUS_LOG_LEVEL      = var.cirrus_log_level
-        CIRRUS_DATA_BUCKET    = var.cirrus_data_bucket
-        CIRRUS_PAYLOAD_BUCKET = var.cirrus_payload_bucket
-        CIRRUS_STATE_DB       = var.cirrus_state_dynamodb_table_name
+        CIRRUS_LOG_LEVEL           = var.cirrus_log_level
+        CIRRUS_DATA_BUCKET         = var.cirrus_data_bucket
+        CIRRUS_PAYLOAD_BUCKET      = var.cirrus_payload_bucket
+        CIRRUS_PAYLOAD_ROOT_PREFIX = var.payload_root_prefix
+        CIRRUS_STATE_DB            = var.cirrus_state_dynamodb_table_name
       },
       var.workflow_metrics_timestream_enabled ? {
         CIRRUS_EVENT_DB_AND_TABLE = "${var.cirrus_state_event_timestreamwrite_database_name}|${var.cirrus_state_event_timestreamwrite_table_name}"

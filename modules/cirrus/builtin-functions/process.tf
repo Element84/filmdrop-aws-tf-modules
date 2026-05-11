@@ -177,6 +177,7 @@ resource "aws_lambda_function" "cirrus_process" {
         CIRRUS_LOG_LEVEL                = var.cirrus_log_level
         CIRRUS_DATA_BUCKET              = var.cirrus_data_bucket
         CIRRUS_PAYLOAD_BUCKET           = var.cirrus_payload_bucket
+        CIRRUS_PAYLOAD_ROOT_PREFIX      = var.payload_root_prefix
         CIRRUS_STATE_DB                 = var.cirrus_state_dynamodb_table_name
         CIRRUS_WORKFLOW_EVENT_TOPIC_ARN = var.cirrus_workflow_event_sns_topic_arn
         CIRRUS_BASE_WORKFLOW_ARN        = "arn:aws:states:${data.aws_region.current.region}:${data.aws_caller_identity.current.account_id}:stateMachine:${var.resource_prefix}-"
