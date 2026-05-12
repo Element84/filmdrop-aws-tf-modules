@@ -43,7 +43,7 @@ resource "null_resource" "cleanup_s3_access_logs_bucket" {
 
   provisioner "local-exec" {
     command = <<EOF
-export AWS_DEFAULT_REGION=${self.triggers.account}
+export AWS_DEFAULT_REGION=${self.triggers.region}
 export AWS_REGION=${self.triggers.region}
 
 echo "FilmDrop CloudFront bucket has been created."
@@ -57,7 +57,7 @@ EOF
   provisioner "local-exec" {
     when    = destroy
     command = <<EOF
-export AWS_DEFAULT_REGION=${self.triggers.account}
+export AWS_DEFAULT_REGION=${self.triggers.region}
 export AWS_REGION=${self.triggers.region}
 
 echo "Cleaning FilmDrop bucket."

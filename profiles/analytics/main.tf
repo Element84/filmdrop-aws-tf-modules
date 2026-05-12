@@ -85,7 +85,7 @@ resource "null_resource" "cleanup_analytics_credentials" {
 
   provisioner "local-exec" {
     command = <<EOF
-export AWS_DEFAULT_REGION=${self.triggers.account}
+export AWS_DEFAULT_REGION=${self.triggers.region}
 export AWS_REGION=${self.triggers.region}
 
 echo "FilmDrop Analytics Secrets have been created."
@@ -100,7 +100,7 @@ EOF
   provisioner "local-exec" {
     when    = destroy
     command = <<EOF
-export AWS_DEFAULT_REGION=${self.triggers.account}
+export AWS_DEFAULT_REGION=${self.triggers.region}
 export AWS_REGION=${self.triggers.region}
 
 echo "Cleaning FilmDrop Analytics Secrets."
@@ -128,7 +128,7 @@ resource "null_resource" "cleanup_analytics_stack" {
 
   provisioner "local-exec" {
     command = <<EOF
-export AWS_DEFAULT_REGION=${self.triggers.account}
+export AWS_DEFAULT_REGION=${self.triggers.region}
 export AWS_REGION=${self.triggers.region}
 
 echo "FilmDrop Analytics Stack has been created."
@@ -141,7 +141,7 @@ EOF
   provisioner "local-exec" {
     when    = destroy
     command = <<EOF
-export AWS_DEFAULT_REGION=${self.triggers.account}
+export AWS_DEFAULT_REGION=${self.triggers.region}
 export AWS_REGION=${self.triggers.region}
 
 
