@@ -457,6 +457,7 @@ variable "filmdrop_ui_inputs" {
       response_page_path    = string
     }))
     version                 = string
+    source_url              = optional(string, "")
     filmdrop_ui_config_file = string
     filmdrop_ui_logo_file   = string
     filmdrop_ui_logo        = string
