@@ -59,11 +59,11 @@ output "cirrus_dashboard_url" {
 }
 
 output "titiler_url" {
-  value = var.deploy_titiler ? module.titiler[0].titiler_url : ""
+  value = var.deploy_titiler ? module.titiler[0].titiler_url : var.deploy_filmdrop_titiler ? module.filmdrop-titiler[0].titiler_url : ""
 }
 
 output "titiler_vpce_dns_regional" {
-  value = var.deploy_titiler ? module.titiler[0].titiler_vpce_dns_regional : null
+  value = var.deploy_titiler ? module.titiler[0].titiler_vpce_dns_regional : var.deploy_filmdrop_titiler ? module.filmdrop-titiler[0].titiler_vpce_dns_regional : null
 }
 
 output "stac_ingest_queue_arn" {
