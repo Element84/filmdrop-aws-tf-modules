@@ -7,13 +7,22 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## Unreleased
 
-- a new `filmdrop-titiler` module that provides a lightweight implementation of the most recent release of TiTiler ([239](https://github.com/Element84/filmdrop-aws-tf-modules/pull/239)).  This is a new module part of a significant migration and should undergo extensive functionality and security testing before production use.
-
 ### Added
 
-- Added SSM parameters for Cirrus pre-batch and post-batch lambda function ARNs (`CIRRUS_PRE_BATCH_LAMBDA_ARN` and `CIRRUS_POST_BATCH_LAMBDA_ARN`)
 
-- Added SSM parameter for Cirrus process queue ARN (`CIRRUS_PROCESS_QUEUE_ARN`)
+### Changed
+
+
+### Fixed
+
+
+### Removed
+
+
+
+## [3.0.2] - 2026-06-02
+
+### Added
 
 - Added `payload_root_prefix` input variable to the cirrus module. This value
   is propagated as the `CIRRUS_PAYLOAD_ROOT_PREFIX` environment variable to all
@@ -38,8 +47,15 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 - Fixed `local-exec` provisioners across 12 modules incorrectly setting `AWS_DEFAULT_REGION` to the AWS account ID instead of the region. The `account` trigger value was used where `region` was intended, causing the AWS CLI to fail with an invalid region when the `AWS_REGION` override was not present. Affected modules: `cloudfront/content`, `cloudfront/s3_origin`, `cloudfront/custom_origin`, `base_infra/log_archive`, `modules/titiler`, `modules/mosaic-titiler`, `modules/cirrus-dashboard`, `modules/ssm_bastion`, `modules/jupyterhub-dask-eks`, and `profiles/analytics`.
 
-### Removed
+## [3.0.1] - 2026-03-30
 
+### Added
+
+- a new `filmdrop-titiler` module that provides a lightweight implementation of the most recent release of TiTiler ([239](https://github.com/Element84/filmdrop-aws-tf-modules/pull/239)).  This is a new module part of a significant migration and should undergo extensive functionality and security testing before production use.
+
+- Added SSM parameters for Cirrus pre-batch and post-batch lambda function ARNs (`CIRRUS_PRE_BATCH_LAMBDA_ARN` and `CIRRUS_POST_BATCH_LAMBDA_ARN`)
+
+- Added SSM parameter for Cirrus process queue ARN (`CIRRUS_PROCESS_QUEUE_ARN`)
 
 ## [3.0.0] - 2026-02-04
 
