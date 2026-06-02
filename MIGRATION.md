@@ -5,6 +5,8 @@ a newer version. For example, if a new required variable is added, this should b
 
 ### Unreleased
 
+### 3.0.2
+
 **Cirrus v2.0.0 upgrade**
 
 If a project does not specify a cirrus version explicitly, it will be upgraded
