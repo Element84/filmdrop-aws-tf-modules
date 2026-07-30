@@ -33,7 +33,6 @@ module "stac-server" {
     aws.east = aws.east
   }
 
-  deploy_local_stac_server_artifacts       = var.deploy_local_stac_server_artifacts
   vpc_id                                   = module.base_infra.vpc_id
   private_subnet_ids                       = module.base_infra.private_subnet_ids
   security_group_id                        = module.base_infra.security_group_id

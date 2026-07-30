@@ -1,8 +1,9 @@
 module "stac-server" {
-  source = "git::https://github.com/Element84/terraform-aws-stac-server.git?ref=v2.0.3"
+  # TODO: flip ref to v3.0.0 once the terraform-aws-stac-server release is tagged
+  source = "git::https://github.com/Element84/terraform-aws-stac-server.git?ref=feat/fetch-release-lambda-dist"
 
-  deploy_local_stac_server_artifacts          = var.deploy_local_stac_server_artifacts
   stac_server_version                         = var.stac_server_inputs.version
+  stac_server_zip_filepath                    = var.stac_server_inputs.zip_filepath
   vpc_id                                      = var.vpc_id
   vpc_cidr_range                              = var.vpc_cidr
   vpc_subnet_ids                              = var.private_subnet_ids
@@ -88,8 +89,9 @@ module "cloudfront_api_gateway_endpoint" {
 }
 
 module "historical_ingest" {
-  count  = var.stac_server_inputs.ingest.include_historical_ingest || var.stac_server_inputs.ingest.destination_collections_list != "" ? 1 : 0
-  source = "git::https://github.com/Element84/terraform-aws-stac-server.git//modules/historical-ingest?ref=v2.0.0"
+  count = var.stac_server_inputs.ingest.include_historical_ingest || var.stac_server_inputs.ingest.destination_collections_list != "" ? 1 : 0
+  # TODO: flip ref to v3.0.0 once the terraform-aws-stac-server release is tagged
+  source = "git::https://github.com/Element84/terraform-aws-stac-server.git//modules/historical-ingest?ref=feat/fetch-release-lambda-dist"
 
   source_catalog_url               = var.stac_server_inputs.ingest.source_catalog_url
   destination_catalog_url          = var.stac_server_inputs.deploy_cloudfront ? "https://${module.cloudfront_api_gateway_endpoint[0].domain_name}" : "https://${module.stac-server.stac_server_api_domain_name}${module.stac-server.stac_server_api_path}"
@@ -111,8 +113,9 @@ module "historical_ingest" {
 }
 
 module "ongoing_ingest" {
-  count                            = var.stac_server_inputs.ingest.include_ongoing_ingest ? 1 : 0
-  source                           = "git::https://github.com/Element84/terraform-aws-stac-server.git//modules/ongoing-ingest?ref=v2.0.0"
+  count = var.stac_server_inputs.ingest.include_ongoing_ingest ? 1 : 0
+  # TODO: flip ref to v3.0.0 once the terraform-aws-stac-server release is tagged
+  source                           = "git::https://github.com/Element84/terraform-aws-stac-server.git//modules/ongoing-ingest?ref=feat/fetch-release-lambda-dist"
   source_sns_arn                   = var.stac_server_inputs.ingest.source_sns_arn
   ingest_sqs_arn                   = module.stac-server.stac_server_ingest_queue_arn
   destination_collections_list     = var.stac_server_inputs.ingest.destination_collections_list
