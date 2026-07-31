@@ -18,7 +18,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
   to v3.0.0, which downloads the stac-server lambda dist ZIP from
   [stac-server releases](https://github.com/stac-utils/stac-server/releases) at apply time
   instead of packaging prebuilt lambda ZIPs
-- `stac_server_inputs.version` now defaults to `"v5.0.0"` and selects the stac-server release
+- `stac_server_inputs.version` now defaults to `"v5.0.2"` and selects the stac-server release
   to download; versions prior to v5.0.0 require `stac_server_inputs.zip_filepath`
 
 ### Fixed

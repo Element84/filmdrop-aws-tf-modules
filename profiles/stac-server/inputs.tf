@@ -40,7 +40,7 @@ variable "stac_server_inputs" {
   description = "Inputs for stac-server FilmDrop deployment."
   type = object({
     app_name                                    = string
-    version                                     = optional(string, "v5.0.0")
+    version                                     = optional(string, "v5.0.2")
     zip_filepath                                = optional(string)
     stac_id                                     = optional(string)
     stac_title                                  = optional(string)
@@ -149,7 +149,7 @@ variable "stac_server_inputs" {
   })
   default = {
     app_name                                    = "stac_server"
-    version                                     = "v5.0.0"
+    version                                     = "v5.0.2"
     stac_id                                     = "stac-server"
     stac_title                                  = "STAC API"
     stac_description                            = "A STAC API using stac-server"
