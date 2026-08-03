@@ -41,7 +41,7 @@ variable "stac_server_inputs" {
   type = object({
     app_name                                    = string
     version                                     = optional(string, "v5.0.2")
-    zip_filepath                                = optional(string)
+    lambda_zip_filepath                         = optional(string)
     stac_id                                     = optional(string)
     stac_title                                  = optional(string)
     stac_description                            = optional(string)

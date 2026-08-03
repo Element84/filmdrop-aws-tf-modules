@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Added
 
-- `stac_server_inputs.zip_filepath` for pointing stac-server at a local lambda dist ZIP
+- `stac_server_inputs.lambda_zip_filepath` for pointing stac-server at a local lambda dist ZIP
   instead of downloading a release asset
 
 ### Changed
@@ -19,7 +19,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
   [stac-server releases](https://github.com/stac-utils/stac-server/releases) at apply time
   instead of packaging prebuilt lambda ZIPs
 - `stac_server_inputs.version` now defaults to `"v5.0.2"` and selects the stac-server release
-  to download; versions prior to v5.0.0 require `stac_server_inputs.zip_filepath`
+  to download; versions prior to v5.0.0 require `stac_server_inputs.lambda_zip_filepath`
 
 ### Fixed
 
@@ -28,7 +28,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 - `deploy_local_stac_server_artifacts` input variable
 - `zip_filepath` fields from `stac_server_inputs.api_lambda`, `.ingest_lambda`, and
-  `.pre_hook_lambda`; use `stac_server_inputs.zip_filepath` instead
+  `.pre_hook_lambda`; use `stac_server_inputs.lambda_zip_filepath` instead
 
 
 

@@ -3,7 +3,7 @@ module "stac-server" {
   source = "git::https://github.com/Element84/terraform-aws-stac-server.git?ref=feat/fetch-release-lambda-dist"
 
   stac_server_version                         = var.stac_server_inputs.version
-  stac_server_zip_filepath                    = var.stac_server_inputs.zip_filepath
+  stac_server_lambda_zip_filepath             = var.stac_server_inputs.lambda_zip_filepath
   vpc_id                                      = var.vpc_id
   vpc_cidr_range                              = var.vpc_cidr
   vpc_subnet_ids                              = var.private_subnet_ids
