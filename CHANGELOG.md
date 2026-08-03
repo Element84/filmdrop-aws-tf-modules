@@ -11,6 +11,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 - `stac_server_inputs.lambda_zip_filepath` for pointing stac-server at a local lambda dist ZIP
   instead of downloading a release asset
+- `stac_server_inputs.stac_api_stage` and `stac_server_inputs.stac_api_expose_stage_in_path`
+  to serve the STAC API under a custom path (e.g. `https://<domain>/v2/`) independent of the
+  deployment environment; both default to the prior environment-based behavior when unset
 
 ### Changed
 
