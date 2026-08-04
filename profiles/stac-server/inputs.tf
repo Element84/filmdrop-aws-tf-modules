@@ -117,7 +117,8 @@ variable "stac_server_inputs" {
     #     path and stac_api_expose_stage_in_path has no effect.
     #
     # stac_api_stage names the API Gateway stage (no slash, e.g. "v2");
-    # defaults to var.environment.
+    # defaults to var.environment. Resource names always derive from
+    # var.environment, never from the stage.
     deploy_cloudfront                         = bool
     domain_alias                              = string
     stac_api_stage                            = optional(string)

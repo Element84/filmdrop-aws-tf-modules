@@ -13,7 +13,7 @@ locals {
 
 module "stac-server" {
   # TODO: flip ref to v3.0.0 once the terraform-aws-stac-server release is tagged
-  source = "git::https://github.com/Element84/terraform-aws-stac-server.git?ref=feat/fetch-release-lambda-dist"
+  source = "git::https://github.com/Element84/terraform-aws-stac-server.git?ref=feat/resource-name-suffix"
 
   stac_server_version                         = var.stac_server_inputs.version
   stac_server_lambda_zip_filepath             = var.stac_server_inputs.lambda_zip_filepath
@@ -22,6 +22,7 @@ module "stac-server" {
   vpc_subnet_ids                              = var.private_subnet_ids
   vpc_security_group_ids                      = [var.security_group_id]
   stac_api_stage                              = local.stac_api_stage
+  resource_name_suffix                        = var.environment
   stac_id                                     = var.stac_server_inputs.stac_id
   stac_title                                  = var.stac_server_inputs.stac_title
   stac_description                            = var.stac_server_inputs.stac_description

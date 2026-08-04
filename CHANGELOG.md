@@ -13,7 +13,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
   instead of downloading a release asset
 - `stac_server_inputs.stac_api_stage` and `stac_server_inputs.stac_api_expose_stage_in_path`
   to serve the STAC API under a custom path (e.g. `https://<domain>/v2/`) independent of the
-  deployment environment; both default to the prior environment-based behavior when unset
+  deployment environment; both default to the prior environment-based behavior when unset.
+  stac-server resource names always derive from `environment`, so changing the stage does not
+  rename (destroy and recreate) resources such as the OpenSearch domain
 
 ### Changed
 
