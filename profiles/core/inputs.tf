@@ -134,6 +134,8 @@ variable "stac_server_inputs" {
     api_rest_type                             = string
     api_provisioned_concurrency               = optional(number)
     api_method_authorization_type             = optional(string)
+    stac_api_stage                            = optional(string)
+    stac_api_expose_stage_in_path             = optional(bool, false)
     private_api_additional_security_group_ids = optional(list(string))
     private_certificate_arn                   = optional(string)
     vpce_private_dns_enabled                  = bool
