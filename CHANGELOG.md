@@ -30,7 +30,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - `zip_filepath` fields from `stac_server_inputs.api_lambda`, `.ingest_lambda`, and
   `.pre_hook_lambda`; use `stac_server_inputs.lambda_zip_filepath` instead
 
+### ⚠️ Breaking
 
+- See MIGRATION.md for the removal of `deploy_local_stac_server_artifacts` and the lambda
+  `zip_filepath` fields, and for the apply-time download of the stac-server lambda dist ZIP
 
 ## [3.0.2] - 2026-06-02
 
