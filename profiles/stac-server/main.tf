@@ -1,3 +1,17 @@
+locals {
+  stac_api_stage             = coalesce(var.stac_server_inputs.stac_api_stage, var.environment)
+  stac_api_expose_stage_path = coalesce(var.stac_server_inputs.stac_api_expose_stage_in_path, false)
+
+  # Link prefix for the STAC API. Behind CloudFront/a custom domain the API is
+  # served at the domain root ("") unless stac_api_expose_stage_in_path opts
+  # into "/<stage>"; without a domain the raw API URL always contains the stage.
+  stac_api_rootpath = (
+    var.stac_server_inputs.deploy_cloudfront || var.stac_server_inputs.domain_alias != ""
+    ? (local.stac_api_expose_stage_path ? "/${local.stac_api_stage}" : "")
+    : "/${local.stac_api_stage}"
+  )
+}
+
 module "stac-server" {
   source = "git::https://github.com/Element84/terraform-aws-stac-server.git?ref=v3.0.0"
 
@@ -7,7 +21,8 @@ module "stac-server" {
   vpc_cidr_range                              = var.vpc_cidr
   vpc_subnet_ids                              = var.private_subnet_ids
   vpc_security_group_ids                      = [var.security_group_id]
-  stac_api_stage                              = var.environment
+  stac_api_stage                              = local.stac_api_stage
+  resource_name_suffix                        = var.environment
   stac_id                                     = var.stac_server_inputs.stac_id
   stac_title                                  = var.stac_server_inputs.stac_title
   stac_description                            = var.stac_server_inputs.stac_description
@@ -47,9 +62,8 @@ module "stac-server" {
   custom_vpce_id                              = var.stac_server_inputs.custom_vpce_id
   domain_alias                                = var.stac_server_inputs.domain_alias
 
-  # CloudFront or a custom domain implies the rootpath is simply "/"
-  stac_api_rootpath = var.stac_server_inputs.deploy_cloudfront || var.stac_server_inputs.domain_alias != "" ? "" : "/${var.environment}"
-  stac_api_url      = var.stac_server_inputs.domain_alias != "" ? "https://${var.stac_server_inputs.domain_alias}" : ""
+  stac_api_rootpath = local.stac_api_rootpath
+  stac_api_url      = var.stac_server_inputs.domain_alias != "" ? "https://${var.stac_server_inputs.domain_alias}${local.stac_api_rootpath}" : ""
 
   cors_origin      = var.stac_server_inputs.cors_origin
   cors_credentials = var.stac_server_inputs.cors_credentials
@@ -65,11 +79,13 @@ module "cloudfront_api_gateway_endpoint" {
     aws.east = aws.east
   }
 
-  zone_id                      = var.domain_zone
-  domain_alias                 = var.stac_server_inputs.domain_alias
-  application_name             = var.stac_server_inputs.app_name
-  api_gateway_dns_name         = module.stac-server.stac_server_api_domain_name
-  api_gateway_path             = module.stac-server.stac_server_api_path
+  zone_id              = var.domain_zone
+  domain_alias         = var.stac_server_inputs.domain_alias
+  application_name     = var.stac_server_inputs.app_name
+  api_gateway_dns_name = module.stac-server.stac_server_api_domain_name
+  # Strip the stage at the origin when serving at the domain root; when the
+  # stage is exposed, let the public path (== stage) pass through to the origin.
+  api_gateway_path             = local.stac_api_rootpath == "" ? module.stac-server.stac_server_api_path : ""
   web_acl_id                   = var.stac_server_inputs.web_acl_id == "" ? var.fd_web_acl_id : var.stac_server_inputs.web_acl_id
   project_name                 = var.project_name
   environment                  = var.environment
@@ -92,7 +108,7 @@ module "historical_ingest" {
   source = "git::https://github.com/Element84/terraform-aws-stac-server.git//modules/historical-ingest?ref=v3.0.0"
 
   source_catalog_url               = var.stac_server_inputs.ingest.source_catalog_url
-  destination_catalog_url          = var.stac_server_inputs.deploy_cloudfront ? "https://${module.cloudfront_api_gateway_endpoint[0].domain_name}" : "https://${module.stac-server.stac_server_api_domain_name}${module.stac-server.stac_server_api_path}"
+  destination_catalog_url          = var.stac_server_inputs.deploy_cloudfront ? "https://${module.cloudfront_api_gateway_endpoint[0].domain_name}${local.stac_api_rootpath}" : "https://${module.stac-server.stac_server_api_domain_name}${module.stac-server.stac_server_api_path}"
   destination_collections_list     = var.stac_server_inputs.ingest.destination_collections_list
   destination_collections_min_lat  = var.stac_server_inputs.ingest.destination_collections_min_lat
   destination_collections_min_long = var.stac_server_inputs.ingest.destination_collections_min_long

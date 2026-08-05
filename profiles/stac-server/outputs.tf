@@ -1,5 +1,13 @@
 output "stac_url" {
-  value = var.stac_server_inputs.deploy_cloudfront ? "https://${module.cloudfront_api_gateway_endpoint[0].domain_name}" : "https://${module.stac-server.stac_server_api_domain_name}${module.stac-server.stac_server_api_path}"
+  value = var.stac_server_inputs.deploy_cloudfront ? "https://${module.cloudfront_api_gateway_endpoint[0].domain_name}${local.stac_api_rootpath}" : "https://${module.stac-server.stac_server_api_domain_name}${module.stac-server.stac_server_api_path}"
+}
+
+output "stac_api_stage" {
+  value = local.stac_api_stage
+}
+
+output "stac_api_rootpath" {
+  value = local.stac_api_rootpath
 }
 
 output "stac_opensearch_domain_name" {

@@ -45,9 +45,7 @@ variable "stac_server_inputs" {
     stac_id                                     = optional(string)
     stac_title                                  = optional(string)
     stac_description                            = optional(string)
-    deploy_cloudfront                           = bool
     web_acl_id                                  = string
-    domain_alias                                = string
     enable_transactions_extension               = bool
     enable_collections_authx                    = bool
     enable_filter_authx                         = bool
@@ -96,8 +94,35 @@ variable "stac_server_inputs" {
     authorized_s3_arns                        = list(string)
     api_rest_type                             = string
     # default 0 required here so that this property is not explicitly null, if not provided
-    api_provisioned_concurrency               = optional(number, 0)
-    api_method_authorization_type             = optional(string)
+    api_provisioned_concurrency   = optional(number, 0)
+    api_method_authorization_type = optional(string)
+    # Public URL configuration. The API always exists at API Gateway's default
+    # URL, which ends in the stage:
+    #   "https://<api-id>.execute-api.<region>.amazonaws.com/<stage>/"
+    # These fields control what, if anything, sits in front of that URL:
+    #
+    #   deploy_cloudfront = true
+    #     CloudFront in front. Serves the API at "https://<domain>/", where
+    #     <domain> is domain_alias if set, else the default *.cloudfront.net
+    #     name. Set stac_api_expose_stage_in_path = true to serve at
+    #     "https://<domain>/<stage>/" instead.
+    #
+    #   deploy_cloudfront = false, domain_alias set
+    #     API Gateway custom domain (requires api_rest_type = "PRIVATE" and
+    #     private_certificate_arn). Always serves at "https://<domain_alias>/";
+    #     stac_api_expose_stage_in_path = true fails validation.
+    #
+    #   deploy_cloudfront = false, no domain_alias
+    #     Clients use the default URL directly; the stage is always in the
+    #     path and stac_api_expose_stage_in_path has no effect.
+    #
+    # stac_api_stage names the API Gateway stage (no slash, e.g. "v2");
+    # defaults to var.environment. Resource names always derive from
+    # var.environment, never from the stage.
+    deploy_cloudfront                         = bool
+    domain_alias                              = string
+    stac_api_stage                            = optional(string)
+    stac_api_expose_stage_in_path             = optional(bool, false)
     private_api_additional_security_group_ids = optional(list(string))
     private_certificate_arn                   = optional(string)
     vpce_private_dns_enabled                  = bool
@@ -153,9 +178,7 @@ variable "stac_server_inputs" {
     stac_id                                     = "stac-server"
     stac_title                                  = "STAC API"
     stac_description                            = "A STAC API using stac-server"
-    deploy_cloudfront                           = true
     web_acl_id                                  = ""
-    domain_alias                                = ""
     enable_transactions_extension               = false
     enable_collections_authx                    = false
     enable_filter_authx                         = false
@@ -182,6 +205,8 @@ variable "stac_server_inputs" {
     authorized_s3_arns                          = []
     api_rest_type                               = "EDGE"
     api_method_authorization_type               = "NONE"
+    deploy_cloudfront                           = true
+    domain_alias                                = ""
     private_api_additional_security_group_ids   = null
     api_lambda                                  = null
     ingest_lambda                               = null
@@ -212,6 +237,14 @@ variable "stac_server_inputs" {
       source_sns_arn                   = ""
       include_ongoing_ingest           = false
     }
+  }
+  validation {
+    condition = !(
+      coalesce(var.stac_server_inputs.stac_api_expose_stage_in_path, false)
+      && var.stac_server_inputs.domain_alias != ""
+      && !var.stac_server_inputs.deploy_cloudfront
+    )
+    error_message = "stac_api_expose_stage_in_path requires deploy_cloudfront: an API Gateway custom domain (domain_alias without CloudFront) can only serve the API at the domain root."
   }
 }
 
