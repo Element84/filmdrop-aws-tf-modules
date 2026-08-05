@@ -240,7 +240,7 @@ variable "stac_server_inputs" {
   }
   validation {
     condition = !(
-      coalesce(var.stac_server_inputs.stac_api_expose_stage_in_path, false)
+      var.stac_server_inputs.stac_api_expose_stage_in_path
       && var.stac_server_inputs.domain_alias != ""
       && !var.stac_server_inputs.deploy_cloudfront
     )

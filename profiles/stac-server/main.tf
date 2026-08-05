@@ -1,13 +1,12 @@
 locals {
-  stac_api_stage             = coalesce(var.stac_server_inputs.stac_api_stage, var.environment)
-  stac_api_expose_stage_path = coalesce(var.stac_server_inputs.stac_api_expose_stage_in_path, false)
+  stac_api_stage = coalesce(var.stac_server_inputs.stac_api_stage, var.environment)
 
   # Link prefix for the STAC API. Behind CloudFront/a custom domain the API is
   # served at the domain root ("") unless stac_api_expose_stage_in_path opts
   # into "/<stage>"; without a domain the raw API URL always contains the stage.
   stac_api_rootpath = (
     var.stac_server_inputs.deploy_cloudfront || var.stac_server_inputs.domain_alias != ""
-    ? (local.stac_api_expose_stage_path ? "/${local.stac_api_stage}" : "")
+    ? (var.stac_server_inputs.stac_api_expose_stage_in_path ? "/${local.stac_api_stage}" : "")
     : "/${local.stac_api_stage}"
   )
 }
