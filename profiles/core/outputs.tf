@@ -42,6 +42,14 @@ output "stac_url" {
   value = var.deploy_stac_server ? module.stac-server[0].stac_url : ""
 }
 
+output "stac_api_stage" {
+  value = var.deploy_stac_server ? module.stac-server[0].stac_api_stage : ""
+}
+
+output "stac_api_rootpath" {
+  value = var.deploy_stac_server ? module.stac-server[0].stac_api_rootpath : ""
+}
+
 output "stac_opensearch_domain_name" {
   value = var.deploy_stac_server ? module.stac-server[0].stac_opensearch_domain_name : ""
 }

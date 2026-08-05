@@ -77,7 +77,7 @@ variable "stac_server_inputs" {
   description = "Inputs for stac-server FilmDrop deployment."
   type = object({
     app_name                                    = string
-    version                                     = optional(string, "v5.0.2")
+    version                                     = optional(string)
     lambda_zip_filepath                         = optional(string)
     stac_id                                     = optional(string)
     stac_title                                  = optional(string)
@@ -136,6 +136,7 @@ variable "stac_server_inputs" {
     api_method_authorization_type             = optional(string)
     stac_api_stage                            = optional(string)
     stac_api_expose_stage_in_path             = optional(bool)
+    stac_api_url                              = optional(string)
     private_api_additional_security_group_ids = optional(list(string))
     private_certificate_arn                   = optional(string)
     vpce_private_dns_enabled                  = bool
@@ -187,7 +188,6 @@ variable "stac_server_inputs" {
   })
   default = {
     app_name                      = "stac_server"
-    version                       = "v5.0.2"
     stac_id                       = "stac-server"
     stac_title                    = "STAC API"
     stac_description              = "A STAC API using stac-server"

@@ -40,7 +40,7 @@ variable "stac_server_inputs" {
   description = "Inputs for stac-server FilmDrop deployment."
   type = object({
     app_name                                    = string
-    version                                     = optional(string, "v5.0.2")
+    version                                     = optional(string)
     lambda_zip_filepath                         = optional(string)
     stac_id                                     = optional(string)
     stac_title                                  = optional(string)
@@ -119,10 +119,20 @@ variable "stac_server_inputs" {
     # stac_api_stage names the API Gateway stage (no slash, e.g. "v2");
     # defaults to var.environment. Resource names always derive from
     # var.environment, never from the stage.
+    #
+    # stac_api_url overrides the public URL stac-server advertises in API
+    # responses (landing-page and search links), normally derived from
+    # domain_alias. Set it when clients reach the API through CloudFront's
+    # auto-assigned *.cloudfront.net domain (deploy_cloudfront with no
+    # domain_alias), which is only known after the first apply — e.g.
+    # "https://d123abc.cloudfront.net/v2". Left unset with no domain_alias,
+    # advertised links fall back to API Gateway's default URL and bypass
+    # CloudFront.
     deploy_cloudfront                         = bool
     domain_alias                              = string
     stac_api_stage                            = optional(string)
     stac_api_expose_stage_in_path             = optional(bool, false)
+    stac_api_url                              = optional(string)
     private_api_additional_security_group_ids = optional(list(string))
     private_certificate_arn                   = optional(string)
     vpce_private_dns_enabled                  = bool
@@ -174,7 +184,6 @@ variable "stac_server_inputs" {
   })
   default = {
     app_name                                    = "stac_server"
-    version                                     = "v5.0.2"
     stac_id                                     = "stac-server"
     stac_title                                  = "STAC API"
     stac_description                            = "A STAC API using stac-server"
@@ -245,6 +254,24 @@ variable "stac_server_inputs" {
       && !var.stac_server_inputs.deploy_cloudfront
     )
     error_message = "stac_api_expose_stage_in_path requires deploy_cloudfront: an API Gateway custom domain (domain_alias without CloudFront) can only serve the API at the domain root."
+  }
+  validation {
+    condition = (
+      var.stac_server_inputs.domain_alias == ""
+      || var.stac_server_inputs.deploy_cloudfront
+      || (
+        var.stac_server_inputs.api_rest_type == "PRIVATE"
+        && coalesce(var.stac_server_inputs.private_certificate_arn, "") != ""
+      )
+    )
+    error_message = "domain_alias without deploy_cloudfront is an API Gateway custom domain, which requires api_rest_type = \"PRIVATE\" and private_certificate_arn."
+  }
+  validation {
+    condition = (
+      var.stac_server_inputs.stac_api_stage == null
+      || can(regex("^[A-Za-z0-9_-]+$", var.stac_server_inputs.stac_api_stage))
+    )
+    error_message = "stac_api_stage is an API Gateway stage name and URL path segment; it may contain only letters, numbers, hyphens, and underscores."
   }
 }
 

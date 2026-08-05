@@ -62,7 +62,11 @@ module "stac-server" {
   domain_alias                                = var.stac_server_inputs.domain_alias
 
   stac_api_rootpath = local.stac_api_rootpath
-  stac_api_url      = var.stac_server_inputs.domain_alias != "" ? "https://${var.stac_server_inputs.domain_alias}${local.stac_api_rootpath}" : ""
+  stac_api_url = (
+    var.stac_server_inputs.stac_api_url != null
+    ? var.stac_server_inputs.stac_api_url
+    : var.stac_server_inputs.domain_alias != "" ? "https://${var.stac_server_inputs.domain_alias}${local.stac_api_rootpath}" : ""
+  )
 
   cors_origin      = var.stac_server_inputs.cors_origin
   cors_credentials = var.stac_server_inputs.cors_credentials
