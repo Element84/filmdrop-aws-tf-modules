@@ -42,6 +42,14 @@ output "stac_url" {
   value = module.filmdrop.stac_url
 }
 
+output "stac_api_stage" {
+  value = module.filmdrop.stac_api_stage
+}
+
+output "stac_api_rootpath" {
+  value = module.filmdrop.stac_api_rootpath
+}
+
 output "stac_opensearch_domain_name" {
   value = module.filmdrop.stac_opensearch_domain_name
 }

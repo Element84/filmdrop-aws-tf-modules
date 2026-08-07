@@ -20,7 +20,6 @@ sns_critical_subscriptions_map = {}
 ##### APPLICATION VARIABLES ####
 stac_server_inputs = {
   app_name                      = "stac_server"
-  version                       = null
   stac_id                       = "stac-server"
   stac_title                    = "STAC API"
   stac_description              = "A STAC API using stac-server"
@@ -319,7 +318,6 @@ deploy_titiler                           = true
 deploy_filmdrop_ui                       = true
 deploy_cirrus                            = true
 deploy_cirrus_dashboard                  = true
-deploy_local_stac_server_artifacts       = false
 deploy_waf_rule                          = true
 
 

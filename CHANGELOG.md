@@ -9,16 +9,47 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Added
 
+- `stac_server_inputs.lambda_zip_filepath` for pointing stac-server at a local lambda dist ZIP
+  instead of downloading a release asset
+- `stac_server_inputs.stac_api_stage` and `stac_server_inputs.stac_api_expose_stage_in_path`
+  to serve the STAC API under a custom path (e.g. `https://<domain>/v2/`) independent of the
+  deployment environment; both default to the prior environment-based behavior when unset.
+  stac-server resource names always derive from `environment`, so changing the stage does not
+  rename (destroy and recreate) resources such as the OpenSearch domain
+- `stac_server_inputs.stac_api_url` to override the public URL stac-server advertises in
+  API responses (landing-page and search links), normally derived from `domain_alias`. Set it
+  when clients reach the API through CloudFront's auto-assigned `*.cloudfront.net` domain (no
+  `domain_alias`), which is only known after the first apply; left unset, advertised links fall
+  back to API Gateway's default URL and bypass CloudFront
+- `stac_api_stage` and `stac_api_rootpath` outputs reporting the deployed API Gateway stage
+  and the path prefix of the public URL
+- Plan-time validation that `domain_alias` without `deploy_cloudfront` (an API Gateway custom
+  domain) is paired with `api_rest_type = "PRIVATE"` and `private_certificate_arn`, and that
+  `stac_api_stage` is a valid stage name
 
 ### Changed
 
+- Updated the [terraform-aws-stac-server module](https://github.com/Element84/terraform-aws-stac-server)
+  to v3.0.0, which downloads the stac-server lambda dist ZIP from
+  [stac-server releases](https://github.com/stac-utils/stac-server/releases) at apply time
+  instead of packaging prebuilt lambda ZIPs
+- `stac_server_inputs.version` is now optional and selects the stac-server release to download;
+  it defaults to the release the pinned terraform-aws-stac-server module is tested against
+  (currently v5.0.2). Versions prior to v5.0.0 require `stac_server_inputs.lambda_zip_filepath`
 
 ### Fixed
 
 
 ### Removed
 
+- `deploy_local_stac_server_artifacts` input variable
+- `zip_filepath` fields from `stac_server_inputs.api_lambda`, `.ingest_lambda`, and
+  `.pre_hook_lambda`; use `stac_server_inputs.lambda_zip_filepath` instead
 
+### ⚠️ Breaking
+
+- See MIGRATION.md for the removal of `deploy_local_stac_server_artifacts` and the lambda
+  `zip_filepath` fields, and for the apply-time download of the stac-server lambda dist ZIP
 
 ## [3.0.2] - 2026-06-02
 

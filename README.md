@@ -199,45 +199,6 @@ If you would like to take a look at the flop terraform infrastructure outputs ag
 
 ### Known Deployment Issues
 
-#### Pulling the stac-server Lambda Code
-
-During the deployment, you may see the following error due to how we're pulling
-the stac server lambda code at apply time:
-
-```text
-│ Error: Provider produced inconsistent final plan
-│
-│ When expanding the plan for module.filmdrop.module.stac-server[0].module.stac-server.aws_lambda_function.stac_server_ingest to include new values learned so far during apply, provider "registry.terraform.io/hashicorp/aws" produced an invalid new value for
-│ .source_code_hash: was cty.StringVal("********"), but now cty.StringVal("********").
-│
-│ This is a bug in the provider, which should be reported in the provider's own issue tracker.
-╵
-╷
-│ Error: Provider produced inconsistent final plan
-│
-│ When expanding the plan for module.filmdrop.module.stac-server[0].module.stac-server.aws_lambda_function.stac_server_api to include new values learned so far during apply, provider "registry.terraform.io/hashicorp/aws" produced an invalid new value for
-│ .source_code_hash: was cty.StringVal("********"), but now cty.StringVal("********").
-│
-```
-
-If you see the error above, just run a flop update like:
-
-```text
-./flop update default.tfvars
-```
-
-The terraform apply will deploy the changes, but before doing so, terraform will
-perform an additional plan and ask you for a confirmation, for which you need to
-answer `yes` to proceed with the deployment.
-
-```text
-Do you want to perform these actions?
-  Terraform will perform the actions described above.
-  Only 'yes' will be accepted to approve.
-
-Enter a value: yes
-```
-
 #### Exceeding WAF Limits
 
 AWS's default limit for WAF rule limits is 100 per region per account.
@@ -275,7 +236,6 @@ deploy_analytics                    = false
 deploy_titiler                      = false
 deploy_filmdrop_ui                  = false
 deploy_cirrus_dashboard             = false
-deploy_local_stac_server_artifacts  = false
 deploy_waf_rule                     = false
 ```
 

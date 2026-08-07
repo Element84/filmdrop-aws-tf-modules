@@ -21,7 +21,6 @@ sns_critical_subscriptions_map = {}
 ##### APPLICATION VARIABLES ####
 stac_server_inputs = {
   app_name                      = "stac_server"
-  version                       = null
   stac_id                       = "stac-server"
   stac_title                    = "STAC API"
   stac_description              = "A STAC API using stac-server"
@@ -328,7 +327,6 @@ deploy_vpc        = false
 deploy_stac_server                       = false
 deploy_stac_server_opensearch_serverless = false
 deploy_stac_server_outside_vpc           = false
-deploy_local_stac_server_artifacts       = false
 
 deploy_cirrus           = false
 deploy_cirrus_dashboard = false
