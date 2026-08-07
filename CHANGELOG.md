@@ -9,6 +9,16 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Added
 
+### Changed
+
+### Fixed
+
+### Removed
+
+## [4.0.0] - 2026-08-07
+
+### Added
+
 - `stac_server_inputs.lambda_zip_filepath` for pointing stac-server at a local lambda dist ZIP
   instead of downloading a release asset
 - `stac_server_inputs.stac_api_stage` and `stac_server_inputs.stac_api_expose_stage_in_path`
@@ -36,9 +46,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - `stac_server_inputs.version` is now optional and selects the stac-server release to download;
   it defaults to the release the pinned terraform-aws-stac-server module is tested against
   (currently v5.0.2). Versions prior to v5.0.0 require `stac_server_inputs.lambda_zip_filepath`
-
-### Fixed
-
 
 ### Removed
 

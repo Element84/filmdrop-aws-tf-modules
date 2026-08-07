@@ -5,6 +5,8 @@ a newer version. For example, if a new required variable is added, this should b
 
 ### Unreleased
 
+### 4.0.0
+
 **stac-server lambdas are now downloaded from stac-server releases**
 
 The [terraform-aws-stac-server module](https://github.com/Element84/terraform-aws-stac-server) (v3.0.0) no longer packages prebuilt stac-server lambda ZIPs. The single lambda dist ZIP attached to the [stac-server release](https://github.com/stac-utils/stac-server/releases) selected by `stac_server_inputs.version` (default `"v5.0.2"`) is downloaded at apply time and used by the api, ingest, and pre-hook lambdas. The machine running Terraform needs `bash`, `curl`, and `jq`.
