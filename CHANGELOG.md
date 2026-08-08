@@ -9,6 +9,16 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Added
 
+### Changed
+
+### Fixed
+
+### Removed
+
+## [4.0.0] - 2026-08-07
+
+### Added
+
 - `stac_server_inputs.lambda_zip_filepath` for pointing stac-server at a local lambda dist ZIP
   instead of downloading a release asset
 - `stac_server_inputs.stac_api_stage` and `stac_server_inputs.stac_api_expose_stage_in_path`
@@ -36,9 +46,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - `stac_server_inputs.version` is now optional and selects the stac-server release to download;
   it defaults to the release the pinned terraform-aws-stac-server module is tested against
   (currently v5.0.2). Versions prior to v5.0.0 require `stac_server_inputs.lambda_zip_filepath`
-
-### Fixed
-
 
 ### Removed
 
@@ -924,3 +931,67 @@ Many changes, see commit history
 ## [0.0.36] - 2023-01-31
 
 - Start of changelog
+
+[4.0.0]: https://github.com/Element84/filmdrop-aws-tf-modules/compare/v3.0.2...v4.0.0
+[3.0.2]: https://github.com/Element84/filmdrop-aws-tf-modules/compare/v3.0.1...v3.0.2
+[3.0.1]: https://github.com/Element84/filmdrop-aws-tf-modules/compare/v3.0.0...v3.0.1
+[3.0.0]: https://github.com/Element84/filmdrop-aws-tf-modules/compare/v2.58.0...v3.0.0
+[2.58.0]: https://github.com/Element84/filmdrop-aws-tf-modules/compare/v2.57.0...v2.58.0
+[2.57.0]: https://github.com/Element84/filmdrop-aws-tf-modules/compare/v2.56.0...v2.57.0
+[2.56.0]: https://github.com/Element84/filmdrop-aws-tf-modules/compare/v2.55.0...v2.56.0
+[2.55.0]: https://github.com/Element84/filmdrop-aws-tf-modules/compare/v2.54.0...v2.55.0
+[2.54.0]: https://github.com/Element84/filmdrop-aws-tf-modules/compare/v2.53.0...v2.54.0
+[2.53.0]: https://github.com/Element84/filmdrop-aws-tf-modules/compare/v2.52.0...v2.53.0
+[2.52.0]: https://github.com/Element84/filmdrop-aws-tf-modules/compare/v2.51.0...v2.52.0
+[2.51.0]: https://github.com/Element84/filmdrop-aws-tf-modules/compare/v2.50.0...v2.51.0
+[2.50.0]: https://github.com/Element84/filmdrop-aws-tf-modules/compare/v2.49.0...v2.50.0
+[2.49.0]: https://github.com/Element84/filmdrop-aws-tf-modules/compare/v2.48.0...v2.49.0
+[2.48.0]: https://github.com/Element84/filmdrop-aws-tf-modules/compare/v2.47.0...v2.48.0
+[2.47.0]: https://github.com/Element84/filmdrop-aws-tf-modules/compare/v2.46.0...v2.47.0
+[2.46.0]: https://github.com/Element84/filmdrop-aws-tf-modules/compare/v2.45.0...v2.46.0
+[2.45.0]: https://github.com/Element84/filmdrop-aws-tf-modules/compare/v2.44.0...v2.45.0
+[2.44.0]: https://github.com/Element84/filmdrop-aws-tf-modules/compare/v2.43.0...v2.44.0
+[2.43.0]: https://github.com/Element84/filmdrop-aws-tf-modules/compare/v2.42.0...v2.43.0
+[2.42.0]: https://github.com/Element84/filmdrop-aws-tf-modules/compare/v2.41.0...v2.42.0
+[2.41.0]: https://github.com/Element84/filmdrop-aws-tf-modules/compare/v2.40.0...v2.41.0
+[2.40.0]: https://github.com/Element84/filmdrop-aws-tf-modules/compare/v2.39.0...v2.40.0
+[2.39.0]: https://github.com/Element84/filmdrop-aws-tf-modules/compare/v2.38.0...v2.39.0
+[2.38.0]: https://github.com/Element84/filmdrop-aws-tf-modules/compare/v2.37.0...v2.38.0
+[2.37.0]: https://github.com/Element84/filmdrop-aws-tf-modules/compare/v2.36.0...v2.37.0
+[2.36.0]: https://github.com/Element84/filmdrop-aws-tf-modules/compare/v2.35.0...v2.36.0
+[2.35.0]: https://github.com/Element84/filmdrop-aws-tf-modules/compare/v2.34.0...v2.35.0
+[2.34.0]: https://github.com/Element84/filmdrop-aws-tf-modules/compare/v2.33.0...v2.34.0
+[2.33.0]: https://github.com/Element84/filmdrop-aws-tf-modules/compare/v2.32.0...v2.33.0
+[2.32.0]: https://github.com/Element84/filmdrop-aws-tf-modules/compare/v2.31.0...v2.32.0
+[2.31.0]: https://github.com/Element84/filmdrop-aws-tf-modules/compare/v2.30.0...v2.31.0
+[2.30.0]: https://github.com/Element84/filmdrop-aws-tf-modules/compare/v2.29.0...v2.30.0
+[2.29.0]: https://github.com/Element84/filmdrop-aws-tf-modules/compare/v2.28.0...v2.29.0
+[2.28.0]: https://github.com/Element84/filmdrop-aws-tf-modules/compare/v2.27.0...v2.28.0
+[2.27.0]: https://github.com/Element84/filmdrop-aws-tf-modules/compare/v2.26.0...v2.27.0
+[2.26.0]: https://github.com/Element84/filmdrop-aws-tf-modules/compare/v2.25.0...v2.26.0
+[2.25.0]: https://github.com/Element84/filmdrop-aws-tf-modules/compare/v2.24.0...v2.25.0
+[2.24.0]: https://github.com/Element84/filmdrop-aws-tf-modules/compare/v2.23.0...v2.24.0
+[2.23.0]: https://github.com/Element84/filmdrop-aws-tf-modules/compare/v2.22.0...v2.23.0
+[2.22.0]: https://github.com/Element84/filmdrop-aws-tf-modules/compare/v2.21.0...v2.22.0
+[2.21.0]: https://github.com/Element84/filmdrop-aws-tf-modules/compare/v2.20.0...v2.21.0
+[2.20.0]: https://github.com/Element84/filmdrop-aws-tf-modules/compare/v2.19.0...v2.20.0
+[2.19.0]: https://github.com/Element84/filmdrop-aws-tf-modules/compare/v2.18.0...v2.19.0
+[2.18.0]: https://github.com/Element84/filmdrop-aws-tf-modules/compare/v2.17.0...v2.18.0
+[2.17.0]: https://github.com/Element84/filmdrop-aws-tf-modules/compare/v2.16.0...v2.17.0
+[2.16.0]: https://github.com/Element84/filmdrop-aws-tf-modules/compare/v2.15.0...v2.16.0
+[2.15.0]: https://github.com/Element84/filmdrop-aws-tf-modules/compare/v2.14.0...v2.15.0
+[2.14.0]: https://github.com/Element84/filmdrop-aws-tf-modules/compare/v2.13.0...v2.14.0
+[2.13.0]: https://github.com/Element84/filmdrop-aws-tf-modules/compare/v2.12.0...v2.13.0
+[2.12.0]: https://github.com/Element84/filmdrop-aws-tf-modules/compare/v2.11.0...v2.12.0
+[2.11.0]: https://github.com/Element84/filmdrop-aws-tf-modules/compare/v2.10.0...v2.11.0
+[2.10.0]: https://github.com/Element84/filmdrop-aws-tf-modules/compare/v2.9.0...v2.10.0
+[2.9.0]: https://github.com/Element84/filmdrop-aws-tf-modules/compare/v2.8.0...v2.9.0
+[2.8.0]: https://github.com/Element84/filmdrop-aws-tf-modules/compare/v2.7.0...v2.8.0
+[2.7.0]: https://github.com/Element84/filmdrop-aws-tf-modules/compare/v2.6.0...v2.7.0
+[2.6.0]: https://github.com/Element84/filmdrop-aws-tf-modules/compare/v2.5.0...v2.6.0
+[2.5.0]: https://github.com/Element84/filmdrop-aws-tf-modules/compare/v2.4.0...v2.5.0
+[2.4.0]: https://github.com/Element84/filmdrop-aws-tf-modules/compare/v2.3.0...v2.4.0
+[2.3.0]: https://github.com/Element84/filmdrop-aws-tf-modules/compare/v2.2.0...v2.3.0
+[2.2.0]: https://github.com/Element84/filmdrop-aws-tf-modules/compare/v2.1.0...v2.2.0
+[2.1.0]: https://github.com/Element84/filmdrop-aws-tf-modules/compare/v2.0.0...v2.1.0
+[2.0.0]: https://github.com/Element84/filmdrop-aws-tf-modules/tree/v2.0.0
