@@ -23,6 +23,25 @@ resource "aws_s3_bucket_versioning" "lambda-source-versioning" {
   }
 }
 
+resource "aws_dynamodb_table" "mosaic-table" {
+  name = "filmdrop-titiler-mosaics"
+  billing_mode = "PAY_PER_REQUEST"
+  read_capacity = 20
+  write_capacity = 20
+  hash_key = "mosaicId"
+  range_key = "quadkey"
+
+  attribute {
+    name = "mosaicId"
+    type = "S"
+  }
+
+  attribute {
+    name = "quadkey"
+    type = "S"
+  }
+}
+
 resource "null_resource" "download-lambda-source-bundle" {
   triggers = {
     bucket  = aws_s3_bucket.lambda-source.id
@@ -76,6 +95,8 @@ resource "aws_lambda_function" "titiler-lambda" {
         REQUEST_HOST_HEADER_OVERRIDE       = var.request_host_header_override
         MOSAIC_TILE_TIMEOUT                = var.mosaic_tile_timeout
         LD_LIBRARY_PATH                    = "/var/task"
+        TITILER_API_MOSAIC_BACKEND         = "dynamodb://"
+        TITILER_API_MOSAIC_HOST            = format("%s/%s", aws_dynamodb_table.mosaic-table.region, aws_dynamodb_table.mosaic-table.name)
       },
       var.allowed_extensions_enabled ? {
         CPL_VSIL_CURL_ALLOWED_EXTENSIONS = var.cpl_vsil_curl_allowed_extensions
@@ -224,8 +245,167 @@ resource "aws_wafv2_web_acl" "titiler-wafv2-web-acl" {
   }
 
   rule {
-    name     = "ManagedRules"
+    name     = "allow-get-mosaic-tiles-with-url-query-param"
     priority = 2
+
+    dynamic "action" {
+      for_each = var.waf_allowed_url == null ? [] : [1]
+      content {
+        allow {}
+      }
+    }
+
+    dynamic "action" {
+      for_each = var.waf_allowed_url == null ? [1] : []
+      content {
+        count {}
+      }
+    }
+
+    statement {
+      and_statement {
+        statement {
+          # GET /mosaicjson/mosaics/{mosaic_id}/*
+          byte_match_statement {
+            positional_constraint = "EXACTLY"
+            search_string         = "get"
+            field_to_match {
+              method {}
+            }
+            text_transformation {
+              priority = 0
+              type     = "LOWERCASE"
+            }
+          }
+        }
+
+        statement {
+          # GET /mosaicjson/mosaics/{mosaic_id}/*
+          regex_match_statement {
+            regex_string         = "\/mosaicjson\/mosaics\/[0-9a-f\-]{36}\/?.*"
+            field_to_match {
+              uri_path {}
+            }
+            text_transformation {
+              priority = 0
+              type     = "LOWERCASE"
+            }
+          }
+        }
+
+        statement {
+          byte_match_statement {
+            positional_constraint = "STARTS_WITH"
+            # since any URL will start with "https:", this rule should never match and count
+            search_string = var.waf_allowed_url == null ? "X" : var.waf_allowed_url
+
+            field_to_match {
+              single_query_argument {
+                name = "url"
+              }
+            }
+
+            text_transformation {
+              priority = 0
+              type     = "LOWERCASE"
+            }
+          }
+        }
+
+      }
+    }
+
+    visibility_config {
+      cloudwatch_metrics_enabled = false
+      metric_name                = "${var.project_name}-${var.environment}-allow-get"
+      sampled_requests_enabled   = false
+    }
+  }
+
+  rule {
+    name     = "allow-post-with-correct-stac-api-root"
+    priority = 3
+
+    dynamic "action" {
+      for_each = var.waf_allowed_url == null ? [] : [1]
+      content {
+        allow {}
+      }
+    }
+
+    dynamic "action" {
+      for_each = var.waf_allowed_url == null ? [1] : []
+      content {
+        count {}
+      }
+    }
+
+    statement {
+      and_statement {
+        statement {
+          # POST /mosaicjson/mosaics
+          byte_match_statement {
+            positional_constraint = "EXACTLY"
+            search_string         = "post"
+            field_to_match {
+              method {}
+            }
+            text_transformation {
+              priority = 0
+              type     = "LOWERCASE"
+            }
+          }
+        }
+
+        statement {
+          # POST /mosaicjson/mosaics
+          byte_match_statement {
+            positional_constraint = "EXACTLY"
+            search_string         = "/mosaicjson/mosaics"
+            field_to_match {
+              uri_path {}
+            }
+            text_transformation {
+              priority = 0
+              type     = "LOWERCASE"
+            }
+          }
+        }
+
+        statement {
+          byte_match_statement {
+            positional_constraint = "EXACTLY"
+            # since any URL will start with "https:", this rule should never match and count
+            search_string = var.waf_allowed_url == null ? "X" : var.waf_allowed_url
+            field_to_match {
+              json_body {
+                match_pattern {
+                  included_paths = ["/stac_api_root"]
+                }
+                match_scope               = "VALUE"
+                invalid_fallback_behavior = "NO_MATCH"
+                oversize_handling         = "NO_MATCH"
+              }
+            }
+            text_transformation {
+              priority = 0
+              type     = "LOWERCASE"
+            }
+          }
+        }
+      }
+    }
+
+    visibility_config {
+      cloudwatch_metrics_enabled = false
+      metric_name                = "${var.project_name}-${var.environment}-mosaic-allow-post"
+      sampled_requests_enabled   = false
+    }
+  }
+
+  rule {
+    name     = "ManagedRules"
+    priority = 4
 
     override_action {
       none {}
