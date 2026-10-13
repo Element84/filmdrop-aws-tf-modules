@@ -324,6 +324,7 @@ variable "filmdrop_titiler_inputs" {
     authorized_s3_arns                        = list(string)
     titiler_waf_allowed_url                   = string
     titiler_host_header                       = string
+    mosaic_enabled                            = optional(bool, false)
     mosaic_tile_timeout                       = number
     web_acl_id                                = string
     lambda_memory                             = optional(number)
@@ -354,6 +355,7 @@ variable "filmdrop_titiler_inputs" {
     authorized_s3_arns                        = []
     titiler_waf_allowed_url                   = ""
     titiler_host_header                       = ""
+    mosaic_enabled                            = false
     mosaic_tile_timeout                       = 30
     web_acl_id                                = ""
     is_private_endpoint                       = false

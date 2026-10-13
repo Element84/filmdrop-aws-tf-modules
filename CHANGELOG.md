@@ -9,6 +9,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Added
 
+- `filmdrop_titiler_inputs.mosaic_enabled` (default `false`). When `true`, filmdrop-titiler is deployed
+  with its mosaic routes (`/mosaicjson/mosaics`) backed by a DynamoDB table created by the module
+  (`filmdrop-titiler-mosaic-<project_name>-<environment>`), the Lambda is granted access to it, and the
+  WAF allows the mosaic `POST`/`OPTIONS` requests. When `false`, the mosaic routes are disabled
+  (`TITILER_API_DISABLE_MOSAIC=true`). Requires a filmdrop-titiler release that includes the mosaic extension
+
 ### Changed
 
 ### Fixed

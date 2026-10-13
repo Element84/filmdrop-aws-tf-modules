@@ -128,6 +128,7 @@ filmdrop_titiler_inputs = {
   authorized_s3_arns                        = []
   titiler_waf_allowed_url                   = "test.filmdrop_titiler.io"
   titiler_host_header                       = ""
+  mosaic_enabled                            = false
   mosaic_tile_timeout                       = 30
   web_acl_id                                = ""
   is_private_endpoint                       = false

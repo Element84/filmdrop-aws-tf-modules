@@ -24,10 +24,28 @@ data "aws_iam_policy_document" "titiler_lambda_policy" {
       resources = var.authorized_s3_arns
     }
   }
+
+  dynamic "statement" {
+    for_each = var.mosaic_enabled ? [1] : []
+    content {
+      sid    = "MosaicDynamoDBAccess"
+      effect = "Allow"
+      actions = [
+        "dynamodb:Query",
+        "dynamodb:GetItem",
+        "dynamodb:Scan",
+        "dynamodb:PutItem",
+        "dynamodb:BatchWriteItem",
+        "dynamodb:CreateTable",
+        "dynamodb:DescribeTable"
+      ]
+      resources = [aws_dynamodb_table.titiler-mosaic-dynamodb-table[0].arn]
+    }
+  }
 }
 
 resource "aws_iam_role_policy" "titiler-lambda-inline-policy" {
-  count  = length(var.authorized_s3_arns) > 0 ? 1 : 0
+  count  = length(var.authorized_s3_arns) > 0 || var.mosaic_enabled ? 1 : 0
   name   = "titiler-lambda-inline-policy"
   role   = aws_iam_role.titiler-lambda-role.id
   policy = data.aws_iam_policy_document.titiler_lambda_policy.json

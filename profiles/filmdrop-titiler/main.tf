@@ -25,6 +25,7 @@ module "filmdrop_titiler" {
   vpce_private_dns_enabled                  = var.filmdrop_titiler_inputs.vpce_private_dns_enabled
   custom_vpce_id                            = var.filmdrop_titiler_inputs.custom_vpce_id
   allowed_extensions_enabled                = var.filmdrop_titiler_inputs.allowed_extensions_enabled
+  mosaic_enabled                            = var.filmdrop_titiler_inputs.mosaic_enabled
 }
 
 module "cloudfront_api_gateway_endpoint" {

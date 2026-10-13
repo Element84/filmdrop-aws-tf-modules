@@ -160,6 +160,16 @@ variable "request_host_header_override" {
   default     = ""
 }
 
+variable "mosaic_enabled" {
+  description = <<-DESCRIPTION
+  Enables the filmdrop-titiler mosaic routes (/mosaicjson/mosaics) backed by a DynamoDB table created by this module.
+  Requires a filmdrop-titiler release that includes the mosaic extension. When false, the mosaic routes are disabled.
+  DESCRIPTION
+  type        = bool
+  default     = false
+  nullable    = false
+}
+
 variable "mosaic_tile_timeout" {
   description = "Overrides the default mosaic tile rendering timeout."
   type        = number

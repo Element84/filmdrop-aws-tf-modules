@@ -42,6 +42,7 @@ variable "filmdrop_titiler_inputs" {
     custom_vpce_id                            = optional(string)
     private_api_additional_security_group_ids = optional(list(string))
     allowed_extensions_enabled                = optional(bool)
+    mosaic_enabled                            = optional(bool, false)
     auth_function = object({
       cf_function_name             = string
       cf_function_runtime          = string
@@ -70,6 +71,7 @@ variable "filmdrop_titiler_inputs" {
     custom_vpce_id                            = null
     private_api_additional_security_group_ids = null
     allowed_extensions_enabled                = true
+    mosaic_enabled                            = false
     auth_function = {
       cf_function_name             = ""
       cf_function_runtime          = "cloudfront-js-2.0"

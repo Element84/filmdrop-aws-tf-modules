@@ -76,7 +76,12 @@ resource "aws_lambda_function" "titiler-lambda" {
         REQUEST_HOST_HEADER_OVERRIDE       = var.request_host_header_override
         MOSAIC_TILE_TIMEOUT                = var.mosaic_tile_timeout
         LD_LIBRARY_PATH                    = "/var/task"
+        TITILER_API_DISABLE_MOSAIC         = tostring(!var.mosaic_enabled)
       },
+      var.mosaic_enabled ? {
+        TITILER_API_MOSAIC_BACKEND = "dynamodb://"
+        TITILER_API_MOSAIC_HOST    = "${data.aws_region.current.region}/${aws_dynamodb_table.titiler-mosaic-dynamodb-table[0].name}"
+      } : {},
       var.allowed_extensions_enabled ? {
         CPL_VSIL_CURL_ALLOWED_EXTENSIONS = var.cpl_vsil_curl_allowed_extensions
       } : {}
@@ -120,6 +125,29 @@ resource "aws_apigatewayv2_integration" "titiler-api-gateway_integration" {
   integration_type       = "AWS_PROXY"
   integration_uri        = aws_lambda_function.titiler-lambda.invoke_arn
   payload_format_version = "2.0"
+}
+
+resource "aws_dynamodb_table" "titiler-mosaic-dynamodb-table" {
+  count        = var.mosaic_enabled ? 1 : 0
+  name         = "filmdrop-titiler-mosaic-${var.project_name}-${var.environment}"
+  billing_mode = "PAY_PER_REQUEST"
+  hash_key     = "mosaicId"
+  range_key    = "quadkey"
+
+  attribute {
+    name = "mosaicId"
+    type = "S"
+  }
+
+  attribute {
+    name = "quadkey"
+    type = "S"
+  }
+
+  ttl {
+    attribute_name = "timeToLive"
+    enabled        = true
+  }
 }
 
 
@@ -244,6 +272,152 @@ resource "aws_wafv2_web_acl" "titiler-wafv2-web-acl" {
       sampled_requests_enabled   = false
     }
 
+  }
+
+  dynamic "rule" {
+    for_each = var.mosaic_enabled ? [1] : []
+    content {
+      name     = "allow-post-with-correct-stac-api-root"
+      priority = 3
+
+      dynamic "action" {
+        for_each = var.waf_allowed_url == null ? [] : [1]
+        content {
+          allow {}
+        }
+      }
+
+      dynamic "action" {
+        for_each = var.waf_allowed_url == null ? [1] : []
+        content {
+          count {}
+        }
+      }
+
+      statement {
+        and_statement {
+          statement {
+            # POST /mosaicjson/mosaics
+            byte_match_statement {
+              positional_constraint = "EXACTLY"
+              search_string         = "post"
+              field_to_match {
+                method {}
+              }
+              text_transformation {
+                priority = 0
+                type     = "LOWERCASE"
+              }
+            }
+          }
+
+          statement {
+            # POST /mosaicjson/mosaics
+            byte_match_statement {
+              positional_constraint = "EXACTLY"
+              search_string         = "/mosaicjson/mosaics"
+              field_to_match {
+                uri_path {}
+              }
+              text_transformation {
+                priority = 0
+                type     = "LOWERCASE"
+              }
+            }
+          }
+
+          statement {
+            byte_match_statement {
+              positional_constraint = "EXACTLY"
+              # since any URL will start with "https:", this rule should never match and count
+              search_string = var.waf_allowed_url == null ? "X" : var.waf_allowed_url
+              field_to_match {
+                json_body {
+                  match_pattern {
+                    included_paths = ["/stac_api_root"]
+                  }
+                  match_scope               = "VALUE"
+                  invalid_fallback_behavior = "NO_MATCH"
+                  oversize_handling         = "NO_MATCH"
+                }
+              }
+              text_transformation {
+                priority = 0
+                type     = "LOWERCASE"
+              }
+            }
+          }
+        }
+      }
+
+      visibility_config {
+        cloudwatch_metrics_enabled = false
+        metric_name                = "${var.project_name}-${var.environment}-mosaic-allow-post"
+        sampled_requests_enabled   = false
+      }
+    }
+  }
+
+  dynamic "rule" {
+    for_each = var.mosaic_enabled ? [1] : []
+    content {
+      name     = "allow-mosaic-options-for-cors"
+      priority = 4
+
+      dynamic "action" {
+        for_each = var.waf_allowed_url == null ? [] : [1]
+        content {
+          allow {}
+        }
+      }
+
+      dynamic "action" {
+        for_each = var.waf_allowed_url == null ? [1] : []
+        content {
+          count {}
+        }
+      }
+
+      statement {
+        and_statement {
+          statement {
+            # OPTIONS /mosaicjson/mosaics
+            byte_match_statement {
+              positional_constraint = "EXACTLY"
+              search_string         = "options"
+              field_to_match {
+                method {}
+              }
+              text_transformation {
+                priority = 0
+                type     = "LOWERCASE"
+              }
+            }
+          }
+
+          statement {
+            # OPTIONS /mosaicjson/mosaics
+            byte_match_statement {
+              positional_constraint = "EXACTLY"
+              search_string         = "/mosaicjson/mosaics"
+              field_to_match {
+                uri_path {}
+              }
+              text_transformation {
+                priority = 0
+                type     = "LOWERCASE"
+              }
+            }
+          }
+        }
+      }
+
+      visibility_config {
+        cloudwatch_metrics_enabled = false
+        metric_name                = "${var.project_name}-${var.environment}-mosaic-allow-options"
+        sampled_requests_enabled   = false
+      }
+    }
   }
 
   visibility_config {
